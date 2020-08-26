@@ -1,0 +1,48 @@
+{
+  "modules": {
+    "32": {
+      "name": "canmio-universal",
+      "component": "mergCANMIO"
+    },
+    "29": {
+      "name": "CANPAN",
+      "component": "mergCANPAN"
+    },
+    "10": {
+      "name": "CANCMD",
+      "component": "mergCANCMD"
+    },
+    "5": {
+      "name": "CANACE8C",
+      "component": "mergDefault"
+    },
+    "65": {
+      "name": "ETHNIGE",
+      "component": "mergETHNIGE"
+    }
+  },
+  "cbusErrors": {
+    "1": "Command Not Supported",
+    "2": "Not in Learn Mode",
+    "3": "Not in Setup Mode",
+    "4": "Too Many Events",
+    "5": "No Event",
+    "6": "Invalid Event variable index",
+    "7": "Invalid Event",
+    "8": "Reserved",
+    "9": "Invalid Parameter Index",
+    "10": "Invalid Node Variable Index",
+    "11": "Invalid Event Variable Value",
+    "12": "Invalid Node Variable Value"
+  },
+  "dccErrors": {
+    "1": "Loco Stack Full",
+    "2": "Loco Address Taken",
+    "3": "Session not present",
+    "4": "Consist Empty",
+    "5": "Loco Not Found",
+    "6": "Can Bus Error",
+    "7": "Invalid Request",
+    "8": "Session Cancelled"
+  }
+}

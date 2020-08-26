@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!--<link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+            integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
+            crossorigin="anonymous"
+    />-->
+    <link href="node_modules/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <link href="node_modules/material-design-icons/iconfont/material-icons.css" rel="stylesheet">
+    <link href="node_modules/typeface-roboto/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+    <title>ChatCord App</title>
+</head>
+<body>
+<v-app id="app">
+    <v-navigation-drawer
+            app
+            v-model="drawer">
+        <v-list dense>
+            <v-list-item @click="$store.state.display_component = 'nodes-list'">
+                <v-list-item-content>Nodes</v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="$store.state.display_component = 'events'">
+                <v-list-item-content>Events</v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="$store.state.display_component = 'cbus-errors'">
+                <v-list-item-content>CBUS Errors</v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="$store.state.display_component = 'dcc-sessions'">
+                <v-list-item-content>DCC Sessions</v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="$store.state.display_component = 'raw-data'">
+                <v-list-item-content>Raw Data</v-list-item-content>
+            </v-list-item>
+        </v-list>
+    </v-navigation-drawer>
+    <v-container>
+        <v-app-bar
+                app
+                color="blue"
+                dark
+        >
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-toolbar-title>{{ $store.state.title }}</v-toolbar-title>
+        </v-app-bar>
+    </v-container>
+    <v-content>
+        <component v-bind:is="$store.state.display_component"></component>
+    </v-content>
+</v-app>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<!--<script src="node_modules/material-design-icons/iconfont/material-icons.css"></script>
+<script src="node_modules/typeface-roboto/index.css"></script>-->
+<script src="node_modules/vue/dist/vue.js"></script>
+<script src="node_modules/vuetify/dist/vuetify.js"></script>
+<script src="node_modules/vuex/dist/vuex.js"></script>
+<script src="components/events_list.js"></script>
+<script src="components/events.js"></script>
+<script src="components/nodes_list.js"></script>
+<script src="components/mergDefault.js"></script>
+<script src="components/mergCANMIO.js"></script>
+<script src="components/mergCANPAN.js"></script>
+<script src="components/cbusErrors.js"></script>
+<script src="components/nodeVariable.js"></script>
+<script src="components/nodeEventVariable.js"></script>
+<script src="components/nodeVariables.js"></script>
+<script src="components/nodeEventVariables.js"></script>
+<script src="components/nodeEvents.js"></script>
+<script src="components/nodeInfo.js"></script>
+<script src="components/rawData.js"></script>
+<script src="components/dccSessions.js"></script>
+
+<script src="js/main.js"></script>
+
+</body>
+</html>
