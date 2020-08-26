@@ -275,7 +275,7 @@ class cbusAdmin extends EventEmitter {
                 this.emit('dccSessions', this.dccSessions)
             },
             '23': (msg) => {
-                //console.log(`Session Keep Alive : ${msg.sessionId()}`)
+                console.log(`Session Keep Alive : ${msg.sessionId()}`)
                 let ref = msg.opCode()
                 let session = msg.sessionId()
                 if (session in this.dccSessions) {

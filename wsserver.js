@@ -114,6 +114,16 @@ function wsserver(httpserver, node) {
         io.emit('dccError', error);
     })
 
+    node.on('cbusNoSupport', function (cbusNoSupport) {
+        console.log(`CBUS - Op Code Unknown : ${cbusNoSupport.opCode}`)
+        io.emit('cbusNoSupport', cbusNoSupport);
+    })
+
+    node.on('dccSessions', function (dccSessions) {
+        //console.log(`CBUS - Op Code Unknown : ${cbusNoSupport.opCode}`)
+        io.emit('dccSessions', dccSessions);
+    })
+
     node.on('cbus', function (task) {
         console.log(`cbus :${JSON.stringify(task)}`)
     })
