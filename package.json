@@ -14,6 +14,7 @@
     "express": "^4.17.1",
     "jsonfile": "^6.0.1",
     "material-design-icons": "^3.0.1",
+    "material-design-icons-iconfont": "^5.0.1",
     "moment": "^2.27.0",
     "socket.io": "^2.3.0",
     "typeface-roboto": "0.0.75",
@@ -22,6 +23,7 @@
     "vuex": "^3.5.1"
   },
   "devDependencies": {
+    "@mdi/font": "^5.5.55",
     "nodemon": "^2.0.4"
   }
 }

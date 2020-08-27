@@ -4,12 +4,14 @@ Vue.use(Vuetify)
 
 Vue.use(Vuex)
 
-const vuetifyOptions = { }
+const vuetifyOptions = {
+    icons: {
+        iconfont: 'md'
+    }
+}
 
 const store = new Vuex.Store({
     state: {
-        title: 'CbusServer',
-        subTitle: 'Admin (Alpha)',
         nodes: [],
         events: [],
         cbusErrors:[],
@@ -73,7 +75,6 @@ var app = new Vue({
     store,
     vuetify: new Vuetify(vuetifyOptions),
     data: {
-        title: " ",
         display_component:"nodes-list",
         drawer:true,
         events: [],
