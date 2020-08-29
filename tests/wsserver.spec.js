@@ -5,6 +5,14 @@ const mock_CBUS_Interface = require('./mock_cbus_interface.js');
 var itParam = require('mocha-param');
 const io = require('socket.io-client');
 
+function decToHex(num, len) {
+    let output = Number(num).toString(16).toUpperCase()
+    var padded = "00000000" + output
+    //return (num + Math.pow(16, len)).toString(16).slice(-len).toUpperCase()
+    return padded.substr(-len)
+}
+
+
 
 describe('Websocket server tests', function(){
 	let http_Server = undefined;
@@ -45,24 +53,16 @@ describe('Websocket server tests', function(){
 		}
 	});
 	
-	    itParam("PARAM test nodeId ${value}", [0, 1, 255], function (done, value) {
+	    itParam("ACON test nodeId ${value}", [0, 1, 255], function (done, value) {
 			mock_CBUS.clearSendArray();
 			websocket_Client.emit('ACON', {"nodeId": value, "eventId": 0})
 			setTimeout(function(){
-				expect(mock_CBUS.getSendArray()[0]).to.equal(":SB780N9000800000;");
+				expected = ":SB780N9000" + decToHex(value, 2) + "0000;";
+				expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
 				done();
 			}, 100);
 		})
 	
-	it('ACON', function(done) {
-		mock_CBUS.clearSendArray();
-		console.log("Client: Request ACON");
-		websocket_Client.emit('ACON', {"nodeId": 128, "eventId": 0})
-		setTimeout(function(){
-			expect(mock_CBUS.getSendArray()[0]).to.equal(":SB780N9000800000;");
-			done();
-			}, 100);
-	});
 
 	it('RQNPN', function(done) {
 		mock_CBUS.clearSendArray();
