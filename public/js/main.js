@@ -77,10 +77,6 @@ var app = new Vue({
     data: {
         display_component:"nodes-list",
         drawer:true,
-        events: [],
-        nodes: [],
-        dccErrors: [],
-        cbusErrors:[]
     },
     methods : {
         send(type, data) {
