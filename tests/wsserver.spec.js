@@ -53,16 +53,27 @@ describe('Websocket server tests', function(){
 		}
 	});
 	
-	    itParam("ACON test nodeId ${value}", [0, 1, 255], function (done, value) {
+		var ACON_Data = [	{ node: 0, event: 0 },
+						{ node: 0, event: 1 },
+						{ node: 0, event: 65535 },
+						{ node: 1, event: 0 },
+						{ node: 1, event: 1 },
+						{ node: 1, event: 65535 },
+						{ node: 65535, event: 0 },
+						{ node: 65535, event: 1 },
+						{ node: 65535, event: 65535 }
+						];
+		
+	    itParam("ACON test nodeId ${value.node} event ${value.event}", ACON_Data, function (done, value) {
 			mock_CBUS.clearSendArray();
-			websocket_Client.emit('ACON', {"nodeId": value, "eventId": 0})
+			websocket_Client.emit('ACON', {"nodeId": value.node, "eventId": value.event})
 			setTimeout(function(){
-				expected = ":SB780N9000" + decToHex(value, 2) + "0000;";
+				expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 				expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
 				done();
 			}, 100);
 		})
-	
+		
 
 	it('RQNPN', function(done) {
 		mock_CBUS.clearSendArray();
