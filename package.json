@@ -4,7 +4,7 @@
   "description": "Websocket Server for MERG Cbus network",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/.bin/mocha ./**/tests/*.spec.js --exit",
     "start": "node server",
     "dev": "nodemon server"
   },
@@ -20,7 +20,10 @@
     "typeface-roboto": "0.0.75",
     "vue": "^2.6.12",
     "vuetify": "^2.3.10",
-    "vuex": "^3.5.1"
+    "vuex": "^3.5.1",
+    "chai": "4.2.0",
+    "mocha": "8.1.1",
+    "mocha-param": "2.0.1"
   },
   "devDependencies": {
     "@mdi/font": "^5.5.55",
