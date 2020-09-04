@@ -45,6 +45,10 @@ class cbusAdmin extends EventEmitter {
 		this.sendArray = [];
 	}
 	
+	ACOF(nodeId, eventId) {
+		return this.header + '91' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
+    }
+	
 	ACON(nodeId, eventId) {		//
         return this.header + '90' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
     }
@@ -53,6 +57,13 @@ class cbusAdmin extends EventEmitter {
         //console.log(`EVLRN Event : ${event} EventId : ${eventId} Event Value : ${valueId}`)
         return this.header + 'D2' + event + decToHex(eventId, 2) + decToHex(valueId, 2) + ';'
     }
+
+    EVULN(event) {
+        console.log(`EVULN Event : ${event}`)
+        return this.header + '95' + event + ';'
+    }
+
+	
 
     NERD(nodeId) {//Request All Events
         return this.header + '57' + decToHex(nodeId, 4) + ';'

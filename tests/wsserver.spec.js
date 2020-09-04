@@ -118,6 +118,16 @@ describe('Websocket server tests', function(){
 	//
 	///////////////////////////////////////////////
 
+	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	console.log("\nTest Client: Request ACOF");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('ACOF', {"nodeId": value.node, "eventId": value.event})
+		setTimeout(function(){
+			expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 100);
+	})
 
 		
 	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
@@ -130,6 +140,30 @@ describe('Websocket server tests', function(){
 			done();
 		}, 100);
 	})
+
+/*
+	itParam("EVLRN test nodeId ${value.node} variableId ${value.paramId} value $(value.paramVal)", TestCases_NodeParamIDParamValue, function (done, value) {
+	console.log("\nTest Client: Request EVLRN");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('EVLRN', {
+                "nodeId": value.node,
+                "actionId": value.paramId,
+                "eventName": value.paramVal,
+                "eventId": value.paramId,
+                "eventVal": value.paramVal
+            })
+		setTimeout(function(){
+			expected = ":SB780N53" + decToHex(value.node, 4) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expected2 = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.paramId, 2) + ";";
+			expect(mock_CBUS.getSendArray()[1]).to.equal(expected2);
+			done();
+		}, 100);
+	})
+*/
+
+
+
 		
 
 	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
