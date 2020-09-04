@@ -49,6 +49,40 @@ class cbusAdmin extends EventEmitter {
         return this.header + '90' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
     }
 
+    EVLRN(event, eventId, valueId) {//Read an Events EV by index
+        //console.log(`EVLRN Event : ${event} EventId : ${eventId} Event Value : ${valueId}`)
+        return this.header + 'D2' + event + decToHex(eventId, 2) + decToHex(valueId, 2) + ';'
+    }
+
+    NERD(nodeId) {//Request All Events
+        return this.header + '57' + decToHex(nodeId, 4) + ';'
+    }
+
+    NNLRN(nodeId) {
+        return this.header + '53' + decToHex(nodeId, 4) + ';'
+    }
+
+    NNULN(nodeId) {
+        return this.header + '54' + decToHex(nodeId, 4) + ';'
+    }
+
+    NVRD(nodeId, variableId) {// Read Node Variable
+        return this.header + '71' + decToHex(nodeId, 4) + decToHex(variableId, 2) + ';'
+    }
+
+    NVSET(nodeId, variableId, variableVal) {
+        console.log(`NVSET NodeId : ${nodeId} VariableId : ${variableId} Variable Value : ${variableVal} :: ${decToHex(variableVal, 2)}`)
+        return this.header + '96' + decToHex(nodeId, 4) + decToHex(variableId, 2) + decToHex(variableVal, 2) + ';'
+    }
+	
+    REVAL(nodeId, eventId, valueId) {//Read an Events EV by index
+        return this.header + '9C' + decToHex(nodeId, 4) + decToHex(eventId, 2) + decToHex(valueId, 2) + ';'
+    }
+
+    RQEVN(nodeId) {// Read Node Variable
+        return this.header + '58' + decToHex(nodeId, 4) + ';'
+    }
+
     RQNPN(nodeId, param) {		//Read Node Parameter
         return this.header + '73' + decToHex(nodeId, 4) + decToHex(param, 2) + ';'
     }
