@@ -1,4 +1,9 @@
 const EventEmitter = require('events').EventEmitter;
+const jsonfile = require('jsonfile')
+
+
+//const cbusMessage = require('./../merg/mergCbusMessage.js')
+
 
 function decToHex(num, len){
     let output = Number(num).toString(16).toUpperCase()
@@ -10,8 +15,11 @@ function decToHex(num, len){
 
 class cbusAdmin extends EventEmitter {
     constructor() {
-		super();
         console.log(`Mock CBUS: Interface created`);
+		super();
+        const merg = jsonfile.readFileSync('./config/mergConfig.json')
+        this.merg = merg
+
 		this.sendArray = [];
  
 		this.pr1 = 2
@@ -19,7 +27,9 @@ class cbusAdmin extends EventEmitter {
         this.canId = 60
         const outHeader = ((((this.pr1 * 4) + this.pr2) * 128) + this.canId) << 5
         this.header = ':S' + outHeader.toString(16).toUpperCase() + 'N'
+		
 
+        this.cbusErrors = {}
 	}
 
 	cbusSend(msg) {
@@ -47,8 +57,41 @@ class cbusAdmin extends EventEmitter {
         return this.header + '0D' + ';'
     }
 
+	Create_cbusError(msg)
+	{
+        console.log("Mock CBUS: cbusError invoked : " + msg);
+        this.emit('cbusError', msg)
+	}
 	
+	Create_cbusNoSupport(msg)
+	{
+        console.log("Mock CBUS: cbusNoSupport invoked : " + msg);
+        this.emit('cbusNoSupport', msg)
+	}
 	
+	Create_dccSessions(msg)
+	{
+        console.log("Mock CBUS: dccSessions invoked : " + msg);
+        this.emit('dccSessions', msg)
+	}
+	
+	Create_Events(msg)
+	{
+        console.log("Mock CBUS: events invoked : " + msg);
+        this.emit('events', msg)
+	}
+	
+	Create_Nodes(msg)
+	{
+        console.log("Mock CBUS: nodes invoked : " + msg);
+        this.emit('nodes', msg)
+	}
+	
+	Create_dccError(msg)
+	{
+        console.log("Mock CBUS: dccError invoked : " + msg);
+        this.emit('dccError', msg)
+	}
 }
 
 module.exports = {
