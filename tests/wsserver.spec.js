@@ -42,6 +42,7 @@ describe('Websocket server tests', function(){
 	});
 
 	after(function() {
+		console.log('\n');  //newline for visual separation
 		if (websocket_Client.connected)
 		{
 			console.log('Close WS Client');
@@ -53,35 +54,274 @@ describe('Websocket server tests', function(){
 		}
 	});
 	
-	    itParam("ACON test nodeId ${value}", [0, 1, 255], function (done, value) {
-			mock_CBUS.clearSendArray();
-			websocket_Client.emit('ACON', {"nodeId": value, "eventId": 0})
-			setTimeout(function(){
-				expected = ":SB780N9000" + decToHex(value, 2) + "0000;";
-				expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
-				done();
-			}, 100);
-		})
-	
+		var TestCases_NodeEvent = 	[	{ node: 0, event: 0 },
+										{ node: 0, event: 1 },
+										{ node: 0, event: 65535 },
+										{ node: 1, event: 0 },
+										{ node: 1, event: 1 },
+										{ node: 1, event: 65535 },
+										{ node: 65535, event: 0 },
+										{ node: 65535, event: 1 },
+										{ node: 65535, event: 65535 }
+										];
 
-	it('RQNPN', function(done) {
+		var TestCases_NodeParameter = [	{ node: 0, param: 0 },
+										{ node: 0, param: 1 },
+										{ node: 0, param: 255 },
+										{ node: 1, param: 0 },
+										{ node: 1, param: 1 },
+										{ node: 1, param: 255 },
+										{ node: 65535, param: 0 },
+										{ node: 65535, param: 1 },
+										{ node: 65535, param: 255 }
+										];
+
+		var TestCases_NodeParamIDParamValue = 	[	{ node: 0, 		paramId: 0, 	paramVal: 0 },
+													{ node: 0, 		paramId: 0, 	paramVal: 1  },
+													{ node: 0, 		paramId: 0, 	paramVal: 255 },
+													{ node: 0, 		paramId: 1, 	paramVal: 0 },
+													{ node: 0, 		paramId: 1, 	paramVal: 1 },
+													{ node: 0, 		paramId: 1, 	paramVal: 255 },
+													{ node: 0, 		paramId: 255, 	paramVal: 0 },
+													{ node: 0, 		paramId: 255, 	paramVal: 1 },
+													{ node: 0, 		paramId: 255, 	paramVal: 255 },
+													{ node: 1, 		paramId: 0, 	paramVal: 0  },
+													{ node: 1, 		paramId: 0, 	paramVal: 1  },
+													{ node: 1, 		paramId: 0, 	paramVal: 255 },
+													{ node: 1, 		paramId: 1, 	paramVal: 0 },
+													{ node: 1, 		paramId: 1, 	paramVal: 1 },
+													{ node: 1, 		paramId: 1, 	paramVal: 255 },
+													{ node: 1, 		paramId: 255, 	paramVal: 0 },
+													{ node: 1, 		paramId: 255, 	paramVal: 1 },
+													{ node: 1, 		paramId: 255, 	paramVal: 255 },
+													{ node: 65535, 	paramId: 0, 	paramVal: 0  },
+													{ node: 65535, 	paramId: 0, 	paramVal: 1  },
+													{ node: 65535, 	paramId: 0, 	paramVal: 255 },
+													{ node: 65535, 	paramId: 1, 	paramVal: 0 },
+													{ node: 65535, 	paramId: 1, 	paramVal: 1 },
+													{ node: 65535, 	paramId: 1, 	paramVal: 255 },
+													{ node: 65535, 	paramId: 255, 	paramVal: 0 },
+													{ node: 65535, 	paramId: 255, 	paramVal: 1 },
+													{ node: 65535, 	paramId: 255, 	paramVal: 255 }
+													];
+
+		var TestCases_NodeId = 		[	{ node: 0 },
+										{ node: 1 },
+										{ node: 65535 },
+										];
+
+
+
+	///////////////////////////////////////////////
+	//
+	// Test WebSocket In Messages
+	//
+	///////////////////////////////////////////////
+
+	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	console.log("\nTest Client: Request ACOF");
 		mock_CBUS.clearSendArray();
-		console.log("Client: Request RQNPN");
-		websocket_Client.emit('RQNPN', {"nodeId": 128, "parameter": 0})
+		websocket_Client.emit('ACOF', {"nodeId": value.node, "eventId": value.event})
 		setTimeout(function(){
-			expect(mock_CBUS.getSendArray()[0]).to.equal(":SB780N73008000;");
+			expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
 			done();
-			}, 100);
-	});
+		}, 100);
+	})
 
-	it('QNN', function(done) {
+		
+	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	console.log("\nTest Client: Request ACON");
 		mock_CBUS.clearSendArray();
-		console.log("Client: Request QNN");
+		websocket_Client.emit('ACON', {"nodeId": value.node, "eventId": value.event})
+		setTimeout(function(){
+			expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 100);
+	})
+
+/*
+	itParam("EVLRN test nodeId ${value.node} variableId ${value.paramId} value $(value.paramVal)", TestCases_NodeParamIDParamValue, function (done, value) {
+	console.log("\nTest Client: Request EVLRN");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('EVLRN', {
+                "nodeId": value.node,
+                "actionId": value.paramId,
+                "eventName": value.paramVal,
+                "eventId": value.paramId,
+                "eventVal": value.paramVal
+            })
+		setTimeout(function(){
+			expected = ":SB780N53" + decToHex(value.node, 4) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expected2 = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.paramId, 2) + ";";
+			expect(mock_CBUS.getSendArray()[1]).to.equal(expected2);
+			done();
+		}, 100);
+	})
+*/
+
+
+
+		
+
+	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
+	console.log("\nTest Client: Request NERD");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('NERD', {"nodeId": value.node})
+		setTimeout(function(){
+			expected = ":SB780N57" + decToHex(value.node, 4) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 100);
+	})
+		
+
+	itParam("NVRD test nodeId ${value.node} variableId ${value.param}", TestCases_NodeParameter, function (done, value) {
+	console.log("\nTest Client: Request NVRD");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('NVRD', {"nodeId": value.node, "variableId": value.param})
+		setTimeout(function(){
+			expected = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.param, 2) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 100);
+	})
+		
+
+	itParam("NVSET test nodeId ${value.node} variableId ${value.paramId} value $(value.paramVal)", TestCases_NodeParamIDParamValue, function (done, value) {
+	console.log("\nTest Client: Request NVSET");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('NVSET', {"nodeId": value.node, "variableId": value.paramId, "variableValue": value.paramVal})
+		setTimeout(function(){
+			expected = ":SB780N96" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expected2 = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.paramId, 2) + ";";
+			expect(mock_CBUS.getSendArray()[1]).to.equal(expected2);
+			done();
+		}, 100);
+	})
+		
+		
+	itParam("REVAL test nodeId ${value.node} variableId ${value.paramId} value $(value.paramVal)", TestCases_NodeParamIDParamValue, function (done, value) {
+	console.log("\nTest Client: Request REVAL");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('REVAL', {"nodeId": value.node, "actionId": value.paramId, "valueId": value.paramVal})
+		setTimeout(function(){
+			expected = ":SB780N9C" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 100);
+	})
+		
+
+	itParam("RQNPN test nodeId ${value.node} param ${value.param}", TestCases_NodeParameter, function (done, value) {
+	console.log("\nTest Client: Request RQNPN");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('RQNPN', {"nodeId": value.node, "parameter": value.param})
+		setTimeout(function(){
+			expected = ":SB780N73" + decToHex(value.node, 4) + decToHex(value.param, 2) + ";";
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 100);
+	})
+		
+
+	it('QNN test', function(done) {
+		console.log("\nTest Client: Request QNN");
+		mock_CBUS.clearSendArray();
 		websocket_Client.emit('QNN', '');
 		setTimeout(function(){
 			expect(mock_CBUS.getSendArray()[0]).to.equal(":SB780N0D;");
 			done();
 			}, 100);
 	});
+
+
+	///////////////////////////////////////////////
+	//
+	// Test WebSocket Out Messages
+	//
+	///////////////////////////////////////////////
+
+
+	it('cbusError test', function(done) {
+		console.log("\nTest Client: Trigger cbusError");
+		let testCase = "ABCDEF";
+		let capturedData= "";
+		websocket_Client.on('cbusError', function (data) {capturedData = data;});	
+		mock_CBUS.Create_cbusError(testCase);
+		setTimeout(function(){
+			expect(capturedData).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
+
+	it('cbusNoSupport test', function(done) {
+		console.log("\nTest Client: Trigger cbusNoSupport");
+		let testCase = "ABCDEF";
+		let capturedData= "";
+		websocket_Client.on('cbusNoSupport', function (data) {capturedData = data;});	
+		mock_CBUS.Create_cbusNoSupport(testCase);
+		setTimeout(function(){
+			expect(capturedData).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
+
+	it('dccError test', function(done) {
+		console.log("\nTest Client: Trigger dccError");
+		let testCase = "ABCDEF";
+		let capturedData= "";
+		websocket_Client.on('dccError', function (data) {capturedData = data;});	
+		mock_CBUS.Create_dccError(testCase);
+		setTimeout(function(){
+			expect(capturedData).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
+
+	it('dccSessions test', function(done) {
+		console.log("\nTest Client: Trigger dccSessions");
+		let testCase = "ABCDEF";
+		let capturedData= "";
+		websocket_Client.on('dccSessions', function (data) {capturedData = data;});	
+		mock_CBUS.Create_dccSessions(testCase);
+		setTimeout(function(){
+			expect(capturedData).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
+
+	it('events test', function(done) {
+		console.log("\nTest Client: Trigger events");
+		let testCase = "ABCDEF";
+		let capturedData= "";
+		websocket_Client.on('events', function (data) {capturedData = data;});	
+		mock_CBUS.Create_Events(testCase);
+		setTimeout(function(){
+			expect(capturedData).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
+
+	it('node test', function(done) {
+		console.log("\nTest Client: Trigger nodes");
+		let testCase = "ABCDEF";
+		let capturedData= "";
+		websocket_Client.on('nodes', function (data) {capturedData = data;});	
+		mock_CBUS.Create_Nodes(testCase);
+		setTimeout(function(){
+			expect(capturedData).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
 
 })
