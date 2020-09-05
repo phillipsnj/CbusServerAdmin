@@ -55,7 +55,7 @@ class cbusAdmin extends EventEmitter {
 
     EVLRN(event, eventId, valueId) {//Read an Events EV by index
         //console.log(`EVLRN Event : ${event} EventId : ${eventId} Event Value : ${valueId}`)
-        return this.header + 'D2' + event + decToHex(eventId, 2) + decToHex(valueId, 2) + ';'
+        return this.header + 'D2' + decToHex(event, 4) + decToHex(eventId, 2) + decToHex(valueId, 2) + ';'
     }
 
     EVULN(event) {
