@@ -502,9 +502,9 @@ class cbusAdmin extends EventEmitter {
         return this.header + '9C' + decToHex(nodeId, 4) + decToHex(eventId, 2) + decToHex(valueId, 2) + ';'
     }
 
-    EVLRN(event, eventId, valueId) {//Read an Events EV by index
+    EVLRN(event, actionId, valueId) {//Read an Events EV by index
         //console.log(`EVLRN Event : ${event} EventId : ${eventId} Event Value : ${valueId}`)
-        return this.header + 'D2' + event + decToHex(eventId, 2) + decToHex(valueId, 2) + ';'
+        return this.header + 'D2' + event + decToHex(actionId, 2) + decToHex(valueId, 2) + ';'
     }
 
     EVULN(event) {//Read an Events EV by index
