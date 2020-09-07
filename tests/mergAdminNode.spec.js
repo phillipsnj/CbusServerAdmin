@@ -72,11 +72,10 @@ describe('mergAdminNode tests', function(){
 	}
 
 
-	itParam("EVLRN test event ${value.event} eventIndex ${value.eventIndex} eventValue ${value.eventValue}", GetTestCase_EVLRN(), function (done, value) {
+	itParam("EVLRN test event ${value.event} eventIndex ${value.eventIndex} eventValue ${value.eventValue}", GetTestCase_EVLRN(), function (value) {
 		if (debug) console.log("\nTest Client: Request EVLRN");
 		expected = ":SB780ND2" + value.event + decToHex(value.eventIndex, 2) + decToHex(value.eventValue, 2) + ";";
 		expect(node.EVLRN(value.event, value.eventIndex, value.eventValue)).to.equal(expected);
-		done();
 	})
 
 
@@ -92,11 +91,10 @@ describe('mergAdminNode tests', function(){
 	}
 
 
-	itParam("EVULN test event ${value.event}", GetTestCase_EVULN(), function (done, value) {
+	itParam("EVULN test event ${value.event}", GetTestCase_EVULN(), function (value) {
 		if (debug) console.log("\nTest Client: Request EVULN");
 		expected = ":SB780N95" + value.event + ";";
 		expect(node.EVULN(value.event)).to.equal(expected);
-		done();
 	})
 
 
@@ -112,11 +110,29 @@ describe('mergAdminNode tests', function(){
 	}
 
 
-	itParam("NERD test nodeId ${value.nodeId}", GetTestCase_NERD(), function (done, value) {
+	itParam("NERD test nodeId ${value.nodeId}", GetTestCase_NERD(), function (value) {
 		if (debug) console.log("\nTest Client: Request NERD");
 		expected = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
 		expect(node.NERD(value.nodeId)).to.equal(expected);
-		done();
+	})
+
+
+	function GetTestCase_NNLRN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+
+	itParam("NNLRN test nodeId ${value.nodeId}", GetTestCase_NNLRN(), function (value) {
+		if (debug) console.log("\nTest Client: Request NNLRN");
+		expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
+		expect(node.NNLRN(value.nodeId)).to.equal(expected);
 	})
 
 
@@ -137,11 +153,10 @@ describe('mergAdminNode tests', function(){
 	}
 
 
-	itParam("NVRD test nodeId ${value.nodeId} nvIndex ${value.nvIndex}", GetTestCase_NVRD(), function (done, value) {
+	itParam("NVRD test nodeId ${value.nodeId} nvIndex ${value.nvIndex}", GetTestCase_NVRD(), function (value) {
 		if (debug) console.log("\nTest Client: Request NVRD");
 		expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + ";";
 		expect(node.NVRD(value.nodeId, value.nvIndex)).to.equal(expected);
-		done();
 	})
 
 
@@ -167,14 +182,71 @@ describe('mergAdminNode tests', function(){
 	}
 
 
-	itParam("NVSET test nodeId ${value.nodeId} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVSET(), function (done, value) {
+	itParam("NVSET test nodeId ${value.nodeId} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVSET(), function (value) {
 		if (debug) console.log("\nTest Client: Request NVSET");
 		expected = ":SB780N96" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + decToHex(value.nvValue, 2) + ";";
 		expect(node.NVSET(value.nodeId, value.nvIndex, value.nvValue)).to.equal(expected);
-		done();
 	})
 
 
+	function GetTestCase_REVAL () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (EVindex = 1; EVindex < 4; EVindex++) {
+				if (EVindex == 1) eventIndex = 0;
+				if (EVindex == 2) eventIndex = 1;
+				if (EVindex == 3) eventIndex = 255;
+				for (EVvalue = 1; EVvalue < 4; EVvalue++) {
+					if (EVvalue == 1) eventValue = 0;
+					if (EVvalue == 2) eventValue = 1;
+					if (EVvalue == 3) eventValue = 255;
+					testCases.push({'nodeId':nodeId, 'eventIndex':eventIndex, 'eventValue':eventValue});
+				}
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("REVAL test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventValue ${value.eventValue}", GetTestCase_REVAL(), function (value) {
+		if (debug) console.log("\nTest Client: Request REVAL");
+		expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventValue, 2) + ";";
+		expect(node.REVAL(value.nodeId, value.eventIndex, value.eventValue)).to.equal(expected);
+	})
+
+
+	function GetTestCase_RQNPN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (Pindex = 1; Pindex < 4; Pindex++) {
+				if (Pindex == 1) paramIndex = 0;
+				if (Pindex == 2) paramIndex = 1;
+				if (Pindex == 3) paramIndex = 255;
+				testCases.push({'nodeId':nodeId, 'paramIndex':paramIndex});
+			}
+		}
+		return testCases;
+	}
+
+
+	it("RQNP test", function () {
+		if (debug) console.log("\nTest Client: Request RQNP");
+		expected = ":SB780N10" + ";";
+		expect(node.RQNP()).to.equal(expected);
+	})
+
+
+	itParam("RQNPN test nodeId ${value.nodeId} paramIndex ${value.paramIndex}", GetTestCase_RQNPN(), function (value) {
+		if (debug) console.log("\nTest Client: Request RQNPN");
+		expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.paramIndex, 2) + ";";
+		expect(node.RQNPN(value.nodeId, value.paramIndex)).to.equal(expected);
+	})
 
 
 	it('QNN test', function() {
