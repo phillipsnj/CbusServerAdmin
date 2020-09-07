@@ -136,6 +136,25 @@ describe('mergAdminNode tests', function(){
 	})
 
 
+	function GetTestCase_NNULN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+
+	itParam("NNULN test nodeId ${value.nodeId}", GetTestCase_NNULN(), function (value) {
+		if (debug) console.log("\nTest Client: Request NNULN");
+		expected = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
+		expect(node.NNULN(value.nodeId)).to.equal(expected);
+	})
+
+
 	function GetTestCase_NVRD () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
