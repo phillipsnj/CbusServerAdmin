@@ -251,16 +251,38 @@ describe('Websocket server tests', function(){
 	})
 
 /*
-Mock CBUS: Send invoked : :SB780N53FFFF;			//0
-Mock CBUS: Send invoked : :SB780ND2FFFFFFFF0100;	//1
-Mock CBUS: Send invoked : :SB780N54FFFF;			//2
-Mock CBUS: Send invoked : :SB780N9CFFFFFF01;		//3
-Mock CBUS: Send invoked : :SB780N54FFFF;			//4
-Mock CBUS: Send invoked : :SB780N57FFFF;			//5
-Mock CBUS: Send invoked : :SB780N58FFFF;			//6
+	itParam("EVULN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
+		GetTestCase_EVLRN(), function (done, value) {
+		if (debug) console.log("\nTest Client: Request EVULN");
+		mock_CBUS.clearSendArray();
+		var TestCases_NodeId = 	[	{ eventName: 0 },
+								{ eventId: 1 },
+								{ eventVal: 65535 },
+								];
+
+		websocket_Client.emit('EVULN', {
+                "nodeId": value.nodeId,
+				"eventName": event
+				})
+		setTimeout(function(){
+			 // expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
+			 // expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			 // expected1 = ":SB780ND2" + value.eventName + decToHex(value.eventId, 2) + decToHex(value.eventVal, 2) + ";";
+			 // expect(mock_CBUS.getSendArray()[1]).to.equal(expected1);
+			 // expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
+			 // expect(mock_CBUS.getSendArray()[2]).to.equal(expected2);
+			 // expected3 = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.actionId, 2) + decToHex(value.eventId, 2) + ";";
+			 // expect(mock_CBUS.getSendArray()[3]).to.equal(expected3);
+			 // expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
+			 // expect(mock_CBUS.getSendArray()[4]).to.equal(expected4);
+			 // expected5 = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
+			 // expect(mock_CBUS.getSendArray()[5]).to.equal(expected5);
+			 // expected6 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
+			 // expect(mock_CBUS.getSendArray()[6]).to.equal(expected6);
+			done();
+		}, 100);
+	})
 */
-
-
 
 	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
 		if (debug) console.log("\nTest Client: Request NERD");
@@ -361,14 +383,59 @@ Mock CBUS: Send invoked : :SB780N58FFFF;			//6
 		}, 100);
 	})
 
-/*
-Mock CBUS: Send invoked : :SB780N53FFFF;			//0
-Mock CBUS: Send invoked : :SB780ND2FFFFFFFFFFFF;	//1
-Mock CBUS: Send invoked : :SB780N54FFFF;			//2
-Mock CBUS: Send invoked : :SB780N54FFFF;			//3
-Mock CBUS: Send invoked : :SB780N57FFFF;			//4
-Mock CBUS: Send invoked : :SB780N58FFFF;			//5
-*/
+
+	itParam("CLEAR_NODE_EVENTS test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
+		if (debug) console.log("\nTest Client: CLEAR_NODE_EVENTS");
+		mock_CBUS.clearSendArray();
+		websocket_Client.emit('CLEAR_NODE_EVENTS', {"nodeId": value.node})
+		setTimeout(function(){
+			expected = value.node;
+			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 100);
+	})
+		
+		
+	it('REFRESH_EVENTS test', function(done) {
+		if (debug) console.log("\nTest Client: REFRESH_EVENTS");
+		mock_CBUS.clearSendArray();
+		let testCase = "REFRESH_EVENTS";
+		websocket_Client.emit('REFRESH_EVENTS')
+		setTimeout(function(){
+			expect(mock_CBUS.getSendArray()[0]).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
+
+	it('CLEAR_CBUS_ERRORS test', function(done) {
+		if (debug) console.log("\nTest Client: CLEAR_CBUS_ERRORS");
+		mock_CBUS.clearSendArray();
+		let testCase = "CLEAR_CBUS_ERRORS";
+		websocket_Client.emit('CLEAR_CBUS_ERRORS')
+		setTimeout(function(){
+			expect(mock_CBUS.getSendArray()[0]).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
+	it('UPDATE_LAYOUT_DETAILS test', function(done) {
+		if (debug) console.log("\nTest Client: UPDATE_LAYOUT_DETAILS");
+		mock_CBUS.clearSendArray();
+		let testCase = "UPDATE_LAYOUT_DETAILS";
+		let capturedData= "";
+		websocket_Client.on('layoutDetails', function (data) {capturedData = data;});	
+		websocket_Client.emit('UPDATE_LAYOUT_DETAILS', testCase)
+		setTimeout(function(){
+			expect(capturedData).to.equal(testCase);
+			done();
+			}, 100);
+	});
+
+
+
+
+
 
 	///////////////////////////////////////////////
 	//

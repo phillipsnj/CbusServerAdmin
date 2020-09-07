@@ -63,8 +63,6 @@ class cbusAdmin extends EventEmitter {
         return this.header + '95' + event + ';'
     }
 
-	
-
     NERD(nodeId) {//Request All Events
         return this.header + '57' + decToHex(nodeId, 4) + ';'
     }
@@ -101,6 +99,26 @@ class cbusAdmin extends EventEmitter {
 	QNN() {						//Query Node Number
         return this.header + '0D' + ';'
     }
+
+    removeNodeEvents(nodeId) {
+		this.sendArray.push(nodeId);
+        console.log("Mock CBUS: removeNodeEvents : " + `${nodeId}`);
+    }
+
+    refreshEvents() {
+		this.sendArray.push("REFRESH_EVENTS");
+        console.log("Mock CBUS: refreshEvents : ");
+    }
+
+    clearCbusErrors() {
+		this.sendArray.push("CLEAR_CBUS_ERRORS");
+        console.log("Mock CBUS: CLEAR_CBUS_ERRORS : ");
+    }
+
+
+
+
+
 
 	Create_cbusError(msg)
 	{
