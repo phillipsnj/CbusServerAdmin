@@ -48,7 +48,41 @@ describe('mergAdminNode tests', function(){
 		expect(node.ACOF(value.node, value.event)).to.equal(expected);
 		done();
 	})
+
+
+	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+		if (debug) console.log("\nTest Client: Request ACON");
+		expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
+		expect(node.ACON(value.node, value.event)).to.equal(expected);
+		done();
+	})
 */
+
+/*
+	function GetTestCase_ASON () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (DN = 1; DN < 4; DN++) {
+				if (DN == 1) deviceNum = 0;
+				if (DN == 2) deviceNum = 1;
+				if (DN == 3) deviceNum = 65535;
+				testCases.push({'nodeId':nodeId, 'deviceNum':deviceNum});
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("ASON test nodeId ${value.nodeId} deviceNum ${value.deviceNum)", GetTestCase_ASON(), function (value) {
+		if (debug) console.log("\nTest Client: Request ASON");
+		expected = ":SB780N57" + decToHex(value.nodeId, 4) + decToHex(value.deviceNum, 4) + ";";
+		expect(node.ASON(value.nodeId, value.deviceNum)).to.equal(expected);
+	})
+*/
+
 
 	function GetTestCase_EVLRN () {
 		var testCases = [];
@@ -237,6 +271,32 @@ describe('mergAdminNode tests', function(){
 	})
 
 
+	function GetTestCase_RQEVN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+
+	itParam("RQEVN test nodeId ${value.nodeId}", GetTestCase_RQEVN(),  function (value) {
+		if (debug) console.log("\nTest Client: Request RQEVN");
+		expected = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
+		expect(node.RQEVN(value.nodeId)).to.equal(expected);
+	})
+
+
+	it("RQNP test", function () {
+		if (debug) console.log("\nTest Client: Request RQNP");
+		expected = ":SB780N10" + ";";
+		expect(node.RQNP()).to.equal(expected);
+	})
+
+
 	function GetTestCase_RQNPN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
@@ -254,17 +314,29 @@ describe('mergAdminNode tests', function(){
 	}
 
 
-	it("RQNP test", function () {
-		if (debug) console.log("\nTest Client: Request RQNP");
-		expected = ":SB780N10" + ";";
-		expect(node.RQNP()).to.equal(expected);
-	})
-
-
 	itParam("RQNPN test nodeId ${value.nodeId} paramIndex ${value.paramIndex}", GetTestCase_RQNPN(), function (value) {
 		if (debug) console.log("\nTest Client: Request RQNPN");
 		expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.paramIndex, 2) + ";";
 		expect(node.RQNPN(value.nodeId, value.paramIndex)).to.equal(expected);
+	})
+
+
+	function GetTestCase_QLOC () {
+		var testCases = [];
+		for (S = 1; S < 4; S++) {
+			if (S == 1) session = 0;
+			if (S == 2) session = 1;
+			if (S == 3) session = 255;
+			testCases.push({'session':session});
+		}
+		return testCases;
+	}
+
+
+	itParam("QLOC test session ${value.session}", GetTestCase_QLOC(), function (value) {
+		if (debug) console.log("\nTest Client: Request QLOC");
+		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
+		expect(node.QLOC(value.session)).to.equal(expected);
 	})
 
 
@@ -273,13 +345,5 @@ describe('mergAdminNode tests', function(){
 		expect(node.QNN()).to.equal(":SB780N0D;");
 
 	});
-
-
-		
-		
-
-		
-
-
 
 })
