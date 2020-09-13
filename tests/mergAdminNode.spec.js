@@ -2,9 +2,11 @@ const expect = require('chai').expect;
 var itParam = require('mocha-param');
 
 const NET_PORT = 5550;
-const NET_ADDRESS = "192.168.8.123"
+const NET_ADDRESS = "127.0.0.1"
 const admin = require('./../merg/mergAdminNode.js')
 const file = 'config/nodeConfig.json'
+const Mock_Cbus = require('./mock_CbusNetwork.js')
+
 
 
 function decToHex(num, len) {
@@ -17,6 +19,7 @@ function decToHex(num, len) {
 
 describe('mergAdminNode tests', function(){
 	let debug = 0;
+	let cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	let node = new admin.cbusAdmin(file, NET_ADDRESS,NET_PORT);
 
 	before(function(done) {
