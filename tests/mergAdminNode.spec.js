@@ -173,6 +173,28 @@ describe('mergAdminNode tests', function(){
 	})
 
 
+	function GetTestCase_NNLRN_invalid () {
+		var testCases = [];
+		for (NN = 0; NN < 4; NN++) {
+			if (NN == 0) nodeId = -Number.MAX_VALUE;
+			if (NN == 1) nodeId = -1;
+			if (NN == 2) nodeId = 65536;
+			if (NN == 3) nodeId = Number.MAX_VALUE;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+
+	itParam("NNLRN test invalid nodeId ${value.nodeId}", GetTestCase_NNLRN_invalid(), function (value) {
+		if (debug) console.log("\nTest Client: Request NNLRN");
+		var expected;	// leave undefined
+		expect(node.NNLRN(value.nodeId)).to.equal(expected);
+	})
+
+
+
+
 	function GetTestCase_NNULN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
