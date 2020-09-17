@@ -41,8 +41,8 @@ Vue.component('mergDefault', {
             <h1>mergDefault</h1>
             <v-tabs>
                 <v-tab :key="1" @click="getInfo()">Info</v-tab>
-                <v-tab :key="2" @click="getVariables()">Variables</v-tab>
-                <v-tab :key="3" @click="getEvents()">Events</v-tab>
+                <v-tab :key="2" @click="getVariables()" v-if="node.flim">Variables</v-tab>
+                <v-tab :key="3" @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
                 <v-tab-item :key="1">
                     <!--                    <nodeInfo :nodeId="node.node"></nodeInfo>-->
                 </v-tab-item>

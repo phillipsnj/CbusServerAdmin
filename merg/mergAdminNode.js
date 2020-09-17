@@ -412,9 +412,11 @@ class cbusAdmin extends EventEmitter {
     }
 
     cbusSend(msg) {
-        //console.log(`cbusSend Base : ${msg.toUpperCase()}`)
-        this.emit('cbus', msg.toUpperCase());
-        this.client.write(msg.toUpperCase());
+		if (typeof msg !== 'undefined') {
+			//console.log(`cbusSend Base : ${msg.toUpperCase()}`)
+			this.emit('cbus', msg.toUpperCase());
+			this.client.write(msg.toUpperCase());
+		}
     }
 
     refreshEvents() {
@@ -482,7 +484,9 @@ class cbusAdmin extends EventEmitter {
     }
 
     NNLRN(nodeId) {
-        return this.header + '53' + decToHex(nodeId, 4) + ';'
+		if (nodeId >= 0 && nodeId <= 0xFFFF) {
+			return this.header + '53' + decToHex(nodeId, 4) + ';'
+		}
     }
 
     NNULN(nodeId) {
