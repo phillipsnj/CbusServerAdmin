@@ -25,6 +25,8 @@ Vue.component('nodeInfo', {
                     <nodeParameter :nodeId="nodeId" parId="1" name="Manufacturer Id"></nodeParameter>
                     <nodeValue name="Module" :value="node.module"></nodeValue>
                     <nodeValue name="Version" :value="moduleVersion"></nodeValue>
+                    <nodeValue name="Flim" :value="node.flim"></nodeValue>
+                    <nodeValue name="Consumer" :value="node.consumer"></nodeValue>
                     <nodeParameter :nodeId="nodeId" parId="6" name="Variables"></nodeParameter>
                     <nodeParameter :nodeId="nodeId" parId="5" name="Event Variables"></nodeParameter>
                     <nodeParameter :nodeId="nodeId" parId="4" name="Supported Events"></nodeParameter>
