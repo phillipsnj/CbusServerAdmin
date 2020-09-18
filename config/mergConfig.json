@@ -16,6 +16,26 @@
       "name": "CANACE8C",
       "component": "mergDefault"
     },
+    "25": {
+      "name": "CANETHER",
+      "component": "mergDefault"
+    },
+    "52": {
+      "name": "CANMIO-OUT",
+      "component": "mergDefault"
+    },
+    "59": {
+      "name": "CANDISP",
+      "component": "mergDefault"
+    },
+    "62": {
+      "name": "CANINP",
+      "component": "mergDefault"
+    },
+    "63": {
+      "name": "CANOUT",
+      "component": "mergDefault"
+    },
     "65": {
       "name": "ETHNIGE",
       "component": "mergETHNIGE"
