@@ -344,13 +344,13 @@ Vue.component('merg-canmio-node-events', {
     },
     mounted() {
         console.log(`merg-canmio-node-events - mounted: ${this.nodeId} `)
-        if (this.node.EvCount > 0) {
+        /*if (this.node.EvCount > 0) {
             console.log(`NERD : ${this.nodeId}`)
             this.$root.send('NERD', {"nodeId": this.nodeId})
         }
         for (let i = 16; i <= 121; i = i + 7) {
             this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
-        }
+        }*/
     },
     computed: {
         nodeId: function () {

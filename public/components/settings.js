@@ -35,7 +35,7 @@ Vue.component('settings', {
     },
     template: `
         <div>
-            <h1>Node Info {{ nodeId }}</h1>
+            <h1>Settings</h1>
             <v-container>
               <v-row>
                 <v-col cols="6">
