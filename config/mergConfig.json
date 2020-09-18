@@ -4,6 +4,14 @@
       "name": "canmio-universal",
       "component": "mergCANMIO"
     },
+    "9": {
+      "name": "CANCAB",
+      "component": "mergDefault"
+    },
+    "19": {
+      "name": "CANSERVO8C",
+      "component": "mergDefault"
+    },
     "29": {
       "name": "CANPAN",
       "component": "mergCANPAN"
