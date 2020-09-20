@@ -1,7 +1,8 @@
 {
   "layoutDetails": {
     "title": "cbusServer",
-    "subTitle": "Admin (Alpha)"
+    "subTitle": "Admin (Alpha)",
+    "nextNodeId": "802"
   },
   "nodeDetails": {
     "200": {

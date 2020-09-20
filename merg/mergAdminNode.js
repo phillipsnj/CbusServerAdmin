@@ -145,6 +145,11 @@ class cbusAdmin extends EventEmitter {
                 // mode
                 console.log(`PARAMS (EF) Received`)
             },
+            '50': (msg) => {//Request Node Number
+                // mode
+                console.log(`RQNN (50) Received`)
+                this.emit('requestNodeNumber')
+            },
             '63': (msg) => {//CMDERR
                 console.log(`CMD ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`)
                 let output = {}
@@ -248,6 +253,9 @@ class cbusAdmin extends EventEmitter {
             },
             '59': (msg) => {
                 console.log("WRACK (59) : " + msg.opCode() + ' ' + msg.messageOutput() + ' ' + msg.deCodeCbusMsg());
+            },
+            '52': (msg) => {
+                console.log("NNACK (59) : " + msg.opCode() + ' ' + msg.messageOutput() + ' ' + msg.deCodeCbusMsg());
             },
             '74': (msg) => {
                 console.log(`NUMNEV (74) : ${msg.nodeId()} :: ${msg.paramId()}`);
@@ -487,6 +495,12 @@ class cbusAdmin extends EventEmitter {
 		if (nodeId >= 0 && nodeId <= 0xFFFF) {
 			return this.header + '53' + decToHex(nodeId, 4) + ';'
 		}
+    }
+
+    SNN(nodeId) {
+        if (nodeId >= 0 && nodeId <= 0xFFFF) {
+            return this.header + '42' + decToHex(nodeId, 4) + ';'
+        }
     }
 
     NNULN(nodeId) {

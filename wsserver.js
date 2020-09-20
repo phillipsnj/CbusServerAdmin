@@ -2,7 +2,7 @@
 const socketIO = require('socket.io');
 
 const jsonfile = require('jsonfile')
-let layoutDetails = jsonfile.readFileSync('config/layoutDetails.json')
+let layoutDetails = jsonfile.readFileSync('./config/layoutDetails.json')
 
 
 function wsserver(httpserver, node) {
@@ -84,7 +84,7 @@ function wsserver(httpserver, node) {
         socket.on('UPDATE_LAYOUT_DETAILS', function(data){
             console.log(`UPDATE_LAYOUT_DETAILS ${JSON.stringify(data)}`)
             layoutDetails = data
-            jsonfile.writeFileSync('./layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
+            jsonfile.writeFileSync('./config/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
             io.emit('layoutDetails', layoutDetails)
         })
         socket.on('CLEAR_CBUS_ERRORS', function(data){
@@ -122,6 +122,16 @@ function wsserver(httpserver, node) {
     node.on('dccSessions', function (dccSessions) {
         //console.log(`CBUS - Op Code Unknown : ${cbusNoSupport.opCode}`)
         io.emit('dccSessions', dccSessions);
+    })
+
+    node.on('requestNodeNumber', function () {
+        const newNodeId=parseInt(layoutDetails.layoutDetails.nextNodeId)
+        console.log(`requestNodeNumber : ${newNodeId}`)
+        node.cbusSend(node.SNN(newNodeId))
+        layoutDetails.layoutDetails.nextNodeId = newNodeId+1
+        jsonfile.writeFileSync('./config/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
+        io.emit('layoutDetails', layoutDetails)
+        node.cbusSend(node.QNN())
     })
 
     node.on('cbus', function (task) {

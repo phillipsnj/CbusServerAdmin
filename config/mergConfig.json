@@ -32,6 +32,10 @@
       "name": "CANMIO-OUT",
       "component": "mergDefault"
     },
+    "53": {
+      "name": "CANMIO-BIP",
+      "component": "mergDefault"
+    },
     "59": {
       "name": "CANDISP",
       "component": "mergDefault"

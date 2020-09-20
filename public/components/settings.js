@@ -4,7 +4,8 @@ Vue.component('settings', {
     data: function () {
         return {
             title: this.$store.state.layout.layoutDetails.title,
-            subTitle: this.$store.state.layout.layoutDetails.subTitle
+            subTitle: this.$store.state.layout.layoutDetails.subTitle,
+            nextNodeId: this.$store.state.layout.layoutDetails.nextNodeId
         }
     },
         watch: {
@@ -13,6 +14,9 @@ Vue.component('settings', {
             },
             updateSubTitle() {
                 this.subTitle = this.$store.state.layout.layoutDetails.subTitle
+            },
+            updateNextNodeId() {
+                this.nextNodeId = this.$store.state.layout.layoutDetails.nextNodeId
             }
         },
         computed: {
@@ -21,6 +25,9 @@ Vue.component('settings', {
             },
             updateSubTitle : function() {
                 return this.$store.state.layout.layoutDetails.subTitle
+            },
+            updateNextNodeId : function() {
+                return this.$store.state.layout.layoutDetails.nextNodeId
             }
         },
     methods: {
@@ -28,6 +35,7 @@ Vue.component('settings', {
             console.log(`Layout Details ${JSON.stringify(this.$store.state.layoutDetails)}`)
             this.$store.state.layout.layoutDetails.title = this.title
             this.$store.state.layout.layoutDetails.subTitle = this.subTitle
+            this.$store.state.layout.layoutDetails.nextNodeId = this.nextNodeId
             console.log(`Layout Details ${JSON.stringify(this.$store.state.layout)}`)
             this.$root.send('UPDATE_LAYOUT_DETAILS', this.$store.state.layout)
             this.editDialog = false
@@ -47,6 +55,11 @@ Vue.component('settings', {
                   <v-text-field label="Sub Title"
                                 placeholder="Sub Title"
                                 v-model="subTitle"
+                                @change="update()">
+                  </v-text-field>
+                  <v-text-field label="Next Node Id"
+                                placeholder="Next Node Id"
+                                v-model="nextNodeId"
                                 @change="update()">
                   </v-text-field>
                   <v-checkbox
