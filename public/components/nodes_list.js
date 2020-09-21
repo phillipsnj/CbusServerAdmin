@@ -67,10 +67,12 @@ Vue.component('nodes-list', {
           </template>
         </v-data-table>
         <div>
+          <v-container v-if="$store.state.debug">
           <h3>Raw Node Data</h3>
           <div v-for="node in $store.state.nodes" :key="node.node">
             <p>{{ JSON.stringify(node) }}</p>
           </div>
+          </v-container>
         </div>
       </v-container>`
 })

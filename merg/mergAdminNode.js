@@ -111,6 +111,7 @@ class cbusAdmin extends EventEmitter {
                     this.config.nodes[ref].flim = (msg.flags() & 4) ? true : false
                     this.config.nodes[ref].bootloader = (msg.flags() & 8) ? true : false
                     this.config.nodes[ref].coe = (msg.flags() & 16) ? true : false
+                    this.config.nodes[ref].learn = (msg.flags() & 16) ? true : false
                 }
                 this.config.nodes[ref].status = true
                 //this.saveConfig()
