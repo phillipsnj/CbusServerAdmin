@@ -127,13 +127,13 @@ Vue.component('events', {
                 //this.editedEvent = item
                 this.teachDialog = true
             },
-            checkNode() {
-                /*this.teachEventOutput = 'getEventVariables()'*/
+            /*checkNode() {
+                /!*this.teachEventOutput = 'getEventVariables()'*!/
 
                 let input = Object.values(this.SelectedEventNode.actions)
                 const found = input.find(o => o.event === this.editedEvent.id)
                 console.log(`checkNode() ${this.SelectedEventNode.node} ${this.SelectedEventNode.consumer} : ${this.editedEvent.id} : found ${JSON.stringify(found)} : ${JSON.stringify(input)}`)
-                /*this.teachEventOutput = JSON.stringify(Object.values(this.SelectedEventNode.actions))*/
+                /!*this.teachEventOutput = JSON.stringify(Object.values(this.SelectedEventNode.actions))*!/
                 if (typeof (found) != "undefined") {
                     this.teachEventStatus = false
                     this.teachEventOutput = "Event already taught"
@@ -151,7 +151,7 @@ Vue.component('events', {
                         this.teachEventOutput = "Node not a consumer"
                     }
                 }
-            },
+            },*/
             close() {
                 this.dialog = false
                 /*                setTimeout(() => {
@@ -168,7 +168,7 @@ Vue.component('events', {
                 this.$root.send('UPDATE_LAYOUT_DETAILS', this.$store.state.layout)
                 this.editDialog = false
             },
-            teach(selectedNode, selectedEvent) {
+            /*teach(selectedNode, selectedEvent) {
                 // eslint-disable-next-line no-console
                 console.log(`TEACH_EVENT : ${selectedNode.node} : ${selectedNode.module} : ${selectedEvent.id}`)
                 if (selectedNode.module == 'canmio-universal') {
@@ -187,7 +187,7 @@ Vue.component('events', {
                     })
                 }
                 this.close()
-            }
+            }*/
         }
         ,
         template: `
