@@ -26,7 +26,7 @@
     },
     "5": {
       "name": "CANACE8C",
-      "component": "mergDefault"
+      "component": "merg-canace8c"
     },
     "25": {
       "name": "CANETHER",
@@ -46,7 +46,7 @@
     },
     "62": {
       "name": "CANINP",
-      "component": "mergDefault"
+      "component": "merg-canace8c"
     },
     "63": {
       "name": "CANOUT",

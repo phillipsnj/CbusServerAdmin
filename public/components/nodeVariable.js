@@ -219,6 +219,23 @@ Vue.component('node-variable-select', {
         </v-card>`
 })
 
+Vue.component('node-variable-bit-array', {
+    name: "node-variable-bit-array",
+    props: ["nodeId", "varId", "name"],
+    template: `<v-card class="xs6 md3 pa-3" flat outlined>
+          <div>{{ name }}</div>
+          <v-row>
+            <node-variable-bit v-for="n in [0,1,2,3,5,6,7]"
+                               :key="n"
+                               v-bind:nodeId="nodeId"
+                               :varId="varId"
+                               :bit="n"
+                               :name="(n+1).toString()">
+            </node-variable-bit>
+          </v-row>
+        </v-card>`
+})
+
 Vue.component('nodeVariable2', {
     name: "nodeVariable2",
     template: `<h1>Node Variable Component 2</h1>`

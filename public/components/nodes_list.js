@@ -37,6 +37,8 @@ Vue.component('nodes-list', {
                 this.$store.state.display_component = 'merg-canmio'
             } else if (node.module == "CANPAN") {
                 this.$store.state.display_component = 'merg-canpan'
+            } else if (node.module == "CANACE8C") {
+                this.$store.state.display_component = 'merg-canace8c'
             } else {
                 this.$store.state.display_component = 'mergDefault'
             }
