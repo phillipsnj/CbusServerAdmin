@@ -31,18 +31,14 @@ Vue.component('nodes-list', {
             }
         },
         editNode(node) {
-            console.log(`Edit Node ${node.module} : ${node.node}`)
+            console.log(`Edit Node ${node.component} : ${node.node}`)
             this.$store.state.selected_node_id = node.node
-            if (node.module == "canmio-universal") {
-                this.$store.state.display_component = 'merg-canmio'
-            } else if (node.module == "CANPAN") {
-                this.$store.state.display_component = 'merg-canpan'
-            } else if (node.module == "CANACE8C") {
-                this.$store.state.display_component = 'merg-canace8c'
+            if (node.component) {
+                this.$store.state.display_component = node.component
             } else {
-                this.$store.state.display_component = 'mergDefault'
+                this.$store.state.display_component  = 'mergDefault'
             }
-        }
+       }
     },
     template: `
       <v-container>

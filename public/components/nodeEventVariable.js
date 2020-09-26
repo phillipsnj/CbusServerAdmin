@@ -184,11 +184,11 @@ Vue.component('node-event-variable-bit-array', {
       <v-card class="xs6 md3 pa-3" flat outlined>
       <div>{{ name }}</div>
       <v-row>
-        <node-event-variable-bit v-for="n in [0,1,2,3,5,6,7]"
+        <node-event-variable-bit v-for="n in [0,1,2,3,4,5,6,7]"
                                  :key="n"
-                                 v-bind:nodeId="nodeId"
+                                 v-bind:node="nodeId"
                                  v-bind:action="action"
-                                 :varId="varId"
+                                 :variable="varId"
                                  :bit="n"
                                  :name="(n+1).toString()">
         </node-event-variable-bit>

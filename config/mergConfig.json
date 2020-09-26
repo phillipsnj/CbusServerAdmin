@@ -6,7 +6,7 @@
     },
     "3": {
       "name": "CANACC8",
-      "component": "mergDefault"
+      "component": "merg-canacc8"
     },
     "9": {
       "name": "CANCAB",
