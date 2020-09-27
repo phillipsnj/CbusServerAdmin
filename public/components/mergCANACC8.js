@@ -377,6 +377,10 @@ Vue.component('merg-canacc8-variable-channel', {
                     label="Repeat"
                     @change="updateNV()"
         ></v-checkbox>
+        <node-variable-bit v-bind:nodeId="nodeId" varId="11" v-bind:bit="channelId-1"
+                           name="Respond to SOD"></node-variable-bit>
+        <node-variable-bit v-bind:nodeId="nodeId" varId="10" v-bind:bit="channelId-1"
+                           name="Send Off instead of Saved Event"></node-variable-bit>
       </v-card-text>
       </v-card>
       <!--      </v-card>-->
