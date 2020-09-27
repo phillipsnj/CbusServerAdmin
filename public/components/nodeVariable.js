@@ -297,12 +297,12 @@ Vue.component('node-variable-slider2', {
 
         <template v-slot:prepend>
           <v-icon color="blue" @click="updateNV(variableLocal-1)">
-            md-minus
+            remove
           </v-icon>
         </template>
         <template v-slot:append>
           <v-icon color="blue" @click="updateNV(variableLocal+1)">
-            md-plus
+            add
           </v-icon>
         </template>
       </v-slider>
