@@ -2,7 +2,7 @@
   "modules": {
     "32": {
       "name": "canmio-universal",
-      "component": "mergCANMIO"
+      "component": "merg-canmio"
     },
     "3": {
       "name": "CANACC8",
@@ -14,7 +14,7 @@
     },
     "19": {
       "name": "CANSERVO8C",
-      "component": "mergDefault"
+      "component": "merg-canservo8c"
     },
     "29": {
       "name": "CANPAN",
