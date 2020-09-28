@@ -1,5 +1,5 @@
-Vue.component('mergDefault', {
-    name: "mergDefault",
+Vue.component('merg-canace8c', {
+    name: "merg-canace8c",
     //mixins: [nodeMixin],
     data: function () {
         return {
@@ -28,17 +28,17 @@ Vue.component('mergDefault', {
             this.$store.state.node_component = "nodeInfo"
         },
         getVariables() {
-            this.$store.state.node_component = "merg-default-node-variables"
+            this.$store.state.node_component = "merg-canace8c-node-variables"
         },
         getEvents() {
             console.log(`mergDefault - NERD : ${this.nodeId}`)
             this.$root.send('NERD', {'nodeId': this.nodeId})
-            this.$store.state.node_component = "merg-default-node-events"
+            this.$store.state.node_component = "merg-canace8c-node-events"
         }
     },
     template: `
       <v-container>
-      <h1>mergDefault</h1>
+      <h1>CANACE8C</h1>
       <v-tabs>
         <v-tab :key="1" @click="getInfo()">Info</v-tab>
         <v-tab :key="2" @click="getVariables()" v-if="node.flim">Variables</v-tab>
@@ -64,8 +64,8 @@ Vue.component('mergDefault', {
     `
 })
 
-Vue.component('merg-default-node-variables', {
-    name: "merg-default-node-variables",
+Vue.component('merg-canace8c-node-variables', {
+    name: "merg-canace8c-node-variables",
     //props: ['nodeId'],
     mounted() {
         for (let i = 1; i <= this.node.parameters[6]; i++) {
@@ -83,6 +83,54 @@ Vue.component('merg-default-node-variables', {
     template: `
       <v-container>
       <h3>Node Variables</h3>
+      <!--<node-variable-bit-array v-bind:nodeId="node.node" varId="3" name="Delay"></node-variable-bit-array>-->
+      <merg-canace8c-variable-channel v-bind:nodeId="node.node" v-bind:channelId="n" v-for="n in [0,1,2,3,4,5,6,7]"
+                                      :key="n"></merg-canace8c-variable-channel>
+      <!--<v-row v-for="n in [0,1,2,3]" :key="n">
+        <v-card class="xs6 md3 pa-3" flat>
+          <p>
+            Input
+          </p>
+        </v-card>
+        
+        <node-variable-bit v-bind:nodeId="node.node"
+                           varId="1"
+                           :bit="n"
+                           name="On Only">
+        </node-variable-bit>
+        <node-variable-bit v-bind:nodeId="node.node"
+                           varId="2"
+                           :bit="n"
+                           name="Inverted">
+        </node-variable-bit>
+        <node-variable-bit v-bind:nodeId="node.node"
+                           varId="3"
+                           :bit="n"
+                           name="Delay">
+        </node-variable-bit>
+        <node-variable-bit v-bind:nodeId="node.node"
+                           varId="6"
+                           :bit="n"
+                           name="Toggle">
+        </node-variable-bit>
+        <node-variable-bit v-bind:nodeId="node.node"
+                           varId="8"
+                           :bit="n"
+                           name="Disable SOD">
+        </node-variable-bit>
+      </v-row>-->
+      <v-row>
+        <node-variable v-bind:nodeId="node.node"
+                       varId="4"
+                       name="On Delay">
+
+        </node-variable>
+        <node-variable v-bind:nodeId="node.node"
+                       varId="5"
+                       name="Off Delay">
+
+        </node-variable>
+      </v-row>
       <v-row>
         <node-variable v-bind:nodeId="node.node"
                        v-bind:varId="n"
@@ -91,14 +139,16 @@ Vue.component('merg-default-node-variables', {
 
         </node-variable>
       </v-row>
+
       <v-row v-if="$store.state.debug">
         <p>{{ node.variables }}</p>
       </v-row>
-      </v-container>`
+      </v-container>
+    `
 })
 
-Vue.component('merg-default-node-events', {
-    name: "merg-default-node-events",
+Vue.component('merg-canace8c-node-events', {
+    name: "merg-canace8c-node-events",
     //props: ['nodeId'],
     data: function () {
         return {
@@ -120,7 +170,7 @@ Vue.component('merg-default-node-events', {
             //this.eventDialog = true
             this.editedEvent = item
             this.$store.state.selected_action_id = item.actionId
-            this.$store.state.node_component = "merg-default-node-event-variables"
+            this.$store.state.node_component = "merg-canace8c-node-event-variables"
 
         },
         deleteEvent: function (event) {
@@ -161,24 +211,6 @@ Vue.component('merg-default-node-events', {
                   inset
                   vertical
               ></v-divider>
-              <!--<v-spacer></v-spacer>
-              <v-dialog v-model="eventDialog" max-width="500px">
-                  <v-card>
-                      <v-card-title>
-                          <span class="headline">Edit Event</span>
-                      </v-card-title>
-                      <v-card-text>
-                          <v-container>
-                              <v-row>
-                                  <merg-default-node-event-variables
-                                          v-bind:nodeId="nodeId"
-                                          v-bind:actionId="editedEvent.actionId">
-                                  </merg-default-node-event-variables>
-                              </v-row>
-                          </v-container>
-                      </v-card-text>
-                  </v-card>
-              </v-dialog>-->
             </v-toolbar>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -193,11 +225,11 @@ Vue.component('merg-default-node-events', {
       </v-container>`
 })
 
-Vue.component('merg-default-node-event-variables', {
-    name: "merg-default-node-event-variables",
+Vue.component('merg-canace8c-node-event-variables', {
+    name: "merg-canace8c-node-event-variables",
     //props: ['nodeId', 'actionId'],
     mounted() {
-        console.log(`merg-default-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
+        console.log(`merg-canace8c-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
         for (let i = 1; i <= this.node.parameters[5]; i++) {
             this.$root.send('REVAL', {
                 "nodeId": this.$store.state.selected_node_id,
@@ -216,20 +248,47 @@ Vue.component('merg-default-node-event-variables', {
         node: function () {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         }
-    }/*,
+    },
     methods: {
-        getEventVariables: function (actionId) {
-            console.log(`getEventVariables(${actionId})`)
-            for (let i = 1; i <= this.node.parameters[5]; i++) {
-                this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": actionId, "valueId": i})
-            }
+        updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
+            // eslint-disable-next-line no-console
+            console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
+            this.$root.send('EVLRN', {
+                "nodeId": this.node.node,
+                "actionId": actionId,
+                "eventName": eventName,
+                "eventId": eventId,
+                "eventVal": eventVal
+            })
         }
-    }*/,
+    },
     template: `
       <v-container>
       <h3>Event Variables</h3>
       <p>Event ID :: {{ $store.state.selected_action_id }}</p>
       <!--<p>{{ $store.state.nodes[this.$store.state.selected_node_id].actions[$store.state.selected_action_id] }}</p>-->
+      <v-card outlined>
+        <v-card-title>Startup Options</v-card-title>
+        <v-card-text>
+          <v-radio-group v-model="node.actions[actionId].variables[1]" :mandatory="true"
+                         @change="updateEV(node.node,
+                                   node.actions[actionId].event,
+                                   node.actions[actionId].actionId,
+                                   3,
+                                   parseInt(node.actions[actionId].variables[1]))">
+            <v-radio label="SOD" :value="0"></v-radio>
+            <v-radio label="Route" :value="1"></v-radio>
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+      <v-row>
+        <node-event-variable-bit v-bind:node="$store.state.selected_node_id"
+                                 v-bind:action="$store.state.selected_action_id"
+                                 variable="1"
+                                 bit="0"
+                                 name="0">
+        </node-event-variable-bit>
+      </v-row>
       <v-row>
         <node-event-variable v-bind:nodeId="$store.state.selected_node_id"
                              v-bind:actionId="$store.state.selected_action_id"
@@ -243,4 +302,42 @@ Vue.component('merg-default-node-event-variables', {
         <p>{{ node.actions[actionId] }}</p>
       </v-row>
       </v-container>`
+})
+
+Vue.component('merg-canace8c-variable-channel', {
+    name: "merg-canace8c-variable-channel",
+    props: ["nodeId", "channelId"],
+    template: `
+      <v-row>
+      <v-card class="xs6 md3 pa-3" flat outlined>
+        <div>Channel {{ channelId }}</div>
+        <v-row>
+          <node-variable-bit v-bind:nodeId="nodeId"
+                             :varId="1"
+                             v-bind:bit="channelId"
+                             name="On Only">
+          </node-variable-bit>
+          <node-variable-bit v-bind:nodeId="nodeId"
+                             :varId="2"
+                             v-bind:bit="channelId"
+                             name="Inverted">
+          </node-variable-bit>
+          <node-variable-bit v-bind:nodeId="nodeId"
+                             :varId="3"
+                             v-bind:bit="channelId"
+                             name="Delay">
+          </node-variable-bit>
+          <node-variable-bit v-bind:nodeId="nodeId"
+                             :varId="6"
+                             v-bind:bit="channelId"
+                             name="Toggle">
+          </node-variable-bit>
+          <node-variable-bit v-bind:nodeId="nodeId"
+                             :varId="8"
+                             v-bind:bit="channelId"
+                             name="SOD">
+          </node-variable-bit>
+        </v-row>
+      </v-card>
+      </v-row>`
 })

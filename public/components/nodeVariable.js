@@ -23,7 +23,7 @@ Vue.component('node-variable', {
         }
     },
     computed: {
-        variableValue: function() {
+        variableValue: function () {
             return this.$store.state.nodes[this.nodeId].variables[this.varId]
         }
     },
@@ -37,16 +37,16 @@ Vue.component('node-variable', {
         }
     },
     template: `
-        <v-card class="xs6 md3 pa-3" flat>
-            <v-text-field
-                    :label="label"
-                    v-model="variableLocal"
-                    outlined
-                    :rules="rules"
-                    @change="updateNV"
-            >
-            </v-text-field>
-        </v-card>`
+      <v-card class="xs6 md3 pa-3" flat>
+      <v-text-field
+          :label="label"
+          v-model="variableLocal"
+          outlined
+          :rules="rules"
+          @change="updateNV"
+      >
+      </v-text-field>
+      </v-card>`
 })
 
 Vue.component('node-variable-bit', {
@@ -74,7 +74,7 @@ Vue.component('node-variable-bit', {
         }
     },
     computed: {
-        variableValue: function() {
+        variableValue: function () {
             return this.$store.state.nodes[this.nodeId].variables[this.varId]
         }
     },
@@ -95,13 +95,11 @@ Vue.component('node-variable-bit', {
         }
     },
     template: `
-        <v-card class="xs6 md3 pa-3" flat>
-            <v-checkbox min-width="100"
-                        v-model="checked"
-                        :label="name"
-                        @change="updateNV"
-            ></v-checkbox>
-        </v-card>`
+      <v-checkbox min-width="100"
+                  v-model="checked"
+                  :label="name"
+                  @change="updateNV"
+      ></v-checkbox>`
 })
 
 Vue.component('node-variable-slider', {
@@ -129,7 +127,7 @@ Vue.component('node-variable-slider', {
         }
     },
     computed: {
-        variableValue: function() {
+        variableValue: function () {
             return this.$store.state.nodes[this.nodeId].variables[this.varId]
         }
     },
@@ -143,33 +141,33 @@ Vue.component('node-variable-slider', {
         }
     },
     template: `
-        <v-card class="xs6 md3 pa-3" flat>
-            <v-text-field
-                    :label="label"
-                    readonly
-                    :value=variableLocal>
-            </v-text-field>
-            <v-slider
-                    v-model="variableLocal"
-                    class="align-center"
-                    :max="234"
-                    :min="0"
-                    hide-details
-                    @change="updateNV(variableLocal)"
-            >
+      <v-card class="xs6 md3 pa-3" flat>
+      <v-text-field
+          :label="label"
+          readonly
+          :value=variableLocal>
+      </v-text-field>
+      <v-slider
+          v-model="variableLocal"
+          class="align-center"
+          :max="234"
+          :min="0"
+          hide-details
+          @change="updateNV(variableLocal)"
+      >
 
-                <template v-slot:prepend>
-                    <v-icon color="blue" @click="updateNV(variableLocal-1)">
-                        mdi-minus
-                    </v-icon>
-                </template>
-                <template v-slot:append>
-                    <v-icon color="blue" @click="updateNV(variableLocal+1)">
-                        mdi-plus
-                    </v-icon>
-                </template>
-            </v-slider>
-        </v-card>`
+        <template v-slot:prepend>
+          <v-icon color="blue" @click="updateNV(variableLocal-1)">
+            mdi-minus
+          </v-icon>
+        </template>
+        <template v-slot:append>
+          <v-icon color="blue" @click="updateNV(variableLocal+1)">
+            mdi-plus
+          </v-icon>
+        </template>
+      </v-slider>
+      </v-card>`
 })
 
 Vue.component('node-variable-select', {
@@ -193,7 +191,7 @@ Vue.component('node-variable-select', {
         }
     },
     computed: {
-        variableValue: function() {
+        variableValue: function () {
             return this.$store.state.nodes[this.nodeId].variables[this.varId]
         }
     },
@@ -207,19 +205,106 @@ Vue.component('node-variable-select', {
         }
     },
     template: `
-        <v-card class="xs6 md3 pa-3" flat>
-            <v-select
-                    :label="label"
-                    v-model="variableLocal"
-                    outlined
-                    @change="updateNV"
-                    :items="items"
-            >
-            </v-select>
-        </v-card>`
+      <v-card class="xs6 md3 pa-3" flat>
+      <v-select
+          :label="label"
+          v-model="variableLocal"
+          outlined
+          @change="updateNV"
+          :items="items"
+      >
+      </v-select>
+      </v-card>`
+})
+
+Vue.component('node-variable-bit-array', {
+    name: "node-variable-bit-array",
+    props: ["nodeId", "varId", "name"],
+    template: `
+      <v-card class="xs6 md3 pa-3" flat outlined>
+      <div>{{ name }}</div>
+      <v-row>
+        <node-variable-bit v-for="n in [0,1,2,3,5,6,7]"
+                           :key="n"
+                           v-bind:nodeId="nodeId"
+                           :varId="varId"
+                           :bit="n"
+                           :name="(n+1).toString()">
+        </node-variable-bit>
+      </v-row>
+      </v-card>`
 })
 
 Vue.component('nodeVariable2', {
     name: "nodeVariable2",
     template: `<h1>Node Variable Component 2</h1>`
+})
+
+Vue.component('node-variable-slider2', {
+    name: "node-variable-slider2",
+    props: ["nodeId", "varId", "name", "max", "min", "step"],
+    data: () => ({
+        rules: [
+            value => value >= this.min || 'Cannot be a negative number',
+            value => value <= this.max || 'Number to High'
+        ],
+        label: "",
+        variableLocal: 0
+    }),
+    mounted() {
+        this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+        if (this.name) {
+            this.label = this.name
+        } else {
+            this.label = `Variable ${this.varId}`
+        }
+    },
+    watch: {
+        variableValue() {
+            this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    computed: {
+        variableValue: function () {
+            return this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    methods: {
+        updateNV: function (position) {
+            this.$root.send('NVSET', {
+                "nodeId": this.nodeId,
+                "variableId": this.varId,
+                "variableValue": position
+            })
+        }
+    },
+    template: `
+      <v-card class="xs6 md3 pa-3" flat>
+      <v-text-field
+          :label="label"
+          readonly
+          :value=variableLocal>
+      </v-text-field>
+      <v-slider
+          v-model="variableLocal"
+          class="align-center"
+          :max="max"
+          :min="min"
+          :step="step"
+          hide-details
+          @change="updateNV(variableLocal)"
+      >
+
+        <template v-slot:prepend>
+          <v-icon color="blue" @click="updateNV(variableLocal-1)">
+            remove
+          </v-icon>
+        </template>
+        <template v-slot:append>
+          <v-icon color="blue" @click="updateNV(variableLocal+1)">
+            add
+          </v-icon>
+        </template>
+      </v-slider>
+      </v-card>`
 })

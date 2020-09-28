@@ -31,16 +31,14 @@ Vue.component('nodes-list', {
             }
         },
         editNode(node) {
-            console.log(`Edit Node ${node.module} : ${node.node}`)
+            console.log(`Edit Node ${node.component} : ${node.node}`)
             this.$store.state.selected_node_id = node.node
-            if (node.module == "canmio-universal") {
-                this.$store.state.display_component = 'merg-canmio'
-            } else if (node.module == "CANPAN") {
-                this.$store.state.display_component = 'merg-canpan'
+            if (node.component) {
+                this.$store.state.display_component = node.component
             } else {
-                this.$store.state.display_component = 'mergDefault'
+                this.$store.state.display_component  = 'mergDefault'
             }
-        }
+       }
     },
     template: `
       <v-container>
@@ -67,10 +65,12 @@ Vue.component('nodes-list', {
           </template>
         </v-data-table>
         <div>
+          <v-container v-if="$store.state.debug">
           <h3>Raw Node Data</h3>
           <div v-for="node in $store.state.nodes" :key="node.node">
             <p>{{ JSON.stringify(node) }}</p>
           </div>
+          </v-container>
         </div>
       </v-container>`
 })

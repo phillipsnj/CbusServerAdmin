@@ -1,7 +1,8 @@
 {
   "layoutDetails": {
-    "title": "cbusServer",
-    "subTitle": "Admin (Alpha)"
+    "title": "cbusServerAdmin",
+    "subTitle": "Settings (Alpha)",
+    "nextNodeId": 805
   },
   "nodeDetails": {
     "200": {
@@ -106,6 +107,11 @@
     "00000001": {
       "name": "Short Event 1",
       "colour": "green",
+      "group": ""
+    },
+    "01020002": {
+      "name": "NodeId : 258 Event : 2",
+      "colour": "pink",
       "group": ""
     }
   }

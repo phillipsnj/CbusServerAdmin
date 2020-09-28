@@ -3,12 +3,22 @@ const http = require('http')
 const express = require('express')
 //const socketio = require('socket.io')
 
+var serveStatic = require('serve-static')
+
 const app = express()
 const server = http.createServer(app)
 //const io = socketio(server)
 
 //Set static folder
 app.use(express.static(path.join(__dirname,'public')))
+//
+// Added to allow access to node_module without exposing the folder to the NET.
+//
+app.use(serveStatic(path.join(__dirname, '/node_modules')));
+app.use('/css',express.static(__dirname +'/node_modules'));
+//
+// *********************************************************
+//
 
 const NET_PORT = 5550;
 const NET_ADDRESS = "192.168.8.123"

@@ -18,53 +18,56 @@ Vue.component('nodeInfo', {
         }
     },
     template: `
-        <div>
-            <h1>Node Info {{ nodeId }}</h1>
-            <v-container>
-                <v-row>
-                    <nodeParameter :nodeId="nodeId" parId="1" name="Manufacturer Id"></nodeParameter>
-                    <nodeValue name="Module" :value="node.module"></nodeValue>
-                    <nodeValue name="Version" :value="moduleVersion"></nodeValue>
-                    <nodeValue name="Flim" :value="node.flim"></nodeValue>
-                    <nodeValue name="Consumer" :value="node.consumer"></nodeValue>
-                    <nodeParameter :nodeId="nodeId" parId="6" name="Variables"></nodeParameter>
-                    <nodeParameter :nodeId="nodeId" parId="5" name="Event Variables"></nodeParameter>
-                    <nodeParameter :nodeId="nodeId" parId="4" name="Supported Events"></nodeParameter>
-                    <nodeValue name="Stored Events" :value="node.EvCount"></nodeValue>
-                </v-row>
-            </v-container>
-        </div>`
+      <div>
+      <h1>Node Info {{ nodeId }}</h1>
+      <v-container>
+        <v-row>
+          <nodeParameter :nodeId="nodeId" parId="1" name="Manufacturer Id"></nodeParameter>
+          <nodeValue name="Module" :value="node.module"></nodeValue>
+          <nodeValue name="Version" :value="moduleVersion"></nodeValue>
+          <nodeValue name="Flim" :value="node.flim"></nodeValue>
+          <nodeValue name="Consumer" :value="node.consumer"></nodeValue>
+          <nodeValue name="Producer" :value="node.producer"></nodeValue>
+          <nodeValue name="Learn" :value="node.learn"></nodeValue>
+          <nodeParameter :nodeId="nodeId" parId="6" name="Variables"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="5" name="Event Variables"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="4" name="Supported Events"></nodeParameter>
+          <nodeValue name="Stored Events" :value="node.EvCount"></nodeValue>
+          <nodeValue name="Actual Events" :value="Object.values(node.actions).length"></nodeValue>
+        </v-row>
+      </v-container>
+      </div>`
 })
 
 Vue.component('nodeParameter', {
     name: "nodeParameter",
     props: ['nodeId', 'parId', 'name'],
     template: `
-        <div>
-            <v-card class="xs6 md3 pa-3" flat>
-                <v-text-field
-                        :label="name"
-                        v-model="$store.state.nodes[nodeId].parameters[parId]"
-                        outlined
-                        readonly
-                >
-                </v-text-field>
-            </v-card>
-        </div>`
+      <div>
+      <v-card class="xs6 md3 pa-3" flat>
+        <v-text-field
+            :label="name"
+            v-model="$store.state.nodes[nodeId].parameters[parId]"
+            outlined
+            readonly
+        >
+        </v-text-field>
+      </v-card>
+      </div>`
 })
 
 Vue.component('nodeValue', {
     name: "nodeValue",
     props: ['name', 'value'],
     template: `
-        <div>
-            <v-card class="xs6 md3 pa-3" flat>
-                <v-text-field
-                        :label="name"
-                        readonly
-                        outlined
-                        :value=value>
-                </v-text-field>
-            </v-card>
-        </div>`
+      <div>
+      <v-card class="xs6 md3 pa-3" flat>
+        <v-text-field
+            :label="name"
+            readonly
+            outlined
+            :value=value>
+        </v-text-field>
+      </v-card>
+      </div>`
 })

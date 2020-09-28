@@ -12,16 +12,18 @@ Vue.component('nodeVariables', {
         },
     },
     template: `
-        <v-container>
-            <h3>Node Variables</h3>
-            <v-row>
-                <nodeVariable v-bind:nodeId="node.node" 
-                              v-bind:varId="n" 
-                              v-for="n in node.parameters[6]"
-                              :key="n">
-                    
-                </nodeVariable>
-            </v-row>
-            <p>{{ node.variables }}</p>
-        </v-container>`
+      <v-container>
+      <h3>Node Variables</h3>
+      <v-row>
+        <nodeVariable v-bind:nodeId="node.node"
+                      v-bind:varId="n"
+                      v-for="n in node.parameters[6]"
+                      :key="n">
+
+        </nodeVariable>
+      </v-row>
+      <v-container v-if="$store.state.debug">
+        <p>{{ node.variables }}</p>
+      </v-container>
+      </v-container>`
 })

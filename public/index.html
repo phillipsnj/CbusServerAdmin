@@ -12,12 +12,13 @@
     />-->
     <!--<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">-->
     <!--<link rel="stylesheet" href="../node_modules/material-design-icons-iconfont/dist/material-design-icons.css">-->
-    <link href="node_modules/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <link href="vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <!--<link href="material-design-icons/iconfont/material-icons.css" rel="stylesheet">-->
     <!--<link href="node_modules/material-design-icons/iconfont/material-icons.css" rel="stylesheet">-->
     <!--<link href="node_modules/material-design-icons-iconfont/dist/material-design-icons.css" rel="stylesheet">-->
-    <link href="node_modules/typeface-roboto/index.css" rel="stylesheet">
+    <link href="typeface-roboto/index.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css"/>
-    <title>MERG CbusServer Admin</title>
+    <title>MERG CbusServerAdmin</title>
 </head>
 <body>
 <v-app id="app">
@@ -49,6 +50,7 @@
         </v-list>
     </v-navigation-drawer>
     <v-container>
+        <test></test>
         <v-app-bar
                 app
                 color="indigo"
@@ -63,22 +65,24 @@
         </v-app-bar>
     </v-container>
     <v-main>
-        <i class="material-icons">face</i>
+        <!--<i class="material-icons">face</i>-->
         <component v-bind:is="$store.state.display_component"></component>
     </v-main>
 </v-app>
 
 <script src="/socket.io/socket.io.js"></script>
-
-<script src="node_modules/vue/dist/vue.js"></script>
-<script src="node_modules/vuetify/dist/vuetify.js"></script>
-<script src="node_modules/vuex/dist/vuex.js"></script>
+<script src="/vue/dist/vue.js"></script>
+<script src="/vuetify/dist/vuetify.js"></script>
+<script src="/vuex/dist/vuex.js"></script>
 <script src="components/events_list.js"></script>
 <script src="components/events.js"></script>
 <script src="components/nodes_list.js"></script>
 <script src="components/mergDefault.js"></script>
 <script src="components/mergCANMIO.js"></script>
 <script src="components/mergCANPAN.js"></script>
+<script src="components/mergCANACE8C.js"></script>
+<script src="components/mergCANACC8.js"></script>
+<script src="components/mergCANSERVO8C.js"></script>
 <script src="components/cbusErrors.js"></script>
 <script src="components/nodeVariable.js"></script>
 <script src="components/nodeEventVariable.js"></script>
