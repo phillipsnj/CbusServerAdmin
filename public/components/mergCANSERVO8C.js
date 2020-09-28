@@ -30,6 +30,9 @@ Vue.component('merg-canservo8c', {
         getVariables() {
             this.$store.state.node_component = "merg-canservo8c-node-variables"
         },
+        getChannels() {
+            this.$store.state.node_component = "merg-canservo8c-node-channels"
+        },
         getEvents() {
             console.log(`mergDefault - NERD : ${this.nodeId}`)
             this.$root.send('NERD', {'nodeId': this.nodeId})
@@ -42,7 +45,7 @@ Vue.component('merg-canservo8c', {
       <v-tabs>
         <v-tab :key="1" @click="getInfo()">Info</v-tab>
         <v-tab :key="2" @click="getVariables()" v-if="node.flim">Variables</v-tab>
-        <v-tab :key="3" @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
+        <v-tab :key="4" @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
         <v-tab-item :key="1">
           <!--                    <nodeInfo :nodeId="node.node"></nodeInfo>-->
         </v-tab-item>
@@ -67,6 +70,20 @@ Vue.component('merg-canservo8c', {
 Vue.component('merg-canservo8c-node-variables', {
     name: "merg-canservo8c-node-variables",
     //props: ['nodeId'],
+    data: function () {
+        return {
+            selectedChannel: 1,
+            selectedChannelBaseNv: 5,
+            IO_channels: [1, 2, 3, 4, 5, 6, 7, 8]
+        }
+    },
+    watch: {
+        baseNV: function () {
+            for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
+                this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+            }
+        }
+    },
     mounted() {
         for (let i = 1; i <= this.node.parameters[6]; i++) {
             this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
@@ -79,17 +96,27 @@ Vue.component('merg-canservo8c-node-variables', {
         node: function () {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         },
+        baseNV: function () {
+            return (((this.selectedChannel || 1) * 4) + 1)
+        }
     },
     template: `
       <v-container>
-      <h3>Node Variables</h3>
+      <h3>Servo {{ selectedChannel }} Variables</h3>
       <v-row>
-      <merg-canservo8c-variable-channel v-bind:nodeId="node.node"
-                                     v-bind:channelId="n"
-                                     v-for="n in [1,2,3,4,5,6,7,8]"
-                                     :key="n">
-      
-      </merg-canservo8c-variable-channel>
+        <v-card class="xs6 md3 pa-3" flat>
+          <v-select
+              label="Select IO Channel"
+              v-model="selectedChannel"
+              :items="IO_channels"
+              outlined
+          ></v-select>
+        </v-card>
+      </v-row>
+      <v-row>
+        <merg-canservo8c-variable-channel v-bind:nodeId="node.node"
+                                          v-bind:channelId="selectedChannel">
+        </merg-canservo8c-variable-channel>
       </v-row>
       <v-row>
         <node-variable v-bind:nodeId="node.node"
@@ -281,34 +308,33 @@ Vue.component('merg-canservo8c-variable-channel', {
     data: function () {
         return {
             variableLocal: 0,
-            baseNv: 0,
             max: 2500,
             min: 0,
             message: ""
         }
     },
-    mounted() {
-        this.baseNv = (this.channelId * 4) +1
-    },
     computed: {
+        baseNv: function () {
+            return (this.channelId * 4) + 1
+        },
         onPosition: function () {
             return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.baseNv]
         },
         offPosition: function () {
-            return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.baseNv+1]
+            return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.baseNv + 1]
         },
         onSpeed: function () {
-            return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.baseNv+2]
+            return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.baseNv + 2]
         },
         offPosition: function () {
-            return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.baseNv+4]
+            return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.baseNv + 4]
         },
         node: function () {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         },
     },
     methods: {
-        updateNV: function (varId,value) {
+        updateNV: function (varId, value) {
             this.$root.send('NVSET', {
                 "nodeId": this.nodeId,
                 "variableId": varId,
@@ -322,27 +348,148 @@ Vue.component('merg-canservo8c-variable-channel', {
         <v-row>
           <div>Channel {{ channelId }} Variable {{ variableValue }} Local {{ variableLocal }}Repeat {{ repeat }} Pulse {{ pulse }}</div>
         </v-row>-->
-      <v-card class="xs6 md3 pa-3" flat max-width="344" min-width="250">
-      <v-card-title>Servo {{ channelId }}</v-card-title>
-      <v-card-text>
-        <node-variable-bit v-bind:nodeId="nodeId" varId="1" v-bind:bit="channelId-1"
-                           name="Cut off"></node-variable-bit>
-        <node-variable-bit v-bind:nodeId="nodeId" varId="2" v-bind:bit="channelId-1"
-                           name="Off Position on Startup"></node-variable-bit>
-        <node-variable-bit v-bind:nodeId="nodeId" varId="3" v-bind:bit="channelId-1"
-                           name="Move to Startup Position"></node-variable-bit>
-        <node-variable-bit v-bind:nodeId="nodeId" varId="4" v-bind:bit="channelId-1"
-                           name="sequential"></node-variable-bit>
-        <node-variable-slider2 v-bind:nodeId="nodeId" :varId="baseNv"
-                              name="On Position" max="255" min="0" step="1"></node-variable-slider2>
-        <node-variable-slider2 v-bind:nodeId="nodeId" :varId="baseNv+1"
-                               name="Off Position" max="255" min="0" step="1"></node-variable-slider2>
-        <node-variable-slider2 v-bind:nodeId="nodeId" :varId="baseNv+2"
-                               name="On Speed" max="7" min="0" step="1"></node-variable-slider2>
-        <node-variable-slider2 v-bind:nodeId="nodeId" :varId="baseNv+3"
-                               name="Off Speed" max="7" min="0" step="1"></node-variable-slider2>
-      </v-card-text>
-      </v-card>
+      <v-container>
+      <h3>Servo {{ channelId }} baseNv {{ baseNv }}</h3>
+      <merg-canservo8c-slider v-bind:nodeId="nodeId" v-bind:varId="baseNv"
+                              name="On Position" max="255" min="0" step="1"></merg-canservo8c-slider>
+      <merg-canservo8c-slider v-bind:nodeId="nodeId" v-bind:varId="baseNv+1"
+                              name="Off Position" max="255" min="0" step="1"></merg-canservo8c-slider>
+      <merg-canservo8c-slider v-bind:nodeId="nodeId" v-bind:varId="baseNv+2"
+                              name="On Speed" max="7" min="0" step="1"></merg-canservo8c-slider>
+      <merg-canservo8c-slider v-bind:nodeId="nodeId" v-bind:varId="baseNv+3"
+                              name="Off Speed" max="7" min="0" step="1"></merg-canservo8c-slider>
+      <merg-canservo8c-variable-bit v-bind:nodeId="nodeId" varId="1" v-bind:bit="channelId-1"
+                                    name="Cut off"></merg-canservo8c-variable-bit>
+      <merg-canservo8c-variable-bit v-bind:nodeId="nodeId" varId="2" v-bind:bit="channelId-1"
+                                    name="Off Position on Startup"></merg-canservo8c-variable-bit>
+      <merg-canservo8c-variable-bit v-bind:nodeId="nodeId" varId="3" v-bind:bit="channelId-1"
+                                    name="Move to Startup Position"></merg-canservo8c-variable-bit>
+      <merg-canservo8c-variable-bit v-bind:nodeId="nodeId" varId="4" v-bind:bit="channelId-1"
+                                    name="Sequential"></merg-canservo8c-variable-bit>
+      </v-container>
       <!--      </v-card>-->
     `
+})
+
+Vue.component('merg-canservo8c-variable-bit', {
+    name: "merg-canservo8c-variable-bit",
+    props: ["nodeId", "varId", "bit", "name"],
+    data: () => ({
+        label: "",
+        checked: false,
+        bitValue: 0,
+        bitArray: {0: 1, 1: 2, 2: 4, 3: 8, 4: 16, 5: 32, 6: 64, 7: 128}
+    }),
+    mounted() {
+        this.bitValue = this.bitArray[this.bit]
+        this.checked = this.$store.state.nodes[this.nodeId].variables[this.varId] & this.bitArray[this.bit] ? true : false
+        if (this.name) {
+            this.label = this.name
+        } else {
+            this.label = `Variable ${this.varId}`
+        }
+    },
+    watch: {
+        variableValue() {
+            console.log(` set `)
+            this.checked = this.$store.state.nodes[this.nodeId].variables[this.varId] & this.bitArray[this.bit] ? true : false
+        }
+    },
+    computed: {
+        variableValue: function () {
+            return this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    methods: {
+        updateNV: function () {
+            let value = this.$store.state.nodes[this.nodeId].variables[this.varId]
+            if (this.checked) {
+                value = value + this.bitArray[this.bit]
+            } else {
+                value = value - this.bitArray[this.bit]
+            }
+            this.$root.send('NVSET-learn', {
+                "nodeId": this.nodeId,
+                "variableId": this.varId,
+                "variableValue": value
+            })
+            console.log(`Stored : ${this.$store.state.nodes[this.nodeId].variables[this.varId]}`)
+        }
+    },
+    template: `
+      <v-checkbox min-width="100"
+                  v-model="checked"
+                  :label="name"
+                  @change="updateNV"
+      ></v-checkbox>`
+})
+
+Vue.component('merg-canservo8c-slider', {
+    name: "merg-canservo8c-slider",
+    props: ["nodeId", "varId", "name", "max", "min", "step"],
+    data: () => ({
+        rules: [
+            value => value >= this.min || 'Cannot be a negative number',
+            value => value <= this.max || 'Number to High'
+        ],
+        label: "",
+        variableLocal: 0
+    }),
+    mounted() {
+        this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+        if (this.name) {
+            this.label = this.name
+        } else {
+            this.label = `Variable ${this.varId}`
+        }
+    },
+    watch: {
+        variableValue() {
+            this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    computed: {
+        variableValue: function () {
+            return this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    methods: {
+        updateNV: function (position) {
+            this.$root.send('NVSET-learn', {
+                "nodeId": this.nodeId,
+                "variableId": this.varId,
+                "variableValue": position
+            })
+        }
+    },
+    template: `
+      <v-container>
+      
+      <v-slider
+          v-model="variableLocal"
+          class="align-center"
+          :max="max"
+          :min="min"
+          :step="step"
+          hide-details
+          @change="updateNV(variableLocal)"
+      >
+
+        <template v-slot:prepend>
+          <v-text-field
+              :label="label"
+              readonly
+              :value=variableLocal>
+          </v-text-field>
+          <v-icon color="blue" @click="updateNV(variableLocal-1)">
+            remove
+          </v-icon>
+        </template>
+        <template v-slot:append>
+          <v-icon color="blue" @click="updateNV(variableLocal+1)">
+            add
+          </v-icon>
+        </template>
+      </v-slider>
+      </v-container>`
 })
