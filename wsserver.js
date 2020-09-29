@@ -29,6 +29,14 @@ function wsserver(httpserver, node) {
             node.cbusSend(node.NVSET(data.nodeId, data.variableId, data.variableValue))
             node.cbusSend(node.NVRD(data.nodeId, data.variableId))
         })
+        socket.on('NVSET-learn', function(data){
+            console.log(`NVSET-learn ${JSON.stringify(data)}`);
+            node.cbusSend(node.NNLRN(data.nodeId))
+            node.cbusSend(node.NVSET(data.nodeId, data.variableId, data.variableValue))
+            node.cbusSend(node.NNULN(data.nodeId))
+            node.cbusSend(node.NVRD(data.nodeId, data.variableId))
+            node.cbusSend(node.NNULN(data.nodeId))
+        })
         socket.on('NERD', function(data){
             console.log(`NERD ${JSON.stringify(data)}`);
             node.cbusSend(node.NERD(data.nodeId))

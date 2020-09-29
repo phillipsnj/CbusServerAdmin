@@ -4,18 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <!--<link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
-            integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
-            crossorigin="anonymous"
-    />-->
-    <!--<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">-->
-    <!--<link rel="stylesheet" href="../node_modules/material-design-icons-iconfont/dist/material-design-icons.css">-->
     <link href="vuetify/dist/vuetify.min.css" rel="stylesheet">
-    <!--<link href="material-design-icons/iconfont/material-icons.css" rel="stylesheet">-->
-    <!--<link href="node_modules/material-design-icons/iconfont/material-icons.css" rel="stylesheet">-->
-    <!--<link href="node_modules/material-design-icons-iconfont/dist/material-design-icons.css" rel="stylesheet">-->
     <link href="typeface-roboto/index.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css"/>
     <title>MERG CbusServerAdmin</title>
@@ -27,24 +16,31 @@
             v-model="drawer">
         <v-list dense>
             <v-list-item @click="$store.state.display_component = 'home'">
+                <v-list-item-action><v-icon>home</v-icon></v-list-item-action>
                 <v-list-item-content>Home</v-list-item-content>
             </v-list-item>
             <v-list-item @click="$store.state.display_component = 'nodes-list'">
+                <v-list-item-action><v-icon>developer_board</v-icon></v-list-item-action>
                 <v-list-item-content>Nodes</v-list-item-content>
             </v-list-item>
             <v-list-item @click="$store.state.display_component = 'events'">
+                <v-list-item-action><v-icon>touch_app</v-icon></v-list-item-action>
                 <v-list-item-content>Events</v-list-item-content>
             </v-list-item>
             <v-list-item @click="$store.state.display_component = 'cbus-errors'">
+                <v-list-item-action><v-icon>warning</v-icon></v-list-item-action>
                 <v-list-item-content>CBUS Errors</v-list-item-content>
             </v-list-item>
             <v-list-item @click="$store.state.display_component = 'dcc-sessions'">
+                <v-list-item-action><v-icon>train</v-icon></v-list-item-action>
                 <v-list-item-content>DCC Sessions</v-list-item-content>
             </v-list-item>
             <v-list-item @click="$store.state.display_component = 'settings'">
+                <v-list-item-action><v-icon>settings</v-icon></v-list-item-action>
                 <v-list-item-content>Settings</v-list-item-content>
             </v-list-item>
             <v-list-item @click="$store.state.display_component = 'raw-data'">
+                <v-list-item-action><v-icon>dehaze</v-icon></v-list-item-action>
                 <v-list-item-content>Raw Data</v-list-item-content>
             </v-list-item>
         </v-list>
