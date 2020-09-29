@@ -1,7 +1,11 @@
 const expect = require('chai').expect;
 const websocket_Server = require('./../wsserver');
 const http = require('http');
-const mock_CBUS_Interface = require('./mock_cbus_interface.js');
+const cbusAdmin_Interface = require('./mock_cbus_interface.js');
+
+const Mock_Cbus = require('./mock_CbusNetwork.js')
+
+
 var itParam = require('mocha-param');
 const io = require('socket.io-client');
 
@@ -17,14 +21,17 @@ function decToHex(num, len) {
 describe('Websocket server tests', function(){
 	let http_Server = undefined;
 	let websocket_Client = undefined;
-	let mock_CBUS = new mock_CBUS_Interface.cbusAdmin();
+//	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
+	
+	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin();
+	let mock_Cbus = cbusAdmin;
 	let debug = 0;
 
 	before(function(done) {
 		http_Server = http.createServer(() => console.log(" -/- "));
 		http_Server.listen(7575, () => { console.log("server listening on 7575"); });
 	
-		websocket_Server(http_Server, mock_CBUS);
+		websocket_Server(http_Server, cbusAdmin);
 
 		websocket_Client = io.connect('http://localhost:7575/', {
             'reconnection delay' : 0
@@ -198,11 +205,11 @@ describe('Websocket server tests', function(){
 
 	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		if (debug) console.log("\nTest Client: Request ACOF");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('ACOF', {"nodeId": value.node, "eventId": value.event})
 		setTimeout(function(){
 			expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
-			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
@@ -210,11 +217,11 @@ describe('Websocket server tests', function(){
 		
 	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		if (debug) console.log("\nTest Client: Request ACON");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('ACON', {"nodeId": value.node, "eventId": value.event})
 		setTimeout(function(){
 			expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
-			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
@@ -223,7 +230,7 @@ describe('Websocket server tests', function(){
 	itParam("EVLRN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_EVLRN(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request EVLRN");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('EVLRN', {
                 "nodeId": value.nodeId,
                 "actionId": value.actionId,
@@ -233,19 +240,19 @@ describe('Websocket server tests', function(){
             })
 		setTimeout(function(){
 			 expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			 expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			 expected1 = ":SB780ND2" + value.eventName + decToHex(value.eventId, 2) + decToHex(value.eventVal, 2) + ";";
-			 expect(mock_CBUS.getSendArray()[1]).to.equal(expected1);
+			 expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
 			 expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[2]).to.equal(expected2);
+			 expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
 			 expected3 = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.actionId, 2) + decToHex(value.eventId, 2) + ";";
-			 expect(mock_CBUS.getSendArray()[3]).to.equal(expected3);
+			 expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
 			 expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[4]).to.equal(expected4);
+			 expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			 expected5 = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[5]).to.equal(expected5);
+			 expect(mock_Cbus.getSendArray()[5]).to.equal(expected5);
 			 expected6 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[6]).to.equal(expected6);
+			 expect(mock_Cbus.getSendArray()[6]).to.equal(expected6);
 			done();
 		}, 100);
 	})
@@ -254,7 +261,7 @@ describe('Websocket server tests', function(){
 	itParam("EVULN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_EVLRN(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request EVULN");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		var TestCases_NodeId = 	[	{ eventName: 0 },
 								{ eventId: 1 },
 								{ eventVal: 65535 },
@@ -266,19 +273,19 @@ describe('Websocket server tests', function(){
 				})
 		setTimeout(function(){
 			 // expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			 // expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			 // expected1 = ":SB780ND2" + value.eventName + decToHex(value.eventId, 2) + decToHex(value.eventVal, 2) + ";";
-			 // expect(mock_CBUS.getSendArray()[1]).to.equal(expected1);
+			 // expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
 			 // expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_CBUS.getSendArray()[2]).to.equal(expected2);
+			 // expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
 			 // expected3 = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.actionId, 2) + decToHex(value.eventId, 2) + ";";
-			 // expect(mock_CBUS.getSendArray()[3]).to.equal(expected3);
+			 // expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
 			 // expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_CBUS.getSendArray()[4]).to.equal(expected4);
+			 // expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			 // expected5 = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_CBUS.getSendArray()[5]).to.equal(expected5);
+			 // expect(mock_Cbus.getSendArray()[5]).to.equal(expected5);
 			 // expected6 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_CBUS.getSendArray()[6]).to.equal(expected6);
+			 // expect(mock_Cbus.getSendArray()[6]).to.equal(expected6);
 			done();
 		}, 100);
 	})
@@ -286,11 +293,11 @@ describe('Websocket server tests', function(){
 
 	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
 		if (debug) console.log("\nTest Client: Request NERD");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('NERD', {"nodeId": value.node})
 		setTimeout(function(){
 			expected = ":SB780N57" + decToHex(value.node, 4) + ";";
-			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
@@ -298,11 +305,11 @@ describe('Websocket server tests', function(){
 
 	itParam("NVRD test nodeId ${value.node} variableId ${value.param}", TestCases_NodeParameter, function (done, value) {
 		if (debug) console.log("\nTest Client: Request NVRD");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('NVRD', {"nodeId": value.node, "variableId": value.param})
 		setTimeout(function(){
 			expected = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.param, 2) + ";";
-			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
@@ -310,13 +317,13 @@ describe('Websocket server tests', function(){
 
 	itParam("NVSET test nodeId ${value.node} variableId ${value.paramId} value ${value.paramVal}", TestCases_NodeParamIDParamValue, function (done, value) {
 		if (debug) console.log("\nTest Client: Request NVSET");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('NVSET', {"nodeId": value.node, "variableId": value.paramId, "variableValue": value.paramVal})
 		setTimeout(function(){
 			expected = ":SB780N96" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
-			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			expected2 = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.paramId, 2) + ";";
-			expect(mock_CBUS.getSendArray()[1]).to.equal(expected2);
+			expect(mock_Cbus.getSendArray()[1]).to.equal(expected2);
 			done();
 		}, 100);
 	})
@@ -324,11 +331,11 @@ describe('Websocket server tests', function(){
 		
 	itParam("REVAL test nodeId ${value.node} variableId ${value.paramId} value ${value.paramVal}", TestCases_NodeParamIDParamValue, function (done, value) {
 		if (debug) console.log("\nTest Client: Request REVAL");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('REVAL', {"nodeId": value.node, "actionId": value.paramId, "valueId": value.paramVal})
 		setTimeout(function(){
 			expected = ":SB780N9C" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
-			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
@@ -336,11 +343,11 @@ describe('Websocket server tests', function(){
 
 	itParam("RQNPN test nodeId ${value.node} param ${value.param}", TestCases_NodeParameter, function (done, value) {
 		if (debug) console.log("\nTest Client: Request RQNPN");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('RQNPN', {"nodeId": value.node, "parameter": value.param})
 		setTimeout(function(){
 			expected = ":SB780N73" + decToHex(value.node, 4) + decToHex(value.param, 2) + ";";
-			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
@@ -348,10 +355,10 @@ describe('Websocket server tests', function(){
 
 	it('QNN test', function(done) {
 		if (debug) console.log("\nTest Client: Request QNN");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('QNN', '');
 		setTimeout(function(){
-			expect(mock_CBUS.getSendArray()[0]).to.equal(":SB780N0D;");
+			expect(mock_Cbus.getSendArray()[0]).to.equal(":SB780N0D;");
 			done();
 			}, 100);
 	});
@@ -359,7 +366,7 @@ describe('Websocket server tests', function(){
 	itParam("TEACH_EVENT test nodeId ${value.nodeId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_TEACH_EVENT(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request TEACH_EVENT");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('TEACH_EVENT', {
                 "nodeId": value.nodeId,
                 "eventName": value.eventName,
@@ -368,17 +375,17 @@ describe('Websocket server tests', function(){
             })
 		setTimeout(function(){
 			 expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			 expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			 expected1 = ":SB780ND2" + value.eventName + decToHex(value.eventId, 2) + decToHex(value.eventVal, 2) + ";";
-			 expect(mock_CBUS.getSendArray()[1]).to.equal(expected1);
+			 expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
 			 expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[2]).to.equal(expected2);
+			 expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
 			 expected3 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[3]).to.equal(expected3);
+			 expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
 			 expected4 = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[4]).to.equal(expected4);
+			 expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			 expected5 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
-			 expect(mock_CBUS.getSendArray()[5]).to.equal(expected5);
+			 expect(mock_Cbus.getSendArray()[5]).to.equal(expected5);
 			done();
 		}, 100);
 	})
@@ -386,11 +393,11 @@ describe('Websocket server tests', function(){
 
 	itParam("CLEAR_NODE_EVENTS test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
 		if (debug) console.log("\nTest Client: CLEAR_NODE_EVENTS");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		websocket_Client.emit('CLEAR_NODE_EVENTS', {"nodeId": value.node})
 		setTimeout(function(){
 			expected = value.node;
-			expect(mock_CBUS.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
@@ -398,11 +405,11 @@ describe('Websocket server tests', function(){
 		
 	it('REFRESH_EVENTS test', function(done) {
 		if (debug) console.log("\nTest Client: REFRESH_EVENTS");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		let testCase = "REFRESH_EVENTS";
 		websocket_Client.emit('REFRESH_EVENTS')
 		setTimeout(function(){
-			expect(mock_CBUS.getSendArray()[0]).to.equal(testCase);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(testCase);
 			done();
 			}, 100);
 	});
@@ -410,18 +417,18 @@ describe('Websocket server tests', function(){
 
 	it('CLEAR_CBUS_ERRORS test', function(done) {
 		if (debug) console.log("\nTest Client: CLEAR_CBUS_ERRORS");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		let testCase = "CLEAR_CBUS_ERRORS";
 		websocket_Client.emit('CLEAR_CBUS_ERRORS')
 		setTimeout(function(){
-			expect(mock_CBUS.getSendArray()[0]).to.equal(testCase);
+			expect(mock_Cbus.getSendArray()[0]).to.equal(testCase);
 			done();
 			}, 100);
 	});
 
 	it('UPDATE_LAYOUT_DETAILS test', function(done) {
 		if (debug) console.log("\nTest Client: UPDATE_LAYOUT_DETAILS");
-		mock_CBUS.clearSendArray();
+		mock_Cbus.clearSendArray();
 		let testCase = "UPDATE_LAYOUT_DETAILS";
 		let capturedData= "";
 		websocket_Client.on('layoutDetails', function (data) {capturedData = data;});	
@@ -449,7 +456,7 @@ describe('Websocket server tests', function(){
 		let testCase = "ABCDEF";
 		let capturedData= "";
 		websocket_Client.on('cbusError', function (data) {capturedData = data;});	
-		mock_CBUS.Create_cbusError(testCase);
+		mock_Cbus.Create_cbusError(testCase);
 		setTimeout(function(){
 			expect(capturedData).to.equal(testCase);
 			done();
@@ -462,7 +469,7 @@ describe('Websocket server tests', function(){
 		let testCase = "ABCDEF";
 		let capturedData= "";
 		websocket_Client.on('cbusNoSupport', function (data) {capturedData = data;});	
-		mock_CBUS.Create_cbusNoSupport(testCase);
+		mock_Cbus.Create_cbusNoSupport(testCase);
 		setTimeout(function(){
 			expect(capturedData).to.equal(testCase);
 			done();
@@ -475,7 +482,7 @@ describe('Websocket server tests', function(){
 		let testCase = "ABCDEF";
 		let capturedData= "";
 		websocket_Client.on('dccError', function (data) {capturedData = data;});	
-		mock_CBUS.Create_dccError(testCase);
+		mock_Cbus.Create_dccError(testCase);
 		setTimeout(function(){
 			expect(capturedData).to.equal(testCase);
 			done();
@@ -488,7 +495,7 @@ describe('Websocket server tests', function(){
 		let testCase = "ABCDEF";
 		let capturedData= "";
 		websocket_Client.on('dccSessions', function (data) {capturedData = data;});	
-		mock_CBUS.Create_dccSessions(testCase);
+		mock_Cbus.Create_dccSessions(testCase);
 		setTimeout(function(){
 			expect(capturedData).to.equal(testCase);
 			done();
@@ -501,7 +508,7 @@ describe('Websocket server tests', function(){
 		let testCase = "ABCDEF";
 		let capturedData= "";
 		websocket_Client.on('events', function (data) {capturedData = data;});	
-		mock_CBUS.Create_Events(testCase);
+		mock_Cbus.Create_Events(testCase);
 		setTimeout(function(){
 			expect(capturedData).to.equal(testCase);
 			done();
@@ -514,7 +521,7 @@ describe('Websocket server tests', function(){
 		let testCase = "ABCDEF";
 		let capturedData= "";
 		websocket_Client.on('nodes', function (data) {capturedData = data;});	
-		mock_CBUS.Create_Nodes(testCase);
+		mock_Cbus.Create_Nodes(testCase);
 		setTimeout(function(){
 			expect(capturedData).to.equal(testCase);
 			done();
