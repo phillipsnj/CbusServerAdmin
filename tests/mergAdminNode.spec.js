@@ -29,6 +29,7 @@ describe('mergAdminNode tests', function(){
 
 	after(function() {
 		console.log('\n');  //newline for visual separation
+		cbus.stopServer();
 	});																										
 	
 	

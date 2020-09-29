@@ -1,9 +1,15 @@
 const expect = require('chai').expect;
 const websocket_Server = require('./../wsserver');
 const http = require('http');
-const cbusAdmin_Interface = require('./mock_cbus_interface.js');
+
+const file = 'config/nodeConfig.json'
+//const cbusAdmin_Interface = require('./mock_cbus_interface.js');
+const cbusAdmin_Interface = require('./../merg/mergAdminNode.js')
 
 const Mock_Cbus = require('./mock_CbusNetwork.js')
+
+const NET_PORT = 5551;
+const NET_ADDRESS = "127.0.0.1"
 
 
 var itParam = require('mocha-param');
@@ -21,10 +27,12 @@ function decToHex(num, len) {
 describe('Websocket server tests', function(){
 	let http_Server = undefined;
 	let websocket_Client = undefined;
-//	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-	
-	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin();
-	let mock_Cbus = cbusAdmin;
+
+	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
+	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(file, NET_ADDRESS,NET_PORT);
+
+//	let mock_Cbus = cbusAdmin;
+
 	let debug = 0;
 
 	before(function(done) {
@@ -203,6 +211,14 @@ describe('Websocket server tests', function(){
 	//
 	///////////////////////////////////////////////
 
+	it("Wait.....", function (done) {
+		setTimeout(function(){
+			done();
+		}, 100);
+	})
+
+
+/*
 	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		if (debug) console.log("\nTest Client: Request ACOF");
 		mock_Cbus.clearSendArray();
@@ -225,7 +241,7 @@ describe('Websocket server tests', function(){
 			done();
 		}, 100);
 	})
-
+*/
 
 	itParam("EVLRN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_EVLRN(), function (done, value) {
@@ -290,6 +306,7 @@ describe('Websocket server tests', function(){
 		}, 100);
 	})
 */
+
 
 	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
 		if (debug) console.log("\nTest Client: Request NERD");
@@ -391,6 +408,7 @@ describe('Websocket server tests', function(){
 	})
 
 
+/*
 	itParam("CLEAR_NODE_EVENTS test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
 		if (debug) console.log("\nTest Client: CLEAR_NODE_EVENTS");
 		mock_Cbus.clearSendArray();
@@ -527,6 +545,6 @@ describe('Websocket server tests', function(){
 			done();
 			}, 100);
 	});
-
+*/
 
 })

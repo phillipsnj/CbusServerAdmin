@@ -15,16 +15,18 @@ class mock_CbusNetwork {
 		console.log("Mock CBUS Network: Starting");
 
 		this.sendArray = [];
+		this.sockets = []
 
-		var server = net.createServer(function (socket) {
+		this.server = net.createServer(function (socket) {
 			socket.setKeepAlive(true,60000);
+			this.sockets.push(socket);
 			socket.on('data', function (data) {
-				console.log('Mock CBUS Network: receive data : ' + data);
-				
-				this.sendArray.push(data);
+//				console.log('Mock CBUS Network: receive data : ' + data);
 
 				const msgArray = data.toString().split(";");
 				for (var i = 0; i < msgArray.length - 1; i++) {
+					msgArray[i] = msgArray[i].concat(";");
+					this.sendArray.push(msgArray[i]);
 					let msg = new cbusMessage.cbusMessage(msgArray[i]);
 					switch (msg.opCode()) {
 					case '0D':
@@ -34,7 +36,6 @@ class mock_CbusNetwork {
 					default:
 						break;
 					}
-					break;
 				}
 			}.bind(this));
 
@@ -48,10 +49,10 @@ class mock_CbusNetwork {
 			
 		}.bind(this));
 
-		server.listen(NET_PORT);
+		this.server.listen(NET_PORT);
 		
 		// emitted when new client connects
-		server.on('connection',function(socket){
+		this.server.on('connection',function(socket){
 			var rport = socket.remotePort;
 			console.log('Mock CBUS Network: remote client at port : ' + rport);
 		});
@@ -65,6 +66,12 @@ class mock_CbusNetwork {
 		this.sendArray = [];
 	}
 
+	stopServer() {
+		this.server.close();
+		this.sockets.forEach( (s) => s.end() )
+		console.log('Mock CBUS Network: Server closed')
+	}
+	
 	
 	outputPNN(socket) {
 		// respond with PNN message
