@@ -14,10 +14,14 @@ class mock_CbusNetwork {
     constructor(NET_PORT) {
 		console.log("Mock CBUS Network: Starting");
 
+		this.sendArray = [];
+
 		var server = net.createServer(function (socket) {
 			socket.setKeepAlive(true,60000);
 			socket.on('data', function (data) {
 				console.log('Mock CBUS Network: receive data : ' + data);
+				
+				this.sendArray.push(data);
 
 				const msgArray = data.toString().split(";");
 				for (var i = 0; i < msgArray.length - 1; i++) {
@@ -25,23 +29,24 @@ class mock_CbusNetwork {
 					switch (msg.opCode()) {
 					case '0D':
 						console.log('Mock CBUS Network: received QNN');
-						mock_CbusNetwork.outputPNN(socket);
+						this.outputPNN(socket);
 						break;
 					default:
 						break;
 					}
 					break;
 				}
-			});
+			}.bind(this));
 
 			socket.on('end', function () {
 				console.log('Mock CBUS Network: Client Disconnected');
-			});
+			}.bind(this));
 			
 			socket.on('error', function(err) {
 				console.log('Mock CBUS Network: ' + err)
-			});
-		});
+			}.bind(this));
+			
+		}.bind(this));
 
 		server.listen(NET_PORT);
 		
@@ -52,8 +57,16 @@ class mock_CbusNetwork {
 		});
 	}
 
+	getSendArray() {
+		return this.sendArray;
+	}
 	
-	static outputPNN(socket) {
+	clearSendArray() {
+		this.sendArray = [];
+	}
+
+	
+	outputPNN(socket) {
 		// respond with PNN message
 		// 									<0xB6><<NN Hi><NN Lo><Manuf Id><Module Id><Flags>
 		console.log('Mock CBUS Network: Output PNN');
