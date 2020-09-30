@@ -1,7 +1,7 @@
 {
   "layoutDetails": {
     "title": "cbusServerAdmin",
-    "subTitle": "Settings (Alpha)",
+    "subTitle": "Settings",
     "nextNodeId": 805
   },
   "nodeDetails": {
@@ -112,7 +112,18 @@
     "01020002": {
       "name": "NodeId : 258 Event : 2",
       "colour": "pink",
+      "group": "Lever"
+    },
+    "03220008": {
+      "name": "Button 8",
+      "colour": "indigo",
+      "group": "Lever"
+    },
+    "0102001E": {
+      "name": "0102-001E",
+      "colour": "black",
       "group": ""
     }
   }
 }
+
