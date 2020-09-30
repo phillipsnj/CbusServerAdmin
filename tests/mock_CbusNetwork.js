@@ -31,6 +31,12 @@ class mock_CbusNetwork {
 
 		this.sendArray = [];
 		this.sockets = []
+		
+		this.modules = 	[
+						new CANACC8 (0),
+						new CANSERVO8C (1),
+						new CANMIO (65535)
+						]
 
 		this.server = net.createServer(function (socket) {
 			socket.setKeepAlive(true,60000);
@@ -107,9 +113,12 @@ class mock_CbusNetwork {
 	outputPNN(socket) {
 		// Format: <0xB6><<NN Hi><NN Lo><Manuf Id><Module Id><Flags>
 		if (debug) console.log('Mock CBUS Network: Output PNN');
-		socket.write( ':S' + 'B780' + 'N' +  'B6'  + '00'  +'00'    + 'A5'     + '03' + '07' + ';');	// CANACC8
-		socket.write( ':S' + 'B780' + 'N' +  'B6'  + '00'  +'01'    + 'A5'     + '13' + '07' + ';');	// CANSERVO8C
-		socket.write( ':S' + 'B780' + 'N' +  'B6'  + 'FF'  +'FF'    + 'A5'     + '20' + '07' + ';');	//CANMIO
+		// generate response for every module instance
+		for (var i = 0; i < this.modules.length; i++) {
+			var msgData = this.modules[i].getNodeId() + this.modules[i].getManufacturerId() + this.modules[i].getModuleId() + this.modules[i].getFlags();
+			if (debug) console.log('Mock CBUS Network: Output PNN : Data [' + i + '] ' + msgData );
+			socket.write( ':S' + 'B780' + 'N' +  'B6' + msgData + ';');	// CANACC8
+		}
 	}
 
 
@@ -139,6 +148,55 @@ class mock_CbusNetwork {
 			socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(0, 4) + ';');
 			socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(1, 4) + ';');
 			socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(65535, 4) + ';');
+	}
+}
+
+class CbusModule {
+	constructor(nodeId) {
+		this.nodeId = nodeId;
+	}
+	
+	getNodeId(){
+		return decToHex(this.nodeId, 4);
+	}
+	
+	getModuleId() {
+		return this.moduleId;
+	}
+
+	getManufacturerId() {
+		return this.manufacturerId;
+	}
+
+	getFlags() {
+		return this.flags;
+	}
+}
+
+class CANACC8 extends CbusModule{
+	constructor(nodeId) {
+		super(nodeId);
+		this.moduleId = '03';
+		this.manufacturerId = 'A5';
+		this.flags = '07';
+	}
+}
+
+class CANSERVO8C extends CbusModule{
+	constructor(nodeId) {
+		super(nodeId);
+		this.moduleId = '13';
+		this.manufacturerId = 'A5';
+		this.flags = '07';
+	}
+}
+
+class CANMIO extends CbusModule{
+	constructor(nodeId) {
+		super(nodeId);
+		this.moduleId = '20';
+		this.manufacturerId = 'A5';
+		this.flags = '07';
 	}
 }
 
