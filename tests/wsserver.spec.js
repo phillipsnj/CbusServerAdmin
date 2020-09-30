@@ -299,10 +299,12 @@ describe('Websocket server tests', function(){
 		GetTestCase_EVULN(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request EVULN");
 		mock_Cbus.clearSendArray();
+		
+		var event = {'event':value.eventName};
 
 		websocket_Client.emit('EVULN', {
                 "nodeId": value.nodeId,
-				"eventName": value.eventName
+				"eventName": event
 				})
 		setTimeout(function(){
 			expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";		// NNLRN
