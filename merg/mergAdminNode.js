@@ -144,15 +144,15 @@ class cbusAdmin extends EventEmitter {
             },
             'EF': (msg) => {//Request Node Parameter in setup
                 // mode
-                console.log(`PARAMS (EF) Received`)
+                //console.log(`PARAMS (EF) Received`)
             },
             '50': (msg) => {//Request Node Number
                 // mode
-                console.log(`RQNN (50) Received`)
+                //console.log(`RQNN (50) Received`)
                 this.emit('requestNodeNumber')
             },
             '63': (msg) => {//CMDERR
-                console.log(`CMD ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`)
+                //console.log(`CMD ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`)
                 let output = {}
                 output['type'] = 'DCC'
                 output['Error'] = msg.errorId()
@@ -161,7 +161,7 @@ class cbusAdmin extends EventEmitter {
                 this.emit('dccError', output)
             },
             '6F': (msg) => {//Cbus Error
-                console.log(`CBUS ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`)
+                //console.log(`CBUS ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`)
                 let ref = msg.nodeId().toString() + '-' + msg.errorId().toString()
                 if (ref in this.cbusErrors) {
                     this.cbusErrors[ref].count += 1
@@ -179,7 +179,7 @@ class cbusAdmin extends EventEmitter {
                 this.emit('cbusError', this.cbusErrors)
             },
             'F2': (msg) => {//ENSRP Response to NERD/NENRD
-                console.log(`ENSRP (F2) Response to NERD : Node : ${msg.nodeId()} Action : ${msg.actionId()} Action Number : ${msg.actionEventId()}`)
+                //console.log(`ENSRP (F2) Response to NERD : Node : ${msg.nodeId()} Action : ${msg.actionId()} Action Number : ${msg.actionEventId()}`)
                 //console.log((`Number of Event Variables ${this.config.nodes[msg.nodeId()].parameters[5]}`))
                 const ref = msg.actionEventId()
                 if (!(ref in this.config.nodes[msg.nodeId()].actions)) {
@@ -195,7 +195,7 @@ class cbusAdmin extends EventEmitter {
                 //this.saveConfig()
             },
             'B5': (msg) => {//Read of EV value Response REVAL
-                console.log(`REVAL (B5) ${msg.nodeId()} Event : ${msg.actionEventIndex()} Event Variable : ${msg.actionEventVarId()} Event Variable Value : ${msg.actionEventVarVal()}`)
+                //console.log(`REVAL (B5) ${msg.nodeId()} Event : ${msg.actionEventIndex()} Event Variable : ${msg.actionEventVarId()} Event Variable Value : ${msg.actionEventVarVal()}`)
                 if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != null) {
                     //console.log(`Event Variable Exists `)
                     if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != msg.actionEventVarVal()) {
@@ -214,7 +214,7 @@ class cbusAdmin extends EventEmitter {
                 //this.saveConfig()
             },
             '97': (msg) => { //Receive Node Variable Value
-                console.log(`NVANS (97) Node ${msg.nodeId()} : ${msg.variableId()} : ${msg.variableVal()}`)
+                //console.log(`NVANS (97) Node ${msg.nodeId()} : ${msg.variableId()} : ${msg.variableVal()}`)
                 if (this.config.nodes[msg.nodeId()].variables[msg.variableId()] != null) {
                     if (this.config.nodes[msg.nodeId()].variables[msg.variableId()] != msg.variableVal()) {
                         console.log(`Variable value has changed`)
@@ -232,7 +232,7 @@ class cbusAdmin extends EventEmitter {
                 //this.saveConfig()
             },
             '9B': (msg) => {//PARAN Parameter readback by Index
-                console.log(`PARAN (9B) ${msg.nodeId()} Parameter ${msg.paramId()} Value ${msg.paramValue()}`)
+                //console.log(`PARAN (9B) ${msg.nodeId()} Parameter ${msg.paramId()} Value ${msg.paramValue()}`)
                 if (this.config.nodes[msg.nodeId()].parameters[msg.paramId()] != null) {
                     if (this.config.nodes[msg.nodeId()].parameters[msg.paramId()] != msg.paramValue()) {
                         console.log(`Parameter value has changed`)
@@ -242,7 +242,7 @@ class cbusAdmin extends EventEmitter {
                         console.log(`Parameter value has not changed`)
                     }
                 } else {
-                    console.log(`Parameter value does not exist in config`)
+                    //console.log(`Parameter value does not exist in config`)
                     this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
                     this.saveConfig()
                 }
@@ -527,7 +527,7 @@ class cbusAdmin extends EventEmitter {
     }
 
     EVULN(event) {//Read an Events EV by index
-        console.log(`EVULN Event : ${event}`)
+        //console.log(`EVULN Event : ${event}`)
         return this.header + '95' + event + ';'
     }
 
@@ -540,7 +540,7 @@ class cbusAdmin extends EventEmitter {
     }
 
     NVSET(nodeId, variableId, variableVal) {// Read Node Variable
-        console.log(`NVSET NodeId : ${nodeId} VariableId : ${variableId} Variable Value : ${variableVal} :: ${decToHex(variableVal, 2)}`)
+        //console.log(`NVSET NodeId : ${nodeId} VariableId : ${variableId} Variable Value : ${variableVal} :: ${decToHex(variableVal, 2)}`)
         return this.header + '96' + decToHex(nodeId, 4) + decToHex(variableId, 2) + decToHex(variableVal, 2) + ';'
     }
 
