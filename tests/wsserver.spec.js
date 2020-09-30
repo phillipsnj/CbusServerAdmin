@@ -392,7 +392,7 @@ describe('Websocket server tests', function(){
 			}, 100);
 	});
 
-/*
+
 	itParam("TEACH_EVENT test nodeId ${value.nodeId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_TEACH_EVENT(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request TEACH_EVENT");
@@ -419,7 +419,7 @@ describe('Websocket server tests', function(){
 			done();
 		}, 100);
 	})
-*/
+
 
 /*
 	itParam("CLEAR_NODE_EVENTS test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
