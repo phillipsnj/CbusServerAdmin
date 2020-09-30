@@ -170,6 +170,26 @@ describe('Websocket server tests', function(){
 		return testCases;
 	}
 
+	function GetTestCase_EVULN () {
+		var testCases = [];
+		var nodeId;
+		var eventName;
+		for (l1 = 1; l1 < 4; l1++) {
+			if (l1 == 1) nodeId = 0;
+			if (l1 == 2) nodeId = 1;
+			if (l1 == 3) nodeId = 65535;
+			
+			for (l3 = 1; l3 < 4; l3++) {
+				if (l3 == 1) eventName = '00000000';
+				if (l3 == 2) eventName = '00000001';
+				if (l3 == 3) eventName = 'FFFFFFFF';
+				
+				testCases.push({'nodeId':nodeId, 'eventName':eventName});
+			}
+		}
+		return testCases;
+	}
+
 	function GetTestCase_TEACH_EVENT () {
 		var testCases = [];
 		var nodeId;
@@ -275,38 +295,29 @@ describe('Websocket server tests', function(){
 	})
 
 
-	itParam("EVULN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
-		GetTestCase_EVLRN(), function (done, value) {
+	itParam("EVULN test nodeId ${value.nodeId} eventName ${value.eventName}",
+		GetTestCase_EVULN(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request EVULN");
 		mock_Cbus.clearSendArray();
-		var TestCases_NodeId = 	[	{ eventName: 0 },
-								{ eventId: 1 },
-								{ eventVal: 65535 },
-								];
 
 		websocket_Client.emit('EVULN', {
                 "nodeId": value.nodeId,
-				"eventName": event
+				"eventName": value.eventName
 				})
 		setTimeout(function(){
-			 // expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
-			 // expected1 = ":SB780ND2" + value.eventName + decToHex(value.eventId, 2) + decToHex(value.eventVal, 2) + ";";
-			 // expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
-			 // expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
-			 // expected3 = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.actionId, 2) + decToHex(value.eventId, 2) + ";";
-			 // expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
-			 // expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
-			 // expected5 = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[5]).to.equal(expected5);
-			 // expected6 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[6]).to.equal(expected6);
+			expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";		// NNLRN
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expected1 = ":SB780N95" + value.eventName + ";";				// EVULN
+			expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
+			expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";		// NNULN
+			expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
+			expected3 = ":SB780N57" + decToHex(value.nodeId, 4) + ";";		// NERD
+			expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
+			expected4 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";		// RQEVN
+			expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			done();
 		}, 100);
 	})
-
 
 
 	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {

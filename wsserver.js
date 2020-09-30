@@ -75,7 +75,7 @@ function wsserver(httpserver, node) {
         socket.on('EVULN', function(data){
             console.log(`EVULN ${JSON.stringify(data)}`);
             node.cbusSend(node.NNLRN(data.nodeId))
-            node.cbusSend(node.EVULN(data.eventName.event, data.eventName.actionId, data.eventName.eventVal))
+            node.cbusSend(node.EVULN(data.eventName))
             node.cbusSend(node.NNULN(data.nodeId))
             node.removeNodeEvents(data.nodeId)
             node.cbusSend(node.NERD(data.nodeId))
