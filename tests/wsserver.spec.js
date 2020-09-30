@@ -447,6 +447,10 @@ describe('Websocket server tests', function(){
 	});
 */
 
+/*
+	//
+	// works, but overwrites default file, so commented out until decision about how to deal with this
+	//
 	it('UPDATE_LAYOUT_DETAILS test', function(done) {
 		if (debug) console.log("\nTest Client: UPDATE_LAYOUT_DETAILS");
 		mock_Cbus.clearSendArray();
@@ -459,7 +463,7 @@ describe('Websocket server tests', function(){
 			done();
 			}, 100);
 	});
-
+*/
 
 
 
