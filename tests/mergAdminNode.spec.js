@@ -12,7 +12,6 @@ const Mock_Cbus = require('./mock_CbusNetwork.js')
 function decToHex(num, len) {
     let output = Number(num).toString(16).toUpperCase()
     var padded = "00000000" + output
-    //return (num + Math.pow(16, len)).toString(16).slice(-len).toUpperCase()
     return padded.substr(-len)
 }
 
@@ -29,6 +28,7 @@ describe('mergAdminNode tests', function(){
 
 	after(function() {
 		console.log('\n');  //newline for visual separation
+		cbus.stopServer();
 	});																										
 	
 	
@@ -43,8 +43,14 @@ describe('mergAdminNode tests', function(){
 									{ node: 65535, event: 65535 }
 								];
 
+	it("Wait.....", function (done) {
+		setTimeout(function(){
+			done();
+		}, 1000);
+	})
 
-/*	
+
+	
 	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		if (debug) console.log("\nTest Client: Request ACOF");
 		expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
@@ -52,14 +58,12 @@ describe('mergAdminNode tests', function(){
 		done();
 	})
 
-
 	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		if (debug) console.log("\nTest Client: Request ACON");
 		expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 		expect(node.ACON(value.node, value.event)).to.equal(expected);
 		done();
 	})
-*/
 
 /*
 	function GetTestCase_ASON () {
@@ -80,8 +84,9 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("ASON test nodeId ${value.nodeId} deviceNum ${value.deviceNum)", GetTestCase_ASON(), function (value) {
+		// Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
 		if (debug) console.log("\nTest Client: Request ASON");
-		expected = ":SB780N57" + decToHex(value.nodeId, 4) + decToHex(value.deviceNum, 4) + ";";
+		expected = ":SB780N98" + decToHex(value.nodeId, 4) + decToHex(value.deviceNum, 4) + ";";
 		expect(node.ASON(value.nodeId, value.deviceNum)).to.equal(expected);
 	})
 */
