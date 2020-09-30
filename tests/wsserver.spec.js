@@ -218,7 +218,7 @@ describe('Websocket server tests', function(){
 	})
 
 
-/*
+
 	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		if (debug) console.log("\nTest Client: Request ACOF");
 		mock_Cbus.clearSendArray();
@@ -227,7 +227,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 100);
+		}, 200);
 	})
 
 		
@@ -241,7 +241,8 @@ describe('Websocket server tests', function(){
 			done();
 		}, 100);
 	})
-*/
+
+
 
 	itParam("EVLRN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_EVLRN(), function (done, value) {
@@ -273,7 +274,7 @@ describe('Websocket server tests', function(){
 		}, 100);
 	})
 
-/*
+
 	itParam("EVULN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_EVLRN(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request EVULN");
@@ -305,7 +306,7 @@ describe('Websocket server tests', function(){
 			done();
 		}, 100);
 	})
-*/
+
 
 
 	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
@@ -380,6 +381,7 @@ describe('Websocket server tests', function(){
 			}, 100);
 	});
 
+/*
 	itParam("TEACH_EVENT test nodeId ${value.nodeId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_TEACH_EVENT(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request TEACH_EVENT");
@@ -406,7 +408,7 @@ describe('Websocket server tests', function(){
 			done();
 		}, 100);
 	})
-
+*/
 
 /*
 	itParam("CLEAR_NODE_EVENTS test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
@@ -443,6 +445,7 @@ describe('Websocket server tests', function(){
 			done();
 			}, 100);
 	});
+*/
 
 	it('UPDATE_LAYOUT_DETAILS test', function(done) {
 		if (debug) console.log("\nTest Client: UPDATE_LAYOUT_DETAILS");
@@ -461,7 +464,7 @@ describe('Websocket server tests', function(){
 
 
 
-
+/*
 	///////////////////////////////////////////////
 	//
 	// Test WebSocket Out Messages
