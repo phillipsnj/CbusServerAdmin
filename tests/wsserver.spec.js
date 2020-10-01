@@ -481,7 +481,7 @@ describe('Websocket server tests', function(){
 
 
 
-/*
+
 	///////////////////////////////////////////////
 	//
 	// Test WebSocket Out Messages
@@ -489,19 +489,60 @@ describe('Websocket server tests', function(){
 	///////////////////////////////////////////////
 
 
-	it('cbusError test', function(done) {
+
+	function cbusError_TestCase () {
+		var testCases = [];
+		var nodeId;
+		var eventName;
+		for (NICount = 1; NICount < 4; NICount++) {
+			if (NICount == 1) nodeId = 0;
+			if (NICount == 2) nodeId = 1;
+			if (NICount == 3) nodeId = 65535;
+			
+			for (ErrCodeCount = 1; ErrCodeCount < 3; ErrCodeCount++) {
+				if (ErrCodeCount == 1) {
+					errorId = 1;
+					message = "Command Not Supported";
+				}
+				if (ErrCodeCount == 2) {
+					errorId = 12;
+					message = "Invalid Node Variable Value";
+				}
+			
+				testCases.push({'nodeId':nodeId, 'errorId':errorId, 'message':message});
+			}
+		}
+		return testCases;
+	}
+
+	itParam("cbusError test nodeId ${value.nodeId} errorId ${value.errorId}, message ${value.message}",
+		cbusError_TestCase(), function (done, value) {
 		if (debug) console.log("\nTest Client: Trigger cbusError");
-		let testCase = "ABCDEF";
-		let capturedData= "";
+		
+			var cbusErrors = {};
+			nodeId=0;
+			errorId=1;
+			let ref = value.nodeId.toString() + '-' + value.errorId.toString()
+			let output = {}
+			output['id'] = value.nodeId.toString() + '-' + value.errorId.toString()
+			output['type'] = 'CBUS'
+			output['Error'] = value.errorId
+			output['Message'] = value.message
+			output['node'] = value.nodeId
+			output['count'] = 1
+			//this.cbusErrors.push(output)
+			cbusErrors[ref] = output
+              
+		cbusAdmin.clearCbusErrors();
 		websocket_Client.on('cbusError', function (data) {capturedData = data;});	
-		mock_Cbus.Create_cbusError(testCase);
+		mock_Cbus.outputCMDERR(value.nodeId, value.errorId);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(cbusErrors));
 			done();
 			}, 100);
 	});
 
-
+/*
 	it('cbusNoSupport test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger cbusNoSupport");
 		let testCase = "ABCDEF";
