@@ -499,12 +499,52 @@ describe('Websocket server tests', function(){
 			if (NICount == 2) nodeId = 1;
 			if (NICount == 3) nodeId = 65535;
 			
-			for (ErrCodeCount = 1; ErrCodeCount < 3; ErrCodeCount++) {
+			for (ErrCodeCount = 1; ErrCodeCount < 13; ErrCodeCount++) {
 				if (ErrCodeCount == 1) {
 					errorId = 1;
 					message = "Command Not Supported";
 				}
 				if (ErrCodeCount == 2) {
+					errorId = 2;
+					message = "Not in Learn Mode";
+				}
+				if (ErrCodeCount == 3) {
+					errorId = 3;
+					message = "Not in Setup Mode";
+				}
+				if (ErrCodeCount == 4) {
+					errorId = 4;
+					message = "Too Many Events";
+				}
+				if (ErrCodeCount == 5) {
+					errorId = 5;
+					message = "No Event";
+				}
+				if (ErrCodeCount == 6) {
+					errorId = 6;
+					message = "Invalid Event variable index";
+				}
+				if (ErrCodeCount == 7) {
+					errorId = 7;
+					message = "Invalid Event";
+				}
+				if (ErrCodeCount == 8) {
+					errorId = 8;
+					message = "Reserved";
+				}
+				if (ErrCodeCount == 9) {
+					errorId = 9;
+					message = "Invalid Parameter Index";
+				}
+				if (ErrCodeCount == 10) {
+					errorId = 10;
+					message = "Invalid Node Variable Index";
+				}
+				if (ErrCodeCount == 11) {
+					errorId = 11;
+					message = "Invalid Event Variable Value";
+				}
+				if (ErrCodeCount == 12) {
 					errorId = 12;
 					message = "Invalid Node Variable Value";
 				}
