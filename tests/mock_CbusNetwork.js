@@ -30,7 +30,7 @@ class mock_CbusNetwork {
 		console.log("Mock CBUS Network: Starting");
 
 		this.sendArray = [];
-		this.sockets = []
+		this.socket;
 		
 		this.modules = 	[
 						new CANACC8 (0),
@@ -39,8 +39,8 @@ class mock_CbusNetwork {
 						]
 
 		this.server = net.createServer(function (socket) {
+			this.socket=socket;
 			socket.setKeepAlive(true,60000);
-			this.sockets.push(socket);
 			socket.on('data', function (data) {
 				if (debug) console.log('Mock CBUS Network: data received');
 				const msgArray = data.toString().split(";");
@@ -105,7 +105,7 @@ class mock_CbusNetwork {
 
 	stopServer() {
 		this.server.close();
-		this.sockets.forEach( (s) => s.end() )
+		this.socket.end();
 		console.log('Mock CBUS Network: Server closed')
 	}
 	
@@ -117,7 +117,7 @@ class mock_CbusNetwork {
 		for (var i = 0; i < this.modules.length; i++) {
 			var msgData = this.modules[i].getNodeId() + this.modules[i].getManufacturerId() + this.modules[i].getModuleId() + this.modules[i].getFlags();
 			if (debug) console.log('Mock CBUS Network: Output PNN : Data [' + i + '] ' + msgData );
-			socket.write( ':S' + 'B780' + 'N' +  'B6' + msgData + ';');	// CANACC8
+			this.socket.write( ':S' + 'B780' + 'N' +  'B6' + msgData + ';');	// CANACC8
 		}
 	}
 
@@ -125,7 +125,7 @@ class mock_CbusNetwork {
 	outputNUMEV(socket, nodeId) {
 		// Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
 		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output NUMEV');
-		socket.write( ':S' + 'B780' + 'N' + '74' + decToHex(nodeId, 4) + '03' + ';');
+		this.socket.write( ':S' + 'B780' + 'N' + '74' + decToHex(nodeId, 4) + '03' + ';');
 	}
 
 
@@ -134,20 +134,26 @@ class mock_CbusNetwork {
 		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output PARAN');
 		if (paramId == 0) {
 			// number of node parameters
-			socket.write( ':S' + 'B780' + 'N' + '9B' + decToHex(nodeId, 4) + decToHex(paramId, 2) + '08' + ';');
+			this.socket.write( ':S' + 'B780' + 'N' + '9B' + decToHex(nodeId, 4) + decToHex(paramId, 2) + '08' + ';');
 		}
 		if (paramId == 6) {
 			// number of node variables
-			socket.write( ':S' + 'B780' + 'N' + '9B' + decToHex(nodeId, 4) + decToHex(paramId, 2) + '08' + ';');
+			this.socket.write( ':S' + 'B780' + 'N' + '9B' + decToHex(nodeId, 4) + decToHex(paramId, 2) + '08' + ';');
 		}
 	}
 	
 	outputACOF(socket, nodeId) {
 		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output ACOF');
 		// Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
-			socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(0, 4) + ';');
-			socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(1, 4) + ';');
-			socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(65535, 4) + ';');
+			this.socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(0, 4) + ';');
+			this.socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(1, 4) + ';');
+			this.socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(65535, 4) + ';');
+	}
+
+	outputCMDERR(nodeId, errorNumber) {
+		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output CMDERR');
+		// Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
+			this.socket.write( ':S' + 'B780' + 'N' + '6F' + decToHex(nodeId, 4) + decToHex(errorNumber, 2) + ';');
 	}
 }
 
