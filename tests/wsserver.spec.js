@@ -170,6 +170,26 @@ describe('Websocket server tests', function(){
 		return testCases;
 	}
 
+	function GetTestCase_EVULN () {
+		var testCases = [];
+		var nodeId;
+		var eventName;
+		for (l1 = 1; l1 < 4; l1++) {
+			if (l1 == 1) nodeId = 0;
+			if (l1 == 2) nodeId = 1;
+			if (l1 == 3) nodeId = 65535;
+			
+			for (l3 = 1; l3 < 4; l3++) {
+				if (l3 == 1) eventName = '00000000';
+				if (l3 == 2) eventName = '00000001';
+				if (l3 == 3) eventName = 'FFFFFFFF';
+				
+				testCases.push({'nodeId':nodeId, 'eventName':eventName});
+			}
+		}
+		return testCases;
+	}
+
 	function GetTestCase_TEACH_EVENT () {
 		var testCases = [];
 		var nodeId;
@@ -275,38 +295,31 @@ describe('Websocket server tests', function(){
 	})
 
 
-	itParam("EVULN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
-		GetTestCase_EVLRN(), function (done, value) {
+	itParam("EVULN test nodeId ${value.nodeId} eventName ${value.eventName}",
+		GetTestCase_EVULN(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request EVULN");
 		mock_Cbus.clearSendArray();
-		var TestCases_NodeId = 	[	{ eventName: 0 },
-								{ eventId: 1 },
-								{ eventVal: 65535 },
-								];
+		
+		var event = {'event':value.eventName};
 
 		websocket_Client.emit('EVULN', {
                 "nodeId": value.nodeId,
 				"eventName": event
 				})
 		setTimeout(function(){
-			 // expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
-			 // expected1 = ":SB780ND2" + value.eventName + decToHex(value.eventId, 2) + decToHex(value.eventVal, 2) + ";";
-			 // expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
-			 // expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
-			 // expected3 = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.actionId, 2) + decToHex(value.eventId, 2) + ";";
-			 // expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
-			 // expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
-			 // expected5 = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[5]).to.equal(expected5);
-			 // expected6 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
-			 // expect(mock_Cbus.getSendArray()[6]).to.equal(expected6);
+			expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";		// NNLRN
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expected1 = ":SB780N95" + value.eventName + ";";				// EVULN
+			expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
+			expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";		// NNULN
+			expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
+			expected3 = ":SB780N57" + decToHex(value.nodeId, 4) + ";";		// NERD
+			expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
+			expected4 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";		// RQEVN
+			expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			done();
 		}, 100);
 	})
-
 
 
 	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
@@ -381,7 +394,7 @@ describe('Websocket server tests', function(){
 			}, 100);
 	});
 
-/*
+
 	itParam("TEACH_EVENT test nodeId ${value.nodeId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
 		GetTestCase_TEACH_EVENT(), function (done, value) {
 		if (debug) console.log("\nTest Client: Request TEACH_EVENT");
@@ -408,7 +421,7 @@ describe('Websocket server tests', function(){
 			done();
 		}, 100);
 	})
-*/
+
 
 /*
 	itParam("CLEAR_NODE_EVENTS test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
@@ -447,6 +460,10 @@ describe('Websocket server tests', function(){
 	});
 */
 
+/*
+	//
+	// works, but overwrites default file, so commented out until decision about how to deal with this
+	//
 	it('UPDATE_LAYOUT_DETAILS test', function(done) {
 		if (debug) console.log("\nTest Client: UPDATE_LAYOUT_DETAILS");
 		mock_Cbus.clearSendArray();
@@ -459,12 +476,12 @@ describe('Websocket server tests', function(){
 			done();
 			}, 100);
 	});
+*/
 
 
 
 
 
-/*
 	///////////////////////////////////////////////
 	//
 	// Test WebSocket Out Messages
@@ -472,14 +489,55 @@ describe('Websocket server tests', function(){
 	///////////////////////////////////////////////
 
 
-	it('cbusError test', function(done) {
+
+	function cbusError_TestCase () {
+		var testCases = [];
+		var nodeId;
+		var eventName;
+		for (NICount = 1; NICount < 4; NICount++) {
+			if (NICount == 1) nodeId = 0;
+			if (NICount == 2) nodeId = 1;
+			if (NICount == 3) nodeId = 65535;
+			
+			for (ErrCodeCount = 1; ErrCodeCount < 3; ErrCodeCount++) {
+				if (ErrCodeCount == 1) {
+					errorId = 1;
+					message = "Command Not Supported";
+				}
+				if (ErrCodeCount == 2) {
+					errorId = 12;
+					message = "Invalid Node Variable Value";
+				}
+			
+				testCases.push({'nodeId':nodeId, 'errorId':errorId, 'message':message});
+			}
+		}
+		return testCases;
+	}
+
+	itParam("cbusError test nodeId ${value.nodeId} errorId ${value.errorId}, message ${value.message}",
+		cbusError_TestCase(), function (done, value) {
 		if (debug) console.log("\nTest Client: Trigger cbusError");
-		let testCase = "ABCDEF";
-		let capturedData= "";
+		
+			var cbusErrors = {};
+			nodeId=0;
+			errorId=1;
+			let ref = value.nodeId.toString() + '-' + value.errorId.toString()
+			let output = {}
+			output['id'] = value.nodeId.toString() + '-' + value.errorId.toString()
+			output['type'] = 'CBUS'
+			output['Error'] = value.errorId
+			output['Message'] = value.message
+			output['node'] = value.nodeId
+			output['count'] = 1
+			//this.cbusErrors.push(output)
+			cbusErrors[ref] = output
+              
+		cbusAdmin.clearCbusErrors();
 		websocket_Client.on('cbusError', function (data) {capturedData = data;});	
-		mock_Cbus.Create_cbusError(testCase);
+		mock_Cbus.outputCMDERR(value.nodeId, value.errorId);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(cbusErrors));
 			done();
 			}, 100);
 	});
@@ -487,17 +545,24 @@ describe('Websocket server tests', function(){
 
 	it('cbusNoSupport test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger cbusNoSupport");
-		let testCase = "ABCDEF";
-		let capturedData= "";
+		
+			var cbusNoSupport = {}
+			let ref = "FC"
+			let output = {}
+			output['opCode'] = "FC"
+            output['msg'] = {"message":":SB780NFC0001"}
+            output['count'] = 1
+            cbusNoSupport[ref] = output
+		
 		websocket_Client.on('cbusNoSupport', function (data) {capturedData = data;});	
-		mock_Cbus.Create_cbusNoSupport(testCase);
+		mock_Cbus.outputUNSUPOPCODE(1);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+		expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(cbusNoSupport));
 			done();
 			}, 100);
 	});
 
-
+/*
 	it('dccError test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger dccError");
 		let testCase = "ABCDEF";
