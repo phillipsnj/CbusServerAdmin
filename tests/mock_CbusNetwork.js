@@ -155,6 +155,13 @@ class mock_CbusNetwork {
 		// Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
 			this.socket.write( ':S' + 'B780' + 'N' + '6F' + decToHex(nodeId, 4) + decToHex(errorNumber, 2) + ';');
 	}
+
+	outputUNSUPOPCODE(nodeId) {
+		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output CMDERR');
+		// Ficticious opcode - 'FC' currently unused
+		// Format: [<MjPri><MinPri=3><CANID>]<FC><NN hi><NN lo>
+			this.socket.write( ':S' + 'B780' + 'N' + 'FC' + decToHex(nodeId, 4) + ';');
+	}
 }
 
 class CbusModule {

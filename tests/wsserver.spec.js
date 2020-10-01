@@ -542,20 +542,27 @@ describe('Websocket server tests', function(){
 			}, 100);
 	});
 
-/*
+
 	it('cbusNoSupport test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger cbusNoSupport");
-		let testCase = "ABCDEF";
-		let capturedData= "";
+		
+			var cbusNoSupport = {}
+			let ref = "FC"
+			let output = {}
+			output['opCode'] = "FC"
+            output['msg'] = {"message":":SB780NFC0001"}
+            output['count'] = 1
+            cbusNoSupport[ref] = output
+		
 		websocket_Client.on('cbusNoSupport', function (data) {capturedData = data;});	
-		mock_Cbus.Create_cbusNoSupport(testCase);
+		mock_Cbus.outputUNSUPOPCODE(1);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+		expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(cbusNoSupport));
 			done();
 			}, 100);
 	});
 
-
+/*
 	it('dccError test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger dccError");
 		let testCase = "ABCDEF";
