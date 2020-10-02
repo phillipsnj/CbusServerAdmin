@@ -602,20 +602,66 @@ describe('Websocket server tests', function(){
 			}, 100);
 	});
 
-/*
-	it('dccError test', function(done) {
+
+	function dccError_TestCase () {
+		var testCases = [];
+		for (ErrCodeCount = 1; ErrCodeCount < 9; ErrCodeCount++) {
+			if (ErrCodeCount == 1) {
+				errorId = 1;
+				message = "Loco Stack Full";
+			}
+			if (ErrCodeCount == 2) {
+				errorId = 2;
+				message = "Loco Address Taken";
+			}
+			if (ErrCodeCount == 3) {
+				errorId = 3;
+				message = "Session not present";
+			}
+			if (ErrCodeCount == 4) {
+				errorId = 4;
+				message = "Consist Empty";
+			}
+			if (ErrCodeCount == 5) {
+				errorId = 5;
+				message = "Loco Not Found";
+			}
+			if (ErrCodeCount == 6) {
+				errorId = 6;
+				message = "Can Bus Error";
+			}
+			if (ErrCodeCount == 7) {
+				errorId = 7;
+				message = "Invalid Request";
+			}
+			if (ErrCodeCount == 8) {
+				errorId = 8;
+				message = "Session Cancelled";
+			}
+		
+			testCases.push({'errorId':errorId, 'message':message});
+		}
+		return testCases;
+	}
+
+	itParam('dccError test errorId ${value.errorId}, message ${value.message}',	dccError_TestCase(), function (done, value) {
 		if (debug) console.log("\nTest Client: Trigger dccError");
-		let testCase = "ABCDEF";
-		let capturedData= "";
+//		{"type":"DCC","Error":7,"Message":"Invalid Request","data":"1234"}
+		let testCase = {
+			'type': "DCC",
+			'Error': value.errorId,
+			'Message': value.message,
+			'data': "1234"
+			}
 		websocket_Client.on('dccError', function (data) {capturedData = data;});	
-		mock_Cbus.Create_dccError(testCase);
+		mock_Cbus.outputERR(value.errorId);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(testCase));
 			done();
 			}, 100);
 	});
 
-
+/*
 	it('dccSessions test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger dccSessions");
 		let testCase = "ABCDEF";
