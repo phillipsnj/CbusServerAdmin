@@ -150,10 +150,10 @@ class mock_CbusNetwork {
 		this.socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(65535, 4) + ';');
 	}
 
-	outputERR(errorNumber) {
+	outputERR(data, errorNumber) {
 		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output ERR');
 		// Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
-		this.socket.write( ':S' + 'B780' + 'N' + '63' + '12' + '34' + decToHex(errorNumber, 2) + ';');
+		this.socket.write( ':S' + 'B780' + 'N' + '63' + decToHex(data, 4) + decToHex(errorNumber, 2) + ';');
 	}
 
 	outputCMDERR(nodeId, errorNumber) {

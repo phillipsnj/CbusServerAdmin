@@ -605,56 +605,62 @@ describe('Websocket server tests', function(){
 
 	function dccError_TestCase () {
 		var testCases = [];
-		for (ErrCodeCount = 1; ErrCodeCount < 9; ErrCodeCount++) {
-			if (ErrCodeCount == 1) {
-				errorId = 1;
-				message = "Loco Stack Full";
+		for (dataCount = 1; dataCount < 4; dataCount++) {
+			if (dataCount == 1) data = 0;
+			if (dataCount == 2) data = 1;
+			if (dataCount == 3) data = 65535;
+			
+			for (ErrCodeCount = 1; ErrCodeCount < 9; ErrCodeCount++) {
+				if (ErrCodeCount == 1) {
+					errorId = 1;
+					message = "Loco Stack Full";
+				}
+				if (ErrCodeCount == 2) {
+					errorId = 2;
+					message = "Loco Address Taken";
+				}
+				if (ErrCodeCount == 3) {
+					errorId = 3;
+					message = "Session not present";
+				}
+				if (ErrCodeCount == 4) {
+					errorId = 4;
+					message = "Consist Empty";
+				}
+				if (ErrCodeCount == 5) {
+					errorId = 5;
+					message = "Loco Not Found";
+				}
+				if (ErrCodeCount == 6) {
+					errorId = 6;
+					message = "Can Bus Error";
+				}
+				if (ErrCodeCount == 7) {
+					errorId = 7;
+					message = "Invalid Request";
+				}
+				if (ErrCodeCount == 8) {
+					errorId = 8;
+					message = "Session Cancelled";
+				}
+			
+				testCases.push({'data':data, 'errorId':errorId, 'message':message});
 			}
-			if (ErrCodeCount == 2) {
-				errorId = 2;
-				message = "Loco Address Taken";
-			}
-			if (ErrCodeCount == 3) {
-				errorId = 3;
-				message = "Session not present";
-			}
-			if (ErrCodeCount == 4) {
-				errorId = 4;
-				message = "Consist Empty";
-			}
-			if (ErrCodeCount == 5) {
-				errorId = 5;
-				message = "Loco Not Found";
-			}
-			if (ErrCodeCount == 6) {
-				errorId = 6;
-				message = "Can Bus Error";
-			}
-			if (ErrCodeCount == 7) {
-				errorId = 7;
-				message = "Invalid Request";
-			}
-			if (ErrCodeCount == 8) {
-				errorId = 8;
-				message = "Session Cancelled";
-			}
-		
-			testCases.push({'errorId':errorId, 'message':message});
 		}
 		return testCases;
 	}
 
-	itParam('dccError test errorId ${value.errorId}, message ${value.message}',	dccError_TestCase(), function (done, value) {
+	itParam('dccError test data ${value.data}, errorId ${value.errorId}, message ${value.message}',	dccError_TestCase(), function (done, value) {
 		if (debug) console.log("\nTest Client: Trigger dccError");
 //		{"type":"DCC","Error":7,"Message":"Invalid Request","data":"1234"}
 		let testCase = {
 			'type': "DCC",
 			'Error': value.errorId,
 			'Message': value.message,
-			'data': "1234"
+			'data': decToHex(value.data,4)
 			}
 		websocket_Client.on('dccError', function (data) {capturedData = data;});	
-		mock_Cbus.outputERR(value.errorId);
+		mock_Cbus.outputERR(value.data, value.errorId);
 		setTimeout(function(){
 			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(testCase));
 			done();
