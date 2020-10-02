@@ -57,7 +57,9 @@ class mock_CbusNetwork {
 					case '0D':
 						// Format: <MjPri><MinPri=3><CANID>]<0D>
 						if (debug) console.log('Mock CBUS Network: received QNN');
-						this.outputPNN();
+						for (var i = 0; i < this.modules.length; i++) {
+							this.outputPNN(this.modules[i].getNodeId());
+						}
 						break;
 					case '58':
 						// Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
@@ -114,25 +116,24 @@ class mock_CbusNetwork {
 		console.log('Mock CBUS Network: Server closed')
 	}
 
+
 	getModule(nodeId) {
 		for (var i = 0; i < this.modules.length; i++) {
 			if (this.modules[i].getNodeId() == nodeId) return this.modules[i];
 		}
 	}
 	
-	outputPNN() {
+	
+	outputPNN(nodeId) {
 		// Format: <0xB6><<NN Hi><NN Lo><Manuf Id><Module Id><Flags>
 		if (debug) console.log('Mock CBUS Network: Output PNN');
-		// generate response for every module instance
-		for (var i = 0; i < this.modules.length; i++) {
-			var nodeData = this.modules[i].getNodeIdHex() 
-				+ this.modules[i].getManufacturerIdHex() 
-				+ this.modules[i].getModuleIdHex() 
-				+ this.modules[i].getFlagsHex();
-			var msgData = ':S' + 'B780' + 'N' + 'B6' + nodeData + ';'
-			if (debug) console.log('Mock CBUS Network: Output PNN : Data [' + i + '] ' + msgData );
-			this.socket.write(msgData);
-		}
+		var nodeData = this.getModule(nodeId).getNodeIdHex()
+			+ this.getModule(nodeId).getManufacturerIdHex() 
+			+ this.getModule(nodeId).getModuleIdHex() 
+			+ this.getModule(nodeId).getFlagsHex();
+		var msgData = ':S' + 'B780' + 'N' + 'B6' + nodeData + ';'
+		if (debug) console.log('Mock CBUS Network: Output PNN : nodeId [' + nodeId + '] ' + msgData );
+		this.socket.write(msgData);
 	}
 
 

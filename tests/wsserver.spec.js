@@ -446,18 +446,6 @@ describe('Websocket server tests', function(){
 			done();
 			}, 100);
 	});
-
-
-	it('CLEAR_CBUS_ERRORS test', function(done) {
-		if (debug) console.log("\nTest Client: CLEAR_CBUS_ERRORS");
-		mock_Cbus.clearSendArray();
-		let testCase = "CLEAR_CBUS_ERRORS";
-		websocket_Client.emit('CLEAR_CBUS_ERRORS')
-		setTimeout(function(){
-			expect(mock_Cbus.getSendArray()[0]).to.equal(testCase);
-			done();
-			}, 100);
-	});
 */
 
 /*
@@ -729,17 +717,6 @@ describe('Websocket server tests', function(){
 	});
 
 
-		var TestCases_Events = 	[	{ nodeId: 0, 	 eventId: 0},
-									{ nodeId: 0, 	 eventId: 1 },
-									{ nodeId: 0, 	 eventId: 65535 },
-									{ nodeId: 1, 	 eventId: 0 },
-									{ nodeId: 1, 	 eventId: 1 },
-									{ nodeId: 1, 	 eventId: 65535 },
-									{ nodeId: 65535, eventId: 0 },
-									{ nodeId: 65535, eventId: 1 },
-									{ nodeId: 65535, eventId: 65535 }
-									];
-
 	function events_TestCase () {
 		var testCases = [];
 		var nodeId;
@@ -761,8 +738,6 @@ describe('Websocket server tests', function(){
 		return testCases;
 	}
 
-
-
 	itParam('events test nodeId ${value.nodeId} eventId ${value.eventId} status ${value.status}', events_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger events");
 		websocket_Client.on('events', function (data) {capturedData = data;});	
@@ -772,27 +747,23 @@ describe('Websocket server tests', function(){
 			// check status for the specific nodeId & eventId exists and is correct status
 			let status = "";
 			capturedData.forEach(function(item, index) {
-				if (item.nodeId == value.nodeId && item.eventId == value.eventId) {
-					status = item.status;
-				}
+				if (item.nodeId == value.nodeId && item.eventId == value.eventId) {status = item.status;}
 			})
 			expect(status).to.equal(value.status);
 			done();
 			}, 100);
 	});
 
-/*
+
 	it('node test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger nodes");
-		let testCase = "ABCDEF";
-		let capturedData= "";
 		websocket_Client.on('nodes', function (data) {capturedData = data;});	
-		mock_Cbus.Create_Nodes(testCase);
+		mock_Cbus.outputPNN(0);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			expect(capturedData[0].module).to.equal("CANACC8");
 			done();
 			}, 100);
 	});
-*/
+
 
 })
