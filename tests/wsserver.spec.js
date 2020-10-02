@@ -609,7 +609,6 @@ describe('Websocket server tests', function(){
 			if (dataCount == 1) data = 0;
 			if (dataCount == 2) data = 1;
 			if (dataCount == 3) data = 65535;
-			
 			for (ErrCodeCount = 1; ErrCodeCount < 9; ErrCodeCount++) {
 				if (ErrCodeCount == 1) {
 					errorId = 1;
@@ -643,7 +642,6 @@ describe('Websocket server tests', function(){
 					errorId = 8;
 					message = "Session Cancelled";
 				}
-			
 				testCases.push({'data':data, 'errorId':errorId, 'message':message});
 			}
 		}
@@ -652,7 +650,6 @@ describe('Websocket server tests', function(){
 
 	itParam('dccError test data ${value.data}, errorId ${value.errorId}, message ${value.message}',	dccError_TestCase(), function (done, value) {
 		if (debug) console.log("\nTest Client: Trigger dccError");
-//		{"type":"DCC","Error":7,"Message":"Invalid Request","data":"1234"}
 		let testCase = {
 			'type': "DCC",
 			'Error': value.errorId,
@@ -667,33 +664,124 @@ describe('Websocket server tests', function(){
 			}, 100);
 	});
 
-/*
-	it('dccSessions test', function(done) {
+	function dccSessions_TestCase () {
+		var testCases = [];
+		for (sessionCount = 1; sessionCount < 4; sessionCount++) {
+			if (sessionCount == 1) session = 0;
+			if (sessionCount == 2) session = 1;
+			if (sessionCount == 3) session = 255;
+
+			testCases.push({'session': session, 'fn1': 1, 'fn2': 1, 	'functionNumber': 1});
+			testCases.push({'session': session, 'fn1': 1, 'fn2': 2, 	'functionNumber': 2});
+			testCases.push({'session': session, 'fn1': 1, 'fn2': 4, 	'functionNumber': 3});
+			testCases.push({'session': session, 'fn1': 1, 'fn2': 8, 	'functionNumber': 4});
+			testCases.push({'session': session, 'fn1': 2, 'fn2': 1, 	'functionNumber': 5});
+			testCases.push({'session': session, 'fn1': 2, 'fn2': 2, 	'functionNumber': 6});
+			testCases.push({'session': session, 'fn1': 2, 'fn2': 4, 	'functionNumber': 7});
+			testCases.push({'session': session, 'fn1': 2, 'fn2': 8, 	'functionNumber': 8});
+			testCases.push({'session': session, 'fn1': 3, 'fn2': 1, 	'functionNumber': 9});
+			testCases.push({'session': session, 'fn1': 3, 'fn2': 2, 	'functionNumber': 10});
+			testCases.push({'session': session, 'fn1': 3, 'fn2': 4, 	'functionNumber': 11});
+			testCases.push({'session': session, 'fn1': 3, 'fn2': 8, 	'functionNumber': 12});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 1, 	'functionNumber': 13});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 2, 	'functionNumber': 14});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 4, 	'functionNumber': 15});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 8, 	'functionNumber': 16});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 16, 	'functionNumber': 17});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 32, 	'functionNumber': 18});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 64, 	'functionNumber': 19});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 128, 'functionNumber': 20});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 1, 	'functionNumber': 21});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 2, 	'functionNumber': 22});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 4, 	'functionNumber': 23});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 8, 	'functionNumber': 24});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 16, 	'functionNumber': 25});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 32, 	'functionNumber': 26});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 64, 	'functionNumber': 27});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 128, 'functionNumber': 28});
+		}
+		return testCases;
+	}
+
+
+	itParam('dccSessions test session ${value.session} fn1 ${value.fn1} fn2 ${value.fn2}', dccSessions_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger dccSessions");
-		let testCase = "ABCDEF";
-		let capturedData= "";
+
+/*
+			let dccSessions = {}
+			dccSessions[value.session] = {}
+            dccSessions[value.session].count = 0
+			let func = `F${value.fn1}`
+			dccSessions[value.session][func] = value.fn2
+            let functionArray = []
+			functionArray.push(value.functionNumber)
+			dccSessions[value.session].functions = functionArray
+*/
+		
 		websocket_Client.on('dccSessions', function (data) {capturedData = data;});	
-		mock_Cbus.Create_dccSessions(testCase);
+		mock_Cbus.outputDFUN(value.session, value.fn1, value.fn2)
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			// check expected fn2
+			expect(capturedData[value.session]['F' + value.fn1]).to.equal(value.fn2);
+//			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(dccSessions));
 			done();
 			}, 100);
 	});
 
 
-	it('events test', function(done) {
+		var TestCases_Events = 	[	{ nodeId: 0, 	 eventId: 0},
+									{ nodeId: 0, 	 eventId: 1 },
+									{ nodeId: 0, 	 eventId: 65535 },
+									{ nodeId: 1, 	 eventId: 0 },
+									{ nodeId: 1, 	 eventId: 1 },
+									{ nodeId: 1, 	 eventId: 65535 },
+									{ nodeId: 65535, eventId: 0 },
+									{ nodeId: 65535, eventId: 1 },
+									{ nodeId: 65535, eventId: 65535 }
+									];
+
+	function events_TestCase () {
+		var testCases = [];
+		var nodeId;
+		var eventName;
+		for (NICount = 1; NICount < 4; NICount++) {
+			if (NICount == 1) nodeId = 0;
+			if (NICount == 2) nodeId = 1;
+			if (NICount == 3) nodeId = 65535;
+			
+			for (EventIdCount = 1; EventIdCount < 4; EventIdCount++) {
+			if (EventIdCount == 1) eventId = 0;
+			if (EventIdCount == 2) eventId = 1;
+			if (EventIdCount == 3) eventId = 65535;
+			
+			testCases.push({'nodeId':nodeId, 'eventId':eventId, 'status':'off'});
+			testCases.push({'nodeId':nodeId, 'eventId':eventId, 'status':'on'});
+			}
+		}
+		return testCases;
+	}
+
+
+
+	itParam('events test nodeId ${value.nodeId} eventId ${value.eventId} status ${value.status}', events_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger events");
-		let testCase = "ABCDEF";
-		let capturedData= "";
 		websocket_Client.on('events', function (data) {capturedData = data;});	
-		mock_Cbus.Create_Events(testCase);
+		if (value.status == 'on') mock_Cbus.outputACON(value.nodeId, value.eventId);
+		if (value.status == 'off') mock_Cbus.outputACOF(value.nodeId, value.eventId);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			// check status for the specific nodeId & eventId exists and is correct status
+			let status = "";
+			capturedData.forEach(function(item, index) {
+				if (item.nodeId == value.nodeId && item.eventId == value.eventId) {
+					status = item.status;
+				}
+			})
+			expect(status).to.equal(value.status);
 			done();
 			}, 100);
 	});
 
-
+/*
 	it('node test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger nodes");
 		let testCase = "ABCDEF";
