@@ -550,7 +550,7 @@ class cbusAdmin extends EventEmitter {
 
     ACON(nodeId, eventId) {
         const eId = decToHex(nodeId, 4) + decToHex(eventId, 4)
-        console.log(`ACON admin ${eId}`)
+        //console.log(`ACON admin ${eId}`)
         if (eId in this.config.events) {
             this.config.events[eId]['status'] = 'on'
             this.config.events[eId]['count'] += 1
@@ -566,7 +566,7 @@ class cbusAdmin extends EventEmitter {
         }
         //this.config.events[eId]['status'] = 'on'
         //this.config.events[eId]['count'] += 1
-        console.log(`ACON Output ${this.config.events}`)
+        //console.log(`ACON Output ${this.config.events}`)
         this.emit('events', Object.values(this.config.events))
 
         return this.header + '90' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
@@ -574,7 +574,7 @@ class cbusAdmin extends EventEmitter {
 
     ACOF(nodeId, eventId) {
         const eId = decToHex(nodeId, 4) + decToHex(eventId, 4)
-        console.log(`ACOF admin ${eId}`)
+        //console.log(`ACOF admin ${eId}`)
         if (eId in this.config.events) {
             this.config.events[eId]['status'] = 'off'
             this.config.events[eId]['count'] += 1
