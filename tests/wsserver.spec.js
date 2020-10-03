@@ -3,7 +3,6 @@ const websocket_Server = require('./../wsserver');
 const http = require('http');
 
 const file = 'config/nodeConfig.json'
-//const cbusAdmin_Interface = require('./mock_cbus_interface.js');
 const cbusAdmin_Interface = require('./../merg/mergAdminNode.js')
 
 const Mock_Cbus = require('./mock_CbusNetwork.js')
@@ -18,7 +17,6 @@ const io = require('socket.io-client');
 function decToHex(num, len) {
     let output = Number(num).toString(16).toUpperCase()
     var padded = "00000000" + output
-    //return (num + Math.pow(16, len)).toString(16).slice(-len).toUpperCase()
     return padded.substr(-len)
 }
 
@@ -30,8 +28,6 @@ describe('Websocket server tests', function(){
 
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(file, NET_ADDRESS,NET_PORT);
-
-//	let mock_Cbus = cbusAdmin;
 
 	let debug = 0;
 
@@ -678,7 +674,7 @@ describe('Websocket server tests', function(){
 			testCases.push({'session': session, 'fn1': 4, 'fn2': 16, 	'functionNumber': 17});
 			testCases.push({'session': session, 'fn1': 4, 'fn2': 32, 	'functionNumber': 18});
 			testCases.push({'session': session, 'fn1': 4, 'fn2': 64, 	'functionNumber': 19});
-			testCases.push({'session': session, 'fn1': 4, 'fn2': 128, 'functionNumber': 20});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 128, 	'functionNumber': 20});
 			testCases.push({'session': session, 'fn1': 5, 'fn2': 1, 	'functionNumber': 21});
 			testCases.push({'session': session, 'fn1': 5, 'fn2': 2, 	'functionNumber': 22});
 			testCases.push({'session': session, 'fn1': 5, 'fn2': 4, 	'functionNumber': 23});
@@ -686,7 +682,7 @@ describe('Websocket server tests', function(){
 			testCases.push({'session': session, 'fn1': 5, 'fn2': 16, 	'functionNumber': 25});
 			testCases.push({'session': session, 'fn1': 5, 'fn2': 32, 	'functionNumber': 26});
 			testCases.push({'session': session, 'fn1': 5, 'fn2': 64, 	'functionNumber': 27});
-			testCases.push({'session': session, 'fn1': 5, 'fn2': 128, 'functionNumber': 28});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 128, 	'functionNumber': 28});
 		}
 		return testCases;
 	}
@@ -694,7 +690,6 @@ describe('Websocket server tests', function(){
 
 	itParam('dccSessions test session ${value.session} fn1 ${value.fn1} fn2 ${value.fn2}', dccSessions_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger dccSessions");
-
 /*
 			let dccSessions = {}
 			dccSessions[value.session] = {}
@@ -705,13 +700,12 @@ describe('Websocket server tests', function(){
 			functionArray.push(value.functionNumber)
 			dccSessions[value.session].functions = functionArray
 */
-		
 		websocket_Client.on('dccSessions', function (data) {capturedData = data;});	
 		mock_Cbus.outputDFUN(value.session, value.fn1, value.fn2)
 		setTimeout(function(){
 			// check expected fn2
 			expect(capturedData[value.session]['F' + value.fn1]).to.equal(value.fn2);
-//			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(dccSessions));
+			if (debug) console.log("\nTest Client: dcc sessions test message data : " + JSON.stringify(capturedData));
 			done();
 			}, 100);
 	});
@@ -740,13 +734,14 @@ describe('Websocket server tests', function(){
 
 	itParam('events test nodeId ${value.nodeId} eventId ${value.eventId} status ${value.status}', events_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger events");
-		websocket_Client.on('events', function (data) {capturedData = data;});	
+		websocket_Client.on('events', function (data) {eventData = data;});	
 		if (value.status == 'on') mock_Cbus.outputACON(value.nodeId, value.eventId);
 		if (value.status == 'off') mock_Cbus.outputACOF(value.nodeId, value.eventId);
 		setTimeout(function(){
+			if (debug) console.log("\nTest Client: event test message data : " + JSON.stringify(eventData));
 			// check status for the specific nodeId & eventId exists and is correct status
 			let status = "";
-			capturedData.forEach(function(item, index) {
+			eventData.forEach(function(item, index) {
 				if (item.nodeId == value.nodeId && item.eventId == value.eventId) {status = item.status;}
 			})
 			expect(status).to.equal(value.status);
@@ -757,10 +752,15 @@ describe('Websocket server tests', function(){
 
 	it('node test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger nodes");
-		websocket_Client.on('nodes', function (data) {capturedData = data;});	
+		nodeData = ""
+		data = ""
+		websocket_Client.on('nodes', function (data) {
+			nodeData = data;
+			if (debug) console.log("\nTest Client: node test message data : " + JSON.stringify(nodeData));
+			});	
 		mock_Cbus.outputPNN(0);
 		setTimeout(function(){
-			expect(capturedData[0].module).to.equal("CANACC8");
+			expect(nodeData[0].module).to.equal("CANACC8");
 			done();
 			}, 100);
 	});
