@@ -558,10 +558,10 @@ describe('Websocket server tests', function(){
 			cbusErrors[ref] = output
               
 		cbusAdmin.clearCbusErrors();
-		websocket_Client.on('cbusError', function (data) {capturedData = data;});	
+		websocket_Client.on('cbusError', function (data) {cbusErrorData = data;});	
 		mock_Cbus.outputCMDERR(value.nodeId, value.errorId);
 		setTimeout(function(){
-			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(cbusErrors));
+			expect(JSON.stringify(cbusErrorData)).to.equal(JSON.stringify(cbusErrors));
 			done();
 			}, 100);
 	});
@@ -578,10 +578,10 @@ describe('Websocket server tests', function(){
             output['count'] = 1
             cbusNoSupport[ref] = output
 		
-		websocket_Client.on('cbusNoSupport', function (data) {capturedData = data;});	
+		websocket_Client.on('cbusNoSupport', function (data) {cbusNoSupportData = data;});	
 		mock_Cbus.outputUNSUPOPCODE(1);
 		setTimeout(function(){
-		expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(cbusNoSupport));
+		expect(JSON.stringify(cbusNoSupportData)).to.equal(JSON.stringify(cbusNoSupport));
 			done();
 			}, 100);
 	});
@@ -640,10 +640,10 @@ describe('Websocket server tests', function(){
 			'Message': value.message,
 			'data': decToHex(value.data,4)
 			}
-		websocket_Client.on('dccError', function (data) {capturedData = data;});	
+		websocket_Client.on('dccError', function (data) {dccErrorData = data;});	
 		mock_Cbus.outputERR(value.data, value.errorId);
 		setTimeout(function(){
-			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(testCase));
+			expect(JSON.stringify(dccErrorData)).to.equal(JSON.stringify(testCase));
 			done();
 			}, 100);
 	});
@@ -700,12 +700,12 @@ describe('Websocket server tests', function(){
 			functionArray.push(value.functionNumber)
 			dccSessions[value.session].functions = functionArray
 */
-		websocket_Client.on('dccSessions', function (data) {capturedData = data;});	
+		websocket_Client.on('dccSessions', function (data) {dccSessionsData = data;});	
 		mock_Cbus.outputDFUN(value.session, value.fn1, value.fn2)
 		setTimeout(function(){
 			// check expected fn2
-			expect(capturedData[value.session]['F' + value.fn1]).to.equal(value.fn2);
-			if (debug) console.log("\nTest Client: dcc sessions test message data : " + JSON.stringify(capturedData));
+			expect(dccSessionsData[value.session]['F' + value.fn1]).to.equal(value.fn2);
+			if (debug) console.log("\nTest Client: dcc sessions test message data : " + JSON.stringify(dccSessionsData));
 			done();
 			}, 100);
 	});
