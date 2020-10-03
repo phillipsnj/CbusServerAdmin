@@ -69,7 +69,7 @@ class cbusAdmin extends EventEmitter {
                 //console.log(`merg :${JSON.stringify(this.merg)}`)
                 const ref = msg.nodeId()
 
-                console.log(`PNN (B6) Node found ${msg.messageOutput()} NodeId ${msg.nodeId()} ManufId ${msg.manufId()} ModuleId ${msg.moduleId()} flags ${msg.flags()}`)
+                //console.log(`PNN (B6) Node found ${msg.messageOutput()} NodeId ${msg.nodeId()} ManufId ${msg.manufId()} ModuleId ${msg.moduleId()} flags ${msg.flags()}`)
                 if (ref in this.config.nodes) {
                     this.config.nodes[ref].flim = (msg.flags() & 4) ? true : false
                     if (this.merg['modules'][msg.moduleId()]) {
@@ -203,7 +203,7 @@ class cbusAdmin extends EventEmitter {
                         this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
                         this.saveConfig()
                     } else {
-                        console.log(`Event Variable Value has not Changed `)
+                        //console.log(`Event Variable Value has not Changed `)
                     }
                 } else {
                     console.log(`Event Variable Does not exist on config`)
@@ -259,7 +259,7 @@ class cbusAdmin extends EventEmitter {
                 console.log("NNACK (59) : " + msg.opCode() + ' ' + msg.messageOutput() + ' ' + msg.deCodeCbusMsg());
             },
             '74': (msg) => {
-                console.log(`NUMNEV (74) : ${msg.nodeId()} :: ${msg.paramId()}`);
+                //console.log(`NUMNEV (74) : ${msg.nodeId()} :: ${msg.paramId()}`);
                 if (this.config.nodes[msg.nodeId()].EvCount != null) {
                     if (this.config.nodes[msg.nodeId()].EvCount != msg.variableId()) {
                         this.config.nodes[msg.nodeId()].EvCount = msg.variableId()
@@ -307,7 +307,7 @@ class cbusAdmin extends EventEmitter {
                 let F1 = msg.locoF1()
                 let F2 = msg.locoF2()
                 let F3 = msg.locoF3()
-                console.log(`Engine Report : ${session} : ${speed} : ${direction}`)
+                //console.log(`Engine Report : ${session} : ${speed} : ${direction}`)
                 if (speed > 127) {
                     direction = 'Forward'
                     speed = speed - 128
@@ -463,7 +463,7 @@ class cbusAdmin extends EventEmitter {
     }
 
     saveConfig() {
-        console.log(`Save Config `)
+        //console.log(`Save Config `)
         //this.config.events = this.events
         //
         //
@@ -546,18 +546,48 @@ class cbusAdmin extends EventEmitter {
 
     ACON(nodeId, eventId) {
         const eId = decToHex(nodeId, 4) + decToHex(eventId, 4)
-        this.config.events[eId]['status'] = 'on'
-        this.config.events[eId]['count'] += 1
+        console.log(`ACON admin ${eId}`)
+        if (eId in this.config.events) {
+            this.config.events[eId]['status'] = 'on'
+            this.config.events[eId]['count'] += 1
+        } else {
+            let output = {}
+            output['id'] = eId
+            output['nodeId'] = nodeId
+            output['eventId'] = eventId
+            output['status'] = 'on'
+            output['type'] = 'long'
+            output['count'] = 1
+            this.config.events[eId] = output
+        }
+        //this.config.events[eId]['status'] = 'on'
+        //this.config.events[eId]['count'] += 1
+        console.log(`ACON Output ${this.config.events}`)
         this.emit('events', Object.values(this.config.events))
-        //console.log(`ACON admin ${eId}`)
+
         return this.header + '90' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
     }
 
     ACOF(nodeId, eventId) {
         const eId = decToHex(nodeId, 4) + decToHex(eventId, 4)
-        this.config.events[eId]['status'] = 'off'
-        this.config.events[eId]['count'] += 1
+        console.log(`ACOF admin ${eId}`)
+        if (eId in this.config.events) {
+            this.config.events[eId]['status'] = 'off'
+            this.config.events[eId]['count'] += 1
+        } else {
+            let output = {}
+            output['id'] = eId
+            output['nodeId'] = nodeId
+            output['eventId'] = eventId
+            output['status'] = 'off'
+            output['type'] = 'long'
+            output['count'] = 1
+            this.config.events[eId] = output
+        }
+        //this.config.events[eId]['status'] = 'off'
+        //this.config.events[eId]['count'] += 1
         this.emit('events', Object.values(this.config.events))
+
         return this.header + '91' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
     }
 
