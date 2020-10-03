@@ -346,6 +346,10 @@ class cbusAdmin extends EventEmitter {
             },
             '60': (msg) => {
                 let session = msg.sessionId()
+                if (!(session in this.dccSessions)) {
+                    this.dccSessions[session] = {}
+                    this.dccSessions[session].count = 0
+                }
                 let functionRange = msg.getInt(11, 2)
                 let dccNMRA = msg.getInt(13, 2)
                 let func = `F${functionRange}`
