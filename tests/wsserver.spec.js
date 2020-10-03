@@ -3,7 +3,6 @@ const websocket_Server = require('./../wsserver');
 const http = require('http');
 
 const file = 'config/nodeConfig.json'
-//const cbusAdmin_Interface = require('./mock_cbus_interface.js');
 const cbusAdmin_Interface = require('./../merg/mergAdminNode.js')
 
 const Mock_Cbus = require('./mock_CbusNetwork.js')
@@ -18,7 +17,6 @@ const io = require('socket.io-client');
 function decToHex(num, len) {
     let output = Number(num).toString(16).toUpperCase()
     var padded = "00000000" + output
-    //return (num + Math.pow(16, len)).toString(16).slice(-len).toUpperCase()
     return padded.substr(-len)
 }
 
@@ -30,8 +28,6 @@ describe('Websocket server tests', function(){
 
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(file, NET_ADDRESS,NET_PORT);
-
-//	let mock_Cbus = cbusAdmin;
 
 	let debug = 0;
 
@@ -446,18 +442,6 @@ describe('Websocket server tests', function(){
 			done();
 			}, 100);
 	});
-
-
-	it('CLEAR_CBUS_ERRORS test', function(done) {
-		if (debug) console.log("\nTest Client: CLEAR_CBUS_ERRORS");
-		mock_Cbus.clearSendArray();
-		let testCase = "CLEAR_CBUS_ERRORS";
-		websocket_Client.emit('CLEAR_CBUS_ERRORS')
-		setTimeout(function(){
-			expect(mock_Cbus.getSendArray()[0]).to.equal(testCase);
-			done();
-			}, 100);
-	});
 */
 
 /*
@@ -499,12 +483,52 @@ describe('Websocket server tests', function(){
 			if (NICount == 2) nodeId = 1;
 			if (NICount == 3) nodeId = 65535;
 			
-			for (ErrCodeCount = 1; ErrCodeCount < 3; ErrCodeCount++) {
+			for (ErrCodeCount = 1; ErrCodeCount < 13; ErrCodeCount++) {
 				if (ErrCodeCount == 1) {
 					errorId = 1;
 					message = "Command Not Supported";
 				}
 				if (ErrCodeCount == 2) {
+					errorId = 2;
+					message = "Not in Learn Mode";
+				}
+				if (ErrCodeCount == 3) {
+					errorId = 3;
+					message = "Not in Setup Mode";
+				}
+				if (ErrCodeCount == 4) {
+					errorId = 4;
+					message = "Too Many Events";
+				}
+				if (ErrCodeCount == 5) {
+					errorId = 5;
+					message = "No Event";
+				}
+				if (ErrCodeCount == 6) {
+					errorId = 6;
+					message = "Invalid Event variable index";
+				}
+				if (ErrCodeCount == 7) {
+					errorId = 7;
+					message = "Invalid Event";
+				}
+				if (ErrCodeCount == 8) {
+					errorId = 8;
+					message = "Reserved";
+				}
+				if (ErrCodeCount == 9) {
+					errorId = 9;
+					message = "Invalid Parameter Index";
+				}
+				if (ErrCodeCount == 10) {
+					errorId = 10;
+					message = "Invalid Node Variable Index";
+				}
+				if (ErrCodeCount == 11) {
+					errorId = 11;
+					message = "Invalid Event Variable Value";
+				}
+				if (ErrCodeCount == 12) {
 					errorId = 12;
 					message = "Invalid Node Variable Value";
 				}
@@ -534,10 +558,10 @@ describe('Websocket server tests', function(){
 			cbusErrors[ref] = output
               
 		cbusAdmin.clearCbusErrors();
-		websocket_Client.on('cbusError', function (data) {capturedData = data;});	
+		websocket_Client.on('cbusError', function (data) {cbusErrorData = data;});	
 		mock_Cbus.outputCMDERR(value.nodeId, value.errorId);
 		setTimeout(function(){
-			expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(cbusErrors));
+			expect(JSON.stringify(cbusErrorData)).to.equal(JSON.stringify(cbusErrors));
 			done();
 			}, 100);
 	});
@@ -554,49 +578,173 @@ describe('Websocket server tests', function(){
             output['count'] = 1
             cbusNoSupport[ref] = output
 		
-		websocket_Client.on('cbusNoSupport', function (data) {capturedData = data;});	
+		websocket_Client.on('cbusNoSupport', function (data) {cbusNoSupportData = data;});	
 		mock_Cbus.outputUNSUPOPCODE(1);
 		setTimeout(function(){
-		expect(JSON.stringify(capturedData)).to.equal(JSON.stringify(cbusNoSupport));
+		expect(JSON.stringify(cbusNoSupportData)).to.equal(JSON.stringify(cbusNoSupport));
 			done();
 			}, 100);
 	});
 
-/*
-	it('dccError test', function(done) {
+
+	function dccError_TestCase () {
+		var testCases = [];
+		for (dataCount = 1; dataCount < 4; dataCount++) {
+			if (dataCount == 1) data = 0;
+			if (dataCount == 2) data = 1;
+			if (dataCount == 3) data = 65535;
+			for (ErrCodeCount = 1; ErrCodeCount < 9; ErrCodeCount++) {
+				if (ErrCodeCount == 1) {
+					errorId = 1;
+					message = "Loco Stack Full";
+				}
+				if (ErrCodeCount == 2) {
+					errorId = 2;
+					message = "Loco Address Taken";
+				}
+				if (ErrCodeCount == 3) {
+					errorId = 3;
+					message = "Session not present";
+				}
+				if (ErrCodeCount == 4) {
+					errorId = 4;
+					message = "Consist Empty";
+				}
+				if (ErrCodeCount == 5) {
+					errorId = 5;
+					message = "Loco Not Found";
+				}
+				if (ErrCodeCount == 6) {
+					errorId = 6;
+					message = "Can Bus Error";
+				}
+				if (ErrCodeCount == 7) {
+					errorId = 7;
+					message = "Invalid Request";
+				}
+				if (ErrCodeCount == 8) {
+					errorId = 8;
+					message = "Session Cancelled";
+				}
+				testCases.push({'data':data, 'errorId':errorId, 'message':message});
+			}
+		}
+		return testCases;
+	}
+
+	itParam('dccError test data ${value.data}, errorId ${value.errorId}, message ${value.message}',	dccError_TestCase(), function (done, value) {
 		if (debug) console.log("\nTest Client: Trigger dccError");
-		let testCase = "ABCDEF";
-		let capturedData= "";
-		websocket_Client.on('dccError', function (data) {capturedData = data;});	
-		mock_Cbus.Create_dccError(testCase);
+		let testCase = {
+			'type': "DCC",
+			'Error': value.errorId,
+			'Message': value.message,
+			'data': decToHex(value.data,4)
+			}
+		websocket_Client.on('dccError', function (data) {dccErrorData = data;});	
+		mock_Cbus.outputERR(value.data, value.errorId);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			expect(JSON.stringify(dccErrorData)).to.equal(JSON.stringify(testCase));
 			done();
 			}, 100);
 	});
 
+	function dccSessions_TestCase () {
+		var testCases = [];
+		for (sessionCount = 1; sessionCount < 4; sessionCount++) {
+			if (sessionCount == 1) session = 0;
+			if (sessionCount == 2) session = 1;
+			if (sessionCount == 3) session = 255;
 
-	it('dccSessions test', function(done) {
+			testCases.push({'session': session, 'fn1': 1, 'fn2': 1, 	'functionNumber': 1});
+			testCases.push({'session': session, 'fn1': 1, 'fn2': 2, 	'functionNumber': 2});
+			testCases.push({'session': session, 'fn1': 1, 'fn2': 4, 	'functionNumber': 3});
+			testCases.push({'session': session, 'fn1': 1, 'fn2': 8, 	'functionNumber': 4});
+			testCases.push({'session': session, 'fn1': 2, 'fn2': 1, 	'functionNumber': 5});
+			testCases.push({'session': session, 'fn1': 2, 'fn2': 2, 	'functionNumber': 6});
+			testCases.push({'session': session, 'fn1': 2, 'fn2': 4, 	'functionNumber': 7});
+			testCases.push({'session': session, 'fn1': 2, 'fn2': 8, 	'functionNumber': 8});
+			testCases.push({'session': session, 'fn1': 3, 'fn2': 1, 	'functionNumber': 9});
+			testCases.push({'session': session, 'fn1': 3, 'fn2': 2, 	'functionNumber': 10});
+			testCases.push({'session': session, 'fn1': 3, 'fn2': 4, 	'functionNumber': 11});
+			testCases.push({'session': session, 'fn1': 3, 'fn2': 8, 	'functionNumber': 12});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 1, 	'functionNumber': 13});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 2, 	'functionNumber': 14});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 4, 	'functionNumber': 15});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 8, 	'functionNumber': 16});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 16, 	'functionNumber': 17});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 32, 	'functionNumber': 18});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 64, 	'functionNumber': 19});
+			testCases.push({'session': session, 'fn1': 4, 'fn2': 128, 	'functionNumber': 20});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 1, 	'functionNumber': 21});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 2, 	'functionNumber': 22});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 4, 	'functionNumber': 23});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 8, 	'functionNumber': 24});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 16, 	'functionNumber': 25});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 32, 	'functionNumber': 26});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 64, 	'functionNumber': 27});
+			testCases.push({'session': session, 'fn1': 5, 'fn2': 128, 	'functionNumber': 28});
+		}
+		return testCases;
+	}
+
+
+	itParam('dccSessions test session ${value.session} fn1 ${value.fn1} fn2 ${value.fn2}', dccSessions_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger dccSessions");
-		let testCase = "ABCDEF";
-		let capturedData= "";
-		websocket_Client.on('dccSessions', function (data) {capturedData = data;});	
-		mock_Cbus.Create_dccSessions(testCase);
+/*
+			let dccSessions = {}
+			dccSessions[value.session] = {}
+            dccSessions[value.session].count = 0
+			let func = `F${value.fn1}`
+			dccSessions[value.session][func] = value.fn2
+            let functionArray = []
+			functionArray.push(value.functionNumber)
+			dccSessions[value.session].functions = functionArray
+*/
+		websocket_Client.on('dccSessions', function (data) {dccSessionsData = data;});	
+		mock_Cbus.outputDFUN(value.session, value.fn1, value.fn2)
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			// check expected fn2
+			expect(dccSessionsData[value.session]['F' + value.fn1]).to.equal(value.fn2);
+			if (debug) console.log("\nTest Client: dcc sessions test message data : " + JSON.stringify(dccSessionsData));
 			done();
 			}, 100);
 	});
 
 
-	it('events test', function(done) {
+	function events_TestCase () {
+		var testCases = [];
+		var nodeId;
+		var eventName;
+		for (NICount = 1; NICount < 4; NICount++) {
+			if (NICount == 1) nodeId = 0;
+			if (NICount == 2) nodeId = 1;
+			if (NICount == 3) nodeId = 65535;
+			
+			for (EventIdCount = 1; EventIdCount < 4; EventIdCount++) {
+			if (EventIdCount == 1) eventId = 0;
+			if (EventIdCount == 2) eventId = 1;
+			if (EventIdCount == 3) eventId = 65535;
+			
+			testCases.push({'nodeId':nodeId, 'eventId':eventId, 'status':'off'});
+			testCases.push({'nodeId':nodeId, 'eventId':eventId, 'status':'on'});
+			}
+		}
+		return testCases;
+	}
+
+	itParam('events test nodeId ${value.nodeId} eventId ${value.eventId} status ${value.status}', events_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger events");
-		let testCase = "ABCDEF";
-		let capturedData= "";
-		websocket_Client.on('events', function (data) {capturedData = data;});	
-		mock_Cbus.Create_Events(testCase);
+		websocket_Client.on('events', function (data) {eventData = data;});	
+		if (value.status == 'on') mock_Cbus.outputACON(value.nodeId, value.eventId);
+		if (value.status == 'off') mock_Cbus.outputACOF(value.nodeId, value.eventId);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			if (debug) console.log("\nTest Client: event test message data : " + JSON.stringify(eventData));
+			// check status for the specific nodeId & eventId exists and is correct status
+			let status = "";
+			eventData.forEach(function(item, index) {
+				if (item.nodeId == value.nodeId && item.eventId == value.eventId) {status = item.status;}
+			})
+			expect(status).to.equal(value.status);
 			done();
 			}, 100);
 	});
@@ -604,15 +752,18 @@ describe('Websocket server tests', function(){
 
 	it('node test', function(done) {
 		if (debug) console.log("\nTest Client: Trigger nodes");
-		let testCase = "ABCDEF";
-		let capturedData= "";
-		websocket_Client.on('nodes', function (data) {capturedData = data;});	
-		mock_Cbus.Create_Nodes(testCase);
+		nodeData = ""
+		data = ""
+		websocket_Client.on('nodes', function (data) {
+			nodeData = data;
+			if (debug) console.log("\nTest Client: node test message data : " + JSON.stringify(nodeData));
+			});	
+		mock_Cbus.outputPNN(0);
 		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
+			expect(nodeData[0].module).to.equal("CANACC8");
 			done();
 			}, 100);
 	});
-*/
+
 
 })
