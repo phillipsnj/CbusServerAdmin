@@ -120,10 +120,9 @@
       "group": "Lever"
     },
     "0102001E": {
-      "name": "0102-001E",
-      "colour": "black",
+      "name": "CANPAN Button 8",
+      "colour": "teal",
       "group": ""
     }
   }
 }
-
