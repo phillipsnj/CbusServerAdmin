@@ -313,10 +313,10 @@ describe('Websocket server tests', function(){
 	})
 
 
-	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
-		if (debug) console.log("\nTest Client: Request NERD");
+	itParam("REQUEST_ALL_NODE_EVENTS test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
+		if (debug) console.log("\nTest Client: Request REQUEST_ALL_NODE_EVENTS");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('NERD', {"nodeId": value.node})
+		websocket_Client.emit('REQUEST_ALL_NODE_EVENTS', {"nodeId": value.node})
 		setTimeout(function(){
 			expected = ":SB780N57" + decToHex(value.node, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
