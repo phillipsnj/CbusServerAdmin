@@ -382,7 +382,7 @@ describe('Websocket server tests', function(){
 		}, 100);
 	})
 		
-	function GetTestCase_REVAL () {
+	function GetTestCase_REQUEST_ALL_EVENT_VARIABLES () {
 		var testCases = [];
 		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
 			if (nodeIdCount == 1) nodeId = 0;
@@ -394,24 +394,34 @@ describe('Websocket server tests', function(){
 				if (eventIndexCount == 2) eventIndex = 1;
 				if (eventIndexCount == 3) eventIndex = 255;
 				
-				testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'eventName':eventName, 'eventVariableId':eventVariableId, 'eventVariableValue':eventVariableValue});
+				for (eventVariableCountCtr = 1; eventVariableCountCtr < 4; eventVariableCountCtr++) {
+					if (eventVariableCountCtr == 1) eventVariableCount = 0;
+					if (eventVariableCountCtr == 2) eventVariableCount = 1;
+					if (eventVariableCountCtr == 3) eventVariableCount = 256;
+					
+					testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'eventName':eventName, 'eventVariableCount':eventVariableCount});
+				}
 			}
 		}
 		return testCases;
 	}
 	
-/*		
-	itParam("REQUEST_ALL_EVENT_VARIABLES test nodeId ${value.node} eventIndex ${value.eventIndex} value ${value.paramVal}", TestCases_NodeParamIDParamValue, function (done, value) {
+
+	itParam("REQUEST_ALL_EVENT_VARIABLES test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableCount ${value.eventVariableCount}", GetTestCase_REQUEST_ALL_EVENT_VARIABLES(), function (done, value) {
 		if (debug) console.log("\nTest Client: REQUEST_ALL_EVENT_VARIABLES test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {"nodeId": value.node, "eventIndex": value.eventIndex, "valueId": value.paramVal})
+		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {"nodeId": value.nodeId, "eventIndex": value.eventIndex, "variables": value.eventVariableCount})
+//		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {"nodeId": 1, "eventIndex": 1, "variables": 2})
 		setTimeout(function(){
-			expected = ":SB780N9C" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
-			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expect(mock_Cbus.getSendArray().length).to.equal(value.eventVariableCount);
+
+//			expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.paramId, 2)+ decToHex(value.eventVariableCount, 2) + ";";
+//			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			
 			done();
-		}, 100);
+		}, value.eventVariableCount*2 + 200);
 	})
-*/		
+		
 
 	itParam("RQNPN test nodeId ${value.node} param ${value.param}", TestCases_NodeParameter, function (done, value) {
 		if (debug) console.log("\nTest Client: Request RQNPN");
