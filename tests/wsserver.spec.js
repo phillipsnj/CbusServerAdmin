@@ -221,11 +221,6 @@ describe('Websocket server tests', function(){
 
 	function GetTestCase_UPDATE_EVENT_VARIABLE () {
 		var testCases = [];
-		var nodeId;
-		var actionId;
-		var eventName;
-		var eventId;
-		var eventVal;
 		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
 			if (nodeIdCount == 1) nodeId = 0;
 			if (nodeIdCount == 2) nodeId = 1;
@@ -236,10 +231,10 @@ describe('Websocket server tests', function(){
 				if (eventIndexCount == 2) eventIndex = 1;
 				if (eventIndexCount == 3) eventIndex = 255;
 				
-				for (l3 = 1; l3 < 4; l3++) {
-					if (l3 == 1) eventName = '00000000';
-					if (l3 == 2) eventName = '00000001';
-					if (l3 == 3) eventName = 'FFFFFFFF';
+				for (eventNameCount = 1; eventNameCount < 4; eventNameCount++) {
+					if (eventNameCount == 1) eventName = '00000000';
+					if (eventNameCount == 2) eventName = '00000001';
+					if (eventNameCount == 3) eventName = 'FFFFFFFF';
 					
 					for (eventVariableIdCount = 1; eventVariableIdCount < 4; eventVariableIdCount++) {
 						if (eventVariableIdCount == 1) eventVariableId = 0;
@@ -262,7 +257,7 @@ describe('Websocket server tests', function(){
 
 	itParam("UPDATE_EVENT_VARIABLE test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventName ${value.eventName}, eventVariableId ${value.eventVariableId}, eventVariableValue ${value.eventVariableValue}",
 		GetTestCase_UPDATE_EVENT_VARIABLE(), function (done, value) {
-		if (debug) console.log("\nTest Client: Request EVLRN");
+		if (debug) console.log("\nTest Client: UPDATE_EVENT_VARIABLE test");
 		mock_Cbus.clearSendArray();
 		websocket_Client.emit('UPDATE_EVENT_VARIABLE', {
                 "nodeId": value.nodeId,
@@ -342,31 +337,81 @@ describe('Websocket server tests', function(){
 	})
 		
 
-	itParam("NVSET test nodeId ${value.node} variableId ${value.paramId} value ${value.paramVal}", TestCases_NodeParamIDParamValue, function (done, value) {
-		if (debug) console.log("\nTest Client: Request NVSET");
+	function GetTestCase_NVSET_learn () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (variableIdCount = 1; variableIdCount < 4; variableIdCount++) {
+				if (variableIdCount == 1) variableId = 0;
+				if (variableIdCount == 2) variableId = 1;
+				if (variableIdCount == 3) variableId = 255;
+				
+				for (variableValueCount = 1; variableValueCount < 4; variableValueCount++) {
+					if (variableValueCount == 1) variableValue = 0;
+					if (variableValueCount == 2) variableValue = 1;
+					if (variableValueCount == 3) variableValue = 255;
+					
+					testCases.push({'nodeId':nodeId,'variableId':variableId, 'variableValue':variableValue});
+				}
+			}
+		}
+		return testCases;
+	}
+	
+
+
+	itParam("NVSET-learn test nodeId ${value.nodeId} variableId ${value.variableId} variableValue ${value.variableValue}", GetTestCase_NVSET_learn(), function (done, value) {
+		if (debug) console.log("\nTest Client: Request NVSET-learn");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('NVSET', {"nodeId": value.node, "variableId": value.paramId, "variableValue": value.paramVal})
+		websocket_Client.emit('NVSET-learn', {"nodeId": value.nodeId, "variableId": value.variableId, "variableValue": value.variableValue})
 		setTimeout(function(){
-			expected = ":SB780N96" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
+			expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
-			expected2 = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.paramId, 2) + ";";
-			expect(mock_Cbus.getSendArray()[1]).to.equal(expected2);
+			expected1 = ":SB780N96" + decToHex(value.nodeId, 4) + decToHex(value.variableId, 2)+ decToHex(value.variableValue, 2) + ";";
+			expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
+			expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
+			expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
+			expected3 = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.variableId, 2) + ";";
+			expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
+			expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
+			expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			done();
 		}, 100);
 	})
 		
-		
-	itParam("REVAL test nodeId ${value.node} variableId ${value.paramId} value ${value.paramVal}", TestCases_NodeParamIDParamValue, function (done, value) {
-		if (debug) console.log("\nTest Client: Request REVAL");
+	function GetTestCase_REVAL () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (eventIndexCount = 1; eventIndexCount < 4; eventIndexCount++) {
+				if (eventIndexCount == 1) eventIndex = 0;
+				if (eventIndexCount == 2) eventIndex = 1;
+				if (eventIndexCount == 3) eventIndex = 255;
+				
+				testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'eventName':eventName, 'eventVariableId':eventVariableId, 'eventVariableValue':eventVariableValue});
+			}
+		}
+		return testCases;
+	}
+	
+/*		
+	itParam("REQUEST_ALL_EVENT_VARIABLES test nodeId ${value.node} eventIndex ${value.eventIndex} value ${value.paramVal}", TestCases_NodeParamIDParamValue, function (done, value) {
+		if (debug) console.log("\nTest Client: REQUEST_ALL_EVENT_VARIABLES test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('REVAL', {"nodeId": value.node, "actionId": value.paramId, "valueId": value.paramVal})
+		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {"nodeId": value.node, "eventIndex": value.eventIndex, "valueId": value.paramVal})
 		setTimeout(function(){
 			expected = ":SB780N9C" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
-		
+*/		
 
 	itParam("RQNPN test nodeId ${value.node} param ${value.param}", TestCases_NodeParameter, function (done, value) {
 		if (debug) console.log("\nTest Client: Request RQNPN");
