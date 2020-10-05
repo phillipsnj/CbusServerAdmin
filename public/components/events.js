@@ -95,9 +95,9 @@ Vue.component('events', {
             sendEvent(nodeId, eventId, type, action) {
                 console.log(`sendEvent ${type} : ${nodeId} : ${eventId} : ${action}`)
                 if (action == 'On') {
-                    this.$root.send('ACON', {"nodeId": nodeId, "eventId": eventId})
+                    this.$root.send('ACCESSORY_LONG_ON', {"nodeId": nodeId, "eventId": eventId})
                 } else {
-                    this.$root.send('ACOF', {"nodeId": nodeId, "eventId": eventId})
+                    this.$root.send('ACCESSORY_LONG_OFF', {"nodeId": nodeId, "eventId": eventId})
                 }
             },
             editEvent(item) {
@@ -314,9 +314,9 @@ Vue.component('events-event-edit', {
         sendEvent(nodeId, eventId, type, action) {
             console.log(`sendEvent ${type} : ${nodeId} : ${eventId} : ${action}`)
             if (action == 'On') {
-                this.$root.send('ACON', {"nodeId": nodeId, "eventId": eventId})
+                this.$root.send('ACCESSORY_LONG_ON', {"nodeId": nodeId, "eventId": eventId})
             } else {
-                this.$root.send('ACOF', {"nodeId": nodeId, "eventId": eventId})
+                this.$root.send('ACCESSORY_LONG_OFF', {"nodeId": nodeId, "eventId": eventId})
             }
         },
         groupList() {

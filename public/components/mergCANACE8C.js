@@ -31,7 +31,7 @@ Vue.component('merg-canace8c', {
             this.$store.state.node_component = "merg-canace8c-node-variables"
         },
         getEvents() {
-            console.log(`mergDefault - NERD : ${this.nodeId}`)
+            //console.log(`mergDefault - NERD : ${this.nodeId}`)
             //this.$root.send('NERD', {'nodeId': this.nodeId})
             this.$store.state.node_component = "merg-canace8c-node-events"
         }
@@ -68,10 +68,7 @@ Vue.component('merg-canace8c-node-variables', {
     name: "merg-canace8c-node-variables",
     //props: ['nodeId'],
     mounted() {
-        for (let i = 1; i <= this.node.parameters[6]; i++) {
-            let time = i * 100
-            setTimeout(this.getVariable, time, i)
-        }
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6]})
     },
     watch: {
         node() {
@@ -86,19 +83,14 @@ Vue.component('merg-canace8c-node-variables', {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         },
     },
-    methods: {
-        getVariable: function (parameter) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
-        }
-    },
     template: `
       <v-container>
       <h3>Node Variables</h3><p>{{ nodeId }} :: {{ node.variables }}</p>
       <node-variable-bit-array v-bind:nodeId="nodeId" varId="1" name="On Only"></node-variable-bit-array>
       <node-variable-bit-array v-bind:nodeId="nodeId" varId="2" name="Inverted"></node-variable-bit-array>
       <node-variable-bit-array v-bind:nodeId="nodeId" varId="3" name="Delay"></node-variable-bit-array>
-      <node-variable-bit-array v-bind:nodeId="nodeId" varId="4" name="Toggle"></node-variable-bit-array>
-      <node-variable-bit-array v-bind:nodeId="nodeId" varId="5" name="Start of Day"></node-variable-bit-array>
+      <node-variable-bit-array v-bind:nodeId="nodeId" varId="6" name="Toggle"></node-variable-bit-array>
+      <node-variable-bit-array v-bind:nodeId="nodeId" varId="8" name="Start of Day"></node-variable-bit-array>
       <!--<merg-canace8c-variable-channel v-bind:nodeId="node.node" v-bind:channelId="n" v-for="n in [0,1,2,3,4,5,6,7]"
                                       :key="n"></merg-canace8c-variable-channel>-->
       
@@ -155,13 +147,13 @@ Vue.component('merg-canace8c-node-events', {
         },
         deleteEvent: function (event) {
             console.log(`deleteEvent : ${this.node.node} : ${event}`)
-            this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
+            this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
         }
     },
     mounted() {
         if (this.node.EvCount > 0) {
-            console.log(`NERD : ${this.nodeId}`)
-            this.$root.send('NERD', {"nodeId": this.nodeId})
+            console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
         }
     },
     computed: {
@@ -210,10 +202,11 @@ Vue.component('merg-canace8c-node-event-variables', {
     //props: ['nodeId', 'actionId'],
     mounted() {
         console.log(`merg-canace8c-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
-        for (let i = 1; i <= this.node.parameters[5]; i++) {
-            let time = i * 100
-            setTimeout(this.getEventVariable, time, i)
-        }
+        this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
+            "nodeId": this.$store.state.selected_node_id,
+            "eventIndex": this.$store.state.selected_action_id,
+            "variables": this.node.parameters[5]
+        })
     },
     computed: {
         nodeId: function () {
@@ -227,22 +220,15 @@ Vue.component('merg-canace8c-node-event-variables', {
         }
     },
     methods: {
-        getEventVariable: function (parameter) {
-            this.$root.send('REVAL', {
-                "nodeId": this.$store.state.selected_node_id,
-                "actionId": this.$store.state.selected_action_id,
-                "valueId": parameter
-            })
-        },
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             // eslint-disable-next-line no-console
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
-            this.$root.send('EVLRN', {
+            this.$root.send('UPDATE_EVENT_VARIABLE', {
                 "nodeId": this.node.node,
-                "actionId": actionId,
+                "eventIndex": actionId,
                 "eventName": eventName,
-                "eventId": eventId,
-                "eventVal": eventVal
+                "eventVariableId": eventId,
+                "eventVariableValue": eventVal
             })
         }
     },

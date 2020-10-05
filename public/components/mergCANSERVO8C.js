@@ -34,8 +34,8 @@ Vue.component('merg-canservo8c', {
             this.$store.state.node_component = "merg-canservo8c-node-channels"
         },
         getEvents() {
-            console.log(`mergDefault - NERD : ${this.nodeId}`)
-            this.$root.send('NERD', {'nodeId': this.nodeId})
+            //console.log(`mergDefault - NERD : ${this.nodeId}`)
+            //this.$root.send('REQUEST_ALL_NODE_EVENTS', {'nodeId': this.nodeId})
             this.$store.state.node_component = "merg-canservo8c-node-events"
         }
     },
@@ -80,13 +80,13 @@ Vue.component('merg-canservo8c-node-variables', {
     watch: {
         baseNV: function () {
             for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
-                this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+                this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i})
             }
         }
     },
     mounted() {
         for (let i = 1; i <= this.node.parameters[6]; i++) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+            this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i})
         }
     },
     computed: {
@@ -151,9 +151,9 @@ Vue.component('merg-canservo8c-node-events', {
     methods: {
         editEvent: function (item) {
             console.log(`editEvent(${item.event})`)
-            for (let i = 1; i <= this.node.parameters[5]; i++) {
+            /*for (let i = 1; i <= this.node.parameters[5]; i++) {
                 this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": item.actionId, "valueId": i})
-            }
+            }*/
             //this.eventDialog = true
             this.editedEvent = item
             this.$store.state.selected_action_id = item.actionId
@@ -162,13 +162,13 @@ Vue.component('merg-canservo8c-node-events', {
         },
         deleteEvent: function (event) {
             console.log(`deleteEvent : ${this.node.node} : ${event}`)
-            this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
+            this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
         }
     },
     mounted() {
         if (this.node.EvCount > 0) {
-            console.log(`NERD : ${this.nodeId}`)
-            this.$root.send('NERD', {"nodeId": this.nodeId})
+            console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
         }
     },
     computed: {
@@ -217,13 +217,11 @@ Vue.component('merg-canservo8c-node-event-variables', {
     //props: ['nodeId', 'actionId'],
     mounted() {
         console.log(`merg-canservo8c-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
-        for (let i = 1; i <= this.node.parameters[5]; i++) {
-            this.$root.send('REVAL', {
-                "nodeId": this.$store.state.selected_node_id,
-                "actionId": this.$store.state.selected_action_id,
-                "valueId": i
-            })
-        }
+        this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
+            "nodeId": this.$store.state.selected_node_id,
+            "eventIndex": this.$store.state.selected_action_id,
+            "variables": this.node.parameters[5]
+        })
     },
     computed: {
         nodeId: function () {
@@ -240,12 +238,12 @@ Vue.component('merg-canservo8c-node-event-variables', {
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             // eslint-disable-next-line no-console
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
-            this.$root.send('EVLRN', {
+            this.$root.send('UPDATE_EVENT_VARIABLE', {
                 "nodeId": this.node.node,
-                "actionId": actionId,
+                "eventIndex": actionId,
                 "eventName": eventName,
-                "eventId": eventId,
-                "eventVal": eventVal
+                "eventVariableId": eventId,
+                "eventVariableValue": eventVal
             })
         }
     },
@@ -253,29 +251,6 @@ Vue.component('merg-canservo8c-node-event-variables', {
       <v-container>
       <h3>Event Variables</h3>
       <p>Event ID :: {{ $store.state.selected_action_id }}</p>
-      <!--<p>{{ $store.state.nodes[this.$store.state.selected_node_id].actions[$store.state.selected_action_id] }}</p>-->
-      <!--<v-card outlined>
-        <v-card-title>Startup Options</v-card-title>
-        <v-card-text>
-          <v-radio-group v-model="node.actions[actionId].variables[1]" :mandatory="true"
-                         @change="updateEV(node.node,
-                                   node.actions[actionId].event,
-                                   node.actions[actionId].actionId,
-                                   3,
-                                   parseInt(node.actions[actionId].variables[1]))">
-            <v-radio label="SOD" :value="0"></v-radio>
-            <v-radio label="Route" :value="1"></v-radio>
-          </v-radio-group>
-        </v-card-text>
-      </v-card>
-      <v-row>
-        <node-event-variable-bit v-bind:node="$store.state.selected_node_id"
-                                 v-bind:action="$store.state.selected_action_id"
-                                 variable="1"
-                                 bit="0"
-                                 name="0">
-        </node-event-variable-bit>
-      </v-row>-->
       <node-event-variable-bit-array v-bind:nodeId="$store.state.selected_node_id"
                                      v-bind:action="$store.state.selected_action_id"
                                      varId="1"
@@ -335,7 +310,7 @@ Vue.component('merg-canservo8c-variable-channel', {
     },
     methods: {
         updateNV: function (varId, value) {
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE_IN_LEARN_MODE', {
                 "nodeId": this.nodeId,
                 "variableId": varId,
                 "variableValue": value
@@ -408,7 +383,7 @@ Vue.component('merg-canservo8c-variable-bit', {
             } else {
                 value = value - this.bitArray[this.bit]
             }
-            this.$root.send('NVSET-learn', {
+            this.$root.send('UPDATE_NODE_VARIABLE_IN_LEARN_MODE', {
                 "nodeId": this.nodeId,
                 "variableId": this.varId,
                 "variableValue": value
@@ -455,7 +430,7 @@ Vue.component('merg-canservo8c-slider', {
     },
     methods: {
         updateNV: function (position) {
-            this.$root.send('NVSET-learn', {
+            this.$root.send('UPDATE_NODE_VARIABLE_IN_LEARN_MODE', {
                 "nodeId": this.nodeId,
                 "variableId": this.varId,
                 "variableValue": position
