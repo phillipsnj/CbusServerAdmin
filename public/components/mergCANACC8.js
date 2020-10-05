@@ -31,7 +31,7 @@ Vue.component('merg-canacc8', {
             this.$store.state.node_component = "merg-canacc8-node-variables"
         },
         getEvents() {
-            console.log(`mergDefault - NERD : ${this.nodeId}`)
+            //console.log(`mergDefault - NERD : ${this.nodeId}`)
             //this.$root.send('NERD', {'nodeId': this.nodeId})
             this.$store.state.node_component = "merg-canacc8-node-events"
         }
@@ -68,10 +68,11 @@ Vue.component('merg-canacc8-node-variables', {
     name: "merg-canacc8-node-variables",
     //props: ['nodeId'],
     mounted() {
-        for (let i = 1; i <= this.node.parameters[6]; i++) {
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6]})
+/*        for (let i = 1; i <= this.node.parameters[6]; i++) {
             let time = i*100
             setTimeout(this.getVariable,time,i)
-        }
+        }*/
     },
     computed: {
         nodeId: function () {
@@ -81,11 +82,11 @@ Vue.component('merg-canacc8-node-variables', {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         },
     },
-    methods: {
+    /*methods: {
         getVariable: function (parameter) {
             this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
         }
-    },
+    },*/
     template: `
       <v-container>
       <h3>Node Variables</h3>
@@ -130,9 +131,9 @@ Vue.component('merg-canacc8-node-events', {
     methods: {
         editEvent: function (item) {
             console.log(`editEvent(${item.event})`)
-            for (let i = 1; i <= this.node.parameters[5]; i++) {
-                this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": item.actionId, "valueId": i})
-            }
+            /*for (let i = 1; i <= this.node.parameters[5]; i++) {
+                this.$root.send('REQUEST_EVENT_VARIABLE', {"nodeId": this.nodeId, "eventIndex": item.actionId, "eventVariableId": i})
+            }*/
             //this.eventDialog = true
             this.editedEvent = item
             this.$store.state.selected_action_id = item.actionId
@@ -141,13 +142,13 @@ Vue.component('merg-canacc8-node-events', {
         },
         deleteEvent: function (event) {
             console.log(`deleteEvent : ${this.node.node} : ${event}`)
-            this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
+            this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
         }
     },
     mounted() {
         if (this.node.EvCount > 0) {
-            console.log(`NERD : ${this.nodeId}`)
-            this.$root.send('NERD', {"nodeId": this.nodeId})
+            console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
         }
     },
     computed: {
@@ -196,10 +197,11 @@ Vue.component('merg-canacc8-node-event-variables', {
     //props: ['nodeId', 'actionId'],
     mounted() {
         console.log(`merg-canacc8-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
-        for (let i = 1; i <= this.node.parameters[5]; i++) {
-            let time = i*100
-            setTimeout(this.getEventVariable,time,i)
-        }
+        this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
+            "nodeId": this.$store.state.selected_node_id,
+            "eventIndex": this.$store.state.selected_action_id,
+            "variables": this.node.parameters[5]
+        })
     },
     computed: {
         nodeId: function () {
@@ -213,13 +215,6 @@ Vue.component('merg-canacc8-node-event-variables', {
         }
     },
     methods: {
-        getEventVariable: function (parameter) {
-            this.$root.send('REVAL', {
-                "nodeId": this.$store.state.selected_node_id,
-                "actionId": this.$store.state.selected_action_id,
-                "valueId": parameter
-            })
-        },
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             // eslint-disable-next-line no-console
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
@@ -342,7 +337,7 @@ Vue.component('merg-canacc8-variable-channel', {
             } else {
                 this.variableLocal = this.pulse / 20
             }
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": this.nodeId,
                 "variableId": this.channelId,
                 "variableValue": this.variableLocal

@@ -6,7 +6,7 @@
     },
     "3": {
       "name": "CANACC8",
-      "component": "mergDefault"
+      "component": "merg-canacc8"
     },
     "9": {
       "name": "CANCAB",
@@ -14,7 +14,7 @@
     },
     "19": {
       "name": "CANSERVO8C",
-      "component": "mergDefault"
+      "component": "merg-canservo8c"
     },
     "29": {
       "name": "CANPAN",
@@ -26,7 +26,7 @@
     },
     "5": {
       "name": "CANACE8C",
-      "component": "mergDefault"
+      "component": "merg-canace8c"
     },
     "25": {
       "name": "CANETHER",
@@ -34,7 +34,7 @@
     },
     "52": {
       "name": "CANMIO-OUT",
-      "component": "mergDefault"
+      "component": "merg-canacc8"
     },
     "53": {
       "name": "CANMIO-BIP",
@@ -46,11 +46,11 @@
     },
     "62": {
       "name": "CANINP",
-      "component": "mergDefault"
+      "component": "merg-canace8c"
     },
     "63": {
       "name": "CANOUT",
-      "component": "mergDefault"
+      "component": "merg-canacc8"
     },
     "65": {
       "name": "ETHNIGE",

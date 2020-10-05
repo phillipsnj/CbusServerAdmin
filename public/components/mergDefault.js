@@ -32,7 +32,7 @@ Vue.component('mergDefault', {
         },
         getEvents() {
             //console.log(`mergDefault - NERD : ${this.nodeId}`)
-            this.$root.send('REQUEST_ALL_NODE_EVENTS', {'nodeId': this.nodeId})
+            //this.$root.send('REQUEST_ALL_NODE_EVENTS', {'nodeId': this.nodeId})
             this.$store.state.node_component = "merg-default-node-events"
         }
     },
@@ -131,13 +131,13 @@ Vue.component('merg-default-node-events', {
 
         },
         deleteEvent: function (event) {
-            console.log(`deleteEvent : ${this.node.node} : ${event}`)
-            this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
+            console.log(`deleteEvent : ${this.node.node} : ${JSON.stringify(event)}`)
+            this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
         }
     },
     mounted() {
         if (this.node.EvCount > 0) {
-            console.log(`NERD : ${this.nodeId}`)
+            console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
             this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
         }
     },
@@ -192,10 +192,6 @@ Vue.component('merg-default-node-event-variables', {
             "eventIndex": this.$store.state.selected_action_id,
             "variables": this.node.parameters[5]
         })
-        /*for (let i = 1; i <= this.node.parameters[5]; i++) {
-            let time = i*100
-            setTimeout(this.getEventVariable,time,i)
-        }*/
     },
     computed: {
         nodeId: function () {
@@ -208,15 +204,6 @@ Vue.component('merg-default-node-event-variables', {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         }
     },
-    /*methods: {
-        getEventVariable: function (parameter) {
-            this.$root.send('REQUEST_EVENT_VARIABLE', {
-                "nodeId": this.$store.state.selected_node_id,
-                "eventIndex": this.$store.state.selected_action_id,
-                "valueId": parameter
-            })
-        }
-    },*/
     template: `
       <v-container>
       <h3>Event Variables</h3>
