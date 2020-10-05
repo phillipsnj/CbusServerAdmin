@@ -1,12 +1,12 @@
 {
   "modules": {
     "32": {
-      "name": "canmio-universal",
-      "component": "merg-canmio"
+      "name": "Universal",
+      "component": "mergDefault"
     },
     "3": {
       "name": "CANACC8",
-      "component": "merg-canacc8"
+      "component": "mergDefault"
     },
     "9": {
       "name": "CANCAB",
@@ -14,11 +14,11 @@
     },
     "19": {
       "name": "CANSERVO8C",
-      "component": "merg-canservo8c"
+      "component": "mergDefault"
     },
     "29": {
       "name": "CANPAN",
-      "component": "mergCANPAN"
+      "component": "mergDefault"
     },
     "10": {
       "name": "CANCMD",
@@ -26,7 +26,7 @@
     },
     "5": {
       "name": "CANACE8C",
-      "component": "merg-canace8c"
+      "component": "mergDefault"
     },
     "25": {
       "name": "CANETHER",
@@ -46,7 +46,7 @@
     },
     "62": {
       "name": "CANINP",
-      "component": "merg-canace8c"
+      "component": "mergDefault"
     },
     "63": {
       "name": "CANOUT",

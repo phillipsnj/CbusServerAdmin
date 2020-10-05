@@ -21,7 +21,8 @@ app.use('/css',express.static(__dirname +'/node_modules'));
 //
 
 const NET_PORT = 5550;
-const NET_ADDRESS = "192.168.8.123"
+const NET_ADDRESS = "localhost"
+//const NET_ADDRESS = "mergDev4"
 const PORT = 3000
 
 const admin = require('./merg/mergAdminNode.js')

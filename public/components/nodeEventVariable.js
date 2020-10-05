@@ -33,12 +33,12 @@ Vue.component('node-event-variable', {
     methods: {
         updateEV: function () {
             console.log(`Update Event Variable : ${this.node} : ${this.action}`)
-            this.$root.send('EVLRN', {
+            this.$root.send('UPDATE_EVENT_VARIABLE', {
                 "nodeId": this.nodeId,
-                "actionId": this.actionId,
+                "eventIndex": this.actionId,
                 "eventName": this.eventName,
-                "eventId": this.varId,
-                "eventVal": this.variableLocal
+                "eventVariableId": this.varId,
+                "eventVariableValue": this.variableLocal
             })
         }
     },
@@ -85,13 +85,20 @@ Vue.component('node-event-variable-select', {
     methods: {
         updateEV: function () {
             console.log(`Update Event Variable Select : ${this.nodeId} : ${this.actionId} : ${this.varId} : ${this.variableLocal}`)
-            this.$root.send('EVLRN', {
+            this.$root.send('UPDATE_EVENT_VARIABLE', {
+                "nodeId": this.nodeId,
+                "eventIndex": this.actionId,
+                "eventName": this.eventName,
+                "eventVariableId": this.varId,
+                "eventVariableValue": this.variableLocal
+            })
+            /*this.$root.send('EVLRN', {
                 "nodeId": this.nodeId,
                 "actionId": this.actionId,
                 "eventName": this.eventName,
                 "eventId": this.varId,
                 "eventVal": this.variableLocal
-            })
+            })*/
         }
     },
     template: `
@@ -132,12 +139,9 @@ Vue.component('node-event-variable-bit', {
     },
     watch: {
         variableValue() {
-            console.log(` set `)
-            //this.checked = this.$store.state.nodes[this.node].variables[this.variable] & this.bitArray[this.bit] ? true : false
+            console.log(`Set ${this.bitValue} ${this.bit}`)
+            this.checked = this.$store.state.nodes[this.node].actions[this.action].variables[this.variable] & this.bitArray[this.bit] ? true : false
         },
-        checked() {
-            console.log(` Checked `)
-        }
     },
     computed: {
         variableValue: function () {
@@ -155,14 +159,21 @@ Vue.component('node-event-variable-bit', {
                 value = value - this.bitArray[this.bit]
             }
             //this.$store.state.nodes[this.node].variables[this.variable] = value
-            console.log(`updateEV bit ${this.node} : ${this.variable} : ${this.checked}`)
-            this.$root.send('EVLRN', {
+            console.log(`updateEV bit ${this.node} : ${this.variable} : ${this.checked} : ${this.bit}`)
+            this.$root.send('UPDATE_EVENT_VARIABLE', {
+                "nodeId": this.node,
+                "eventIndex": this.action,
+                "eventName": this.eventName,
+                "eventVariableId": this.variable,
+                "eventVariableValue": value
+            })
+            /*this.$root.send('EVLRN', {
                 "nodeId": this.node,
                 "actionId": this.action,
                 "eventName": this.eventName,
                 "eventId": this.variable,
                 "eventVal": value
-            })
+            })*/
             //console.log(`New Value : ${value}`)
             //console.log(`Stored : ${this.$store.state.nodes[this.node].actions[this.action].variables[this.variable]}`)
         }

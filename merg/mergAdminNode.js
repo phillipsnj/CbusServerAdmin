@@ -115,9 +115,9 @@ class cbusAdmin extends EventEmitter {
                 }
                 this.config.nodes[ref].status = true
                 //this.saveConfig()
-                this.cbusSend(this.RQNPN(msg.nodeId(), 0))// Get the number of Parameters
+                //this.cbusSend(this.RQNPN(msg.nodeId(), 0))// Get the number of Parameters
                 //this.cbusSend(this.RQNPN(msg.nodeId(),5))// Get the number of Event Variables
-                this.cbusSend(this.RQNPN(msg.nodeId(), 6))// Get the number of Node Variables
+                //this.cbusSend(this.RQNPN(msg.nodeId(), 6))// Get the number of Node Variables
                 this.cbusSend((this.RQEVN(msg.nodeId())))
                 //this.cbusSend(this.NVRD(msg.nodeId(),1))//
                 /*let nodes = []
@@ -199,14 +199,14 @@ class cbusAdmin extends EventEmitter {
                 if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != null) {
                     //console.log(`Event Variable Exists `)
                     if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != msg.actionEventVarVal()) {
-                        console.log(`Event Variable Value has Changed `)
+                        console.log(`Event Variable ${msg.actionEventVarId()} Value has Changed `)
                         this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
                         this.saveConfig()
                     } else {
-                        //console.log(`Event Variable Value has not Changed `)
+                        console.log(`Event Variable ${msg.actionEventVarId()} Value has not Changed `)
                     }
                 } else {
-                    console.log(`Event Variable Does not exist on config`)
+                    console.log(`Event Variable ${msg.actionEventVarId()} Does not exist on config`)
                     this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
                     this.saveConfig()
                 }
@@ -217,14 +217,14 @@ class cbusAdmin extends EventEmitter {
                 //console.log(`NVANS (97) Node ${msg.nodeId()} : ${msg.variableId()} : ${msg.variableVal()}`)
                 if (this.config.nodes[msg.nodeId()].variables[msg.variableId()] != null) {
                     if (this.config.nodes[msg.nodeId()].variables[msg.variableId()] != msg.variableVal()) {
-                        console.log(`Variable value has changed`)
+                        console.log(`Variable ${msg.variableId()} value has changed`)
                         this.config.nodes[msg.nodeId()].variables[msg.variableId()] = msg.variableVal()
                         this.saveConfig()
                     } else {
-                        console.log(`Variable value has not changed`)
+                        console.log(`Variable ${msg.variableId()} value has not changed`)
                     }
                 } else {
-                    console.log(`Variable value does not exist in config`)
+                    console.log(`Variable ${msg.variableId()} value does not exist in config`)
                     this.config.nodes[msg.nodeId()].variables[msg.variableId()] = msg.variableVal()
                     this.saveConfig()
                 }
@@ -235,14 +235,14 @@ class cbusAdmin extends EventEmitter {
                 //console.log(`PARAN (9B) ${msg.nodeId()} Parameter ${msg.paramId()} Value ${msg.paramValue()}`)
                 if (this.config.nodes[msg.nodeId()].parameters[msg.paramId()] != null) {
                     if (this.config.nodes[msg.nodeId()].parameters[msg.paramId()] != msg.paramValue()) {
-                        console.log(`Parameter value has changed`)
+                        console.log(`Parameter ${msg.paramId()} value has changed`)
                         this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
                         this.saveConfig()
                     } else {
-                        console.log(`Parameter value has not changed`)
+                        console.log(`Parameter ${msg.paramId()} value has not changed`)
                     }
                 } else {
-                    //console.log(`Parameter value does not exist in config`)
+                    console.log(`Parameter ${msg.paramId()} value does not exist in config`)
                     this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
                     this.saveConfig()
                 }

@@ -164,7 +164,8 @@ Vue.component('merg-canmio-node-variables', {
     //props: ['nodeId'],
     mounted() {
         for (let i = 1; i <= 4; i++) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+            let time = i*50
+            setTimeout(this.getVariable,time,i)
         }
     },
     computed: {
@@ -174,6 +175,11 @@ Vue.component('merg-canmio-node-variables', {
         node: function () {
             return this.$store.state.nodes[this.nodeId]
         },
+    },
+    methods: {
+        getVariable: function (parameter) {
+            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
+        }
     },
     template: `
       <v-container>
@@ -218,13 +224,18 @@ Vue.component('merg-canmio-node-channels', {
     },
     mounted() {
         for (let i = 16; i <= 22; i++) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+            let time = i*100
+            setTimeout(this.getVariable,time,i)
         }
     },
     watch: {
         baseNV: function () {
+            let count=1
             for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
-                this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+                //this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+                let time = count*100
+                count +=1
+                setTimeout(this.getVariable,time,i)
             }
         }
     },
@@ -252,6 +263,9 @@ Vue.component('merg-canmio-node-channels', {
         }
     },
     methods: {
+        getVariable: function (parameter) {
+            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
+        },
         updateChannelType: function () {
             this.$root.send('NVSET', {
                 "nodeId": this.nodeId,

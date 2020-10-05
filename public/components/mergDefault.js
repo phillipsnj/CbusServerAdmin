@@ -31,8 +31,8 @@ Vue.component('mergDefault', {
             this.$store.state.node_component = "merg-default-node-variables"
         },
         getEvents() {
-            console.log(`mergDefault - NERD : ${this.nodeId}`)
-            this.$root.send('NERD', {'nodeId': this.nodeId})
+            //console.log(`mergDefault - NERD : ${this.nodeId}`)
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {'nodeId': this.nodeId})
             this.$store.state.node_component = "merg-default-node-events"
         }
     },
@@ -68,9 +68,11 @@ Vue.component('merg-default-node-variables', {
     name: "merg-default-node-variables",
     //props: ['nodeId'],
     mounted() {
-        for (let i = 1; i <= this.node.parameters[6]; i++) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
-        }
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6]})
+        /*for (let i = 1; i <= this.node.parameters[6]; i++) {
+            let time = i*100
+            setTimeout(this.getVariable,time,i)
+        }*/
     },
     computed: {
         nodeId: function () {
@@ -80,6 +82,11 @@ Vue.component('merg-default-node-variables', {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         },
     },
+    /*methods: {
+        getVariable: function (parameter) {
+            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
+        }
+    },*/
     template: `
       <v-container>
       <h3>Node Variables</h3>
@@ -114,9 +121,9 @@ Vue.component('merg-default-node-events', {
     methods: {
         editEvent: function (item) {
             console.log(`editEvent(${item.event})`)
-            for (let i = 1; i <= this.node.parameters[5]; i++) {
-                this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": item.actionId, "valueId": i})
-            }
+            /*for (let i = 1; i <= this.node.parameters[5]; i++) {
+                this.$root.send('REQUEST_EVENT_VARIABLE', {"nodeId": this.nodeId, "actionId": item.actionId, "valueId": i})
+            }*/
             //this.eventDialog = true
             this.editedEvent = item
             this.$store.state.selected_action_id = item.actionId
@@ -131,7 +138,7 @@ Vue.component('merg-default-node-events', {
     mounted() {
         if (this.node.EvCount > 0) {
             console.log(`NERD : ${this.nodeId}`)
-            this.$root.send('NERD', {"nodeId": this.nodeId})
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
         }
     },
     computed: {
@@ -161,24 +168,6 @@ Vue.component('merg-default-node-events', {
                   inset
                   vertical
               ></v-divider>
-              <!--<v-spacer></v-spacer>
-              <v-dialog v-model="eventDialog" max-width="500px">
-                  <v-card>
-                      <v-card-title>
-                          <span class="headline">Edit Event</span>
-                      </v-card-title>
-                      <v-card-text>
-                          <v-container>
-                              <v-row>
-                                  <merg-default-node-event-variables
-                                          v-bind:nodeId="nodeId"
-                                          v-bind:actionId="editedEvent.actionId">
-                                  </merg-default-node-event-variables>
-                              </v-row>
-                          </v-container>
-                      </v-card-text>
-                  </v-card>
-              </v-dialog>-->
             </v-toolbar>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -198,13 +187,15 @@ Vue.component('merg-default-node-event-variables', {
     //props: ['nodeId', 'actionId'],
     mounted() {
         console.log(`merg-default-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
-        for (let i = 1; i <= this.node.parameters[5]; i++) {
-            this.$root.send('REVAL', {
-                "nodeId": this.$store.state.selected_node_id,
-                "actionId": this.$store.state.selected_action_id,
-                "valueId": i
-            })
-        }
+        this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
+            "nodeId": this.$store.state.selected_node_id,
+            "eventIndex": this.$store.state.selected_action_id,
+            "variables": this.node.parameters[5]
+        })
+        /*for (let i = 1; i <= this.node.parameters[5]; i++) {
+            let time = i*100
+            setTimeout(this.getEventVariable,time,i)
+        }*/
     },
     computed: {
         nodeId: function () {
@@ -216,15 +207,16 @@ Vue.component('merg-default-node-event-variables', {
         node: function () {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         }
-    }/*,
-    methods: {
-        getEventVariables: function (actionId) {
-            console.log(`getEventVariables(${actionId})`)
-            for (let i = 1; i <= this.node.parameters[5]; i++) {
-                this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": actionId, "valueId": i})
-            }
+    },
+    /*methods: {
+        getEventVariable: function (parameter) {
+            this.$root.send('REQUEST_EVENT_VARIABLE', {
+                "nodeId": this.$store.state.selected_node_id,
+                "eventIndex": this.$store.state.selected_action_id,
+                "valueId": parameter
+            })
         }
-    }*/,
+    },*/
     template: `
       <v-container>
       <h3>Event Variables</h3>

@@ -2,9 +2,7 @@ Vue.component('nodeInfo', {
     name: "nodeInfo",
     //props: ['nodeId'],
     mounted() {
-        for (let i = 1; i <= this.node.parameters[0]; i++) {
-            this.$root.send('RQNPN', {"nodeId": this.node.node, "parameter": i})
-        }
+        this.$root.send('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": this.node.node, "parameters": 20})
     },
     computed: {
         nodeId: function () {
