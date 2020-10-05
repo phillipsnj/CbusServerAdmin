@@ -16,18 +16,33 @@ function wsserver(httpserver, node) {
             console.log('QNN Requested');
             node.cbusSend(node.QNN())
         })
+        socket.on('REQUEST_ALL_NODE_PARAMETERS', function(data){ //Request Node Parameter
+            console.log(`REQUEST_ALL_NODE_PARAMETERS ${JSON.stringify(data)}`);
+            for (let i = 0; i <= data.parameters; i++) {
+                let time = i*100
+                setTimeout(function() {node.cbusSend(node.RQNPN(data.nodeId, i))},time)
+            }
+            //node.cbusSend(node.RQNPN(data.nodeId, data.parameter))
+        })
         socket.on('RQNPN', function(data){ //Request Node Parameter
             console.log(`RQNPN ${JSON.stringify(data)}`);
             node.cbusSend(node.RQNPN(data.nodeId, data.parameter))
+        })
+        socket.on('REQUEST_ALL_NODE_VARIABLES', function(data){
+            console.log(`REQUEST_ALL_NODE_VARIABLES ${JSON.stringify(data)}`);
+            for (let i = 0; i <= data.variables; i++) {
+                let time = i*100
+                setTimeout(function() {node.cbusSend(node.NVRD(data.nodeId, i))},time)
+            }
         })
         socket.on('NVRD', function(data){
             console.log(`NVRD ${JSON.stringify(data)}`);
             node.cbusSend(node.NVRD(data.nodeId, data.variableId))
         })
-        socket.on('NVSET', function(data){
-            console.log(`NVSET ${JSON.stringify(data)}`);
+        socket.on('UPDATE_NODE_VARIABLE', function(data){
             node.cbusSend(node.NVSET(data.nodeId, data.variableId, data.variableValue))
-            node.cbusSend(node.NVRD(data.nodeId, data.variableId))
+            console.log(`UPDATE_NODE_VARIABLE ${JSON.stringify(data)}`);
+            setTimeout(function() {node.cbusSend(node.NVRD(data.nodeId, data.variableId))},100)
         })
         socket.on('NVSET-learn', function(data){
             console.log(`NVSET-learn ${JSON.stringify(data)}`);
@@ -37,20 +52,27 @@ function wsserver(httpserver, node) {
             node.cbusSend(node.NVRD(data.nodeId, data.variableId))
             node.cbusSend(node.NNULN(data.nodeId))
         })
-        socket.on('NERD', function(data){
-            console.log(`NERD ${JSON.stringify(data)}`);
+        socket.on('REQUEST_ALL_NODE_EVENTS', function(data){
+            console.log(`REQUEST_ALL_NODE_EVENTS ${JSON.stringify(data)}`);
             node.cbusSend(node.NERD(data.nodeId))
         })
-        socket.on('REVAL', function(data){
-            console.log(`REVAL ${JSON.stringify(data)}`);
+        socket.on('REQUEST_ALL_EVENT_VARIABLES', function(data){
+            console.log(`REQUEST_EVENT_VARIABLE ${JSON.stringify(data)}`);
+            for (let i = 0; i <= data.variables; i++) {
+                let time = i*100
+                setTimeout(function() {node.cbusSend(node.REVAL(data.nodeId, data.eventIndex, i))},time)
+            }
+        })
+        socket.on('REQUEST_EVENT_VARIABLE', function(data){
+            console.log(`REQUEST_EVENT_VARIABLE ${JSON.stringify(data)}`);
             node.cbusSend(node.REVAL(data.nodeId, data.actionId, data.valueId))
         })
-        socket.on('EVLRN', function(data){
+        socket.on('UPDATE_EVENT_VARIABLE', function(data){
             console.log(`EVLRN ${JSON.stringify(data)}`);
             node.cbusSend(node.NNLRN(data.nodeId))
-            node.cbusSend(node.EVLRN(data.eventName, data.eventId, data.eventVal))
+            node.cbusSend(node.EVLRN(data.eventName, data.eventVariableId, data.eventVariableValue))
             node.cbusSend(node.NNULN(data.nodeId))
-            node.cbusSend(node.REVAL(data.nodeId, data.actionId, data.eventId))
+            node.cbusSend(node.REVAL(data.nodeId, data.eventIndex, data.eventVariableId))
             node.cbusSend(node.NNULN(data.nodeId))
             node.cbusSend(node.NERD(data.nodeId))
             node.cbusSend(node.RQEVN(data.nodeId))

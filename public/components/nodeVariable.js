@@ -29,7 +29,7 @@ Vue.component('node-variable', {
     },
     methods: {
         updateNV: function () {
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": this.nodeId,
                 "variableId": this.varId,
                 "variableValue": this.variableLocal
@@ -69,8 +69,8 @@ Vue.component('node-variable-bit', {
     },
     watch: {
         variableValue() {
-            console.log(` set `)
             this.checked = this.$store.state.nodes[this.nodeId].variables[this.varId] & this.bitArray[this.bit] ? true : false
+            console.log(`Set ${this.bit} : ${this.bitArray[this.bit]} : ${this.checked}`)
         }
     },
     computed: {
@@ -81,17 +81,18 @@ Vue.component('node-variable-bit', {
     methods: {
         updateNV: function () {
             let value = this.$store.state.nodes[this.nodeId].variables[this.varId]
+            console.log(`Update Nv : ${this.bit} : ${this.bitArray[this.bit]} : ${value}`)
             if (this.checked) {
                 value = value + this.bitArray[this.bit]
             } else {
                 value = value - this.bitArray[this.bit]
             }
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": this.nodeId,
                 "variableId": this.varId,
                 "variableValue": value
             })
-            console.log(`Stored : ${this.$store.state.nodes[this.nodeId].variables[this.varId]}`)
+            console.log(`Stored : ${this.bit} : ${this.bitArray[this.bit]} : ${value}`)
         }
     },
     template: `
@@ -133,7 +134,7 @@ Vue.component('node-variable-slider', {
     },
     methods: {
         updateNV: function (position) {
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": this.nodeId,
                 "variableId": this.varId,
                 "variableValue": position
@@ -197,7 +198,7 @@ Vue.component('node-variable-select', {
     },
     methods: {
         updateNV: function () {
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": this.nodeId,
                 "variableId": this.varId,
                 "variableValue": this.variableLocal
@@ -271,7 +272,7 @@ Vue.component('node-variable-slider2', {
     },
     methods: {
         updateNV: function (position) {
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": this.nodeId,
                 "variableId": this.varId,
                 "variableValue": position

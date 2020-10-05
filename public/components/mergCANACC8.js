@@ -32,7 +32,7 @@ Vue.component('merg-canacc8', {
         },
         getEvents() {
             console.log(`mergDefault - NERD : ${this.nodeId}`)
-            this.$root.send('NERD', {'nodeId': this.nodeId})
+            //this.$root.send('NERD', {'nodeId': this.nodeId})
             this.$store.state.node_component = "merg-canacc8-node-events"
         }
     },
@@ -69,7 +69,8 @@ Vue.component('merg-canacc8-node-variables', {
     //props: ['nodeId'],
     mounted() {
         for (let i = 1; i <= this.node.parameters[6]; i++) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+            let time = i*100
+            setTimeout(this.getVariable,time,i)
         }
     },
     computed: {
@@ -79,6 +80,11 @@ Vue.component('merg-canacc8-node-variables', {
         node: function () {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         },
+    },
+    methods: {
+        getVariable: function (parameter) {
+            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
+        }
     },
     template: `
       <v-container>
@@ -191,11 +197,8 @@ Vue.component('merg-canacc8-node-event-variables', {
     mounted() {
         console.log(`merg-canacc8-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
         for (let i = 1; i <= this.node.parameters[5]; i++) {
-            this.$root.send('REVAL', {
-                "nodeId": this.$store.state.selected_node_id,
-                "actionId": this.$store.state.selected_action_id,
-                "valueId": i
-            })
+            let time = i*100
+            setTimeout(this.getEventVariable,time,i)
         }
     },
     computed: {
@@ -210,6 +213,13 @@ Vue.component('merg-canacc8-node-event-variables', {
         }
     },
     methods: {
+        getEventVariable: function (parameter) {
+            this.$root.send('REVAL', {
+                "nodeId": this.$store.state.selected_node_id,
+                "actionId": this.$store.state.selected_action_id,
+                "valueId": parameter
+            })
+        },
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             // eslint-disable-next-line no-console
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
