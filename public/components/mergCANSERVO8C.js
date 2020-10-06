@@ -79,15 +79,17 @@ Vue.component('merg-canservo8c-node-variables', {
     },
     watch: {
         baseNV: function () {
-            for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
+            this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
+            /*for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
                 this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i})
-            }
+            }*/
         }
     },
     mounted() {
-        for (let i = 1; i <= this.node.parameters[6]; i++) {
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
+        /*for (let i = 1; i <= this.node.parameters[6]; i++) {
             this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i})
-        }
+        }*/
     },
     computed: {
         nodeId: function () {
@@ -102,6 +104,7 @@ Vue.component('merg-canservo8c-node-variables', {
     },
     template: `
       <v-container>
+      <p>{{ node.variables }}</p>
       <h3>Servo {{ selectedChannel }} Variables</h3>
       <v-row>
         <v-card class="xs6 md3 pa-3" flat>

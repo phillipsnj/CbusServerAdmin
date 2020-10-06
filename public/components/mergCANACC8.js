@@ -68,7 +68,7 @@ Vue.component('merg-canacc8-node-variables', {
     name: "merg-canacc8-node-variables",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6]})
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
 /*        for (let i = 1; i <= this.node.parameters[6]; i++) {
             let time = i*100
             setTimeout(this.getVariable,time,i)
@@ -90,6 +90,7 @@ Vue.component('merg-canacc8-node-variables', {
     template: `
       <v-container>
       <h3>Node Variables</h3>
+      <p>{{ node.variables }}</p>
       <v-row>
       <merg-canacc8-variable-channel v-bind:nodeId="node.node"
                                      v-bind:channelId="n"

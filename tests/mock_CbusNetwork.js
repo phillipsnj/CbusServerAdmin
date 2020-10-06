@@ -65,9 +65,6 @@ class mock_CbusNetwork {
 						// Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
 						if (debug) console.log('Mock CBUS Network: received RQEVN');
 						this.outputNUMEV(msg.nodeId());
-						this.outputACOF(msg.nodeId(), 0);
-						this.outputACOF(msg.nodeId(), 1);
-						this.outputACOF(msg.nodeId(), 65535);
 						break;
 					case '73':
 						// Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>

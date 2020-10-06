@@ -125,47 +125,6 @@ describe('Websocket server tests', function(){
 										{ node: 65535 },
 										];
 
-	function GetTestCase_EVLRN () {
-		var testCases = [];
-		var nodeId;
-		var actionId;
-		var eventName;
-		var eventId;
-		var eventVal;
-		for (l1 = 1; l1 < 4; l1++) {
-			if (l1 == 1) nodeId = 0;
-			if (l1 == 2) nodeId = 1;
-			if (l1 == 3) nodeId = 65535;
-			
-			for (l2 = 1; l2 < 4; l2++) {
-				if (l2 == 1) actionId = 0;
-				if (l2 == 2) actionId = 1;
-				if (l2 == 3) actionId = 65535;
-				
-				for (l3 = 1; l3 < 4; l3++) {
-					if (l3 == 1) eventName = '00000000';
-					if (l3 == 2) eventName = '00000001';
-					if (l3 == 3) eventName = 'FFFFFFFF';
-					
-					for (l4 = 1; l4 < 4; l4++) {
-						if (l4 == 1) eventId = 0;
-						if (l4 == 2) eventId = 1;
-						if (l4 == 3) eventId = 255;
-					
-						for (l5 = 1; l5 < 4; l5++) {
-							if (l5 == 1) eventVal = 0;
-							if (l5 == 2) eventVal = 1;
-							if (l5 == 3) eventVal = 255;
-						
-							testCases.push({'nodeId':nodeId,'actionId':actionId, 'eventName':eventName, 'eventId':eventId, 'eventVal':eventVal});
-						}
-					}
-				}
-			}
-		}
-		return testCases;
-	}
-
 	function GetTestCase_EVULN () {
 		var testCases = [];
 		var nodeId;
@@ -260,25 +219,61 @@ describe('Websocket server tests', function(){
 
 
 
-	itParam("EVLRN test nodeId ${value.nodeId} actionId ${value.actionId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
-		GetTestCase_EVLRN(), function (done, value) {
-		if (debug) console.log("\nTest Client: Request EVLRN");
+	function GetTestCase_UPDATE_EVENT_VARIABLE () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (eventIndexCount = 1; eventIndexCount < 4; eventIndexCount++) {
+				if (eventIndexCount == 1) eventIndex = 0;
+				if (eventIndexCount == 2) eventIndex = 1;
+				if (eventIndexCount == 3) eventIndex = 255;
+				
+				for (eventNameCount = 1; eventNameCount < 4; eventNameCount++) {
+					if (eventNameCount == 1) eventName = '00000000';
+					if (eventNameCount == 2) eventName = '00000001';
+					if (eventNameCount == 3) eventName = 'FFFFFFFF';
+					
+					for (eventVariableIdCount = 1; eventVariableIdCount < 4; eventVariableIdCount++) {
+						if (eventVariableIdCount == 1) eventVariableId = 0;
+						if (eventVariableIdCount == 2) eventVariableId = 1;
+						if (eventVariableIdCount == 3) eventVariableId = 255;
+					
+						for (eventVariableValueCount = 1; eventVariableValueCount < 4; eventVariableValueCount++) {
+							if (eventVariableValueCount == 1) eventVariableValue = 0;
+							if (eventVariableValueCount == 2) eventVariableValue = 1;
+							if (eventVariableValueCount == 3) eventVariableValue = 255;
+						
+							testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'eventName':eventName, 'eventVariableId':eventVariableId, 'eventVariableValue':eventVariableValue});
+						}
+					}
+				}
+			}
+		}
+		return testCases;
+	}
+
+	itParam("UPDATE_EVENT_VARIABLE test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventName ${value.eventName}, eventVariableId ${value.eventVariableId}, eventVariableValue ${value.eventVariableValue}",
+		GetTestCase_UPDATE_EVENT_VARIABLE(), function (done, value) {
+		if (debug) console.log("\nTest Client: UPDATE_EVENT_VARIABLE test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('EVLRN', {
+		websocket_Client.emit('UPDATE_EVENT_VARIABLE', {
                 "nodeId": value.nodeId,
-                "actionId": value.actionId,
+                "eventIndex": value.eventIndex,
                 "eventName": value.eventName,
-                "eventId": value.eventId,
-                "eventVal": value.eventVal
+                "eventVariableId": value.eventVariableId,
+                "eventVariableValue": value.eventVariableValue
             })
 		setTimeout(function(){
 			 expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
 			 expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
-			 expected1 = ":SB780ND2" + value.eventName + decToHex(value.eventId, 2) + decToHex(value.eventVal, 2) + ";";
+			 expected1 = ":SB780ND2" + value.eventName + decToHex(value.eventVariableId, 2) + decToHex(value.eventVariableValue, 2) + ";";
 			 expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
 			 expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
 			 expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
-			 expected3 = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.actionId, 2) + decToHex(value.eventId, 2) + ";";
+			 expected3 = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableId, 2) + ";";
 			 expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
 			 expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
 			 expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
@@ -318,10 +313,10 @@ describe('Websocket server tests', function(){
 	})
 
 
-	itParam("NERD test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
-		if (debug) console.log("\nTest Client: Request NERD");
+	itParam("REQUEST_ALL_NODE_EVENTS test nodeId ${value.node}", TestCases_NodeId, function (done, value) {
+		if (debug) console.log("\nTest Client: Request REQUEST_ALL_NODE_EVENTS");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('NERD', {"nodeId": value.node})
+		websocket_Client.emit('REQUEST_ALL_NODE_EVENTS', {"nodeId": value.node})
 		setTimeout(function(){
 			expected = ":SB780N57" + decToHex(value.node, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
@@ -342,29 +337,167 @@ describe('Websocket server tests', function(){
 	})
 		
 
-	itParam("NVSET test nodeId ${value.node} variableId ${value.paramId} value ${value.paramVal}", TestCases_NodeParamIDParamValue, function (done, value) {
-		if (debug) console.log("\nTest Client: Request NVSET");
+	function GetTestCase_NVSET_learn () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (variableIdCount = 1; variableIdCount < 4; variableIdCount++) {
+				if (variableIdCount == 1) variableId = 0;
+				if (variableIdCount == 2) variableId = 1;
+				if (variableIdCount == 3) variableId = 255;
+				
+				for (variableValueCount = 1; variableValueCount < 4; variableValueCount++) {
+					if (variableValueCount == 1) variableValue = 0;
+					if (variableValueCount == 2) variableValue = 1;
+					if (variableValueCount == 3) variableValue = 255;
+					
+					testCases.push({'nodeId':nodeId,'variableId':variableId, 'variableValue':variableValue});
+				}
+			}
+		}
+		return testCases;
+	}
+	
+
+
+	itParam("NVSET-learn test nodeId ${value.nodeId} variableId ${value.variableId} variableValue ${value.variableValue}", GetTestCase_NVSET_learn(), function (done, value) {
+		if (debug) console.log("\nTest Client: Request NVSET-learn");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('NVSET', {"nodeId": value.node, "variableId": value.paramId, "variableValue": value.paramVal})
+		websocket_Client.emit('NVSET-learn', {"nodeId": value.nodeId, "variableId": value.variableId, "variableValue": value.variableValue})
 		setTimeout(function(){
-			expected = ":SB780N96" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
+			expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
-			expected2 = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.paramId, 2) + ";";
-			expect(mock_Cbus.getSendArray()[1]).to.equal(expected2);
+			expected1 = ":SB780N96" + decToHex(value.nodeId, 4) + decToHex(value.variableId, 2)+ decToHex(value.variableValue, 2) + ";";
+			expect(mock_Cbus.getSendArray()[1]).to.equal(expected1);
+			expected2 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
+			expect(mock_Cbus.getSendArray()[2]).to.equal(expected2);
+			expected3 = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.variableId, 2) + ";";
+			expect(mock_Cbus.getSendArray()[3]).to.equal(expected3);
+			expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
+			expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			done();
 		}, 100);
 	})
 		
-		
-	itParam("REVAL test nodeId ${value.node} variableId ${value.paramId} value ${value.paramVal}", TestCases_NodeParamIDParamValue, function (done, value) {
-		if (debug) console.log("\nTest Client: Request REVAL");
+	function GetTestCase_REQUEST_ALL_EVENT_VARIABLES () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (eventIndexCount = 1; eventIndexCount < 4; eventIndexCount++) {
+				if (eventIndexCount == 1) eventIndex = 0;
+				if (eventIndexCount == 2) eventIndex = 1;
+				if (eventIndexCount == 3) eventIndex = 255;
+				
+				for (eventVariableCountCtr = 1; eventVariableCountCtr < 4; eventVariableCountCtr++) {
+					if (eventVariableCountCtr == 1) eventVariableCount = 0;
+					if (eventVariableCountCtr == 2) eventVariableCount = 1;
+					if (eventVariableCountCtr == 3) {
+						if (nodeId == 65535 && eventIndex == 255) eventVariableCount = 255
+						else eventVariableCount = 2
+					}
+					
+					testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'eventName':eventName, 'eventVariableCount':eventVariableCount});
+				}
+			}
+		}
+		return testCases;
+	}
+	
+
+	itParam("REQUEST_ALL_EVENT_VARIABLES test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableCount ${value.eventVariableCount}", GetTestCase_REQUEST_ALL_EVENT_VARIABLES(), function (done, value) {
+		if (debug) console.log("\nTest Client: REQUEST_ALL_EVENT_VARIABLES test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('REVAL', {"nodeId": value.node, "actionId": value.paramId, "valueId": value.paramVal})
+		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {"nodeId": value.nodeId, "eventIndex": value.eventIndex, "variables": value.eventVariableCount})
 		setTimeout(function(){
-			expected = ":SB780N9C" + decToHex(value.node, 4) + decToHex(value.paramId, 2)+ decToHex(value.paramVal, 2) + ";";
+			expect(mock_Cbus.getSendArray().length).to.equal(value.eventVariableCount+1);
+			expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2)+ decToHex(0, 2) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expected_n = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2)+ decToHex(value.eventVariableCount, 2) + ";";
+			expect(mock_Cbus.getSendArray()[value.eventVariableCount]).to.equal(expected_n);
 			done();
-		}, 100);
+		}, value.eventVariableCount*100 + 200);
+	})
+		
+
+	function GetTestCase_REQUEST_ALL_NODE_PARAMETERS () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (parameterCountCtr = 1; parameterCountCtr < 4; parameterCountCtr++) {
+				if (parameterCountCtr == 1) parameterCount = 0;
+				if (parameterCountCtr == 2) parameterCount = 1;
+				if (parameterCountCtr == 3) {
+					if (nodeId == 65535) parameterCount = 255
+					else parameterCount = 2
+				}
+				
+				testCases.push({'nodeId':nodeId, 'parameterCount':parameterCount});
+			}
+		}
+		return testCases;
+	}
+	
+
+	itParam("REQUEST_ALL_NODE_PARAMETERS test nodeId ${value.nodeId} parameterCount ${value.parameterCount}", GetTestCase_REQUEST_ALL_NODE_PARAMETERS(), function (done, value) {
+		if (debug) console.log("\nTest Client: REQUEST_ALL_NODE_PARAMETERS test");
+		mock_Cbus.clearSendArray();
+		websocket_Client.emit('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": value.nodeId, "parameters": value.parameterCount})
+		setTimeout(function(){
+			expect(mock_Cbus.getSendArray().length).to.equal(value.parameterCount+1);
+			expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(0, 2) + ";";
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expected_n = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.parameterCount, 2) + ";";
+			expect(mock_Cbus.getSendArray()[value.parameterCount]).to.equal(expected_n);
+			done();
+		}, value.parameterCount*100 + 200);
+	})
+		
+
+	function GetTestCase_REQUEST_ALL_NODE_VARIABLES () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (VariableCountCtr = 1; VariableCountCtr < 4; VariableCountCtr++) {
+				if (VariableCountCtr == 1) variableCount = 0;
+				if (VariableCountCtr == 2) variableCount = 1;
+				if (VariableCountCtr == 3) {
+					if (nodeId == 65535) variableCount = 255
+					else variableCount = 2
+				}
+				
+				testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'variableCount':variableCount});
+			}
+		}
+		return testCases;
+	}
+	
+
+	
+
+	itParam("REQUEST_ALL_NODE_VARIABLES test nodeId ${value.nodeId} variableCount ${value.variableCount}", GetTestCase_REQUEST_ALL_NODE_VARIABLES(), function (done, value) {
+		if (debug) console.log("\nTest Client: REQUEST_ALL_NODE_VARIABLES test");
+		mock_Cbus.clearSendArray();
+		websocket_Client.emit('REQUEST_ALL_NODE_VARIABLES', {"nodeId": value.nodeId, "variables": value.variableCount})
+		setTimeout(function(){
+			expect(mock_Cbus.getSendArray().length).to.equal(value.variableCount+1);
+			expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(0, 2) + ";";
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expected_n = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.variableCount, 2) + ";";
+			expect(mock_Cbus.getSendArray()[value.variableCount]).to.equal(expected_n);
+			done();
+		}, value.variableCount*100 + 200);
 	})
 		
 

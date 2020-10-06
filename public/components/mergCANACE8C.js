@@ -68,7 +68,7 @@ Vue.component('merg-canace8c-node-variables', {
     name: "merg-canace8c-node-variables",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6]})
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
     },
     watch: {
         node() {
@@ -85,7 +85,8 @@ Vue.component('merg-canace8c-node-variables', {
     },
     template: `
       <v-container>
-      <h3>Node Variables</h3><p>{{ nodeId }} :: {{ node.variables }}</p>
+      <h3>Node Variables</h3>
+      <p>{{ nodeId }} :: {{ node.variables }}</p>
       <node-variable-bit-array v-bind:nodeId="nodeId" varId="1" name="On Only"></node-variable-bit-array>
       <node-variable-bit-array v-bind:nodeId="nodeId" varId="2" name="Inverted"></node-variable-bit-array>
       <node-variable-bit-array v-bind:nodeId="nodeId" varId="3" name="Delay"></node-variable-bit-array>
