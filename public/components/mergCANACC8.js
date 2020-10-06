@@ -90,6 +90,7 @@ Vue.component('merg-canacc8-node-variables', {
     template: `
       <v-container>
       <h3>Node Variables</h3>
+      <p>{{ node.variables }}</p>
       <v-row>
       <merg-canacc8-variable-channel v-bind:nodeId="node.node"
                                      v-bind:channelId="n"

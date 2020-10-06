@@ -102,6 +102,7 @@ Vue.component('merg-canservo8c-node-variables', {
     },
     template: `
       <v-container>
+      <p>{{ node.variables }}</p>
       <h3>Servo {{ selectedChannel }} Variables</h3>
       <v-row>
         <v-card class="xs6 md3 pa-3" flat>

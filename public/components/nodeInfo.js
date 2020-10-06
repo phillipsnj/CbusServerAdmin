@@ -18,6 +18,7 @@ Vue.component('nodeInfo', {
     template: `
       <div>
       <h1>Node Info {{ nodeId }}</h1>
+      <p>{{ node.parameters }}</p>
       <v-container>
         <v-row>
           <nodeParameter :nodeId="nodeId" parId="1" name="Manufacturer Id"></nodeParameter>

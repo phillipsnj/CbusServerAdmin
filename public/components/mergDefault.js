@@ -90,6 +90,7 @@ Vue.component('merg-default-node-variables', {
     template: `
       <v-container>
       <h3>Node Variables</h3>
+      <p>{{ node.variables }}</p>
       <v-row>
         <node-variable v-bind:nodeId="node.node"
                        v-bind:varId="n"
