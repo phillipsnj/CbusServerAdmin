@@ -398,7 +398,7 @@ describe('Websocket server tests', function(){
 					if (eventVariableCountCtr == 1) eventVariableCount = 0;
 					if (eventVariableCountCtr == 2) eventVariableCount = 1;
 					if (eventVariableCountCtr == 3) {
-						if (nodeId == 65535 && eventIndex == 255) eventVariableCount = 256
+						if (nodeId == 65535 && eventIndex == 255) eventVariableCount = 255
 						else eventVariableCount = 2
 					}
 					
@@ -436,7 +436,7 @@ describe('Websocket server tests', function(){
 				if (parameterCountCtr == 1) parameterCount = 0;
 				if (parameterCountCtr == 2) parameterCount = 1;
 				if (parameterCountCtr == 3) {
-					if (nodeId == 65535) parameterCount = 256
+					if (nodeId == 65535) parameterCount = 255
 					else parameterCount = 2
 				}
 				
@@ -459,6 +459,45 @@ describe('Websocket server tests', function(){
 			expect(mock_Cbus.getSendArray()[value.parameterCount]).to.equal(expected_n);
 			done();
 		}, value.parameterCount*100 + 200);
+	})
+		
+
+	function GetTestCase_REQUEST_ALL_NODE_VARIABLES () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (VariableCountCtr = 1; VariableCountCtr < 4; VariableCountCtr++) {
+				if (VariableCountCtr == 1) variableCount = 0;
+				if (VariableCountCtr == 2) variableCount = 1;
+				if (VariableCountCtr == 3) {
+					if (nodeId == 65535) variableCount = 255
+					else variableCount = 2
+				}
+				
+				testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'variableCount':variableCount});
+			}
+		}
+		return testCases;
+	}
+	
+
+	
+
+	itParam("REQUEST_ALL_NODE_VARIABLES test nodeId ${value.nodeId} variableCount ${value.variableCount}", GetTestCase_REQUEST_ALL_NODE_VARIABLES(), function (done, value) {
+		if (debug) console.log("\nTest Client: REQUEST_ALL_NODE_VARIABLES test");
+		mock_Cbus.clearSendArray();
+		websocket_Client.emit('REQUEST_ALL_NODE_VARIABLES', {"nodeId": value.nodeId, "variables": value.variableCount})
+		setTimeout(function(){
+			expect(mock_Cbus.getSendArray().length).to.equal(value.variableCount+1);
+			expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(0, 2) + ";";
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expected_n = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.variableCount, 2) + ";";
+			expect(mock_Cbus.getSendArray()[value.variableCount]).to.equal(expected_n);
+			done();
+		}, value.variableCount*100 + 200);
 	})
 		
 
