@@ -36,7 +36,8 @@ function wsserver(httpserver, node) {
             if (data.delay === undefined) {
                 data.delay = 100
             }
-            for (let i = data.start; i <= data.variables; i++) {
+            let finish = data.variables + data.start -1
+            for (let i = data.start; i <= finish; i++) {
                 let time = i*data.delay
                 setTimeout(function() {node.cbusSend(node.NVRD(data.nodeId, i))},time)
             }

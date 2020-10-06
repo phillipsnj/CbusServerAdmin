@@ -68,7 +68,7 @@ Vue.component('merg-canace8c-node-variables', {
     name: "merg-canace8c-node-variables",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6]})
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
     },
     watch: {
         node() {
