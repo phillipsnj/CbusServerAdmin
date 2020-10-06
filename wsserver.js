@@ -30,8 +30,14 @@ function wsserver(httpserver, node) {
         })
         socket.on('REQUEST_ALL_NODE_VARIABLES', function(data){
             console.log(`REQUEST_ALL_NODE_VARIABLES ${JSON.stringify(data)}`);
-            for (let i = 0; i <= data.variables; i++) {
-                let time = i*100
+            if (data.start === undefined) {
+                data.start = 1
+            }
+            if (data.delay === undefined) {
+                data.delay = 100
+            }
+            for (let i = data.start; i <= data.variables; i++) {
+                let time = i*data.delay
                 setTimeout(function() {node.cbusSend(node.NVRD(data.nodeId, i))},time)
             }
         })

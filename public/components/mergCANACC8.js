@@ -68,7 +68,7 @@ Vue.component('merg-canacc8-node-variables', {
     name: "merg-canacc8-node-variables",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6]})
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
 /*        for (let i = 1; i <= this.node.parameters[6]; i++) {
             let time = i*100
             setTimeout(this.getVariable,time,i)
