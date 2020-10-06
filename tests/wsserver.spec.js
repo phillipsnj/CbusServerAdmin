@@ -425,6 +425,43 @@ describe('Websocket server tests', function(){
 	})
 		
 
+	function GetTestCase_REQUEST_ALL_NODE_PARAMETERS () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (parameterCountCtr = 1; parameterCountCtr < 4; parameterCountCtr++) {
+				if (parameterCountCtr == 1) parameterCount = 0;
+				if (parameterCountCtr == 2) parameterCount = 1;
+				if (parameterCountCtr == 3) {
+					if (nodeId == 65535) parameterCount = 256
+					else parameterCount = 2
+				}
+				
+				testCases.push({'nodeId':nodeId, 'parameterCount':parameterCount});
+			}
+		}
+		return testCases;
+	}
+	
+
+	itParam("REQUEST_ALL_NODE_PARAMETERS test nodeId ${value.nodeId} parameterCount ${value.parameterCount}", GetTestCase_REQUEST_ALL_NODE_PARAMETERS(), function (done, value) {
+		if (debug) console.log("\nTest Client: REQUEST_ALL_NODE_PARAMETERS test");
+		mock_Cbus.clearSendArray();
+		websocket_Client.emit('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": value.nodeId, "parameters": value.parameterCount})
+		setTimeout(function(){
+			expect(mock_Cbus.getSendArray().length).to.equal(value.parameterCount+1);
+			expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(0, 2) + ";";
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expected_n = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.parameterCount, 2) + ";";
+			expect(mock_Cbus.getSendArray()[value.parameterCount]).to.equal(expected_n);
+			done();
+		}, value.parameterCount*100 + 200);
+	})
+		
+
 	itParam("RQNPN test nodeId ${value.node} param ${value.param}", TestCases_NodeParameter, function (done, value) {
 		if (debug) console.log("\nTest Client: Request RQNPN");
 		mock_Cbus.clearSendArray();
