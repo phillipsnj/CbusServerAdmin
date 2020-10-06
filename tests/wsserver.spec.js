@@ -397,7 +397,10 @@ describe('Websocket server tests', function(){
 				for (eventVariableCountCtr = 1; eventVariableCountCtr < 4; eventVariableCountCtr++) {
 					if (eventVariableCountCtr == 1) eventVariableCount = 0;
 					if (eventVariableCountCtr == 2) eventVariableCount = 1;
-					if (eventVariableCountCtr == 3) eventVariableCount = 256;
+					if (eventVariableCountCtr == 3) {
+						if (nodeId == 65535 && eventIndex == 255) eventVariableCount = 256
+						else eventVariableCount = 2
+					}
 					
 					testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'eventName':eventName, 'eventVariableCount':eventVariableCount});
 				}
@@ -419,7 +422,7 @@ describe('Websocket server tests', function(){
 //			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			
 			done();
-		}, value.eventVariableCount*2 + 200);
+		}, value.eventVariableCount*100 + 200);
 	})
 		
 
