@@ -194,10 +194,10 @@ describe('Websocket server tests', function(){
 
 
 
-	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
-		if (debug) console.log("\nTest Client: Request ACOF");
+	itParam("ACCESSORY_LONG_OFF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+		if (debug) console.log("\nTest Client: ACCESSORY_LONG_OFF test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('ACOF', {"nodeId": value.node, "eventId": value.event})
+		websocket_Client.emit('ACCESSORY_LONG_OFF', {"nodeId": value.node, "eventId": value.event})
 		setTimeout(function(){
 			expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
@@ -206,10 +206,10 @@ describe('Websocket server tests', function(){
 	})
 
 		
-	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
-		if (debug) console.log("\nTest Client: Request ACON");
+	itParam("ACCESSORY_LONG_ON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+		if (debug) console.log("\nTest Client: ACCESSORY_LONG_ON test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('ACON', {"nodeId": value.node, "eventId": value.event})
+		websocket_Client.emit('ACCESSORY_LONG_ON', {"nodeId": value.node, "eventId": value.event})
 		setTimeout(function(){
 			expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
