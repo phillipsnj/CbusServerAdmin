@@ -414,13 +414,12 @@ describe('Websocket server tests', function(){
 		if (debug) console.log("\nTest Client: REQUEST_ALL_EVENT_VARIABLES test");
 		mock_Cbus.clearSendArray();
 		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {"nodeId": value.nodeId, "eventIndex": value.eventIndex, "variables": value.eventVariableCount})
-//		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {"nodeId": 1, "eventIndex": 1, "variables": 2})
 		setTimeout(function(){
-			expect(mock_Cbus.getSendArray().length).to.equal(value.eventVariableCount);
-
-//			expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.paramId, 2)+ decToHex(value.eventVariableCount, 2) + ";";
-//			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
-			
+			expect(mock_Cbus.getSendArray().length).to.equal(value.eventVariableCount+1);
+			expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2)+ decToHex(0, 2) + ";";
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			expected_n = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2)+ decToHex(value.eventVariableCount, 2) + ";";
+			expect(mock_Cbus.getSendArray()[value.eventVariableCount]).to.equal(expected_n);
 			done();
 		}, value.eventVariableCount*100 + 200);
 	})
