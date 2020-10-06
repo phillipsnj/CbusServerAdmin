@@ -125,26 +125,6 @@ describe('Websocket server tests', function(){
 										{ node: 65535 },
 										];
 
-	function GetTestCase_EVULN () {
-		var testCases = [];
-		var nodeId;
-		var eventName;
-		for (l1 = 1; l1 < 4; l1++) {
-			if (l1 == 1) nodeId = 0;
-			if (l1 == 2) nodeId = 1;
-			if (l1 == 3) nodeId = 65535;
-			
-			for (l3 = 1; l3 < 4; l3++) {
-				if (l3 == 1) eventName = '00000000';
-				if (l3 == 2) eventName = '00000001';
-				if (l3 == 3) eventName = 'FFFFFFFF';
-				
-				testCases.push({'nodeId':nodeId, 'eventName':eventName});
-			}
-		}
-		return testCases;
-	}
-
 	function GetTestCase_TEACH_EVENT () {
 		var testCases = [];
 		var nodeId;
@@ -286,16 +266,34 @@ describe('Websocket server tests', function(){
 	})
 
 
-	itParam("EVULN test nodeId ${value.nodeId} eventName ${value.eventName}",
-		GetTestCase_EVULN(), function (done, value) {
-		if (debug) console.log("\nTest Client: Request EVULN");
+	function GetTestCase_REMOVE_EVENT () {
+		var testCases = [];
+		var nodeId;
+		var eventName;
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (eventNameCount = 1; eventNameCount < 4; eventNameCount++) {
+				if (eventNameCount == 1) eventName = '00000000';
+				if (eventNameCount == 2) eventName = '00000001';
+				if (eventNameCount == 3) eventName = 'FFFFFFFF';
+				
+				testCases.push({'nodeId':nodeId, 'eventName':eventName});
+			}
+		}
+		return testCases;
+	}
+
+	itParam("REMOVE_EVENT test nodeId ${value.nodeId} eventName ${value.eventName}",
+		GetTestCase_REMOVE_EVENT(), function (done, value) {
+		if (debug) console.log("\nTest Client: REMOVE_EVENT test");
 		mock_Cbus.clearSendArray();
 		
-		var event = {'event':value.eventName};
-
-		websocket_Client.emit('EVULN', {
+		websocket_Client.emit('REMOVE_EVENT', {
                 "nodeId": value.nodeId,
-				"eventName": event
+				"eventName": value.eventName
 				})
 		setTimeout(function(){
 			expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";		// NNLRN
@@ -325,10 +323,10 @@ describe('Websocket server tests', function(){
 	})
 		
 
-	itParam("NVRD test nodeId ${value.node} variableId ${value.param}", TestCases_NodeParameter, function (done, value) {
-		if (debug) console.log("\nTest Client: Request NVRD");
+	itParam("REQUEST_NODE_VARIABLE test nodeId ${value.node} variableId ${value.param}", TestCases_NodeParameter, function (done, value) {
+		if (debug) console.log("\nTest Client: REQUEST_NODE_VARIABLE test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('NVRD', {"nodeId": value.node, "variableId": value.param})
+		websocket_Client.emit('REQUEST_NODE_VARIABLE', {"nodeId": value.node, "variableId": value.param})
 		setTimeout(function(){
 			expected = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.param, 2) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
@@ -363,10 +361,10 @@ describe('Websocket server tests', function(){
 	
 
 
-	itParam("NVSET-learn test nodeId ${value.nodeId} variableId ${value.variableId} variableValue ${value.variableValue}", GetTestCase_NVSET_learn(), function (done, value) {
-		if (debug) console.log("\nTest Client: Request NVSET-learn");
+	itParam("UPDATE_NODE_VARIABLE_IN_LEARN_MODE test nodeId ${value.nodeId} variableId ${value.variableId} variableValue ${value.variableValue}", GetTestCase_NVSET_learn(), function (done, value) {
+		if (debug) console.log("\nTest Client: UPDATE_NODE_VARIABLE_IN_LEARN_MODE test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('NVSET-learn', {"nodeId": value.nodeId, "variableId": value.variableId, "variableValue": value.variableValue})
+		websocket_Client.emit('UPDATE_NODE_VARIABLE_IN_LEARN_MODE', {"nodeId": value.nodeId, "variableId": value.variableId, "variableValue": value.variableValue})
 		setTimeout(function(){
 			expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
@@ -513,10 +511,10 @@ describe('Websocket server tests', function(){
 	})
 		
 
-	it('QNN test', function(done) {
-		if (debug) console.log("\nTest Client: Request QNN");
+	it('QUERY_ALL_NODES test', function(done) {
+		if (debug) console.log("\nTest Client: QUERY_ALL_NODES test");
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('QNN', '');
+		websocket_Client.emit('QUERY_ALL_NODES', '');
 		setTimeout(function(){
 			expect(mock_Cbus.getSendArray()[0]).to.equal(":SB780N0D;");
 			done();
