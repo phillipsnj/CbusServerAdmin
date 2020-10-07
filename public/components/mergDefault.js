@@ -68,7 +68,7 @@ Vue.component('merg-default-node-variables', {
     name: "merg-default-node-variables",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6]})
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
         /*for (let i = 1; i <= this.node.parameters[6]; i++) {
             let time = i*100
             setTimeout(this.getVariable,time,i)
@@ -191,7 +191,8 @@ Vue.component('merg-default-node-event-variables', {
         this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
             "nodeId": this.$store.state.selected_node_id,
             "eventIndex": this.$store.state.selected_action_id,
-            "variables": this.node.parameters[5]
+            "variables": this.node.parameters[5],
+            "delay":30
         })
     },
     computed: {
@@ -209,7 +210,7 @@ Vue.component('merg-default-node-event-variables', {
       <v-container>
       <h3>Event Variables</h3>
       <p>Event ID :: {{ $store.state.selected_action_id }}</p>
-      <!--<p>{{ $store.state.nodes[this.$store.state.selected_node_id].actions[$store.state.selected_action_id] }}</p>-->
+      <p>{{ $store.state.nodes[this.nodeId].actions[$store.state.selected_action_id] }}</p>
       <v-row>
         <node-event-variable v-bind:nodeId="$store.state.selected_node_id"
                              v-bind:actionId="$store.state.selected_action_id"

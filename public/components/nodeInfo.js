@@ -2,7 +2,7 @@ Vue.component('nodeInfo', {
     name: "nodeInfo",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": this.node.node, "parameters": 20})
+        this.$root.send('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": this.node.node, "parameters": 20, "delay":30})
     },
     computed: {
         nodeId: function () {
@@ -17,7 +17,7 @@ Vue.component('nodeInfo', {
     },
     template: `
       <div>
-      <h1>Node Info {{ nodeId }}</h1>
+      <h1>Node Info {{ nodeId }}</h1> 
       <p>{{ node.parameters }}</p>
       <v-container>
         <v-row>

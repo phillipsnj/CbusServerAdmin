@@ -2,7 +2,7 @@
   "modules": {
     "32": {
       "name": "Universal",
-      "component": "mergDefault"
+      "component": "merg-canmio"
     },
     "3": {
       "name": "CANACC8",
@@ -18,7 +18,7 @@
     },
     "29": {
       "name": "CANPAN",
-      "component": "mergDefault"
+      "component": "merg-canpan"
     },
     "10": {
       "name": "CANCMD",
