@@ -64,9 +64,10 @@ Vue.component('merg-canpan-node-variables', {
     name: "merg-canpan-node-variables",
     //props: ['nodeId'],
     mounted() {
-        for (let i = 1; i <= this.node.parameters[6]; i++) {
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
+        /*for (let i = 1; i <= this.node.parameters[6]; i++) {
             this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
-        }
+        }*/
     },
     computed: {
         nodeId: function () {
@@ -79,7 +80,7 @@ Vue.component('merg-canpan-node-variables', {
     methods: {
         updateNV: function (node_id, variableId, variableValue) {
             console.log(`update CANPAN NV(${variableId},${variableValue})`)
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": node_id,
                 "variableId": variableId,
                 "variableValue": variableValue
@@ -122,13 +123,13 @@ Vue.component('merg-canpan-node-events', {
         },
         deleteEvent: function (event) {
             console.log(`deleteEvent : ${this.node.node} : ${event}`)
-            this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
+            this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
         }
     },
     mounted() {
         if (this.node.EvCount > 0) {
-            console.log(`NERD : ${this.nodeId}`)
-            this.$root.send('NERD', {"nodeId": this.nodeId})
+            console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
         }
     },
     computed: {
@@ -194,9 +195,15 @@ Vue.component('merg-canpan-node-event-variables', {
     //props: ['nodeId', 'actionId'],
     mounted() {
         console.log(`merg-CANPAN-node-event-variables mounted : ${this.nodeId} :: ${this.actionId}`)
-        for (let i = 1; i <= this.node.parameters[5]; i++) {
+        this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
+            "nodeId": this.nodeId,
+            "eventIndex": this.actionId,
+            "variables": this.node.parameters[5],
+            "delay":120
+        })
+/*        for (let i = 1; i <= this.node.parameters[5]; i++) {
             this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": this.actionId, "valueId": i})
-        }
+        }*/
     },
     computed: {
         node: function () {
@@ -213,12 +220,12 @@ Vue.component('merg-canpan-node-event-variables', {
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             // eslint-disable-next-line no-console
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
-            this.$root.send('EVLRN', {
+            this.$root.send('UPDATE_EVENT_VARIABLE', {
                 "nodeId": this.node.node,
-                "actionId": actionId,
+                "eventIndex": actionId,
                 "eventName": eventName,
-                "eventId": eventId,
-                "eventVal": eventVal
+                "eventVariableId": eventId,
+                "eventVariableVal": eventVal
             })
         }
     },

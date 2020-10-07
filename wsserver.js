@@ -18,8 +18,11 @@ function wsserver(httpserver, node) {
         })
         socket.on('REQUEST_ALL_NODE_PARAMETERS', function(data){ //Request Node Parameter
             console.log(`REQUEST_ALL_NODE_PARAMETERS ${JSON.stringify(data)}`);
+            if (data.delay === undefined) {
+                data.delay = 100
+            }
             for (let i = 0; i <= data.parameters; i++) {
-                let time = i*100
+                let time = i*data.delay
                 setTimeout(function() {node.cbusSend(node.RQNPN(data.nodeId, i))},time)
             }
             //node.cbusSend(node.RQNPN(data.nodeId, data.parameter))
@@ -37,9 +40,11 @@ function wsserver(httpserver, node) {
                 data.delay = 100
             }
             let finish = data.variables + data.start -1
+            let increment = 1
             for (let i = data.start; i <= finish; i++) {
-                let time = i*data.delay
+                let time = increment*data.delay
                 setTimeout(function() {node.cbusSend(node.NVRD(data.nodeId, i))},time)
+                increment +=1
             }
         })
         socket.on('REQUEST_NODE_VARIABLE', function(data){
@@ -65,8 +70,11 @@ function wsserver(httpserver, node) {
         })
         socket.on('REQUEST_ALL_EVENT_VARIABLES', function(data){
             console.log(`REQUEST_EVENT_VARIABLE ${JSON.stringify(data)}`);
+            if (data.delay === undefined) {
+                data.delay = 100
+            }
             for (let i = 0; i <= data.variables; i++) {
-                let time = i*100
+                let time = i*data.delay
                 setTimeout(function() {node.cbusSend(node.REVAL(data.nodeId, data.eventIndex, i))},time)
             }
         })

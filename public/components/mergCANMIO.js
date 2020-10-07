@@ -17,9 +17,11 @@ Vue.component('merg-canmio', {
     },
     mounted() {
         this.nodeId = this.$store.state.selected_node_id
-        for (let i = 16; i <= 121; i = i + 7) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
-        }
+        //this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
+        //let delay=20
+        /*for (let i = 16; i <= 121; i = i + 7) {
+            setTimeout(() => {this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i, "delay":150})})
+        }*/
         this.getInfo()
 
     },
@@ -41,7 +43,8 @@ Vue.component('merg-canmio', {
         getEvents() {
             console.log(`merg-canmio - getEvents : ${this.nodeId}`)
             this.$root.send('CLEAR_NODE_EVENTS', {'nodeId': this.nodeId})
-            this.$root.send('NERD', {'nodeId': this.nodeId})
+            console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
             this.update_event_actions()
             this.update_happening_actions()
             this.$store.state.node_component = "merg-canmio-node-events"
@@ -163,10 +166,8 @@ Vue.component('merg-canmio-node-variables', {
     name: "merg-canmio-node-variables",
     //props: ['nodeId'],
     mounted() {
-        for (let i = 1; i <= 4; i++) {
-            let time = i*50
-            setTimeout(this.getVariable,time,i)
-        }
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": 23, "delay" : 50})
+
     },
     computed: {
         nodeId: function () {
@@ -175,11 +176,6 @@ Vue.component('merg-canmio-node-variables', {
         node: function () {
             return this.$store.state.nodes[this.nodeId]
         },
-    },
-    methods: {
-        getVariable: function (parameter) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
-        }
     },
     template: `
       <v-container>
@@ -223,20 +219,27 @@ Vue.component('merg-canmio-node-channels', {
         }
     },
     mounted() {
+        /*this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "start":16, "variables": this.node.parameters[6], "delay" : 20})
         for (let i = 16; i <= 22; i++) {
             let time = i*100
             setTimeout(this.getVariable,time,i)
+        }
+        */
+        //this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "start":16, "variables": 7, "delay" : 20})
+        for (let i = 16; i <= 121; i = i + 7) {
+            setTimeout(() => {this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i, "delay":30})})
         }
     },
     watch: {
         baseNV: function () {
             let count=1
-            for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
+            this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "start":this.baseNV, "variables": 7, "delay" : 20})
+            /*for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
                 //this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
                 let time = count*100
                 count +=1
                 setTimeout(this.getVariable,time,i)
-            }
+            }*/
         }
     },
     computed: {
@@ -254,7 +257,8 @@ Vue.component('merg-canmio-node-channels', {
         },
         nvTypes: function () {
             console.log(`Selected Channel ${this.selectedChannel}`)
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": this.baseNV})
+            //this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "start":this.baseNV, "variables": 1, "delay" : 20})
+            //this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": this.baseNV})
             if (this.selectedChannel < 9) {
                 return this.NV_types1
             } else {
@@ -263,18 +267,19 @@ Vue.component('merg-canmio-node-channels', {
         }
     },
     methods: {
-        getVariable: function (parameter) {
+        /*getVariable: function (parameter) {
             this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
-        },
+        },*/
         updateChannelType: function () {
-            this.$root.send('NVSET', {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": this.nodeId,
                 "variableId": this.baseNV,
                 "variableValue": this.node.variables[this.baseNV]
             })
-            for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
+            this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "start":this.baseNV, "variables": 6, "delay" : 20})
+/*            for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
                 this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
-            }
+            }*/
         }
     },
     template: `
@@ -342,9 +347,15 @@ Vue.component('merg-canmio-node-events', {
     methods: {
         editEvent: function (item) {
             console.log(`editEvent(${item.actionId})`)
-            for (let i = 1; i <= this.$store.state.nodes[this.nodeId].actions[item.actionId].variables[0] + 1; i++) {
+            /*for (let i = 1; i <= this.$store.state.nodes[this.nodeId].actions[item.actionId].variables[0] + 1; i++) {
                 this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": item.actionId, "valueId": i})
-            }
+            }*/
+            this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
+                "nodeId": this.nodeId,
+                "eventIndex": item.actionId,
+                "variables": this.$store.state.nodes[this.nodeId].actions[item.actionId].variables[0],
+                "delay":30
+            })
             //this.eventDialog = true
             this.editedEvent = item
             this.$store.state.selected_action_id = item.actionId
@@ -352,8 +363,8 @@ Vue.component('merg-canmio-node-events', {
 
         },
         deleteEvent: function (event) {
-            console.log(`deleteEvent : ${this.node.node} : ${event}`)
-            this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
+            console.log(`REMOVE_EVENT : ${this.node.node} : ${event}`)
+            this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
         }
     },
     mounted() {

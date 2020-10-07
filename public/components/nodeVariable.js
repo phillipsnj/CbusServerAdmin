@@ -70,7 +70,7 @@ Vue.component('node-variable-bit', {
     watch: {
         variableValue() {
             this.checked = this.$store.state.nodes[this.nodeId].variables[this.varId] & this.bitArray[this.bit] ? true : false
-            console.log(`Set ${this.bit} : ${this.bitArray[this.bit]} : ${this.checked}`)
+            //console.log(`Set ${this.bit} : ${this.bitArray[this.bit]} : ${this.checked}`)
         }
     },
     computed: {
@@ -81,7 +81,7 @@ Vue.component('node-variable-bit', {
     methods: {
         updateNV: function () {
             let value = this.$store.state.nodes[this.nodeId].variables[this.varId]
-            console.log(`Update Nv : ${this.bit} : ${this.bitArray[this.bit]} : ${value}`)
+            //console.log(`Update Nv : ${this.bit} : ${this.bitArray[this.bit]} : ${value}`)
             if (this.checked) {
                 value = value + this.bitArray[this.bit]
             } else {
@@ -92,7 +92,7 @@ Vue.component('node-variable-bit', {
                 "variableId": this.varId,
                 "variableValue": value
             })
-            console.log(`Stored : ${this.bit} : ${this.bitArray[this.bit]} : ${value}`)
+            //console.log(`Stored : ${this.bit} : ${this.bitArray[this.bit]} : ${value}`)
         }
     },
     template: `

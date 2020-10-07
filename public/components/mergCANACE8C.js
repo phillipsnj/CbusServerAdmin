@@ -206,7 +206,8 @@ Vue.component('merg-canace8c-node-event-variables', {
         this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
             "nodeId": this.$store.state.selected_node_id,
             "eventIndex": this.$store.state.selected_action_id,
-            "variables": this.node.parameters[5]
+            "variables": this.node.parameters[5],
+            "delay":30
         })
     },
     computed: {
