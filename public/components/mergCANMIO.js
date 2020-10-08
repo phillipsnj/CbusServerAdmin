@@ -17,11 +17,12 @@ Vue.component('merg-canmio', {
     },
     mounted() {
         this.nodeId = this.$store.state.selected_node_id
-        //this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
-        //let delay=20
-        /*for (let i = 16; i <= 121; i = i + 7) {
-            setTimeout(() => {this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i, "delay":150})})
-        }*/
+        //this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.$store.state.selected_node_id, "variables": 127, "delay" : 100})
+        let delay=20
+        for (let i = 16; i <= 121; i = i + 7) {
+            setTimeout(() => {this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.$store.state.selected_node_id, "variableId": i})},delay)
+            delay += 100
+        }
         this.getInfo()
 
     },
