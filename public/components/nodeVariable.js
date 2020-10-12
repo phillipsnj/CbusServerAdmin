@@ -1,15 +1,23 @@
 Vue.component('node-variable', {
     name: "node-variable",
-    props: ["nodeId", "varId", "name"],
+    props: ["nodeId", "varId", "name", "max", "min", "hint"],
     data: () => ({
-        rules: [
+        /*rules: [
             value => value >= 0 || 'Cannot be a negative number',
             value => value <= 255 || 'Number to High'
-        ],
+        ],*/
+        maximum: 255,
+        minimum: 0,
         label: "",
-        variableLocal: 0
+        variableLocal: 0,
     }),
     mounted() {
+        if (this.max !== undefined) {
+            this.maximum = this.max
+        }
+        if (this.min !== undefined) {
+            this.minimum = this.min
+        }
         this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
         if (this.name) {
             this.label = this.name
@@ -29,20 +37,24 @@ Vue.component('node-variable', {
     },
     methods: {
         updateNV: function () {
-            this.$root.send('UPDATE_NODE_VARIABLE', {
-                "nodeId": this.nodeId,
-                "variableId": this.varId,
-                "variableValue": this.variableLocal
-            })
+            if (this.variableLocal >= this.minimum && this.variableLocal <= this.maximum) {
+                this.$root.send('UPDATE_NODE_VARIABLE', {
+                    "nodeId": this.nodeId,
+                    "variableId": this.varId,
+                    "variableValue": this.variableLocal
+                })
+            }
         }
     },
     template: `
       <v-card class="xs6 md3 pa-3" flat>
       <v-text-field
           :label="label"
+          :hint="hint"
           v-model="variableLocal"
           outlined
-          :rules="rules"
+          :rules="[value => value >= this.minimum || 'Number to low',
+            value => value <= this.maximum || 'Number to High']"
           @change="updateNV"
       >
       </v-text-field>
@@ -308,4 +320,134 @@ Vue.component('node-variable-slider2', {
         </template>
       </v-slider>
       </v-card>`
+})
+
+Vue.component('node-variable-dual', {
+    name: "node-variable-dual",
+    props: ["nodeId", "varId1", "varId2", "name"],
+    data: () => ({
+        rules: [
+            value => value >= 0 || 'Cannot be a negative number',
+            value => value <= 62000 || 'Number to High'
+        ],
+        label: "",
+        variableLocal: 0
+    }),
+    mounted() {
+        this.variableLocal = (this.$store.state.nodes[this.nodeId].variables[this.varId1] << 8) + this.$store.state.nodes[this.nodeId].variables[this.varId2]
+        if (this.name) {
+            this.label = this.name
+        } else {
+            this.label = `Variable ${this.varId}`
+        }
+    },
+    watch: {
+        variableValue() {
+            this.variableLocal = (this.$store.state.nodes[this.nodeId].variables[this.varId1] << 8) + this.$store.state.nodes[this.nodeId].variables[this.varId2]
+        }
+    },
+    computed: {
+        variableValue: function () {
+            return (this.$store.state.nodes[this.nodeId].variables[this.varId1] << 8) + this.$store.state.nodes[this.nodeId].variables[this.varId2]
+        }
+    },
+    methods: {
+        updateNV: function () {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
+                "nodeId": this.nodeId,
+                "variableId": this.varId1,
+                "variableValue": this.variableLocal >> 8
+            })
+            this.$root.send('UPDATE_NODE_VARIABLE', {
+                "nodeId": this.nodeId,
+                "variableId": this.varId2,
+                "variableValue": this.variableLocal & 0xFF
+            })
+        }
+    },
+    template: `
+      <v-card class="xs6 md3 pa-3" flat>
+      <v-text-field
+          :label="label"
+          v-model="variableLocal"
+          outlined
+          :rules="rules"
+          @change="updateNV"
+      >
+      </v-text-field>
+      </v-card>`
+})
+
+Vue.component('node-variable2', {
+    name: "node-variable2",
+    props: ["nodeId", "varId", "name", "max", "min", "text"],
+    data: () => ({
+        /*rules: [
+            value => value >= 0 || 'Cannot be a negative number',
+            value => value <= 255 || 'Number to High'
+        ],*/
+        maximum: 255,
+        minimum: 0,
+        label: "",
+        variableLocal: 0,
+    }),
+    mounted() {
+        if (this.max !== undefined) {
+            this.maximum = this.max
+        }
+        if (this.min !== undefined) {
+            this.minimum = this.min
+        }
+        this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+        if (this.name) {
+            this.label = this.name
+        } else {
+            this.label = `Variable ${this.varId}`
+        }
+    },
+    watch: {
+        variableValue() {
+            this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    computed: {
+        variableValue: function () {
+            return this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    methods: {
+        updateNV: function () {
+            if (this.variableLocal >= this.minimum && this.variableLocal <= this.maximum) {
+                this.$root.send('UPDATE_NODE_VARIABLE', {
+                    "nodeId": this.nodeId,
+                    "variableId": this.varId,
+                    "variableValue": this.variableLocal
+                })
+            }
+        }
+    },
+    template: `
+      <v-container fluid>
+      <v-row>
+        <v-col cols="2">
+          <v-row>
+          <div>{{ label }}</div>
+        
+          <v-text-field
+              v-model="variableLocal"
+              regular
+              :rules="[value => value >= this.minimum || 'Number to low',
+            value => value <= this.maximum || 'Number to High']"
+              @change="updateNV"
+          >
+          </v-text-field>
+          </v-row>
+        </v-col>
+          <v-col align="start" justify="start" class="mx-0"  cols="8">
+            <div align="start" justify="start" class="grey--text ml-4">{{ this.text }}</div>
+          
+        </v-col>
+      </v-row>
+      </v-container>
+    `
 })
