@@ -498,8 +498,8 @@ Vue.component('merg-canmio-node-event-variables', {
                                     v-if="n>1">
         </node-event-variable-select>
 
-        <p>{{ node.actions[actionId] }}</p>
-        <p>{{ happening_actions }}</p>
+        <!--<p>{{ node.actions[actionId] }}</p>-->
+        <!--<p>{{ happening_actions }}</p>-->
         <p>{{ event_actions }}</p>
       </v-row>
       </v-container>`
