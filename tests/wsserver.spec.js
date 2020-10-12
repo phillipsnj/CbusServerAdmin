@@ -594,6 +594,24 @@ describe('Websocket server tests', function(){
 */
 
 
+	it('REQUEST_VERSION test', function(done) {
+		if (debug) console.log("\nTest Client: REQUEST_VERSION");
+		mock_Cbus.clearSendArray();
+			let testCase = {
+				'major': '1',
+				'minor': '0',
+				'patch': '0',
+				}
+		websocket_Client.on('VERSION', function (data) {
+			versionData = data;
+			if (debug) console.log("\nTest Client: REQUEST_VERSION test : " + JSON.stringify(versionData));
+			});	
+		websocket_Client.emit('REQUEST_VERSION')
+		setTimeout(function(){
+			expect(JSON.stringify(versionData)).to.equal(JSON.stringify(testCase));
+			done();
+			}, 100);
+	});
 
 
 
