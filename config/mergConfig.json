@@ -22,7 +22,7 @@
     },
     "10": {
       "name": "CANCMD",
-      "component": "mergDefault"
+      "component": "merg-cancmd"
     },
     "5": {
       "name": "CANACE8C",
