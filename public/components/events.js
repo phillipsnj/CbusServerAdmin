@@ -7,11 +7,12 @@ Vue.component('events', {
                 expanded: [],
                 headers: [
                     {text: 'Event Name', value: 'EventName', sortable: false},
-                    {text: 'nodeId', value: 'nodeId'},
-                    {text: 'eventId', value: 'eventId'},
-                    {text: 'type', value: 'type'},
-                    {text: 'status', value: 'status'},
-                    {text: 'count', value: 'count'},
+                    {text: 'Group', value: 'group'},
+                    {text: 'NodeId', value: 'nodeId'},
+                    {text: 'EventId', value: 'eventId'},
+                    {text: 'Type', value: 'type'},
+                    {text: 'Status', value: 'status'},
+                    {text: 'Count', value: 'count'},
                     {text: '', value: 'data-table-expand'}
                 ],
                 dialog: false,
@@ -338,13 +339,13 @@ Vue.component('events-event-edit', {
     template: `
       <v-card>
       <v-card-title>
-        <span class="headline">Edit Event Component {{ eventId }} :: {{ status }}</span>
+        <span class="headline">Edit Event </span><events-event-display-id :id="eventId"></events-event-display-id>
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md>
           <v-row>
             <v-text-field v-model="editedEvent.name" outlined
-                          label="Event Id"></v-text-field>
+                          label="Event Name"></v-text-field>
           </v-row>
         </v-container>
         <events-event-display :id="eventId"></events-event-display>
@@ -392,6 +393,26 @@ Vue.component('events-event-display', {
       <v-container>
       <div v-if="id in $store.state.layout.eventDetails" :class="displayColour">{{ displayName }}</div>
       <div v-else class="black--text">Node : {{ nodeId }} - Event : {{ eventId }}</div>
+      </v-container>`
+})
+
+Vue.component('events-event-display-id', {
+    name: "events-event-display-id",
+    props: ['id'],
+    data: () => ({
+        label: "",
+    }),
+    computed: {
+        nodeId: function () {
+            return parseInt(this.id.substr(0, 4), 16);
+        },
+        eventId: function () {
+            return parseInt(this.id.substr(4, 4), 16);
+        }
+    },
+    template: `
+      <v-container>
+      <div class="black--text">NodeId : {{ nodeId }} : EventId : {{ eventId }}</div>
       </v-container>`
 })
 
