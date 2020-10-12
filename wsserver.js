@@ -3,7 +3,7 @@ const socketIO = require('socket.io');
 
 const jsonfile = require('jsonfile')
 let layoutDetails = jsonfile.readFileSync('./config/layoutDetails.json')
-
+const packageFile = jsonfile.readFileSync('./package.json')
 
 function wsserver(httpserver, node) {
     const io = socketIO(httpserver);
@@ -135,6 +135,18 @@ function wsserver(httpserver, node) {
         socket.on('CLEAR_CBUS_ERRORS', function(data){
             console.log(`CLEAR_CBUS_ERRORS`)
             node.clearCbusErrors()
+        })
+		
+        socket.on('REQUEST_VERSION', function(){
+//            console.log(`REQUEST_VERSION ${JSON.stringify(packageFile)}`)
+            const versionArray = packageFile.version.toString().split(".");
+			let version = {
+				'major': versionArray[0],
+				'minor': versionArray[1],
+				'patch': versionArray[2],
+				}
+
+            io.emit('VERSION', version)
         })
     });
 

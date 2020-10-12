@@ -594,6 +594,24 @@ describe('Websocket server tests', function(){
 */
 
 
+	it('REQUEST_VERSION test', function(done) {
+		if (debug) console.log("\nTest Client: REQUEST_VERSION");
+		mock_Cbus.clearSendArray();
+			let testCase = {
+				'major': '1',
+				'minor': '0',
+				'patch': '0',
+				}
+		websocket_Client.on('VERSION', function (data) {
+			versionData = data;
+			if (debug) console.log("\nTest Client: REQUEST_VERSION test : " + JSON.stringify(versionData));
+			});	
+		websocket_Client.emit('REQUEST_VERSION')
+		setTimeout(function(){
+			expect(JSON.stringify(versionData)).to.equal(JSON.stringify(testCase));
+			done();
+			}, 100);
+	});
 
 
 
@@ -689,7 +707,10 @@ describe('Websocket server tests', function(){
 			cbusErrors[ref] = output
               
 		cbusAdmin.clearCbusErrors();
-		websocket_Client.on('cbusError', function (data) {cbusErrorData = data;});	
+		websocket_Client.on('cbusError', function (data) {
+			cbusErrorData = data;
+			if (debug) console.log("\nTest Client: cbusError test - data : " + JSON.stringify(cbusErrorData));
+			});	
 		mock_Cbus.outputCMDERR(value.nodeId, value.errorId);
 		setTimeout(function(){
 			expect(JSON.stringify(cbusErrorData)).to.equal(JSON.stringify(cbusErrors));
@@ -709,10 +730,13 @@ describe('Websocket server tests', function(){
             output['count'] = 1
             cbusNoSupport[ref] = output
 		
-		websocket_Client.on('cbusNoSupport', function (data) {cbusNoSupportData = data;});	
+		websocket_Client.on('cbusNoSupport', function (data) {
+			cbusNoSupportData = data;
+			if (debug) console.log("\nTest Client: cbusNoSupportData test - data : " + JSON.stringify(cbusNoSupportData));
+			});	
 		mock_Cbus.outputUNSUPOPCODE(1);
 		setTimeout(function(){
-		expect(JSON.stringify(cbusNoSupportData)).to.equal(JSON.stringify(cbusNoSupport));
+			expect(JSON.stringify(cbusNoSupportData)).to.equal(JSON.stringify(cbusNoSupport));
 			done();
 			}, 100);
 	});
@@ -771,7 +795,10 @@ describe('Websocket server tests', function(){
 			'Message': value.message,
 			'data': decToHex(value.data,4)
 			}
-		websocket_Client.on('dccError', function (data) {dccErrorData = data;});	
+		websocket_Client.on('dccError', function (data) {
+			dccErrorData = data;
+			if (debug) console.log("\nTest Client: dccError test - data : " + JSON.stringify(dccErrorData));
+			});	
 		mock_Cbus.outputERR(value.data, value.errorId);
 		setTimeout(function(){
 			expect(JSON.stringify(dccErrorData)).to.equal(JSON.stringify(testCase));
@@ -821,22 +848,14 @@ describe('Websocket server tests', function(){
 
 	itParam('dccSessions test session ${value.session} fn1 ${value.fn1} fn2 ${value.fn2}', dccSessions_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger dccSessions");
-/*
-			let dccSessions = {}
-			dccSessions[value.session] = {}
-            dccSessions[value.session].count = 0
-			let func = `F${value.fn1}`
-			dccSessions[value.session][func] = value.fn2
-            let functionArray = []
-			functionArray.push(value.functionNumber)
-			dccSessions[value.session].functions = functionArray
-*/
-		websocket_Client.on('dccSessions', function (data) {dccSessionsData = data;});	
+		websocket_Client.on('dccSessions', function (data) {
+			dccSessionsData = data;
+			if (debug) console.log("\nTest Client: dcc sessions test message data : " + JSON.stringify(dccSessionsData));
+			});	
 		mock_Cbus.outputDFUN(value.session, value.fn1, value.fn2)
 		setTimeout(function(){
 			// check expected fn2
 			expect(dccSessionsData[value.session]['F' + value.fn1]).to.equal(value.fn2);
-			if (debug) console.log("\nTest Client: dcc sessions test message data : " + JSON.stringify(dccSessionsData));
 			done();
 			}, 100);
 	});
@@ -865,11 +884,13 @@ describe('Websocket server tests', function(){
 
 	itParam('events test nodeId ${value.nodeId} eventId ${value.eventId} status ${value.status}', events_TestCase(), function(done, value) {
 		if (debug) console.log("\nTest Client: Trigger events");
-		websocket_Client.on('events', function (data) {eventData = data;});	
+		websocket_Client.on('events', function (data) {
+			eventData = data;
+			if (debug) console.log("\nTest Client: event test message data : " + JSON.stringify(eventData));
+			});	
 		if (value.status == 'on') mock_Cbus.outputACON(value.nodeId, value.eventId);
 		if (value.status == 'off') mock_Cbus.outputACOF(value.nodeId, value.eventId);
 		setTimeout(function(){
-			if (debug) console.log("\nTest Client: event test message data : " + JSON.stringify(eventData));
 			// check status for the specific nodeId & eventId exists and is correct status
 			let status = "";
 			eventData.forEach(function(item, index) {
