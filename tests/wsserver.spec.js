@@ -400,7 +400,7 @@ describe('Websocket server tests', function(){
 						else eventVariableCount = 2
 					}
 					
-					testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'eventName':eventName, 'eventVariableCount':eventVariableCount});
+					testCases.push({'nodeId':nodeId,'eventIndex':eventIndex, 'eventVariableCount':eventVariableCount});
 				}
 			}
 		}
@@ -410,8 +410,13 @@ describe('Websocket server tests', function(){
 
 	itParam("REQUEST_ALL_EVENT_VARIABLES test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableCount ${value.eventVariableCount}", GetTestCase_REQUEST_ALL_EVENT_VARIABLES(), function (done, value) {
 		if (debug) console.log("\nTest Client: REQUEST_ALL_EVENT_VARIABLES test");
+		let timeoutDelay = 5;
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {"nodeId": value.nodeId, "eventIndex": value.eventIndex, "variables": value.eventVariableCount})
+		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {
+				"nodeId": value.nodeId, 
+				"eventIndex": value.eventIndex, 
+				"variables": value.eventVariableCount, 
+				"delay": timeoutDelay})
 		setTimeout(function(){
 			expect(mock_Cbus.getSendArray().length).to.equal(value.eventVariableCount+1);
 			expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2)+ decToHex(0, 2) + ";";
@@ -419,7 +424,7 @@ describe('Websocket server tests', function(){
 			expected_n = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2)+ decToHex(value.eventVariableCount, 2) + ";";
 			expect(mock_Cbus.getSendArray()[value.eventVariableCount]).to.equal(expected_n);
 			done();
-		}, value.eventVariableCount*100 + 200);
+		}, value.eventVariableCount*timeoutDelay + 100);
 	})
 		
 
@@ -447,8 +452,12 @@ describe('Websocket server tests', function(){
 
 	itParam("REQUEST_ALL_NODE_PARAMETERS test nodeId ${value.nodeId} parameterCount ${value.parameterCount}", GetTestCase_REQUEST_ALL_NODE_PARAMETERS(), function (done, value) {
 		if (debug) console.log("\nTest Client: REQUEST_ALL_NODE_PARAMETERS test");
+		let timeoutDelay = 5;
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": value.nodeId, "parameters": value.parameterCount})
+		websocket_Client.emit('REQUEST_ALL_NODE_PARAMETERS', {
+				"nodeId": value.nodeId, 
+				"parameters": value.parameterCount, 
+				"delay": timeoutDelay})
 		setTimeout(function(){
 			expect(mock_Cbus.getSendArray().length).to.equal(value.parameterCount+1);
 			expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(0, 2) + ";";
@@ -456,7 +465,7 @@ describe('Websocket server tests', function(){
 			expected_n = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.parameterCount, 2) + ";";
 			expect(mock_Cbus.getSendArray()[value.parameterCount]).to.equal(expected_n);
 			done();
-		}, value.parameterCount*100 + 200);
+		}, value.parameterCount*timeoutDelay + 200);
 	})
 		
 
@@ -600,7 +609,7 @@ describe('Websocket server tests', function(){
 			let testCase = {
 				'major': '1',
 				'minor': '0',
-				'patch': '0',
+				'patch': '2',
 				}
 		websocket_Client.on('VERSION', function (data) {
 			versionData = data;
