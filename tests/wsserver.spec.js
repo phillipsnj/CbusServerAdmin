@@ -1,4 +1,6 @@
 const expect = require('chai').expect;
+var winston = require('./config/winston.js');
+
 const websocket_Server = require('./../wsserver');
 const http = require('http');
 
@@ -20,7 +22,9 @@ function decToHex(num, len) {
     return padded.substr(-len)
 }
 
-
+winston.info({message: '----------------------------------------------------------------------'});
+winston.info({message: '----------------------------- wsserver tests -------------------------'});
+winston.info({message: '----------------------------------------------------------------------'});
 
 describe('Websocket server tests', function(){
 	let http_Server = undefined;
@@ -28,12 +32,12 @@ describe('Websocket server tests', function(){
 
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(file, NET_ADDRESS,NET_PORT);
-
+	
 	let debug = 0;
 
 	before(function(done) {
 		http_Server = http.createServer(() => console.log(" -/- "));
-		http_Server.listen(7575, () => { console.log("server listening on 7575"); });
+		http_Server.listen(7575, () => { winston.info({message: "server listening on 7575"}); });
 	
 		websocket_Server(http_Server, cbusAdmin);
 
@@ -44,12 +48,12 @@ describe('Websocket server tests', function(){
         });
 		
         websocket_Client.on('connect', function() {
-			console.log('Client connected...');
+			winston.info({message: 'test Client connected...'});
             done();
         });
 		
         websocket_Client.on('disconnect', function() {
-            console.log('Client disconnected...');
+			winston.info({message: 'test Client disconnected...'});
         });
 		
 
@@ -59,11 +63,13 @@ describe('Websocket server tests', function(){
 		console.log('\n');  //newline for visual separation
 		if (websocket_Client.connected)
 		{
-			console.log('Close WS Client');
+//			console.log('Close WS Client');
+			winston.info({message: 'Close test Client'});
 			websocket_Client.close();
 		}
 		if(http_Server) {
-			console.log('Close http server');
+//			console.log('Close http server');
+			winston.info({message: 'Close http server'});
 			http_Server.close(() => { console.log('CLOSING Server'); http_Server.unref(); done(); });
 		}
 		
@@ -410,7 +416,7 @@ describe('Websocket server tests', function(){
 
 	itParam("REQUEST_ALL_EVENT_VARIABLES test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableCount ${value.eventVariableCount}", GetTestCase_REQUEST_ALL_EVENT_VARIABLES(), function (done, value) {
 		if (debug) console.log("\nTest Client: REQUEST_ALL_EVENT_VARIABLES test");
-		let timeoutDelay = 5;
+		let timeoutDelay = 4;
 		mock_Cbus.clearSendArray();
 		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {
 				"nodeId": value.nodeId, 
@@ -452,7 +458,7 @@ describe('Websocket server tests', function(){
 
 	itParam("REQUEST_ALL_NODE_PARAMETERS test nodeId ${value.nodeId} parameterCount ${value.parameterCount}", GetTestCase_REQUEST_ALL_NODE_PARAMETERS(), function (done, value) {
 		if (debug) console.log("\nTest Client: REQUEST_ALL_NODE_PARAMETERS test");
-		let timeoutDelay = 5;
+		let timeoutDelay = 4;
 		mock_Cbus.clearSendArray();
 		websocket_Client.emit('REQUEST_ALL_NODE_PARAMETERS', {
 				"nodeId": value.nodeId, 
@@ -465,7 +471,7 @@ describe('Websocket server tests', function(){
 			expected_n = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.parameterCount, 2) + ";";
 			expect(mock_Cbus.getSendArray()[value.parameterCount]).to.equal(expected_n);
 			done();
-		}, value.parameterCount*timeoutDelay + 200);
+		}, value.parameterCount*timeoutDelay + 100);
 	})
 		
 
@@ -495,8 +501,8 @@ describe('Websocket server tests', function(){
 	itParam("REQUEST_ALL_NODE_VARIABLES test nodeId ${value.nodeId} variableCount ${value.variableCount}", GetTestCase_REQUEST_ALL_NODE_VARIABLES(), function (done, value) {
 		if (debug) console.log("\nTest Client: REQUEST_ALL_NODE_VARIABLES test");
 		mock_Cbus.clearSendArray();
-		var timeoutDelay = 10;
-		websocket_Client.emit('REQUEST_ALL_NODE_VARIABLES', {"nodeId": value.nodeId, "variables": value.variableCount, "delay":timeoutDelay})
+		var timeoutDelay = 4;
+		websocket_Client.emit('REQUEST_ALL_NODE_VARIABLES', {"nodeId": value.nodeId, "variables": value.variableCount, "delay": timeoutDelay})
 		setTimeout(function(){
 			expect(mock_Cbus.getSendArray().length).to.equal(value.variableCount);
 			expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(1, 2) + ";";
@@ -504,7 +510,7 @@ describe('Websocket server tests', function(){
 			expected_n = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.variableCount, 2) + ";";
 			expect(mock_Cbus.getSendArray()[value.variableCount-1]).to.equal(expected_n);
 			done();
-		}, value.variableCount*timeoutDelay + 200);
+		}, value.variableCount*timeoutDelay + 100);
 	})
 		
 
@@ -912,12 +918,10 @@ describe('Websocket server tests', function(){
 
 
 	it('node test', function(done) {
-		if (debug) console.log("\nTest Client: Trigger nodes");
-		nodeData = ""
-		data = ""
+		winston.info({message: 'wsserver: node test'});
 		websocket_Client.on('nodes', function (data) {
 			nodeData = data;
-			if (debug) console.log("\nTest Client: node test message data : " + JSON.stringify(nodeData));
+			winston.info({message: 'wsserver: node test - message data : ' + JSON.stringify(nodeData) + ' :: '});
 			});	
 		mock_Cbus.outputPNN(0);
 		setTimeout(function(){
