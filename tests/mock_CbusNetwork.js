@@ -60,17 +60,58 @@ class mock_CbusNetwork {
 							this.outputPNN(this.modules[i].getNodeId());
 						}
 						break;
+					case '53':
+						// Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
+						winston.info({message: 'Mock CBUS Network: received NNLRN'});
+						break;
+					case '54':
+						// Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
+						winston.info({message: 'Mock CBUS Network: received NNULN'});
+						break;
+					case '57':
+						// Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
+						winston.info({message: 'Mock CBUS Network: received NERD'});
+						break;
 					case '58':
 						// Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
 						winston.info({message: 'Mock CBUS Network: received RQEVN'});
 						this.outputNUMEV(msg.nodeId());
+						break;
+					case '71':
+						// Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
+						winston.info({message: 'Mock CBUS Network: received NVRD'});
 						break;
 					case '73':
 						// Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
 						winston.info({message: 'Mock CBUS Network: received RQNPN'});
 						this.outputPARAN(msg.nodeId(), msg.paramId());
 						break;
+					case '90':
+						// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
+						winston.info({message: 'Mock CBUS Network: received ACON'});
+						break;
+					case '91':
+						// Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
+						winston.info({message: 'Mock CBUS Network: received ACOF'});
+						break;
+					case '95':
+						// Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+						winston.info({message: 'Mock CBUS Network: received EVULN'});
+						break;
+					case '96':
+						// Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+						winston.info({message: 'Mock CBUS Network: received NVSET'});
+						break;
+					case '9C':
+						// Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
+						winston.info({message: 'Mock CBUS Network: received REVAL'});
+						break;
+					case 'D2':
+						// Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
+						winston.info({message: 'Mock CBUS Network: received EVLRN'});
+						break;
 					default:
+						winston.info({message: 'Mock CBUS Network: *************************** received unknown opcode '});
 						break;
 					}
 				}
