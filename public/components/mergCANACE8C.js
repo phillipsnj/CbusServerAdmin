@@ -85,26 +85,16 @@ Vue.component('merg-canace8c-node-variables', {
     },
     template: `
       <v-container>
-      <h3>Node Variables</h3>
-      <p>{{ nodeId }} :: {{ node.variables }}</p>
-      <node-variable-bit-array v-bind:nodeId="nodeId" varId="1" name="On Only"></node-variable-bit-array>
-      <node-variable-bit-array v-bind:nodeId="nodeId" varId="2" name="Inverted"></node-variable-bit-array>
-      <node-variable-bit-array v-bind:nodeId="nodeId" varId="3" name="Delay"></node-variable-bit-array>
-      <node-variable-bit-array v-bind:nodeId="nodeId" varId="6" name="Toggle"></node-variable-bit-array>
-      <node-variable-bit-array v-bind:nodeId="nodeId" varId="8" name="Start of Day"></node-variable-bit-array>
+      <p v-if="$store.state.debug">Node : {{ nodeId }}  Variables: {{ node.variables }}</p>
+      <node-variable-bit-array v-bind:nodeId="nodeId" varId="1" name="Output On Only Events"></node-variable-bit-array>
+      <node-variable-bit-array v-bind:nodeId="nodeId" varId="2" name="Invert Output"></node-variable-bit-array>
+      <node-variable-bit-array v-bind:nodeId="nodeId" varId="3" name="Apply Delay"></node-variable-bit-array>
+      <node-variable-bit-array v-bind:nodeId="nodeId" varId="6" name="Toggle between On & Off"></node-variable-bit-array>
+      <node-variable-bit-array v-bind:nodeId="nodeId" varId="8" name="Disable Start of Day"></node-variable-bit-array>
       <!--<merg-canace8c-variable-channel v-bind:nodeId="node.node" v-bind:channelId="n" v-for="n in [0,1,2,3,4,5,6,7]"
                                       :key="n"></merg-canace8c-variable-channel>-->
-      
-      <node-variable v-bind:nodeId="nodeId"
-                     varId="4"
-                     name="On Delay">
-
-      </node-variable>
-      <node-variable v-bind:nodeId="nodeId"
-                     varId="5"
-                     name="Off Delay">
-
-      </node-variable>
+      <node-variable-slider2 v-bind:nodeId="nodeId" varId="4" name="On Delay (ms)" max="255" min="0" multi="10"></node-variable-slider2>
+      <node-variable-slider2 v-bind:nodeId="nodeId" varId="5" name="Off Delay (ms)" max="255" min="0" multi="10"></node-variable-slider2>
       <v-row>
         <node-variable v-bind:nodeId="nodeId"
                        v-bind:varId="n"
@@ -312,4 +302,85 @@ Vue.component('merg-canace8c-variable-channel', {
         </v-row>
       </v-card>
       </v-row>`
+})
+
+Vue.component('merg-canace8c-variable-slider', {
+    name: "merg-canace8c-variable-slider",
+    props: ["nodeId", "varId", "name", "max", "min", "step", "multi"],
+    data: () => ({
+        rules: [
+            value => value >= this.min || 'Cannot be a negative number',
+            value => value <= this.max || 'Number to High'
+        ],
+        label: "",
+        variableLocal: 0,
+        multiplier : 1,
+        minimum : 0,
+        maximum :255
+    }),
+    mounted() {
+        this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+        if (this.name) {
+            this.label = this.name
+        } else {
+            this.label = `Variable ${this.varId}`
+        }
+        if (this.multi !== undefined){
+            this.multiplier = this.multi
+        }
+        if (this.max !== undefined){
+            this.maximum = this.max
+        }
+        if (this.min !== undefined){
+            this.minimum = this.min
+        }
+    },
+    watch: {
+        variableValue() {
+            this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    computed: {
+        variableValue: function () {
+            return this.$store.state.nodes[this.nodeId].variables[this.varId]
+        }
+    },
+    methods: {
+        updateNV: function (position) {
+            this.$root.send('UPDATE_NODE_VARIABLE', {
+                "nodeId": this.nodeId,
+                "variableId": this.varId,
+                "variableValue": position
+            })
+        }
+    },
+    template: `
+      <v-card class="xs6 md3 pa-3" flat>
+      <v-text-field
+          :label="label"
+          readonly
+          :value=variableLocal*multi>
+      </v-text-field>
+      <v-slider
+          v-model="variableLocal"
+          class="align-center"
+          :max="max"
+          :min="min"
+          :step="step"
+          hide-details
+          @change="updateNV(variableLocal)"
+      >
+
+        <template v-slot:prepend>
+          <v-icon color="blue" @click="updateNV(variableLocal-1)">
+            remove
+          </v-icon>
+        </template>
+        <template v-slot:append>
+          <v-icon color="blue" @click="updateNV(variableLocal+1)">
+            add
+          </v-icon>
+        </template>
+      </v-slider>
+      </v-card>`
 })

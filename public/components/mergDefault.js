@@ -114,6 +114,7 @@ Vue.component('merg-default-node-events', {
             editedEvent: {event: "0", variables: [], actionId: 1},
             headers: [
                 {text: 'Event Name', value: 'event'},
+                {text: 'Event', value: 'eventName'},
                 {text: 'Action ID', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ]
@@ -170,6 +171,10 @@ Vue.component('merg-default-node-events', {
                   vertical
               ></v-divider>
             </v-toolbar>
+          </template>
+          <template v-slot:item.eventName="{ item }">
+            <!--                    <displayEventName :id="item.id"></displayEventName>-->
+            <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
           </template>
           <template v-slot:item.actions="{ item }">
             <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>

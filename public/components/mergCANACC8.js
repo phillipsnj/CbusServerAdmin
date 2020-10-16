@@ -68,11 +68,15 @@ Vue.component('merg-canacc8-node-variables', {
     name: "merg-canacc8-node-variables",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
-/*        for (let i = 1; i <= this.node.parameters[6]; i++) {
-            let time = i*100
-            setTimeout(this.getVariable,time,i)
-        }*/
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {
+            "nodeId": this.nodeId,
+            "variables": this.node.parameters[6],
+            "delay": 20
+        })
+        /*        for (let i = 1; i <= this.node.parameters[6]; i++) {
+                    let time = i*100
+                    setTimeout(this.getVariable,time,i)
+                }*/
     },
     computed: {
         nodeId: function () {
@@ -89,17 +93,19 @@ Vue.component('merg-canacc8-node-variables', {
     },*/
     template: `
       <v-container>
-      <h3>Node Variables</h3>
-      <p>{{ node.variables }}</p>
-      <v-row>
-      <merg-canacc8-variable-channel v-bind:nodeId="node.node"
-                                     v-bind:channelId="n"
-                                     v-for="n in [1,2,3,4,5,6,7,8]"
-                                     :key="n">
-      
-      </merg-canacc8-variable-channel>
+      <v-row v-if="$store.state.debug">
+        <h3>Node Variables</h3>
+        <p>{{ node.variables }}</p>
       </v-row>
       <v-row>
+        <merg-canacc8-variable-channel v-bind:nodeId="node.node"
+                                       v-bind:channelId="n"
+                                       v-for="n in [1,2,3,4,5,6,7,8]"
+                                       :key="n">
+
+        </merg-canacc8-variable-channel>
+      </v-row>
+      <v-row v-if="$store.state.debug">
         <node-variable v-bind:nodeId="node.node"
                        v-bind:varId="n"
                        v-for="n in node.parameters[6]"
@@ -124,6 +130,7 @@ Vue.component('merg-canacc8-node-events', {
             editedEvent: {event: "0", variables: [], actionId: 1},
             headers: [
                 {text: 'Event Name', value: 'event'},
+                {text: 'Event', value: 'eventName'},
                 {text: 'Action ID', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ]
@@ -165,28 +172,30 @@ Vue.component('merg-canacc8-node-events', {
     },
     template: `
       <v-container>
-      <v-card>
-        <v-data-table :headers="headers"
-                      :items="eventList"
-                      :items-per-page="20"
-                      class="elevation-1"
-                      item-key="id">
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-toolbar-title>Events for {{ node.node }}</v-toolbar-title>
-              <v-divider
-                  class="mx-4"
-                  inset
-                  vertical
-              ></v-divider>
-            </v-toolbar>
-          </template>
-          <template v-slot:item.actions="{ item }">
-            <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
-            <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
-          </template>
-        </v-data-table>
-      </v-card>
+      <v-data-table :headers="headers"
+                    :items="eventList"
+                    :items-per-page="20"
+                    class="elevation-1"
+                    item-key="id">
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-toolbar-title>Events for {{ node.node }}</v-toolbar-title>
+            <v-divider
+                class="mx-4"
+                inset
+                vertical
+            ></v-divider>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.eventName="{ item }">
+          <!--                    <displayEventName :id="item.id"></displayEventName>-->
+          <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
+          <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
+        </template>
+      </v-data-table>
       <v-row v-if="$store.state.debug">
         <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
       </v-row>
@@ -230,43 +239,19 @@ Vue.component('merg-canacc8-node-event-variables', {
     },
     template: `
       <v-container>
-      <h3>Event Variables</h3>
       <p>Event ID :: {{ $store.state.selected_action_id }}</p>
-      <!--<p>{{ $store.state.nodes[this.$store.state.selected_node_id].actions[$store.state.selected_action_id] }}</p>-->
-      <!--<v-card outlined>
-        <v-card-title>Startup Options</v-card-title>
-        <v-card-text>
-          <v-radio-group v-model="node.actions[actionId].variables[1]" :mandatory="true"
-                         @change="updateEV(node.node,
-                                   node.actions[actionId].event,
-                                   node.actions[actionId].actionId,
-                                   3,
-                                   parseInt(node.actions[actionId].variables[1]))">
-            <v-radio label="SOD" :value="0"></v-radio>
-            <v-radio label="Route" :value="1"></v-radio>
-          </v-radio-group>
-        </v-card-text>
-      </v-card>
-      <v-row>
-        <node-event-variable-bit v-bind:node="$store.state.selected_node_id"
-                                 v-bind:action="$store.state.selected_action_id"
-                                 variable="1"
-                                 bit="0"
-                                 name="0">
-        </node-event-variable-bit>
-      </v-row>-->
       <node-event-variable-bit-array v-bind:nodeId="$store.state.selected_node_id"
                                      v-bind:action="$store.state.selected_action_id"
                                      varId="1"
-                                     name="Active">
+                                     name="Active Outputs">
       </node-event-variable-bit-array>
       <node-event-variable-bit-array v-bind:nodeId="$store.state.selected_node_id"
                                      v-bind:action="$store.state.selected_action_id"
                                      varId="2"
-                                     name="Inverted">
+                                     name="Inverted Outputs">
       </node-event-variable-bit-array>
 
-      <v-row>
+      <v-row v-if="$store.state.debug">
         <node-event-variable v-bind:nodeId="$store.state.selected_node_id"
                              v-bind:actionId="$store.state.selected_action_id"
                              v-bind:varId="n"
