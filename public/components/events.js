@@ -270,10 +270,12 @@ Vue.component('events', {
             </template>
 
           </v-data-table>
-          <h3>Events</h3>
-          <div v-for="event in this.$store.state.events" :key="event.id">
-            <p>{{ JSON.stringify(event) }}</p>
-          </div>
+          <v-container v-if="$store.state.debug">
+            <h3>Events</h3>
+            <div v-for="event in this.$store.state.events" :key="event.id">
+              <p>{{ JSON.stringify(event) }}</p>
+            </div>
+          </v-container>
           </div>
         `
     }
@@ -339,7 +341,8 @@ Vue.component('events-event-edit', {
     template: `
       <v-card>
       <v-card-title>
-        <span class="headline">Edit Event </span><events-event-display-id :id="eventId"></events-event-display-id>
+        <span class="headline">Edit Event </span>
+        <events-event-display-id :id="eventId"></events-event-display-id>
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md>
@@ -471,7 +474,7 @@ Vue.component('events-teach-event', {
         teach(selectedNode, selectedEvent) {
             // eslint-disable-next-line no-console
             console.log(`TEACH_EVENT : ${selectedNode.node} : ${selectedNode.module} : ${selectedEvent.id}`)
-            if (selectedNode.module == 'canmio-universal') {
+            if (selectedNode.module == 'Universal') {
                 this.$root.send('TEACH_EVENT', {
                     "nodeId": selectedNode.node,
                     "eventName": selectedEvent.id,

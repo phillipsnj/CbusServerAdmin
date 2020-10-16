@@ -104,8 +104,8 @@ Vue.component('merg-canservo8c-node-variables', {
     },
     template: `
       <v-container>
-      <p>{{ node.variables }}</p>
-      <h3>Servo {{ selectedChannel }} Variables</h3>
+      <p v-if="$store.state.debug">{{ node.variables }}</p>
+      <h3 v-if="$store.state.debug">Servo {{ selectedChannel }} Variables</h3>
       <v-row>
         <v-card class="xs6 md3 pa-3" flat>
           <v-select
@@ -121,7 +121,7 @@ Vue.component('merg-canservo8c-node-variables', {
                                           v-bind:channelId="selectedChannel">
         </merg-canservo8c-variable-channel>
       </v-row>
-      <v-row>
+      <v-row v-if="$store.state.debug">
         <node-variable v-bind:nodeId="node.node"
                        v-bind:varId="n"
                        v-for="n in node.parameters[6]"
@@ -253,8 +253,7 @@ Vue.component('merg-canservo8c-node-event-variables', {
     },
     template: `
       <v-container>
-      <h3>Event Variables</h3>
-      <p>Event ID :: {{ $store.state.selected_action_id }}</p>
+      <p v-if="$store.state.debug">Event ID :: {{ $store.state.selected_action_id }}</p>
       <node-event-variable-bit-array v-bind:nodeId="$store.state.selected_node_id"
                                      v-bind:action="$store.state.selected_action_id"
                                      varId="1"
@@ -266,7 +265,7 @@ Vue.component('merg-canservo8c-node-event-variables', {
                                      name="Inverted">
       </node-event-variable-bit-array>
 
-      <v-row>
+      <v-row v-if="$store.state.debug">
         <node-event-variable v-bind:nodeId="$store.state.selected_node_id"
                              v-bind:actionId="$store.state.selected_action_id"
                              v-bind:varId="n"
@@ -323,12 +322,8 @@ Vue.component('merg-canservo8c-variable-channel', {
     },
     template: `
 
-      <!--<v-card class="xs6 md3 pa-3" flat outlined>
-        <v-row>
-          <div>Channel {{ channelId }} Variable {{ variableValue }} Local {{ variableLocal }}Repeat {{ repeat }} Pulse {{ pulse }}</div>
-        </v-row>-->
       <v-container>
-      <h3>Servo {{ channelId }} baseNv {{ baseNv }}</h3>
+      <h3 v-if="$store.state.debug">Servo {{ channelId }} baseNv {{ baseNv }}</h3>
       <merg-canservo8c-slider v-bind:nodeId="nodeId" v-bind:varId="baseNv"
                               name="On Position" max="255" min="0" step="1"></merg-canservo8c-slider>
       <merg-canservo8c-slider v-bind:nodeId="nodeId" v-bind:varId="baseNv+1"
@@ -458,6 +453,7 @@ Vue.component('merg-canservo8c-slider', {
           <v-text-field
               :label="label"
               readonly
+              outlined
               :value=variableLocal>
           </v-text-field>
           <v-icon color="blue" @click="updateNV(variableLocal-1)">

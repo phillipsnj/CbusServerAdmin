@@ -23,12 +23,6 @@ Vue.component('nodes-list', {
         QNN: function () {
             this.$root.send('QUERY_ALL_NODES')
         },
-        /*getParameters: function (node_id) {
-            console.log(`getParameters ${node_id}`)
-            for (let i = 1; i < 9; i++) {
-                socket.emit('RQNPN', {"nodeId": node_id, "parameter": i})
-            }
-        },*/
         editNode(node) {
             console.log(`Edit Node ${node.component} : ${node.node}`)
             this.$store.state.selected_node_id = node.node

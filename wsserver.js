@@ -69,7 +69,7 @@ function wsserver(httpserver, node) {
             node.cbusSend(node.NERD(data.nodeId))
         })
         socket.on('REQUEST_ALL_EVENT_VARIABLES', function(data){
-            console.log(`REQUEST_EVENT_VARIABLE ${JSON.stringify(data)}`);
+            console.log(`REQUEST_ALL_EVENT_VARIABLE ${JSON.stringify(data)}`);
             if (data.delay === undefined) {
                 data.delay = 100
             }

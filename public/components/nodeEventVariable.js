@@ -59,14 +59,14 @@ Vue.component('node-event-variable-select', {
     name: "node-event-variable-select",
     props: ["nodeId", "actionId", "varId", "name", "items"],
     data: () => ({
-        label: "",
+        label: "Unknown",
         variableLocal: 0,
         eventName: ""
     }),
     mounted() {
         this.variableLocal = this.$store.state.nodes[this.nodeId].actions[this.actionId].variables[this.varId]
         this.eventName = this.$store.state.nodes[this.nodeId].actions[this.actionId].event
-        if (this.name) {
+        if (this.name !== undefined) {
             this.label = this.name
         } else {
             this.label = `Variable ${this.varId}`
@@ -167,13 +167,6 @@ Vue.component('node-event-variable-bit', {
                 "eventVariableId": this.variable,
                 "eventVariableValue": value
             })
-            /*this.$root.send('EVLRN', {
-                "nodeId": this.node,
-                "actionId": this.action,
-                "eventName": this.eventName,
-                "eventId": this.variable,
-                "eventVal": value
-            })*/
             //console.log(`New Value : ${value}`)
             //console.log(`Stored : ${this.$store.state.nodes[this.node].actions[this.action].variables[this.variable]}`)
         }
@@ -192,7 +185,7 @@ Vue.component('node-event-variable-bit-array', {
     name: "node-event-variable-bit-array",
     props: ["nodeId", "action", "varId", "name"],
     template: `
-      <v-card class="xs6 md3 pa-3" flat outlined>
+      <v-card class="xs6 md3 pa-3" flat>
       <div>{{ name }}</div>
       <v-row>
         <node-event-variable-bit v-for="n in [0,1,2,3,4,5,6,7]"
@@ -205,4 +198,28 @@ Vue.component('node-event-variable-bit-array', {
         </node-event-variable-bit>
       </v-row>
       </v-card>`
+})
+
+Vue.component('node-event-variable-display-name', {
+    name: "node-event-variable-display-name",
+    props: ["eventId"],
+    methods : {
+        getEventName(id) {
+            console.log(`getEventName : ${id} : ${this.eventId}`)
+            if (id in this.$store.state.layout.eventDetails) {
+                return this.$store.state.layout.eventDetails[id].name
+            } else {
+                return id
+            }
+        },
+        getEventColour(id) {
+            console.log(`getEventColour : ${id} : ${this.eventId}`)
+            if (id in this.$store.state.layout.eventDetails) {
+                return this.$store.state.layout.eventDetails[id].colour + "--text"
+            } else {
+                return "black--text"
+            }
+        },
+    },
+    template: `<div :class="getEventColour(eventId)">{{ getEventName(eventId) }}</div>`
 })

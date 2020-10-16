@@ -18,9 +18,14 @@ Vue.component('merg-canmio', {
     mounted() {
         this.nodeId = this.$store.state.selected_node_id
         //this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.$store.state.selected_node_id, "variables": 127, "delay" : 100})
-        let delay=20
+        let delay = 20
         for (let i = 16; i <= 121; i = i + 7) {
-            setTimeout(() => {this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.$store.state.selected_node_id, "variableId": i})},delay)
+            setTimeout(() => {
+                this.$root.send('REQUEST_NODE_VARIABLE', {
+                    "nodeId": this.$store.state.selected_node_id,
+                    "variableId": i
+                })
+            }, delay)
             delay += 100
         }
         this.getInfo()
@@ -158,7 +163,7 @@ Vue.component('merg-canmio', {
       </v-tabs>
       <p>{{ $store.state.node_component }}</p>
       <component v-bind:is="$store.state.node_component"></component>
-      <p>{{ JSON.stringify(node) }}</p>
+      <p v-if="$store.state.debug">{{ JSON.stringify(node) }}</p>
       </v-container>
     `
 })
@@ -167,7 +172,7 @@ Vue.component('merg-canmio-node-variables', {
     name: "merg-canmio-node-variables",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": 23, "delay" : 50})
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": 23, "delay": 50})
 
     },
     computed: {
@@ -228,13 +233,20 @@ Vue.component('merg-canmio-node-channels', {
         */
         //this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "start":16, "variables": 7, "delay" : 20})
         for (let i = 16; i <= 121; i = i + 7) {
-            setTimeout(() => {this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i, "delay":30})})
+            setTimeout(() => {
+                this.$root.send('REQUEST_NODE_VARIABLE', {"nodeId": this.nodeId, "variableId": i, "delay": 30})
+            })
         }
     },
     watch: {
         baseNV: function () {
-            let count=1
-            this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "start":this.baseNV, "variables": 7, "delay" : 20})
+            let count = 1
+            this.$root.send('REQUEST_ALL_NODE_VARIABLES', {
+                "nodeId": this.nodeId,
+                "start": this.baseNV,
+                "variables": 7,
+                "delay": 20
+            })
             /*for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
                 //this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
                 let time = count*100
@@ -277,10 +289,15 @@ Vue.component('merg-canmio-node-channels', {
                 "variableId": this.baseNV,
                 "variableValue": this.node.variables[this.baseNV]
             })
-            this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "start":this.baseNV, "variables": 6, "delay" : 20})
-/*            for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
-                this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
-            }*/
+            this.$root.send('REQUEST_ALL_NODE_VARIABLES', {
+                "nodeId": this.nodeId,
+                "start": this.baseNV,
+                "variables": 6,
+                "delay": 20
+            })
+            /*            for (let i = this.baseNV; i <= this.baseNV + 6; i++) {
+                            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
+                        }*/
         }
     },
     template: `
@@ -354,8 +371,9 @@ Vue.component('merg-canmio-node-events', {
             this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
                 "nodeId": this.nodeId,
                 "eventIndex": item.actionId,
-                "variables": this.$store.state.nodes[this.nodeId].actions[item.actionId].variables[0],
-                "delay":30
+                // "variables": this.$store.state.nodes[this.nodeId].actions[item.actionId].variables[0],
+                "variables": 20,
+                "delay": 30
             })
             //this.eventDialog = true
             this.editedEvent = item
@@ -450,7 +468,8 @@ Vue.component('merg-canmio-node-event-variables', {
     data: function () {
         return {
             //event_actions: [],
-            //happening_actions: []
+            //happening_actions: [],
+            eventActions: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20]
         }
     },
     mounted() {
@@ -488,21 +507,86 @@ Vue.component('merg-canmio-node-event-variables', {
         <p>{{ node.actions[actionId].variables.length }}</p>
         <p>{{ node.actions[actionId] }}</p>
         <h3>Happening :: {{ happening_actions[node.actions[actionId].variables[1]] }}</h3>
-        <node-event-variable-select v-bind:nodeId="nodeId"
-                                    v-bind:actionId="actionId"
-                                    v-bind:varId="n"
-                                    :items="$store.state.canmio_event_actions"
-                                    v-for="n in numberEventVariables"
-                                    :key="n"
-                                    dense
-                                    v-if="n>1">
-        </node-event-variable-select>
-
-        <!--<p>{{ node.actions[actionId] }}</p>-->
-        <!--<p>{{ happening_actions }}</p>-->
+        <v-row v-for="n in eventActions">
+          <merg-canmio-event-variable-select v-bind:nodeId="nodeId"
+                                      v-bind:actionId="actionId"
+                                      v-bind:varId="n"
+                                      :name="'Action-'+n" 
+                                      :items="$store.state.canmio_event_actions" 
+                                      dense>
+          </merg-canmio-event-variable-select>
+        </v-row>
         <p>{{ event_actions }}</p>
       </v-row>
       </v-container>`
+})
+
+Vue.component('merg-canmio-event-variable-select', {
+    name: "merg-canmio-variable-select",
+    props: ["nodeId", "actionId", "varId", "name", "items"],
+    data: () => ({
+        label: "Unknown",
+        variableLocal: 0,
+        eventName: ""
+    }),
+    mounted() {
+        this.variableLocal = this.$store.state.nodes[this.nodeId].actions[this.actionId].variables[this.varId]
+        this.eventName = this.$store.state.nodes[this.nodeId].actions[this.actionId].event
+        if (this.name !== undefined) {
+            this.label = this.name
+        } else {
+            this.label = `Variable ${this.varId}`
+        }
+    },
+    watch: {
+        variableValue() {
+            this.variableLocal = this.$store.state.nodes[this.nodeId].actions[this.actionId].variables[this.varId]
+        }
+    },
+    computed: {
+        variableValue: function () {
+            return this.$store.state.nodes[this.nodeId].actions[this.actionId].variables[this.varId]
+        }
+    },
+    methods: {
+        updateEV: function () {
+            console.log(`Update Event Variable Select : ${this.nodeId} : ${this.actionId} : ${this.varId} : ${this.variableLocal}`)
+            this.$root.send('UPDATE_EVENT_VARIABLE', {
+                "nodeId": this.nodeId,
+                "eventIndex": this.actionId,
+                "eventName": this.eventName,
+                "eventVariableId": this.varId,
+                "eventVariableValue": this.variableLocal
+            })
+            this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
+                "nodeId": this.nodeId,
+                "eventIndex": this.actionId,
+                // "variables": this.$store.state.nodes[this.nodeId].actions[item.actionId].variables[0],
+                "variables": 20,
+                "delay": 30
+            })
+            /*this.$root.send('EVLRN', {
+                "nodeId": this.nodeId,
+                "actionId": this.actionId,
+                "eventName": this.eventName,
+                "eventId": this.varId,
+                "eventVal": this.variableLocal
+            })*/
+        }
+    },
+    template: `
+      <div>
+      <v-card class="xs6 md3 pa-3" flat>
+        <v-select
+            :label="label"
+            v-model="variableLocal"
+            outlined
+            @change="updateEV()"
+            :items="items"
+        >
+        </v-select>
+      </v-card>
+      </div>`
 })
 
 Vue.component('merg-canmio-channel-input', {

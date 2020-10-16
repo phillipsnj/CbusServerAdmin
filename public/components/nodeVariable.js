@@ -108,11 +108,13 @@ Vue.component('node-variable-bit', {
         }
     },
     template: `
+      <v-card class="xs6 md3 pa-3" flat>
       <v-checkbox min-width="100"
                   v-model="checked"
                   :label="name"
                   @change="updateNV"
-      ></v-checkbox>`
+      ></v-checkbox>
+      </v-card>`
 })
 
 Vue.component('node-variable-slider', {
@@ -234,10 +236,10 @@ Vue.component('node-variable-bit-array', {
     name: "node-variable-bit-array",
     props: ["nodeId", "varId", "name"],
     template: `
-      <v-card class="xs6 md3 pa-3" flat outlined>
+      <v-card class="xs6 md3 pa-3" flat>
       <div>{{ name }}</div>
       <v-row>
-        <node-variable-bit v-for="n in [0,1,2,3,5,6,7]"
+        <node-variable-bit v-for="n in [0,1,2,3,4,5,6,7]"
                            :key="n"
                            v-bind:nodeId="nodeId"
                            :varId="varId"
@@ -255,14 +257,18 @@ Vue.component('nodeVariable2', {
 
 Vue.component('node-variable-slider2', {
     name: "node-variable-slider2",
-    props: ["nodeId", "varId", "name", "max", "min", "step"],
+    props: ["nodeId", "varId", "name", "max", "min", "step", "multi"],
     data: () => ({
         rules: [
             value => value >= this.min || 'Cannot be a negative number',
             value => value <= this.max || 'Number to High'
         ],
         label: "",
-        variableLocal: 0
+        variableLocal: 0,
+        displayLocal:0,
+        multiplier : 1,
+        minimum : 0,
+        maximum :255
     }),
     mounted() {
         this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
@@ -271,10 +277,21 @@ Vue.component('node-variable-slider2', {
         } else {
             this.label = `Variable ${this.varId}`
         }
+        if (this.multi !== undefined){
+            this.multiplier = this.multi
+        }
+        if (this.max !== undefined){
+            this.maximum = this.max
+        }
+        if (this.min !== undefined){
+            this.minimum = this.min
+        }
+        this.displayLocal = this.$store.state.nodes[this.nodeId].variables[this.varId] * this.multi
     },
     watch: {
         variableValue() {
             this.variableLocal = this.$store.state.nodes[this.nodeId].variables[this.varId]
+            this.displayLocal = this.$store.state.nodes[this.nodeId].variables[this.varId] * this.multiplier
         }
     },
     computed: {
@@ -296,13 +313,13 @@ Vue.component('node-variable-slider2', {
       <v-text-field
           :label="label"
           readonly
-          :value=variableLocal>
+          :value=displayLocal>
       </v-text-field>
       <v-slider
           v-model="variableLocal"
           class="align-center"
-          :max="max"
-          :min="min"
+          :max="maximum"
+          :min="minimum"
           :step="step"
           hide-details
           @change="updateNV(variableLocal)"
@@ -431,21 +448,22 @@ Vue.component('node-variable2', {
       <v-row>
         <v-col cols="2">
           <v-row>
-          <div>{{ label }}</div>
-        
-          <v-text-field
-              v-model="variableLocal"
-              regular
-              :rules="[value => value >= this.minimum || 'Number to low',
+            <!--          <div>{{ label }}</div>-->
+
+            <v-text-field
+                :label="label"
+                v-model="variableLocal"
+                outlined
+                :rules="[value => value >= this.minimum || 'Number to low',
             value => value <= this.maximum || 'Number to High']"
-              @change="updateNV"
-          >
-          </v-text-field>
+                @change="updateNV"
+            >
+            </v-text-field>
           </v-row>
         </v-col>
-          <v-col align="start" justify="start" class="mx-0"  cols="8">
-            <div align="start" justify="start" class="grey--text ml-4">{{ this.text }}</div>
-          
+        <v-col align="start" justify="start" class="mx-0" cols="8">
+          <div align="start" justify="start" class="grey--text ml-4">{{ this.text }}</div>
+
         </v-col>
       </v-row>
       </v-container>
