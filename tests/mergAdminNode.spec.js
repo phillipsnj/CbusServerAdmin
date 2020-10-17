@@ -1,5 +1,7 @@
 const expect = require('chai').expect;
 var itParam = require('mocha-param');
+var winston = require('./config/winston.js');
+
 
 const NET_PORT = 5550;
 const NET_ADDRESS = "127.0.0.1"
@@ -17,18 +19,24 @@ function decToHex(num, len) {
 
 
 describe('mergAdminNode tests', function(){
-	let debug = 0;
 	let cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	let node = new admin.cbusAdmin(file, NET_ADDRESS,NET_PORT);
 
 	before(function(done) {
+		winston.info({message: ' '});
+		winston.info({message: '======================================================================'});
+		winston.info({message: '------------------------ mergAdminNode tests -------------------------'});
+		winston.info({message: '======================================================================'});
+		winston.info({message: ' '});
+
         node.cbusSend(node.QNN())
 		done();
 	});
 
 	after(function() {
-		console.log('\n');  //newline for visual separation
 		cbus.stopServer();
+		winston.info({message: 'Close mergAdminNode test Client'});
+
 	});																										
 	
 	
@@ -52,14 +60,14 @@ describe('mergAdminNode tests', function(){
 
 	
 	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
-		if (debug) console.log("\nTest Client: Request ACOF");
+		winston.info({message: 'mergAdminNode test: BEGIN ACOF test ' + JSON.stringify(value)});
 		expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 		expect(node.ACOF(value.node, value.event)).to.equal(expected);
 		done();
 	})
 
 	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
-		if (debug) console.log("\nTest Client: Request ACON");
+		winston.info({message: 'mergAdminNode test: BEGIN ACON test ' + JSON.stringify(value)});
 		expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 		expect(node.ACON(value.node, value.event)).to.equal(expected);
 		done();
@@ -85,7 +93,7 @@ describe('mergAdminNode tests', function(){
 
 	itParam("ASON test nodeId ${value.nodeId} deviceNum ${value.deviceNum)", GetTestCase_ASON(), function (value) {
 		// Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
-		if (debug) console.log("\nTest Client: Request ASON");
+		winston.info({message: 'mergAdminNode test: BEGIN ASON test ' + JSON.stringify(value)});
 		expected = ":SB780N98" + decToHex(value.nodeId, 4) + decToHex(value.deviceNum, 4) + ";";
 		expect(node.ASON(value.nodeId, value.deviceNum)).to.equal(expected);
 	})
@@ -115,7 +123,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("EVLRN test event ${value.event} eventIndex ${value.eventIndex} eventValue ${value.eventValue}", GetTestCase_EVLRN(), function (value) {
-		if (debug) console.log("\nTest Client: Request EVLRN");
+		winston.info({message: 'mergAdminNode test: BEGIN EVLRN test ' + JSON.stringify(value)});
 		expected = ":SB780ND2" + value.event + decToHex(value.eventIndex, 2) + decToHex(value.eventValue, 2) + ";";
 		expect(node.EVLRN(value.event, value.eventIndex, value.eventValue)).to.equal(expected);
 	})
@@ -134,7 +142,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("EVULN test event ${value.event}", GetTestCase_EVULN(), function (value) {
-		if (debug) console.log("\nTest Client: Request EVULN");
+		winston.info({message: 'mergAdminNode test: BEGIN EVULN test ' + JSON.stringify(value)});
 		expected = ":SB780N95" + value.event + ";";
 		expect(node.EVULN(value.event)).to.equal(expected);
 	})
@@ -153,7 +161,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("NERD test nodeId ${value.nodeId}", GetTestCase_NERD(), function (value) {
-		if (debug) console.log("\nTest Client: Request NERD");
+		winston.info({message: 'mergAdminNode test: BEGIN NERD test ' + JSON.stringify(value)});
 		expected = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
 		expect(node.NERD(value.nodeId)).to.equal(expected);
 	})
@@ -172,7 +180,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("NNLRN test nodeId ${value.nodeId}", GetTestCase_NNLRN(), function (value) {
-		if (debug) console.log("\nTest Client: Request NNLRN");
+		winston.info({message: 'mergAdminNode test: BEGIN NNLRN test ' + JSON.stringify(value)});
 		expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
 		expect(node.NNLRN(value.nodeId)).to.equal(expected);
 	})
@@ -192,7 +200,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("NNLRN test invalid nodeId ${value.nodeId}", GetTestCase_NNLRN_invalid(), function (value) {
-		if (debug) console.log("\nTest Client: Request NNLRN");
+		winston.info({message: 'mergAdminNode test: BEGIN NNLRN invalid test ' + JSON.stringify(value)});
 		var expected;	// leave undefined
 		expect(node.NNLRN(value.nodeId)).to.equal(expected);
 	})
@@ -213,7 +221,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("NNULN test nodeId ${value.nodeId}", GetTestCase_NNULN(), function (value) {
-		if (debug) console.log("\nTest Client: Request NNULN");
+		winston.info({message: 'mergAdminNode test: BEGIN NNULN test ' + JSON.stringify(value)});
 		expected = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
 		expect(node.NNULN(value.nodeId)).to.equal(expected);
 	})
@@ -237,7 +245,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("NVRD test nodeId ${value.nodeId} nvIndex ${value.nvIndex}", GetTestCase_NVRD(), function (value) {
-		if (debug) console.log("\nTest Client: Request NVRD");
+		winston.info({message: 'mergAdminNode test: BEGIN NVRD test ' + JSON.stringify(value)});
 		expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + ";";
 		expect(node.NVRD(value.nodeId, value.nvIndex)).to.equal(expected);
 	})
@@ -266,7 +274,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("NVSET test nodeId ${value.nodeId} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVSET(), function (value) {
-		if (debug) console.log("\nTest Client: Request NVSET");
+		winston.info({message: 'mergAdminNode test: BEGIN NVSET test ' + JSON.stringify(value)});
 		expected = ":SB780N96" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + decToHex(value.nvValue, 2) + ";";
 		expect(node.NVSET(value.nodeId, value.nvIndex, value.nvValue)).to.equal(expected);
 	})
@@ -295,7 +303,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("REVAL test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventValue ${value.eventValue}", GetTestCase_REVAL(), function (value) {
-		if (debug) console.log("\nTest Client: Request REVAL");
+		winston.info({message: 'mergAdminNode test: BEGIN REVAL test ' + JSON.stringify(value)});
 		expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventValue, 2) + ";";
 		expect(node.REVAL(value.nodeId, value.eventIndex, value.eventValue)).to.equal(expected);
 	})
@@ -314,14 +322,14 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("RQEVN test nodeId ${value.nodeId}", GetTestCase_RQEVN(),  function (value) {
-		if (debug) console.log("\nTest Client: Request RQEVN");
+		winston.info({message: 'mergAdminNode test: BEGIN RQEVN test ' + JSON.stringify(value)});
 		expected = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
 		expect(node.RQEVN(value.nodeId)).to.equal(expected);
 	})
 
 
 	it("RQNP test", function () {
-		if (debug) console.log("\nTest Client: Request RQNP");
+		winston.info({message: 'mergAdminNode test: BEGIN RQNP test '});
 		expected = ":SB780N10" + ";";
 		expect(node.RQNP()).to.equal(expected);
 	})
@@ -345,7 +353,7 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("RQNPN test nodeId ${value.nodeId} paramIndex ${value.paramIndex}", GetTestCase_RQNPN(), function (value) {
-		if (debug) console.log("\nTest Client: Request RQNPN");
+		winston.info({message: 'mergAdminNode test: BEGIN RQNPN test ' + JSON.stringify(value)});
 		expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.paramIndex, 2) + ";";
 		expect(node.RQNPN(value.nodeId, value.paramIndex)).to.equal(expected);
 	})
@@ -364,14 +372,14 @@ describe('mergAdminNode tests', function(){
 
 
 	itParam("QLOC test session ${value.session}", GetTestCase_QLOC(), function (value) {
-		if (debug) console.log("\nTest Client: Request QLOC");
+		winston.info({message: 'mergAdminNode test: BEGIN QLOC test ' + JSON.stringify(value)});
 		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
 		expect(node.QLOC(value.session)).to.equal(expected);
 	})
 
 
 	it('QNN test', function() {
-		console.log("\nTest Client: Get QNN");
+		winston.info({message: 'mergAdminNode test: BEGIN QNN test '});
 		expect(node.QNN()).to.equal(":SB780N0D;");
 
 	});

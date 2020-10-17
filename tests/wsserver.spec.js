@@ -22,10 +22,6 @@ function decToHex(num, len) {
     return padded.substr(-len)
 }
 
-winston.info({message: '----------------------------------------------------------------------'});
-winston.info({message: '----------------------------- wsserver tests -------------------------'});
-winston.info({message: '----------------------------------------------------------------------'});
-
 describe('Websocket server tests', function(){
 	let http_Server = undefined;
 	let websocket_Client = undefined;
@@ -36,8 +32,14 @@ describe('Websocket server tests', function(){
 	let debug = 0;
 
 	before(function(done) {
+		winston.info({message: ' '});
+		winston.info({message: '======================================================================'});
+		winston.info({message: '----------------------------- wsserver tests -------------------------'});
+		winston.info({message: '======================================================================'});
+		winston.info({message: ' '});
+
 		http_Server = http.createServer(() => console.log(" -/- "));
-		http_Server.listen(7575, () => { winston.info({message: "server listening on 7575"}); });
+		http_Server.listen(7575, () => { winston.info({message: "wsserver listening on 7575"}); });
 	
 		websocket_Server(http_Server, cbusAdmin);
 
@@ -48,27 +50,26 @@ describe('Websocket server tests', function(){
         });
 		
         websocket_Client.on('connect', function() {
-			winston.info({message: 'test Client connected...'});
+			winston.info({message: 'wwserver client connected...'});
             done();
         });
 		
         websocket_Client.on('disconnect', function() {
-			winston.info({message: 'test Client disconnected...'});
+			winston.info({message: 'wwserver client disconnected...'});
         });
 		
 
 	});
 
 	after(function() {
-		console.log('\n');  //newline for visual separation
 		if (websocket_Client.connected)
 		{
-			winston.info({message: 'Close test Client'});
+			winston.info({message: 'Close wwserver test Client'});
 			websocket_Client.close();
 		}
 		if(http_Server) {
 			winston.info({message: 'Close http server'});
-			http_Server.close(() => { console.log('CLOSING Server'); http_Server.unref(); done(); });
+			http_Server.close(() => { console.log('CLOSING WSServer'); http_Server.unref(); done(); });
 		}
 		
 	});
