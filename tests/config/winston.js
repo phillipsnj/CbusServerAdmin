@@ -28,6 +28,7 @@ var options = {
   file: {
     level: 'info',
     filename: `./tests/logs/tests.log`,
+	options: { flags: 'w' },
     handleExceptions: true,
     json: true,
     maxsize: 5242880, // 5MB
