@@ -60,6 +60,12 @@ class mock_CbusNetwork {
 							this.outputPNN(this.modules[i].getNodeId());
 						}
 						break;
+					case '42':
+						// Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
+						var nodeNumber = msg.nodeId();
+						winston.info({message: 'Mock CBUS Network: received SNN : new Node Number ' + nodeNumber});
+						// could renumber or create a new module, but not necessary at this time
+						break;
 					case '53':
 						// Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
 						winston.info({message: 'Mock CBUS Network: received NNLRN'});
@@ -211,7 +217,7 @@ class mock_CbusNetwork {
 		// Format: [<MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
 		var msgData = ':S' + 'B780' + 'N' + '60' + decToHex(session, 2) + decToHex(fn1, 2) + decToHex(fn2, 2) + ';';
 		this.socket.write(msgData);
-		winston.info({message: 'Mock CBUS Network: Output DFUN : nodeId [' + nodeId + '] ' + msgData});
+		winston.info({message: 'Mock CBUS Network: Output DFUN : session [' + session + '] ' + msgData});
 	}
 
 
@@ -219,7 +225,7 @@ class mock_CbusNetwork {
 		// Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
 		var msgData = ':S' + 'B780' + 'N' + '63' + decToHex(data, 4) + decToHex(errorNumber, 2) + ';';
 		this.socket.write(msgData);
-		winston.info({message: 'Mock CBUS Network: Output ERR : nodeId [' + nodeId + '] ' + msgData});
+		winston.info({message: 'Mock CBUS Network: Output ERR : ' + msgData});
 	}
 
 
@@ -235,9 +241,17 @@ class mock_CbusNetwork {
 		// Format: [<MjPri><MinPri=2><CANID>]<21><Session>
 		var msgData = ':S' + 'B780' + 'N' + '21' + decToHex(session, 2) + ';';
 		this.socket.write(msgData);
-		winston.info({message: 'Mock CBUS Network: Output KLOC : nodeId [' + nodeId + '] ' + msgData});
+		winston.info({message: 'Mock CBUS Network: Output KLOC : session [' + session + '] ' + msgData});
 	}
 
+
+	outputRQNN(nodeId) {
+		//Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
+		var msgData = ':S' + 'B780' + 'N' + '50' + decToHex(nodeId, 4) + ';';
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output RQNN : nodeId [' + nodeId + '] ' + msgData});
+	}
+	
 
 	outputUNSUPOPCODE(nodeId) {
 		// Ficticious opcode - 'FC' currently unused
@@ -274,6 +288,7 @@ class CbusModule {
 	
 	getNodeId(){return this.nodeId}
 	getNodeIdHex(){return decToHex(this.nodeId, 4)}
+	setNodeId(newNodeId) { this.nodeId = newNodeId;}
 	
 	getModuleIdHex() {return decToHex(this.parameters[3], 2)}
 	setModuleId(Id) {this.parameters[3] = Id}
