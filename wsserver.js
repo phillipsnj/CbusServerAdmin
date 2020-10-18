@@ -100,6 +100,14 @@ function wsserver(httpserver, node) {
             console.log(`ACCESSORY_LONG_OFF ${JSON.stringify(data)}`);
             node.cbusSend(node.ACOF(data.nodeId, data.eventId))
         })
+        socket.on('ACCESSORY_SHORT_OFF', function(data){
+            console.log(`ACCESSORY_SHORT_OFF ${JSON.stringify(data)}`);
+            node.cbusSend(node.ASOF(data.nodeId, data.deviceNumber))
+        })
+        socket.on('ACCESSORY_SHORT_ON', function(data){
+            console.log(`ACCESSORY_SHORT_ON ${JSON.stringify(data)}`);
+            node.cbusSend(node.ASON(data.nodeId, data.deviceNumber))
+        })
         socket.on('TEACH_EVENT', function(data){
             console.log(`EVLRN ${JSON.stringify(data)}`);
             node.cbusSend(node.NNLRN(data.nodeId))

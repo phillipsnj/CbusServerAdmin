@@ -74,96 +74,12 @@ describe('Websocket server tests', function(){
 		
 	});
 	
-		var TestCases_NodeEvent = 	[	{ node: 0, event: 0 },
-										{ node: 0, event: 1 },
-										{ node: 0, event: 65535 },
-										{ node: 1, event: 0 },
-										{ node: 1, event: 1 },
-										{ node: 1, event: 65535 },
-										{ node: 65535, event: 0 },
-										{ node: 65535, event: 1 },
-										{ node: 65535, event: 65535 }
-										];
-
-		var TestCases_NodeParameter = [	{ node: 0, param: 0 },
-										{ node: 0, param: 1 },
-										{ node: 0, param: 255 },
-										{ node: 1, param: 0 },
-										{ node: 1, param: 1 },
-										{ node: 1, param: 255 },
-										{ node: 65535, param: 0 },
-										{ node: 65535, param: 1 },
-										{ node: 65535, param: 255 }
-										];
-
-		var TestCases_NodeParamIDParamValue = 	[	{ node: 0, 		paramId: 0, 	paramVal: 0 },
-													{ node: 0, 		paramId: 0, 	paramVal: 1  },
-													{ node: 0, 		paramId: 0, 	paramVal: 255 },
-													{ node: 0, 		paramId: 1, 	paramVal: 0 },
-													{ node: 0, 		paramId: 1, 	paramVal: 1 },
-													{ node: 0, 		paramId: 1, 	paramVal: 255 },
-													{ node: 0, 		paramId: 255, 	paramVal: 0 },
-													{ node: 0, 		paramId: 255, 	paramVal: 1 },
-													{ node: 0, 		paramId: 255, 	paramVal: 255 },
-													{ node: 1, 		paramId: 0, 	paramVal: 0  },
-													{ node: 1, 		paramId: 0, 	paramVal: 1  },
-													{ node: 1, 		paramId: 0, 	paramVal: 255 },
-													{ node: 1, 		paramId: 1, 	paramVal: 0 },
-													{ node: 1, 		paramId: 1, 	paramVal: 1 },
-													{ node: 1, 		paramId: 1, 	paramVal: 255 },
-													{ node: 1, 		paramId: 255, 	paramVal: 0 },
-													{ node: 1, 		paramId: 255, 	paramVal: 1 },
-													{ node: 1, 		paramId: 255, 	paramVal: 255 },
-													{ node: 65535, 	paramId: 0, 	paramVal: 0  },
-													{ node: 65535, 	paramId: 0, 	paramVal: 1  },
-													{ node: 65535, 	paramId: 0, 	paramVal: 255 },
-													{ node: 65535, 	paramId: 1, 	paramVal: 0 },
-													{ node: 65535, 	paramId: 1, 	paramVal: 1 },
-													{ node: 65535, 	paramId: 1, 	paramVal: 255 },
-													{ node: 65535, 	paramId: 255, 	paramVal: 0 },
-													{ node: 65535, 	paramId: 255, 	paramVal: 1 },
-													{ node: 65535, 	paramId: 255, 	paramVal: 255 }
-													];
 
 		var TestCases_NodeId = 		[	{ node: 0 },
 										{ node: 1 },
 										{ node: 65535 },
 										];
 
-	function GetTestCase_TEACH_EVENT () {
-		var testCases = [];
-		var nodeId;
-		var actionId;
-		var eventName;
-		var eventId;
-		var eventVal;
-		for (l1 = 1; l1 < 4; l1++) {
-			if (l1 == 1) nodeId = 0;
-			if (l1 == 2) nodeId = 1;
-			if (l1 == 3) nodeId = 65535;
-			
-			for (l3 = 1; l3 < 4; l3++) {
-				if (l3 == 1) eventName = '00000000';
-				if (l3 == 2) eventName = '00000001';
-				if (l3 == 3) eventName = 'FFFFFFFF';
-				
-				for (l4 = 1; l4 < 4; l4++) {
-					if (l4 == 1) eventId = 0;
-					if (l4 == 2) eventId = 1;
-					if (l4 == 3) eventId = 255;
-				
-					for (l5 = 1; l5 < 4; l5++) {
-						if (l5 == 1) eventVal = 0;
-						if (l5 == 2) eventVal = 1;
-						if (l5 == 3) eventVal = 255;
-					
-						testCases.push({'nodeId':nodeId, 'eventName':eventName, 'eventId':eventId, 'eventVal':eventVal});
-					}
-				}
-			}
-		}
-		return testCases;
-	}
 
 	///////////////////////////////////////////////
 	//
@@ -177,33 +93,93 @@ describe('Websocket server tests', function(){
 		}, 100);
 	})
 
+	function GetTestCase_ACCESSORY_LONG () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (eventIdCount = 1; eventIdCount < 4; eventIdCount++) {
+				if (eventIdCount == 1) eventId = 0;
+				if (eventIdCount == 2) eventId = 1;
+				if (eventIdCount == 3) eventId = 65535;
+				
+				testCases.push({'nodeId':nodeId, 'eventId':eventId});
+			}
+		}
+		return testCases;
+	}
 
 
-	itParam("ACCESSORY_LONG_OFF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	itParam("ACCESSORY_LONG_OFF test nodeId ${value.nodeId} event ${value.eventId}", GetTestCase_ACCESSORY_LONG(), function (done, value) {
 		winston.info({message: 'wsserver Test: START ACCESSORY_LONG_OFF test: ' + JSON.stringify(value)});
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('ACCESSORY_LONG_OFF', {"nodeId": value.node, "eventId": value.event})
+		websocket_Client.emit('ACCESSORY_LONG_OFF', {"nodeId": value.nodeId, "eventId": value.eventId})
 		setTimeout(function(){
-			expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
+			expected = ":SB780N91" + decToHex(value.nodeId, 4) + decToHex(value.eventId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 200);
 	})
 
 		
-	itParam("ACCESSORY_LONG_ON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	itParam("ACCESSORY_LONG_ON test nodeId ${value.nodeId} event ${value.eventId}", GetTestCase_ACCESSORY_LONG(), function (done, value) {
 		winston.info({message: 'wsserver Test: START ACCESSORY_LONG_ON test: ' + JSON.stringify(value)});
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('ACCESSORY_LONG_ON', {"nodeId": value.node, "eventId": value.event})
+		websocket_Client.emit('ACCESSORY_LONG_ON', {"nodeId": value.nodeId, "eventId": value.eventId})
 		setTimeout(function(){
-			expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
+			expected = ":SB780N90" + decToHex(value.nodeId, 4) + decToHex(value.eventId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
 	})
 
 
+	function GetTestCase_ACCESSORY_SHORT () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (deviceNumberCount = 1; deviceNumberCount < 4; deviceNumberCount++) {
+				if (deviceNumberCount == 1) deviceNumber = 0;
+				if (deviceNumberCount == 2) deviceNumber = 1;
+				if (deviceNumberCount == 3) deviceNumber = 65535;
+				
+				testCases.push({'nodeId':nodeId, 'deviceNumber':deviceNumber});
+			}
+		}
+		return testCases;
+	}
 
+
+	itParam("ACCESSORY_SHORT_OFF test nodeId ${value.nodeId} deviceNumber ${value.deviceNumber}", GetTestCase_ACCESSORY_SHORT(), function (done, value) {
+		winston.info({message: 'wsserver Test: START ACCESSORY_SHORT_OFF test: ' + JSON.stringify(value)});
+		mock_Cbus.clearSendArray();
+		websocket_Client.emit('ACCESSORY_SHORT_OFF', {"nodeId": value.nodeId, "deviceNumber": value.deviceNumber})
+		setTimeout(function(){
+			expected = ":SB780N99" + decToHex(value.nodeId, 4) + decToHex(value.deviceNumber, 4) + ";";
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 200);
+	})
+
+
+	itParam("ACCESSORY_SHORT_ON test nodeId ${value.nodeId} deviceNumber ${value.deviceNumber}", GetTestCase_ACCESSORY_SHORT(), function (done, value) {
+		winston.info({message: 'wsserver Test: START ACCESSORY_SHORT_ON test: ' + JSON.stringify(value)});
+		mock_Cbus.clearSendArray();
+		websocket_Client.emit('ACCESSORY_SHORT_ON', {"nodeId": value.nodeId, "deviceNumber": value.deviceNumber})
+		setTimeout(function(){
+			expected = ":SB780N98" + decToHex(value.nodeId, 4) + decToHex(value.deviceNumber, 4) + ";";
+			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
+			done();
+		}, 200);
+	})
+
+
+		
 	function GetTestCase_UPDATE_EVENT_VARIABLE () {
 		var testCases = [];
 		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
@@ -273,8 +249,6 @@ describe('Websocket server tests', function(){
 
 	function GetTestCase_REMOVE_EVENT () {
 		var testCases = [];
-		var nodeId;
-		var eventName;
 		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
 			if (nodeIdCount == 1) nodeId = 0;
 			if (nodeIdCount == 2) nodeId = 1;
@@ -328,12 +302,31 @@ describe('Websocket server tests', function(){
 	})
 		
 
-	itParam("REQUEST_NODE_VARIABLE test nodeId ${value.node} variableId ${value.param}", TestCases_NodeParameter, function (done, value) {
+	function GetTestCase_REQUEST_NODE_VARIABLE () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (variableIdCount = 1; variableIdCount < 4; variableIdCount++) {
+				if (variableIdCount == 1) variableId = 0;
+				if (variableIdCount == 2) variableId = 1;
+				if (variableIdCount == 3) variableId = 255;
+				
+				testCases.push({'nodeId':nodeId,'variableId':variableId});
+			}
+		}
+		return testCases;
+	}
+	
+
+	itParam("REQUEST_NODE_VARIABLE test nodeId ${value.node} variableId ${value.variableId}", GetTestCase_REQUEST_NODE_VARIABLE(), function (done, value) {
 		winston.info({message: 'wsserver Test: START REQUEST_NODE_VARIABLE test: ' + JSON.stringify(value)});
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('REQUEST_NODE_VARIABLE', {"nodeId": value.node, "variableId": value.param})
+		websocket_Client.emit('REQUEST_NODE_VARIABLE', {"nodeId": value.node, "variableId": value.variableId});
 		setTimeout(function(){
-			expected = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.param, 2) + ";";
+			expected = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.variableId, 2) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
@@ -513,12 +506,31 @@ describe('Websocket server tests', function(){
 	})
 		
 
-	itParam("RQNPN test nodeId ${value.node} param ${value.param}", TestCases_NodeParameter, function (done, value) {
+	function GetTestCase_RQNPN () {
+		var testCases = [];
+		for (nodeIdCount = 1; nodeIdCount < 4; nodeIdCount++) {
+			if (nodeIdCount == 1) nodeId = 0;
+			if (nodeIdCount == 2) nodeId = 1;
+			if (nodeIdCount == 3) nodeId = 65535;
+			
+			for (parameterIdCount = 1; parameterIdCount < 4; parameterIdCount++) {
+				if (parameterIdCount == 1) parameterId = 0;
+				if (parameterIdCount == 2) parameterId = 1;
+				if (parameterIdCount == 3) parameterId = 255;
+				
+				testCases.push({'nodeId':nodeId, 'parameterId':parameterId});
+			}
+		}
+		return testCases;
+	}
+	
+
+	itParam("RQNPN test nodeId ${value.nodeId} param ${value.parameterId}", GetTestCase_RQNPN(), function (done, value) {
 		winston.info({message: 'wsserver Test: RQNPN test: ' + JSON.stringify(value)});
 		mock_Cbus.clearSendArray();
-		websocket_Client.emit('RQNPN', {"nodeId": value.node, "parameter": value.param})
+		websocket_Client.emit('RQNPN', {"nodeId": value.nodeId, "parameter": value.parameterId})
 		setTimeout(function(){
-			expected = ":SB780N73" + decToHex(value.node, 4) + decToHex(value.param, 2) + ";";
+			expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.parameterId, 2) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
 		}, 100);
@@ -534,6 +546,37 @@ describe('Websocket server tests', function(){
 			done();
 			}, 100);
 	});
+
+
+	function GetTestCase_TEACH_EVENT () {
+		var testCases = [];
+		for (l1 = 1; l1 < 4; l1++) {
+			if (l1 == 1) nodeId = 0;
+			if (l1 == 2) nodeId = 1;
+			if (l1 == 3) nodeId = 65535;
+			
+			for (l3 = 1; l3 < 4; l3++) {
+				if (l3 == 1) eventName = '00000000';
+				if (l3 == 2) eventName = '00000001';
+				if (l3 == 3) eventName = 'FFFFFFFF';
+				
+				for (l4 = 1; l4 < 4; l4++) {
+					if (l4 == 1) eventId = 0;
+					if (l4 == 2) eventId = 1;
+					if (l4 == 3) eventId = 255;
+				
+					for (l5 = 1; l5 < 4; l5++) {
+						if (l5 == 1) eventVal = 0;
+						if (l5 == 2) eventVal = 1;
+						if (l5 == 3) eventVal = 255;
+					
+						testCases.push({'nodeId':nodeId, 'eventName':eventName, 'eventId':eventId, 'eventVal':eventVal});
+					}
+				}
+			}
+		}
+		return testCases;
+	}
 
 
 	itParam("TEACH_EVENT test nodeId ${value.nodeId} eventName ${value.eventName}, eventId ${value.eventId}, eventVal ${value.eventVal}",
@@ -936,6 +979,24 @@ describe('Websocket server tests', function(){
 			websocket_Client.off('nodes');
 			done();
 			}, 100);
+	});
+
+
+	it('requestNodeNumber test', function(done) {
+		winston.info({message: 'wsserver: requestNodeNumber test'});
+		mock_Cbus.clearSendArray();
+		websocket_Client.on('layoutDetails', function (data) {
+			nodeData = data;
+			winston.info({message: 'wsserver: START requestNodeNumber test - message data : ' + JSON.stringify(nodeData)});
+			});	
+		mock_Cbus.outputRQNN(0);
+		setTimeout(function(){
+			// check that nextNodeId is +1 from the new nodeId transmitted as a result of the request
+			var newNodeId = parseInt(mock_Cbus.getSendArray()[0].substr(9, 4), 16);
+			expect(nodeData.layoutDetails.nextNodeId).to.equal(newNodeId + 1);
+			websocket_Client.off('nodes');
+			done();
+			}, 500);
 	});
 
 

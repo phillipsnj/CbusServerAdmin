@@ -73,8 +73,7 @@ describe('mergAdminNode tests', function(){
 		done();
 	})
 
-/*
-	function GetTestCase_ASON () {
+	function GetTestCase_ACCESSORY_SHORT () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
 			if (NN == 1) nodeId = 0;
@@ -91,13 +90,20 @@ describe('mergAdminNode tests', function(){
 	}
 
 
-	itParam("ASON test nodeId ${value.nodeId} deviceNum ${value.deviceNum)", GetTestCase_ASON(), function (value) {
+	itParam("ASOF test nodeId ${value.nodeId} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (value) {
+		// Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
+		winston.info({message: 'mergAdminNode test: BEGIN ASOF test ' + JSON.stringify(value)});
+		expected = ":SB780N99" + decToHex(value.nodeId, 4) + decToHex(value.deviceNum, 4) + ";";
+		expect(node.ASOF(value.nodeId, value.deviceNum)).to.equal(expected);
+	})
+
+
+	itParam("ASON test nodeId ${value.nodeId} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (value) {
 		// Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
 		winston.info({message: 'mergAdminNode test: BEGIN ASON test ' + JSON.stringify(value)});
 		expected = ":SB780N98" + decToHex(value.nodeId, 4) + decToHex(value.deviceNum, 4) + ";";
 		expect(node.ASON(value.nodeId, value.deviceNum)).to.equal(expected);
 	})
-*/
 
 
 	function GetTestCase_EVLRN () {

@@ -597,12 +597,46 @@ class cbusAdmin extends EventEmitter {
         return this.header + '91' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
     }
 
-    ASON(eventId) {
-        return this.header + '980000' + decToHex(eventId, 4) + ';';
+    ASON(nodeId, deviceNumber) {
+        const eId = decToHex(nodeId, 4) + decToHex(deviceNumber, 4)
+        //console.log(`ACOF admin ${eId}`)
+        if (eId in this.config.events) {
+            this.config.events[eId]['status'] = 'on'
+            this.config.events[eId]['count'] += 1
+        } else {
+            let output = {}
+            output['id'] = eId
+            output['nodeId'] = 0					// short events have a node id of 0 in event tables
+            output['eventId'] = deviceNumber
+            output['status'] = 'on'
+            output['type'] = 'short'
+            output['count'] = 1
+            this.config.events[eId] = output
+        }
+        this.emit('events', Object.values(this.config.events))
+		//Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
+        return this.header + '98' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
     }
 
-    ASOF(eventId) {
-        return this.header + '990000' + decToHex(eventId, 4) + ';';
+    ASOF(nodeId, deviceNumber) {
+        const eId = decToHex(nodeId, 4) + decToHex(deviceNumber, 4)
+        //console.log(`ACOF admin ${eId}`)
+        if (eId in this.config.events) {
+            this.config.events[eId]['status'] = 'off'
+            this.config.events[eId]['count'] += 1
+        } else {
+            let output = {}
+            output['id'] = eId
+            output['nodeId'] = 0					// short events have a node id of 0 in event tables
+            output['eventId'] = deviceNumber
+            output['status'] = 'off'
+            output['type'] = 'short'
+            output['count'] = 1
+            this.config.events[eId] = output
+        }
+        this.emit('events', Object.values(this.config.events))
+		//Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
+        return this.header + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
     }
 
     QLOC(sessionId) {
