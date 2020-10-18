@@ -1,4 +1,5 @@
 'use strict';
+var winston = require('./config/winston.js');
 const net = require('net');
 const cbusMessage = require('./../merg/mergCbusMessage.js')
 
@@ -7,8 +8,6 @@ const cbusMessage = require('./../merg/mergCbusMessage.js')
 //     : <S | X> <IDENTIFIER> <N> <DATA-0> <DATA-1> … <DATA-7> ;
 //
 //	
-
-let debug = 0;
 
 function pad(num, len) { //add zero's to ensure hex values have correct number of characters
     var padded = "00000000" + num;
@@ -27,7 +26,8 @@ function decToHex(num, len) {
 class mock_CbusNetwork {
 
     constructor(NET_PORT) {
-		console.log("Mock CBUS Network: Starting");
+		winston.info({message: 'Mock CBUS Network: Starting'});
+
 
 		this.sendArray = [];
 		this.socket;
@@ -45,44 +45,84 @@ class mock_CbusNetwork {
 			this.socket=socket;
 			socket.setKeepAlive(true,60000);
 			socket.on('data', function (data) {
-				if (debug) console.log('Mock CBUS Network: data received');
+				winston.info({message: 'Mock CBUS Network: data received'});
 				const msgArray = data.toString().split(";");
 				for (var i = 0; i < msgArray.length - 1; i++) {
 					msgArray[i] = msgArray[i].concat(";");				// add back the ';' terminator that was lost in the split
 					this.sendArray.push(msgArray[i]);					// store the incoming messages so the test can inspect them
-					if (debug) console.log('Mock CBUS Network: [' + i + '] : ' +  msgArray[i] );
-					
+					winston.info({message: 'Mock CBUS Network: [' + i + '] : ' +  msgArray[i]});
 					let msg = new cbusMessage.cbusMessage(msgArray[i]);
 					switch (msg.opCode()) {
 					case '0D':
 						// Format: <MjPri><MinPri=3><CANID>]<0D>
-						if (debug) console.log('Mock CBUS Network: received QNN');
+						winston.info({message: 'Mock CBUS Network: received QNN'});
 						for (var i = 0; i < this.modules.length; i++) {
 							this.outputPNN(this.modules[i].getNodeId());
 						}
 						break;
+					case '53':
+						// Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
+						winston.info({message: 'Mock CBUS Network: received NNLRN'});
+						break;
+					case '54':
+						// Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
+						winston.info({message: 'Mock CBUS Network: received NNULN'});
+						break;
+					case '57':
+						// Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
+						winston.info({message: 'Mock CBUS Network: received NERD'});
+						break;
 					case '58':
 						// Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
-						if (debug) console.log('Mock CBUS Network: received RQEVN');
+						winston.info({message: 'Mock CBUS Network: received RQEVN'});
 						this.outputNUMEV(msg.nodeId());
+						break;
+					case '71':
+						// Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
+						winston.info({message: 'Mock CBUS Network: received NVRD'});
 						break;
 					case '73':
 						// Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
-						if (debug) console.log('Mock CBUS Network: received RQNPN');
+						winston.info({message: 'Mock CBUS Network: received RQNPN'});
 						this.outputPARAN(msg.nodeId(), msg.paramId());
 						break;
+					case '90':
+						// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
+						winston.info({message: 'Mock CBUS Network: received ACON'});
+						break;
+					case '91':
+						// Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
+						winston.info({message: 'Mock CBUS Network: received ACOF'});
+						break;
+					case '95':
+						// Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+						winston.info({message: 'Mock CBUS Network: received EVULN'});
+						break;
+					case '96':
+						// Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+						winston.info({message: 'Mock CBUS Network: received NVSET'});
+						break;
+					case '9C':
+						// Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
+						winston.info({message: 'Mock CBUS Network: received REVAL'});
+						break;
+					case 'D2':
+						// Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
+						winston.info({message: 'Mock CBUS Network: received EVLRN'});
+						break;
 					default:
+						winston.info({message: 'Mock CBUS Network: *************************** received unknown opcode '});
 						break;
 					}
 				}
 			}.bind(this));
 
 			socket.on('end', function () {
-				console.log('Mock CBUS Network: Client Disconnected');
+				winston.info({message: 'Mock CBUS Network: Client Disconnected'});
 			}.bind(this));
 			
 			socket.on('error', function(err) {
-				console.log('Mock CBUS Network Error: ' + err)
+				winston.info({message: 'Mock CBUS Network: Socket error ' + err});
 			}.bind(this));
 			
 		}.bind(this));
@@ -92,7 +132,7 @@ class mock_CbusNetwork {
 		// emitted when new client connects
 		this.server.on('connection',function(socket){
 			var rport = socket.remotePort;
-			console.log('Mock CBUS Network: remote client at port : ' + rport);
+			winston.info({message: 'Mock CBUS Network: remote client at port : ' + rport});
 		});
 	}
 
@@ -110,7 +150,7 @@ class mock_CbusNetwork {
 	stopServer() {
 		this.server.close();
 		this.socket.end();
-		console.log('Mock CBUS Network: Server closed')
+		winston.info({message: 'Mock CBUS Network: Server closed'});
 	}
 
 
@@ -123,84 +163,88 @@ class mock_CbusNetwork {
 	
 	outputPNN(nodeId) {
 		// Format: <0xB6><<NN Hi><NN Lo><Manuf Id><Module Id><Flags>
-		if (debug) console.log('Mock CBUS Network: Output PNN');
 		var nodeData = this.getModule(nodeId).getNodeIdHex()
 			+ this.getModule(nodeId).getManufacturerIdHex() 
 			+ this.getModule(nodeId).getModuleIdHex() 
 			+ this.getModule(nodeId).getFlagsHex();
 		var msgData = ':S' + 'B780' + 'N' + 'B6' + nodeData + ';'
-		if (debug) console.log('Mock CBUS Network: Output PNN : nodeId [' + nodeId + '] ' + msgData );
+		winston.info({message: 'Mock CBUS Network: Output PNN : nodeId [' + nodeId + '] ' + msgData});
 		this.socket.write(msgData);
 	}
 
 
 	outputNUMEV(nodeId) {
 		// Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
-		if (debug) console.log('Mock CBUS Network: Output NUMEV : Node [' + nodeId + ']');
 		var storedEventsCount = this.getModule(nodeId).getStoredEventsCount();
 		var msgData = ':S' + 'B780' + 'N' + '74' + decToHex(nodeId, 4) + decToHex(storedEventsCount, 2) + ';'
-		if (debug) console.log('Mock CBUS Network: Output NUMEV : Node [' + nodeId + '] : ' + msgData);
+		winston.info({message: 'Mock CBUS Network: Output NUMEV : nodeId [' + nodeId + '] ' + msgData});
 		this.socket.write(msgData);
 	}
 
 
 	outputPARAN(nodeId, paramId) {
 		// Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
-		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output PARAN');
 		var paramValue = this.getModule(nodeId).getParameter(paramId);
 		var msgData = ':S' + 'B780' + 'N' + '9B' + decToHex(nodeId, 4) + decToHex(paramId, 2) + decToHex(paramValue, 2) + ';'
-		if (debug) console.log('Mock CBUS Network: Output PARAN : Node [' + nodeId + '] : '  + msgData);
+		winston.info({message: 'Mock CBUS Network: Output PARAN : nodeId [' + nodeId + '] ' + msgData});
 		this.socket.write(msgData);
 	}
 
 	
 	outputACON(nodeId, eventId) {
-		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output ACON');
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
-		this.socket.write( ':S' + 'B780' + 'N' + '90' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';');
+		var msgData = ':S' + 'B780' + 'N' + '90' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ACON : nodeId [' + nodeId + '] ' + msgData});
 	}
 
 
 	outputACOF(nodeId, eventId) {
-		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output ACOF');
 		// Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
-		this.socket.write( ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';');
+		var msgData = ':S' + 'B780' + 'N' + '91' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ACOF : nodeId [' + nodeId + '] ' + msgData});
 	}
 
 
 	outputDFUN(session, fn1, fn2) {
-		if (debug) console.log('Mock CBUS Network: Output DFUN');
 		// Format: [<MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
-		this.socket.write( ':S' + 'B780' + 'N' + '60' + decToHex(session, 2) + decToHex(fn1, 2) + decToHex(fn2, 2) + ';');
+		var msgData = ':S' + 'B780' + 'N' + '60' + decToHex(session, 2) + decToHex(fn1, 2) + decToHex(fn2, 2) + ';';
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output DFUN : nodeId [' + nodeId + '] ' + msgData});
 	}
 
 
 	outputERR(data, errorNumber) {
-		if (debug) console.log('Mock CBUS Network: Output ERR');
 		// Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
-		this.socket.write( ':S' + 'B780' + 'N' + '63' + decToHex(data, 4) + decToHex(errorNumber, 2) + ';');
+		var msgData = ':S' + 'B780' + 'N' + '63' + decToHex(data, 4) + decToHex(errorNumber, 2) + ';';
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ERR : nodeId [' + nodeId + '] ' + msgData});
 	}
 
 
 	outputCMDERR(nodeId, errorNumber) {
-		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output CMDERR');
 		// Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-		this.socket.write( ':S' + 'B780' + 'N' + '6F' + decToHex(nodeId, 4) + decToHex(errorNumber, 2) + ';');
+		var msgData = ':S' + 'B780' + 'N' + '6F' + decToHex(nodeId, 4) + decToHex(errorNumber, 2) + ';';
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output CMDERR : nodeId [' + nodeId + '] ' + msgData});
 	}
 
 
 	outputKLOC(session) {
-		if (debug) console.log('Mock CBUS Network: Output KLOC');
 		// Format: [<MjPri><MinPri=2><CANID>]<21><Session>
-		this.socket.write( ':S' + 'B780' + 'N' + '21' + decToHex(session, 2) + ';');
+		var msgData = ':S' + 'B780' + 'N' + '21' + decToHex(session, 2) + ';';
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output KLOC : nodeId [' + nodeId + '] ' + msgData});
 	}
 
 
 	outputUNSUPOPCODE(nodeId) {
-		if (debug) console.log('Mock CBUS Network: Node [' + nodeId + '] Output CMDERR');
 		// Ficticious opcode - 'FC' currently unused
 		// Format: [<MjPri><MinPri=3><CANID>]<FC><NN hi><NN lo>
-		this.socket.write( ':S' + 'B780' + 'N' + 'FC' + decToHex(nodeId, 4) + ';');
+		var msgData = ':S' + 'B780' + 'N' + 'FC' + decToHex(nodeId, 4) + ';';
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output UNSUPOPCODE : nodeId [' + nodeId + '] ' + msgData});
 	}
 }
 
