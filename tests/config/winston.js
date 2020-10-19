@@ -45,20 +45,22 @@ var options = {
   },
 };
 
-var logger = new winston.createLogger({
-  transports: [
-    new winston.transports.File(options.file),
-    new winston.transports.Console(options.console)
-  ],
-  exitOnError: false, // do not exit on handled exceptions
-});
+//
+// Use inbuilt default logger instead of creating another logger
+// then config only has to be specified once, and otehr included modules just need require 'winston/js' with no config
+// and they will pickup the default logger - thus allowing different root programs to specify different configs
+// i.e. different configs for run and test fo example
+// default logger is essentially a blank logger, and has no transports setup, so need to add them
+//
+
+winston.add(new winston.transports.File(options.file));
+winston.add(new winston.transports.Console(options.console));
 
 
-logger.stream = {
+winston.stream = {
   write: function(message, encoding) {
-    logger.info(message);
+    winston.info(message);
   },
 };
 
-
-module.exports = logger;
+module.exports = winston;
