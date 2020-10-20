@@ -38,7 +38,7 @@ Vue.component('nodes-list', {
         <v-toolbar flat>
           <v-toolbar-title>Cbus Modules</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text v-on:click="QNN">QNN()</v-btn>
+          <v-btn color="blue darken-1" text v-on:click="QNN">Check Nodes</v-btn>
         </v-toolbar>
 
         <v-data-table :headers="headers"
