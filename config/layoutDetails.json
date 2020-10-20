@@ -1,7 +1,7 @@
 {
   "layoutDetails": {
-    "title": "cbusServerAdmin",
-    "subTitle": "Settings",
+    "title": "MERG Demo",
+    "subTitle": "Admin",
     "nextNodeId": 805
   },
   "nodeDetails": {
@@ -123,6 +123,11 @@
       "name": "CANPAN Button 8",
       "colour": "teal",
       "group": ""
+    },
+    "03220001": {
+      "name": "Button 1",
+      "colour": "red",
+      "group": "Button"
     }
   }
 }
