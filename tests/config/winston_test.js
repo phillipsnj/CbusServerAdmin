@@ -1,7 +1,7 @@
 var winston = require('winston');
 
 /*
-for rerference only, default npm logging levels used
+for reference only, default npm logging levels used
 lower number being higher priority
 const levels = { 
   error: 0,
@@ -16,11 +16,15 @@ const levels = {
 
 // custom format to put timestamp first
 var timeStampFirst = winston.format.combine(
-  winston.format.timestamp({format: 'YYYY-MM-DD HH:mm:ss.SSS'}),
+  winston.format.timestamp({format: 'HH:mm:ss.SSS'}),
   winston.format.printf((info) => {
-    return JSON.stringify({timestamp: info.timestamp, 
-                           level: info.level, 
-                           message: info.message});
+	  return info.timestamp + " " + info.level + "\t" + info.message;
+}));
+
+// custom format - replicate simple console.log output
+var messageOnly = winston.format.combine(
+  winston.format.printf((info) => {
+    return info.message;
 }));
 
 
@@ -30,26 +34,22 @@ var options = {
     filename: `./tests/logs/tests.log`,
 	options: { flags: 'w' },
     handleExceptions: true,
-    json: true,
     maxsize: 5242880, // 5MB
     maxFiles: 5,
-    colorize: false,
 	format: timeStampFirst
   },
   console: {
     level: 'warn',
     handleExceptions: true,
-    json: false,
-    colorize: true,
-	format: timeStampFirst
+	format: messageOnly
   },
 };
 
 //
 // Use inbuilt default logger instead of creating another logger
-// then config only has to be specified once, and otehr included modules just need require 'winston/js' with no config
-// and they will pickup the default logger - thus allowing different root programs to specify different configs
-// i.e. different configs for run and test fo example
+// Config then only has to be specified once in highest level file, 
+// and other included modules then just need require 'winston/js' with no config so they then pickup the default logger
+// Thus allowing different root programs to specify different configs - i.e. different configs for run and test for example
 // default logger is essentially a blank logger, and has no transports setup, so need to add them
 //
 
