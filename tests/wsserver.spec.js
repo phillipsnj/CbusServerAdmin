@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-var winston = require('./config/winston.js');
+var winston = require('./config/winston_test.js');
 
 const websocket_Server = require('./../wsserver');
 const http = require('http');
@@ -21,6 +21,7 @@ function decToHex(num, len) {
     var padded = "00000000" + output
     return padded.substr(-len)
 }
+
 
 describe('Websocket server tests', function(){
 	let http_Server = undefined;

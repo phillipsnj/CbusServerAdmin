@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 var itParam = require('mocha-param');
-var winston = require('./config/winston.js');
+var winston = require('./config/winston_test.js');
 
 
 const NET_PORT = 5550;
