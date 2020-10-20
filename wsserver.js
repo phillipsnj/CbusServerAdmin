@@ -1,5 +1,7 @@
 'use strict';
 const socketIO = require('socket.io');
+var winston = require('winston');		// use config from root instance
+
 
 const jsonfile = require('jsonfile')
 let layoutDetails = jsonfile.readFileSync('./config/layoutDetails.json')
@@ -200,7 +202,9 @@ function wsserver(httpserver, node) {
     })
 
     node.on('cbus', function (task) {
-        console.log(`cbus :${JSON.stringify(task)}`)
+//        console.log(`cbus :${JSON.stringify(task)}`)
+		winston.debug({message: `cbus :${JSON.stringify(task)}`});
+
     })
 }
 

@@ -2,6 +2,8 @@ const path = require('path')
 const http = require('http')
 const express = require('express')
 //const socketio = require('socket.io')
+var winston = require('./config/winston.js');
+
 
 var serveStatic = require('serve-static')
 
