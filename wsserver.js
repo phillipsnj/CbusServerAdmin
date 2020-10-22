@@ -11,15 +11,15 @@ function wsserver(httpserver, node) {
     const io = socketIO(httpserver);
 
     io.on('connection', function(socket){
-        console.log('an user connected')
+		winston.debug({message: 'a user connected'});
         node.cbusSend(node.QNN())
         io.emit('layoutDetails', layoutDetails)
         socket.on('QUERY_ALL_NODES', function(){
-            console.log('QUERY_ALL_NODES');
+			winston.debug({message: 'QUERY_ALL_NODES'});
             node.cbusSend(node.QNN())
         })
         socket.on('REQUEST_ALL_NODE_PARAMETERS', function(data){ //Request Node Parameter
-            console.log(`REQUEST_ALL_NODE_PARAMETERS ${JSON.stringify(data)}`);
+			winston.debug({message: `REQUEST_ALL_NODE_PARAMETERS ${JSON.stringify(data)}`});
             if (data.delay === undefined) {
                 data.delay = 100
             }
@@ -30,11 +30,11 @@ function wsserver(httpserver, node) {
             //node.cbusSend(node.RQNPN(data.nodeId, data.parameter))
         })
         socket.on('RQNPN', function(data){ //Request Node Parameter
-            console.log(`RQNPN ${JSON.stringify(data)}`);
+			winston.debug({message: `RQNPN ${JSON.stringify(data)}`});
             node.cbusSend(node.RQNPN(data.nodeId, data.parameter))
         })
         socket.on('REQUEST_ALL_NODE_VARIABLES', function(data){
-            console.log(`REQUEST_ALL_NODE_VARIABLES ${JSON.stringify(data)}`);
+			winston.debug({message: `REQUEST_ALL_NODE_VARIABLES ${JSON.stringify(data)}`});
             if (data.start === undefined) {
                 data.start = 1
             }
@@ -50,16 +50,16 @@ function wsserver(httpserver, node) {
             }
         })
         socket.on('REQUEST_NODE_VARIABLE', function(data){
-            console.log(`REQUEST_NODE_VARIABLE ${JSON.stringify(data)}`);
+			winston.debug({message: `REQUEST_NODE_VARIABLE ${JSON.stringify(data)}`});
             node.cbusSend(node.NVRD(data.nodeId, data.variableId))
         })
         socket.on('UPDATE_NODE_VARIABLE', function(data){
             node.cbusSend(node.NVSET(data.nodeId, data.variableId, data.variableValue))
-            console.log(`UPDATE_NODE_VARIABLE ${JSON.stringify(data)}`);
+			winston.debug({message: `UPDATE_NODE_VARIABLE ${JSON.stringify(data)}`});
             setTimeout(function() {node.cbusSend(node.NVRD(data.nodeId, data.variableId))},100)
         })
         socket.on('UPDATE_NODE_VARIABLE_IN_LEARN_MODE', function(data){
-            console.log(`NVSET-learn ${JSON.stringify(data)}`);
+			winston.debug({message: `NVSET-learn ${JSON.stringify(data)}`});
             node.cbusSend(node.NNLRN(data.nodeId))
             node.cbusSend(node.NVSET(data.nodeId, data.variableId, data.variableValue))
             node.cbusSend(node.NNULN(data.nodeId))
@@ -67,11 +67,11 @@ function wsserver(httpserver, node) {
             node.cbusSend(node.NNULN(data.nodeId))
         })
         socket.on('REQUEST_ALL_NODE_EVENTS', function(data){
-            console.log(`REQUEST_ALL_NODE_EVENTS ${JSON.stringify(data)}`);
+			winston.debug({message: `REQUEST_ALL_NODE_EVENTS ${JSON.stringify(data)}`});
             node.cbusSend(node.NERD(data.nodeId))
         })
         socket.on('REQUEST_ALL_EVENT_VARIABLES', function(data){
-            console.log(`REQUEST_ALL_EVENT_VARIABLE ${JSON.stringify(data)}`);
+			winston.debug({message: `REQUEST_ALL_EVENT_VARIABLE ${JSON.stringify(data)}`});
             if (data.delay === undefined) {
                 data.delay = 100
             }
@@ -81,11 +81,11 @@ function wsserver(httpserver, node) {
             }
         })
         socket.on('REQUEST_EVENT_VARIABLE', function(data){
-            console.log(`REQUEST_EVENT_VARIABLE ${JSON.stringify(data)}`);
+			winston.debug({message: `REQUEST_EVENT_VARIABLE ${JSON.stringify(data)}`});
             node.cbusSend(node.REVAL(data.nodeId, data.eventIndex, data.eventVariableId))
         })
         socket.on('UPDATE_EVENT_VARIABLE', function(data){
-            console.log(`EVLRN ${JSON.stringify(data)}`);
+			winston.debug({message: `EVLRN ${JSON.stringify(data)}`});
             node.cbusSend(node.NNLRN(data.nodeId))
             node.cbusSend(node.EVLRN(data.eventName, data.eventVariableId, data.eventVariableValue))
             node.cbusSend(node.NNULN(data.nodeId))
@@ -95,23 +95,23 @@ function wsserver(httpserver, node) {
             node.cbusSend(node.RQEVN(data.nodeId))
         })
         socket.on('ACCESSORY_LONG_ON', function(data){
-            console.log(`ACCESSORY_LONG_ON ${JSON.stringify(data)}`);
+			winston.debug({message: `ACCESSORY_LONG_ON ${JSON.stringify(data)}`});
             node.cbusSend(node.ACON(data.nodeId, data.eventId))
         })
         socket.on('ACCESSORY_LONG_OFF', function(data){
-            console.log(`ACCESSORY_LONG_OFF ${JSON.stringify(data)}`);
+			winston.debug({message: `ACCESSORY_LONG_OFF ${JSON.stringify(data)}`});
             node.cbusSend(node.ACOF(data.nodeId, data.eventId))
         })
         socket.on('ACCESSORY_SHORT_OFF', function(data){
-            console.log(`ACCESSORY_SHORT_OFF ${JSON.stringify(data)}`);
+			winston.debug({message: `ACCESSORY_SHORT_OFF ${JSON.stringify(data)}`});
             node.cbusSend(node.ASOF(data.nodeId, data.deviceNumber))
         })
         socket.on('ACCESSORY_SHORT_ON', function(data){
-            console.log(`ACCESSORY_SHORT_ON ${JSON.stringify(data)}`);
+			winston.debug({message: `ACCESSORY_SHORT_ON ${JSON.stringify(data)}`});
             node.cbusSend(node.ASON(data.nodeId, data.deviceNumber))
         })
         socket.on('TEACH_EVENT', function(data){
-            console.log(`EVLRN ${JSON.stringify(data)}`);
+			winston.debug({message: `EVLRN ${JSON.stringify(data)}`});
             node.cbusSend(node.NNLRN(data.nodeId))
             node.cbusSend(node.EVLRN(data.eventName, data.eventId, data.eventVal))
             node.cbusSend(node.NNULN(data.nodeId))
@@ -120,7 +120,7 @@ function wsserver(httpserver, node) {
             node.cbusSend(node.RQEVN(data.nodeId))
         })
         socket.on('REMOVE_EVENT', function(data){
-            console.log(`REMOVE_EVENT ${JSON.stringify(data)}`);
+			winston.debug({message: `REMOVE_EVENT ${JSON.stringify(data)}`});
             node.cbusSend(node.NNLRN(data.nodeId))
             node.cbusSend(node.EVULN(data.eventName))
             node.cbusSend(node.NNULN(data.nodeId))
@@ -129,26 +129,26 @@ function wsserver(httpserver, node) {
             node.cbusSend(node.RQEVN(data.nodeId))
         })
         socket.on('CLEAR_NODE_EVENTS', function(data){
-            console.log(`CLEAR_NODE_EVENTS ${data.nodeId}`)
+			winston.debug({message: `CLEAR_NODE_EVENTS ${data.nodeId}`});
             node.removeNodeEvents(data.nodeId);
         })
         socket.on('REFRESH_EVENTS', function(){
-            console.log(`REFRESH_EVENTS`)
+			winston.debug({message: `REFRESH_EVENTS`});
             node.refreshEvents();
         })
         socket.on('UPDATE_LAYOUT_DETAILS', function(data){
-            console.log(`UPDATE_LAYOUT_DETAILS ${JSON.stringify(data)}`)
+			winston.debug({message: `UPDATE_LAYOUT_DETAILS ${JSON.stringify(data)}`});
             layoutDetails = data
             jsonfile.writeFileSync('./config/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
             io.emit('layoutDetails', layoutDetails)
         })
         socket.on('CLEAR_CBUS_ERRORS', function(data){
-            console.log(`CLEAR_CBUS_ERRORS`)
+			winston.debug({message: `CLEAR_CBUS_ERRORS`});
             node.clearCbusErrors()
         })
 		
         socket.on('REQUEST_VERSION', function(){
-//            console.log(`REQUEST_VERSION ${JSON.stringify(packageFile)}`)
+//			winston.debug({message: `REQUEST_VERSION ${JSON.stringify(packageFile)}`});
             const versionArray = packageFile.version.toString().split(".");
 			let version = {
 				'major': versionArray[0],
@@ -162,38 +162,37 @@ function wsserver(httpserver, node) {
 
 
     node.on('events', function (events) {
-        //console.log(`Events :${JSON.stringify(events)}`)
+		//winston.debug({message: `Events :${JSON.stringify(events)}`});
         io.emit('events', events);
     })
 
     node.on('nodes', function (nodes) {
-        //console.log(`Nodes Sent :${JSON.stringify(nodes)}`)
+		//winston.debug({message: `Nodes Sent :${JSON.stringify(nodes)}`});
         io.emit('nodes', nodes);
     })
 
     node.on('cbusError', function (cbusErrors) {
-        console.log(`CBUS - ERROR :${JSON.stringify(cbusErrors)}`)
+		winston.debug({message: `CBUS - ERROR :${JSON.stringify(cbusErrors)}`});
         io.emit('cbusError', cbusErrors);
     })
 
     node.on('dccError', function (error) {
-        console.log(`CBUS - ERROR :${JSON.stringify(error)}`)
+		winston.debug({message: `CBUS - ERROR :${JSON.stringify(error)}`});
         io.emit('dccError', error);
     })
 
     node.on('cbusNoSupport', function (cbusNoSupport) {
-        console.log(`CBUS - Op Code Unknown : ${cbusNoSupport.opCode}`)
+		winston.debug({message: `CBUS - Op Code Unknown : ${cbusNoSupport.opCode}`});
         io.emit('cbusNoSupport', cbusNoSupport);
     })
 
     node.on('dccSessions', function (dccSessions) {
-        //console.log(`CBUS - Op Code Unknown : ${cbusNoSupport.opCode}`)
         io.emit('dccSessions', dccSessions);
     })
 
     node.on('requestNodeNumber', function () {
         const newNodeId=parseInt(layoutDetails.layoutDetails.nextNodeId)
-        console.log(`requestNodeNumber : ${newNodeId}`)
+		winston.debug({message: `requestNodeNumber : ${newNodeId}`});
         node.cbusSend(node.SNN(newNodeId))
         layoutDetails.layoutDetails.nextNodeId = newNodeId+1
         jsonfile.writeFileSync('./config/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
@@ -202,9 +201,7 @@ function wsserver(httpserver, node) {
     })
 
     node.on('cbus', function (task) {
-//        console.log(`cbus :${JSON.stringify(task)}`)
 		winston.debug({message: `cbus :${JSON.stringify(task)}`});
-
     })
 }
 

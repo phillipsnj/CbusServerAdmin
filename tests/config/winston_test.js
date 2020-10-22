@@ -30,7 +30,7 @@ var messageOnly = winston.format.combine(
 
 var options = {
   file: {
-    level: 'info',
+    level: 'debug',
     filename: `./tests/logs/tests.log`,
 	options: { flags: 'w' },
     handleExceptions: true,

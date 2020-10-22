@@ -121,7 +121,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N91" + decToHex(value.nodeId, 4) + decToHex(value.eventId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 200);
+		}, 10);
 	})
 
 		
@@ -133,7 +133,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N90" + decToHex(value.nodeId, 4) + decToHex(value.eventId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 100);
+		}, 10);
 	})
 
 
@@ -164,7 +164,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N99" + decToHex(value.nodeId, 4) + decToHex(value.deviceNumber, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 200);
+		}, 10);
 	})
 
 
@@ -176,7 +176,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N98" + decToHex(value.nodeId, 4) + decToHex(value.deviceNumber, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 200);
+		}, 10);
 	})
 
 
@@ -244,7 +244,7 @@ describe('Websocket server tests', function(){
 			 expected6 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
 			 expect(mock_Cbus.getSendArray()[6]).to.equal(expected6);
 			done();
-		}, 100);
+		}, 50);
 	})
 
 
@@ -287,7 +287,7 @@ describe('Websocket server tests', function(){
 			expected4 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";		// RQEVN
 			expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			done();
-		}, 100);
+		}, 10);
 	})
 
 
@@ -299,7 +299,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N57" + decToHex(value.node, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 100);
+		}, 10);
 	})
 		
 
@@ -330,7 +330,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N71" + decToHex(value.node, 4) + decToHex(value.variableId, 2) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 100);
+		}, 10);
 	})
 		
 
@@ -376,7 +376,7 @@ describe('Websocket server tests', function(){
 			expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			done();
-		}, 100);
+		}, 10);
 	})
 		
 	function GetTestCase_REQUEST_ALL_EVENT_VARIABLES () {
@@ -409,7 +409,7 @@ describe('Websocket server tests', function(){
 
 	itParam("REQUEST_ALL_EVENT_VARIABLES test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableCount ${value.eventVariableCount}", GetTestCase_REQUEST_ALL_EVENT_VARIABLES(), function (done, value) {
 		winston.info({message: 'wsserver Test: START REQUEST_ALL_EVENT_VARIABLES test: ' + JSON.stringify(value)});
-		let timeoutDelay = 4;
+		let timeoutDelay = 1;
 		mock_Cbus.clearSendArray();
 		websocket_Client.emit('REQUEST_ALL_EVENT_VARIABLES', {
 				"nodeId": value.nodeId, 
@@ -423,7 +423,7 @@ describe('Websocket server tests', function(){
 			expected_n = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2)+ decToHex(value.eventVariableCount, 2) + ";";
 			expect(mock_Cbus.getSendArray()[value.eventVariableCount]).to.equal(expected_n);
 			done();
-		}, value.eventVariableCount*timeoutDelay + 100);
+		}, value.eventVariableCount*timeoutDelay + 50);
 	})
 		
 
@@ -451,7 +451,7 @@ describe('Websocket server tests', function(){
 
 	itParam("REQUEST_ALL_NODE_PARAMETERS test nodeId ${value.nodeId} parameterCount ${value.parameterCount}", GetTestCase_REQUEST_ALL_NODE_PARAMETERS(), function (done, value) {
 		winston.info({message: 'wsserver Test: START REQUEST_ALL_NODE_PARAMETERS test: ' + JSON.stringify(value)});
-		let timeoutDelay = 4;
+		let timeoutDelay = 1;
 		mock_Cbus.clearSendArray();
 		websocket_Client.emit('REQUEST_ALL_NODE_PARAMETERS', {
 				"nodeId": value.nodeId, 
@@ -464,7 +464,7 @@ describe('Websocket server tests', function(){
 			expected_n = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.parameterCount, 2) + ";";
 			expect(mock_Cbus.getSendArray()[value.parameterCount]).to.equal(expected_n);
 			done();
-		}, value.parameterCount*timeoutDelay + 100);
+		}, value.parameterCount*timeoutDelay + 50);
 	})
 		
 
@@ -494,7 +494,7 @@ describe('Websocket server tests', function(){
 	itParam("REQUEST_ALL_NODE_VARIABLES test nodeId ${value.nodeId} variableCount ${value.variableCount}", GetTestCase_REQUEST_ALL_NODE_VARIABLES(), function (done, value) {
 		winston.info({message: 'wsserver Test: START REQUEST_ALL_NODE_VARIABLES test: ' + JSON.stringify(value)});
 		mock_Cbus.clearSendArray();
-		var timeoutDelay = 4;
+		var timeoutDelay = 1;
 		websocket_Client.emit('REQUEST_ALL_NODE_VARIABLES', {"nodeId": value.nodeId, "variables": value.variableCount, "delay": timeoutDelay})
 		setTimeout(function(){
 			expect(mock_Cbus.getSendArray().length).to.equal(value.variableCount);
@@ -503,7 +503,7 @@ describe('Websocket server tests', function(){
 			expected_n = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.variableCount, 2) + ";";
 			expect(mock_Cbus.getSendArray()[value.variableCount-1]).to.equal(expected_n);
 			done();
-		}, value.variableCount*timeoutDelay + 100);
+		}, value.variableCount*timeoutDelay + 50);
 	})
 		
 
@@ -534,7 +534,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.parameterId, 2) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 100);
+		}, 10);
 	})
 		
 
@@ -545,7 +545,7 @@ describe('Websocket server tests', function(){
 		setTimeout(function(){
 			expect(mock_Cbus.getSendArray()[0]).to.equal(":SB780N0D;");
 			done();
-			}, 100);
+			}, 10);
 	});
 
 
@@ -604,7 +604,7 @@ describe('Websocket server tests', function(){
 			 expected5 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
 			 expect(mock_Cbus.getSendArray()[5]).to.equal(expected5);
 			done();
-		}, 100);
+		}, 10);
 	})
 
 
@@ -633,24 +633,6 @@ describe('Websocket server tests', function(){
 	});
 */
 
-/*
-	//
-	// works, but overwrites default file, so commented out until decision about how to deal with this
-	//
-	it('UPDATE_LAYOUT_DETAILS test', function(done) {
-		if (debug) console.log("\nTest Client: START UPDATE_LAYOUT_DETAILS");
-		mock_Cbus.clearSendArray();
-		let testCase = "UPDATE_LAYOUT_DETAILS";
-		let capturedData= "";
-		websocket_Client.on('layoutDetails', function (data) {capturedData = data;});	
-		websocket_Client.emit('UPDATE_LAYOUT_DETAILS', testCase)
-		setTimeout(function(){
-			expect(capturedData).to.equal(testCase);
-			done();
-			}, 100);
-	});
-*/
-
 
 	it('REQUEST_VERSION test', function(done) {
 		winston.info({message: 'wsserver Test: START REQUEST_VERSION test'});
@@ -658,7 +640,7 @@ describe('Websocket server tests', function(){
 			let testCase = {
 				'major': '1',
 				'minor': '0',
-				'patch': '2',
+				'patch': '4',
 				}
 		websocket_Client.on('VERSION', function (data) {
 			versionData = data;
@@ -670,7 +652,7 @@ describe('Websocket server tests', function(){
 			expect(JSON.stringify(versionData)).to.equal(JSON.stringify(testCase));
 			websocket_Client.off('VERSION');
 			done();
-			}, 100);
+			}, 10);
 	});
 
 
@@ -776,7 +758,7 @@ describe('Websocket server tests', function(){
 			expect(JSON.stringify(cbusErrorData)).to.equal(JSON.stringify(cbusErrors));
 			websocket_Client.off('cbusError');
 			done();
-			}, 100);
+			}, 10);
 	});
 
 
@@ -800,7 +782,7 @@ describe('Websocket server tests', function(){
 			expect(JSON.stringify(cbusNoSupportData)).to.equal(JSON.stringify(cbusNoSupport));
 			websocket_Client.off('cbusNoSupport');
 			done();
-			}, 100);
+			}, 10);
 	});
 
 
@@ -866,7 +848,7 @@ describe('Websocket server tests', function(){
 			expect(JSON.stringify(dccErrorData)).to.equal(JSON.stringify(testCase));
 			websocket_Client.off('dccError');
 			done();
-			}, 100);
+			}, 10);
 	});
 
 	function dccSessions_TestCase () {
@@ -921,7 +903,7 @@ describe('Websocket server tests', function(){
 			expect(dccSessionsData[value.session]['F' + value.fn1]).to.equal(value.fn2);
 			websocket_Client.off('dccSessions');
 			done();
-			}, 100);
+			}, 10);
 	});
 
 
@@ -964,7 +946,7 @@ describe('Websocket server tests', function(){
 			expect(status).to.equal(value.status);
 			websocket_Client.off('events');
 			done();
-			}, 100);
+			}, 10);
 	});
 
 
@@ -979,7 +961,7 @@ describe('Websocket server tests', function(){
 			expect(nodeData[0].module).to.equal("CANACC8");
 			websocket_Client.off('nodes');
 			done();
-			}, 100);
+			}, 10);
 	});
 
 
@@ -997,7 +979,7 @@ describe('Websocket server tests', function(){
 			expect(nodeData.layoutDetails.nextNodeId).to.equal(newNodeId + 1);
 			websocket_Client.off('nodes');
 			done();
-			}, 500);
+			}, 50);
 	});
 
 
