@@ -24,6 +24,11 @@
       "name": "CANACE8C - 557",
       "colour": "purple"
     },
+    "602": {
+      "name": "Node 602",
+      "colour": "red",
+      "group": "Board 3"
+    },
     "700": {
       "name": "CANSERVO8C 4G - 700",
       "colour": "red",
