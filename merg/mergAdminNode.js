@@ -206,10 +206,10 @@ class cbusAdmin extends EventEmitter {
                         this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
                         this.saveConfig()
                     } else {
-						winston.debug({message: 'Event Variable ${msg.actionEventVarId()} Value has not Changed '});
+						winston.debug({message: `Event Variable ${msg.actionEventVarId()} Value has not Changed `});
                     }
                 } else {
-					winston.debug({message: 'Event Variable ${msg.actionEventVarId()} Does not exist on config'});
+					winston.debug({message: `Event Variable ${msg.actionEventVarId()} Does not exist on config`});
                     this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
                     this.saveConfig()
                 }
@@ -220,14 +220,14 @@ class cbusAdmin extends EventEmitter {
 				//winston.debug({message: `NVANS (97) Node ${msg.nodeId()} : ${msg.variableId()} : ${msg.variableVal()}`});
                 if (this.config.nodes[msg.nodeId()].variables[msg.variableId()] != null) {
                     if (this.config.nodes[msg.nodeId()].variables[msg.variableId()] != msg.variableVal()) {
-						winston.debug({message: 'Variable ${msg.variableId()} value has changed'});
+						winston.debug({message: `Variable ${msg.variableId()} value has changed`});
                         this.config.nodes[msg.nodeId()].variables[msg.variableId()] = msg.variableVal()
                         this.saveConfig()
                     } else {
-						winston.debug({message: 'Variable ${msg.variableId()} value has not changed'});
+						winston.debug({message: `Variable ${msg.variableId()} value has not changed`});
                     }
                 } else {
-					winston.debug({message: 'Variable ${msg.variableId()} value does not exist in config'});
+					winston.debug({message: `Variable ${msg.variableId()} value does not exist in config`});
                     this.config.nodes[msg.nodeId()].variables[msg.variableId()] = msg.variableVal()
                     this.saveConfig()
                 }
@@ -238,14 +238,14 @@ class cbusAdmin extends EventEmitter {
 				//winston.debug({message: `PARAN (9B) ${msg.nodeId()} Parameter ${msg.paramId()} Value ${msg.paramValue()}`});
                 if (this.config.nodes[msg.nodeId()].parameters[msg.paramId()] != null) {
                     if (this.config.nodes[msg.nodeId()].parameters[msg.paramId()] != msg.paramValue()) {
-						winston.debug({message: 'Parameter ${msg.paramId()} value has changed'});
+						winston.debug({message: `Parameter ${msg.paramId()} value has changed`});
                         this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
                         this.saveConfig()
                     } else {
-						winston.debug({message: 'Parameter ${msg.paramId()} value has not changed'});
+						winston.debug({message: `Parameter ${msg.paramId()} value has not changed`});
                     }
                 } else {
-					winston.debug({message: 'Parameter ${msg.paramId()} value does not exist in config'});
+					winston.debug({message: `Parameter ${msg.paramId()} value does not exist in config`});
                     this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
                     this.saveConfig()
                 }
@@ -268,7 +268,7 @@ class cbusAdmin extends EventEmitter {
                         this.config.nodes[msg.nodeId()].EvCount = msg.variableId()
                         this.saveConfig()
                     } else {
-						winston.debug({message: 'EvCount value has not changed'});
+						winston.debug({message: `EvCount value has not changed`});
                     }
                 } else {
                     this.config.nodes[msg.nodeId()].EvCount = msg.variableId()
