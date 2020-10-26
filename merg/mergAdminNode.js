@@ -50,6 +50,7 @@ class cbusAdmin extends EventEmitter {
             const outMsg = data.toString().split(";");
             for (var i = 0; i < outMsg.length - 1; i++) {
                 let msg = new cbusMessage.cbusMessage(outMsg[i]);
+				this.emit('cbus', ' Inbound: ' + msg.messageOutput() + ';');
                 //winston.debug({message: `CbusAdminServer Message Rv: ${i}  ${msg.opCode()} ${msg.nodeId()} ${msg.eventId()} ${msg.messageOutput()} ${msg.header()}`});
                 this.action_message(msg)
             }
@@ -430,7 +431,7 @@ class cbusAdmin extends EventEmitter {
     cbusSend(msg) {
 		if (typeof msg !== 'undefined') {
 			//winston.debug({message: `cbusSend Base : ${msg.toUpperCase()}`});
-			this.emit('cbus', msg.toUpperCase());
+			this.emit('cbus', 'Outbound: ' + msg.toUpperCase());
 			this.client.write(msg.toUpperCase());
 		}
     }
