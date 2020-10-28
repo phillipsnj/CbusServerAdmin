@@ -640,7 +640,7 @@ describe('Websocket server tests', function(){
 			let testCase = {
 				'major': '1',
 				'minor': '0',
-				'patch': '4',
+				'patch': '6',
 				}
 		websocket_Client.on('VERSION', function (data) {
 			versionData = data;
@@ -769,7 +769,7 @@ describe('Websocket server tests', function(){
 			let ref = "FC"
 			let output = {}
 			output['opCode'] = "FC"
-            output['msg'] = {"message":":SB780NFC0001"}
+            output['msg'] = {"message":":SB780NFC0001;"}
             output['count'] = 1
             cbusNoSupport[ref] = output
 		

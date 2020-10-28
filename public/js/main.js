@@ -57,6 +57,12 @@ socket.on('cbusNoSupport', function (data) {
     store.state.cbusNoSupport = data;
 });
 
+
+socket.on('cbusTraffic', function (data) {
+    console.log(`cbusTraffic : ` + data.direction + " " + data.raw + " " + data.translated)
+});
+
+
 socket.on('dccSessions', function (data) {
     // console.log(`CBUS Errors Received:${JSON.stringify(data)}`)
     store.state.dccSessions = data;

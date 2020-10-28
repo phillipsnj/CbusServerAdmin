@@ -200,8 +200,9 @@ function wsserver(httpserver, node) {
         node.cbusSend(node.QNN())
     })
 
-    node.on('cbus', function (task) {
-		winston.debug({message: `cbus :${JSON.stringify(task)}`});
+    node.on('cbusTraffic', function (data) {
+		winston.debug({message: `cbusTraffic : ` + data.direction + " " + data.raw + " " + data.translated});
+        io.emit('cbusTraffic', data);
     })
 }
 
