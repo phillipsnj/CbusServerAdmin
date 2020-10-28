@@ -177,9 +177,94 @@ class cbusMessage {
 	translateMessage()
 	{
 		switch (this.opCode()) {
+					case '00':
+						// ACK Format: [<MjPri><MinPri=3><CANID>]<00>
+						return "ACK";
+						break;
+					case '01':
+						// NAK Format: [<MjPri><MinPri=3><CANID>]<01>
+						return "NAK";
+						break;
+					case '02':
+						// HLT Format: [<MjPri><MinPri=3><CANID>]<02>
+						return "HLT";
+						break;
+					case '03':
+						// BON Format: [<MjPri><MinPri=3><CANID>]<03>
+						return "BON";
+						break;
+					case '04':
+						// TOF Format: [<MjPri><MinPri=3><CANID>]<04>
+						return "TOF";
+						break;
+					case '05':
+						// TON Format: [<MjPri><MinPri=3><CANID>]<05>
+						return "TON";
+						break;
+					case '06':
+						// ESTOP Format: [<MjPri><MinPri=3><CANID>]<06>
+						return "ESTOP";
+						break;
+					case '07':
+						// ARST Format: [<MjPri><MinPri=3><CANID>]<07>
+						return "ARST";
+						break;
+					case '08':
+						// RTOF Format: [<MjPri><MinPri=3><CANID>]<08>
+						return "RTOF";
+						break;
+					case '09':
+						// RTON Format: [<MjPri><MinPri=3><CANID>]<09>
+						return "RTON";
+						break;
+					case '0A':
+						// RESTP Format: [<MjPri><MinPri=3><CANID>]<0A>
+						return "RESTP";
+						break;
+					case '0C':
+						// RSTAT Format: [<MjPri><MinPri=3><CANID>]<0C>
+						return "RSTAT";
+						break;
 					case '0D':
 						// QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
 						return "QNN";
+						break;
+					case '10':
+						// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
+						return "RQNP";
+						break;
+					case '11':
+						// RQMN Format: [<MjPri><MinPri=3><CANID>]<11>
+						return "RQMN";
+						break;
+					case '21':
+						// KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
+						return "KLOC Session " + parseInt(this.message.substr(9, 2), 16);
+						break;
+					case '22':
+						// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
+						return "QLOC Session " + parseInt(this.message.substr(9, 2), 16);
+						break;
+					case '23':
+						// DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
+						return "DKEEP Session " + parseInt(this.message.substr(9, 2), 16);
+						break;
+					case '30':
+						// DBG1 Format: [<MjPri><MinPri=2><CANID>]<30><Status>
+						return "DBG1 Status " + parseInt(this.message.substr(9, 2), 16);
+						break;
+					case '3F':
+						// EXTC Format: [<MjPri><MinPri=2><CANID>]<3F><Ext_OPC>
+						return "EXTC Ext_OPC " + parseInt(this.message.substr(9, 2), 16);
+						break;
+					case '40':
+						// RLOC Format: [<MjPri><MinPri=2><CANID>]<40><Dat1><Dat2 >
+						return "RLOC Decoder " + parseInt(this.message.substr(9, 4), 16);
+						break;
+					case '41':
+						// QCON Format: [<MjPri><MinPri=2><CANID>]<41><ConID><Index>
+						return "QCON ConId " + parseInt(this.message.substr(9, 2), 16) +
+								" Index " + parseInt(this.message.substr(11, 2), 16);
 						break;
 					case '42':
 						// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
@@ -258,6 +343,12 @@ class cbusMessage {
 								" Node Variable Index " + parseInt(this.message.substr(13, 2), 16) +
 								" Value " + parseInt(this.message.substr(15, 2), 16);
 						break;
+					case '97':
+						// NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
+						return "NVANS NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Node Variable Index " + parseInt(this.message.substr(13, 2), 16) +
+								" Value " + parseInt(this.message.substr(15, 2), 16);
+						break;
 					case '98':
 						// ASON Format: <MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
 						return "ASON Node " + parseInt(this.message.substr(9, 4), 16) + 
@@ -278,7 +369,14 @@ class cbusMessage {
 						// RETVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
 						return "RETVAL Node " + parseInt(this.message.substr(9, 4), 16) + 
 								" Event Index " + parseInt(this.message.substr(13, 2), 16) + 
-								" Value Index " + parseInt(this.message.substr(15, 2), 16);
+								" Event Value Index " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case 'B5':
+						// NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
+						return "NEVAL NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event Index " + parseInt(this.message.substr(13, 2), 16) + 
+								" Event Value Index " + parseInt(this.message.substr(15, 2), 16) + 
+								" Value " + parseInt(this.message.substr(17, 2), 16);
 						break;
 					case 'B6':
 						// PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
@@ -291,6 +389,15 @@ class cbusMessage {
 						// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
 						return "EVULN Node " + parseInt(this.message.substr(9, 4), 16) + 
 								" Event " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case 'F2':
+						// ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
+						return "ENRSP Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" EN3 " + parseInt(this.message.substr(13, 2), 16) + 
+								" EN2 " + parseInt(this.message.substr(15, 2), 16) + 
+								" EN1 " + parseInt(this.message.substr(17, 2), 16) + 
+								" EN0 " + parseInt(this.message.substr(19, 2), 16) + 
+								" Event Index " + parseInt(this.message.substr(21, 2), 16);
 						break;
 					default:
 						return "No translation for Opcode";
