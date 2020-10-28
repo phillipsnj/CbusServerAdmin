@@ -174,7 +174,7 @@ class cbusMessage {
         return this.message
     }
 	
-	TranslateMessage()
+	translateMessage()
 	{
 		switch (this.opCode()) {
 					case '0D':
@@ -184,6 +184,10 @@ class cbusMessage {
 					case '42':
 						// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
 						return "SNN Node " + parseInt(this.message.substr(9, 4), 16);
+						break;
+					case '50':
+						// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
+						return "RQNN Node " + parseInt(this.message.substr(9, 4), 16);
 						break;
 					case '53':
 						// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
@@ -201,6 +205,23 @@ class cbusMessage {
 						// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
 						return "RQEVN Node " + parseInt(this.message.substr(9, 4), 16);
 						break;
+					case '60':
+						// DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
+						return "DFUN Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Fn1 " + parseInt(this.message.substr(11, 2), 16) +
+								" Fn2 " + parseInt(this.message.substr(13, 2), 16);
+						break;
+					case '63':
+						// ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
+						return "ERR Data1 " + parseInt(this.message.substr(9, 2), 16) +
+								" Data2 " + parseInt(this.message.substr(11, 2), 16) +
+								" Data3 " + parseInt(this.message.substr(13, 2), 16);
+						break;
+					case '6F':
+						// CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
+						return "CMDERR Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Error " + parseInt(this.message.substr(13, 2), 16);
+						break;
 					case '71':
 						// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
 						return "NVRD Node " + parseInt(this.message.substr(9, 4), 16) + 
@@ -210,6 +231,11 @@ class cbusMessage {
 						// RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
 						return "NVRD Node " + parseInt(this.message.substr(9, 4), 16) + 
 								" Node Parameter Index " + parseInt(this.message.substr(13, 2), 16);
+						break;
+					case '74':
+						// NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
+						return "NUMEV Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Number of Events " + parseInt(this.message.substr(13, 2), 16);
 						break;
 					case '90':
 						// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
@@ -242,6 +268,12 @@ class cbusMessage {
 						return "ASOF Node " + parseInt(this.message.substr(9, 4), 16) + 
 								" Device " + parseInt(this.message.substr(13, 4), 16);
 						break;
+					case '9B':
+						// PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
+						return "PARAN Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Parameter Index " + parseInt(this.message.substr(13, 2), 16) + 
+								" Parameter Value " + parseInt(this.message.substr(15, 2), 16);
+						break;
 					case '9C':
 						// RETVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
 						return "RETVAL Node " + parseInt(this.message.substr(9, 4), 16) + 
@@ -265,6 +297,7 @@ class cbusMessage {
 						break;
 					}
 	}
+	
 }
 
 module.exports = {
