@@ -270,6 +270,51 @@ class cbusMessage {
 						// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
 						return "SNN Node " + parseInt(this.message.substr(9, 4), 16);
 						break;
+					case '43':
+						// ALOC Format: [<MjPri><MinPri=2><CANID>]<43><Session ID><Allocation code >
+						return "ALOC Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Allocation code " + parseInt(this.message.substr(11, 2), 16);
+						break;
+					case '44':
+						// STMOD Format: [<MjPri><MinPri=2><CANID>]<44><Session><MMMMMMMM>
+						return "STMOD Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Mode bits " + parseInt(this.message.substr(11, 2), 16);
+						break;
+					case '45':
+						// PCON Format: [<MjPri><MinPri=2><CANID>]<45><Session><Consist#>
+						return "PCON Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Consist Address " + parseInt(this.message.substr(11, 2), 16);
+						break;
+					case '46':
+						// KCON) Format: [<MjPri><MinPri=2><CANID>]<46><Session><Consist#>
+						return "KCON Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Consist Address " + parseInt(this.message.substr(11, 2), 16);
+						break;
+					case '47':
+						// DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
+						return "DSPD Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Speed/Dir " + parseInt(this.message.substr(11, 2), 16);
+						break;
+					case '48':
+						// DFLG Format: [<MjPri><MinPri=2><CANID>]<48><Session><DDDDDDDD>
+						return "DFLG Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Flags " + parseInt(this.message.substr(11, 2), 16);
+						break;
+					case '49':
+						// DFNON Format: [<MjPri><MinPri=2><CANID>]<49><Session><Fnum>
+						return "DFNON Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Function number " + parseInt(this.message.substr(11, 2), 16);
+						break;
+					case '4A':
+						// DFNOF Format: [<MjPri><MinPri=2><CANID>]<4A><Session><Fnum>
+						return "DFNOF Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Function number " + parseInt(this.message.substr(11, 2), 16);
+						break;
+					case '4C':
+						// SSTAT Format: [<MjPri><MinPri=3><CANID>]<4C><Session><Status>
+						return "SSTAT Session " + parseInt(this.message.substr(9, 2), 16) +
+								" Status " + parseInt(this.message.substr(11, 2), 16);
+						break;
 					case '50':
 						// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
 						return "RQNN Node " + parseInt(this.message.substr(9, 4), 16);
