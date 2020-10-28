@@ -173,6 +173,98 @@ class cbusMessage {
     messageOutput() {
         return this.message
     }
+	
+	TranslateMessage()
+	{
+		switch (this.opCode()) {
+					case '0D':
+						// QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
+						return "QNN";
+						break;
+					case '42':
+						// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
+						return "SNN Node " + parseInt(this.message.substr(9, 4), 16);
+						break;
+					case '53':
+						// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
+						return "NNLRN Node " + parseInt(this.message.substr(9, 4), 16);
+						break;
+					case '54':
+						// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
+						return "NNULN Node " + parseInt(this.message.substr(9, 4), 16);
+						break;
+					case '57':
+						// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
+						return "NERD Node " + parseInt(this.message.substr(9, 4), 16);
+						break;
+					case '58':
+						// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
+						return "RQEVN Node " + parseInt(this.message.substr(9, 4), 16);
+						break;
+					case '71':
+						// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
+						return "NVRD Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Node Variable Index " + parseInt(this.message.substr(13, 2), 16);
+						break;
+					case '73':
+						// RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
+						return "NVRD Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Node Parameter Index " + parseInt(this.message.substr(13, 2), 16);
+						break;
+					case '90':
+						// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
+						return "ACON Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '91':
+						// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
+						return "ACOF Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '95':
+						// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+						return "EVULN Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '96':
+						// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+						return "NVSET Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Node Variable Index " + parseInt(this.message.substr(13, 2), 16) +
+								" Value " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case '98':
+						// ASON Format: <MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
+						return "ASON Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '99':
+						// ASOF Format: <MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
+						return "ASOF Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '9C':
+						// RETVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
+						return "RETVAL Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event Index " + parseInt(this.message.substr(13, 2), 16) + 
+								" Value Index " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case 'B6':
+						// PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
+						return "PNN NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" ManufId " + parseInt(this.message.substr(13, 2), 16) + 
+								" ModuleId " + parseInt(this.message.substr(15, 2), 16) + 
+								" flags " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'D2':
+						// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
+						return "EVULN Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					default:
+						return "No translation for Opcode";
+						break;
+					}
+	}
 }
 
 module.exports = {
