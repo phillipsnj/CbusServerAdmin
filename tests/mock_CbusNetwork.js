@@ -50,8 +50,8 @@ class mock_CbusNetwork {
 				for (var i = 0; i < msgArray.length - 1; i++) {
 					msgArray[i] = msgArray[i].concat(";");				// add back the ';' terminator that was lost in the split
 					this.sendArray.push(msgArray[i]);					// store the incoming messages so the test can inspect them
-					winston.info({message: 'Mock CBUS Network: [' + i + '] : ' +  msgArray[i]});
 					let msg = new cbusMessage.cbusMessage(msgArray[i]);
+					winston.info({message: 'Mock CBUS Network: [' + i + '] ' +  msgArray[i] + " " + msg.translateMessage()});
 					switch (msg.opCode()) {
 					case '0D':
 						// Format: <MjPri><MinPri=3><CANID>]<0D>

@@ -49,8 +49,8 @@ class cbusAdmin extends EventEmitter {
         this.client.on('data', function (data) { //Receives packets from network and process individual Messages
             const outMsg = data.toString().split(";");
             for (var i = 0; i < outMsg.length - 1; i++) {
-                let msg = new cbusMessage.cbusMessage(outMsg[i]);
-				this.emit('cbus', ' Inbound: ' + msg.messageOutput() + ';');
+                let msg = new cbusMessage.cbusMessage(outMsg[i] + ';');		// replace terminator removed by 'split' method
+				this.emit('cbusTraffic', {direction: 'In', raw: msg.messageOutput(), translated: msg.translateMessage()});
                 //winston.debug({message: `CbusAdminServer Message Rv: ${i}  ${msg.opCode()} ${msg.nodeId()} ${msg.eventId()} ${msg.messageOutput()} ${msg.header()}`});
                 this.action_message(msg)
             }
@@ -431,8 +431,11 @@ class cbusAdmin extends EventEmitter {
     cbusSend(msg) {
 		if (typeof msg !== 'undefined') {
 			//winston.debug({message: `cbusSend Base : ${msg.toUpperCase()}`});
-			this.emit('cbus', 'Outbound: ' + msg.toUpperCase());
 			this.client.write(msg.toUpperCase());
+
+            let outMsg = new cbusMessage.cbusMessage(msg);
+//			this.emit('cbus', 'Outbound: ' + msg.toUpperCase());
+			this.emit('cbusTraffic', {direction: 'Out', raw: outMsg.messageOutput(), translated: outMsg.translateMessage()});
 		}
     }
 
