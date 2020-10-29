@@ -434,6 +434,37 @@ class cbusMessage {
 								" Byte1 " + parseInt(this.message.substr(11, 2), 16) +
 								" Byte2 " + parseInt(this.message.substr(13, 2), 16);
 						break;
+					case '80':
+						// RDCC3 Format: [[<MjPri><MinPri=2><CANID>]<80><REP><Byte0>..<Byte2>
+						return "RDCC3 Repetitions " + parseInt(this.message.substr(9, 2), 16) + 
+								" Byte0 " + parseInt(this.message.substr(11, 2), 16) +
+								" Byte1 " + parseInt(this.message.substr(13, 2), 16) +
+								" Byte2 " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case '82':
+						// WCVO Format: [<MjPri><MinPri=2><CANID>]<82><Session><High CV#><Low CV#><Val>
+						return "WCVO Session " + parseInt(this.message.substr(9, 2), 16) + 
+								" CV " + parseInt(this.message.substr(11, 4), 16) +
+								" Value " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case '83':
+						// WCVB Format: [<MjPri><MinPri=2><CANID>]<83><Session><High CV#><Low CV#><Val>
+						return "WCVB Session " + parseInt(this.message.substr(9, 2), 16) + 
+								" CV " + parseInt(this.message.substr(11, 4), 16) +
+								" Value " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case '84':
+						// QCVS Format: [<MjPri><MinPri=2><CANID>]<84><Session><High CV#><Low CV#><Mode>
+						return "QCVS Session " + parseInt(this.message.substr(9, 2), 16) + 
+								" CV " + parseInt(this.message.substr(11, 4), 16) +
+								" Mode " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case '85':
+						// PCVS Format: [<MjPri><MinPri=2><CANID>]<85><Session><High CV#><Low CV#><Val>
+						return "PCVS Session " + parseInt(this.message.substr(9, 2), 16) + 
+								" CV " + parseInt(this.message.substr(11, 4), 16) +
+								" Value " + parseInt(this.message.substr(15, 2), 16);
+						break;
 					case '90':
 						// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 						return "ACON Node " + parseInt(this.message.substr(9, 4), 16) + 
@@ -442,6 +473,21 @@ class cbusMessage {
 					case '91':
 						// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
 						return "ACOF Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '92':
+						// AREQ Format: [<MjPri><MinPri=3><CANID>]<92><NN hi><NN lo><EN hi><EN lo>
+						return "AREQ Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '93':
+						// ARON Format: [<MjPri><MinPri=3><CANID>]<93><NN hi><NN lo><EN hi><EN lo>
+						return "ARON Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '94':
+						// AROF Format: [<MjPri><MinPri=3><CANID>]<94><NN hi><NN lo><EN hi><EN lo>
+						return "AROF Node " + parseInt(this.message.substr(9, 4), 16) + 
 								" Event " + parseInt(this.message.substr(13, 4), 16);
 						break;
 					case '95':
@@ -471,6 +517,11 @@ class cbusMessage {
 						return "ASOF Node " + parseInt(this.message.substr(9, 4), 16) + 
 								" Device " + parseInt(this.message.substr(13, 4), 16);
 						break;
+					case '9A':
+						// ASRQ Format: <MjPri><MinPri=3><CANID>]<9A><NN hi><NN lo><DN hi><DN lo>
+						return "ASRQ Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16);
+						break;
 					case '9B':
 						// PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
 						return "PARAN Node " + parseInt(this.message.substr(9, 4), 16) + 
@@ -482,6 +533,68 @@ class cbusMessage {
 						return "RETVAL Node " + parseInt(this.message.substr(9, 4), 16) + 
 								" Event Index " + parseInt(this.message.substr(13, 2), 16) + 
 								" Event Value Index " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case '9D':
+						// ARSON Format: <MjPri><MinPri=3><CANID>]<9D><NN hi><NN lo><DN hi><DN lo>
+						return "ARSON Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '9E':
+						// ARSOF Format: <MjPri><MinPri=3><CANID>]<9E><NN hi><NN lo><DN hi><DN lo>
+						return "ARSOF Node " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16);
+						break;
+					case '9F':
+						// EXTC3 Format: [<MjPri><MinPri=3><CANID>]<9F><Ext_OPC><byte1><byte2><byte3>
+						return "EXTC3 Ext_OPC " + parseInt(this.message.substr(9, 2), 16) + 
+								" Byte1 " + parseInt(this.message.substr(11, 2), 16) +
+								" Byte2 " + parseInt(this.message.substr(13, 2), 16) +
+								" Byte3 " + parseInt(this.message.substr(15, 2), 16);
+						break;
+					case 'A0':
+						// RDCC4 Format: [[<MjPri><MinPri=2><CANID>]<A0><REP><Byte0>..<Byte3>
+						return "RDCC4 Repetitions " + parseInt(this.message.substr(9, 2), 16) + 
+								" Byte0 " + parseInt(this.message.substr(11, 2), 16) +
+								" Byte1 " + parseInt(this.message.substr(13, 2), 16) +
+								" Byte2 " + parseInt(this.message.substr(15, 2), 16) +
+								" Byte3 " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'A2':
+						// WCVS Format: [<MjPri><MinPri=2><CANID>]<A2><Session><High CV#><LowCV#><Mode><CVval>
+						return "WCVS Session " + parseInt(this.message.substr(9, 2), 16) + 
+								" CV " + parseInt(this.message.substr(11, 4), 16) +
+								" Mode " + parseInt(this.message.substr(15, 2), 16) +
+								" Value " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'B0':
+						// ACON1 Format: [<MjPri><MinPri=3><CANID>]<B0><NN hi><NN lo><EN hi><EN lo><data>
+						return "ACON1 NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16) + 
+								" Data " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'B1':
+						// REQEV Format: [<MjPri><MinPri=3><CANID>]<B1><NN hi><NN lo><EN hi><EN lo><data>
+						return "REQEV NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16) + 
+								" Data " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'B2':
+						// ACOF1 Format: [<MjPri><MinPri=3><CANID>]<B2><NN hi><NN lo><EN hi><EN lo><EV# >
+						return "ACOF1 NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16) + 
+								" Event Index " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'B3':
+						// ARON1 Format: [<MjPri><MinPri=3><CANID>]<B3><NN hi><NN lo><EN hi><EN lo><data>
+						return "ARON1 NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16) + 
+								" Data " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'B4':
+						// AROF1 Format: [<MjPri><MinPri=3><CANID>]<B4><NN hi><NN lo><EN hi><EN lo><data>
+						return "AROF1 NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Event " + parseInt(this.message.substr(13, 4), 16) + 
+								" Data " + parseInt(this.message.substr(17, 2), 16);
 						break;
 					case 'B5':
 						// NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
@@ -497,6 +610,40 @@ class cbusMessage {
 								" ModuleId " + parseInt(this.message.substr(15, 2), 16) + 
 								" flags " + parseInt(this.message.substr(17, 2), 16);
 						break;
+					case 'B8':
+						// ASON1 Format: [<MjPri><MinPri=3><CANID>]<B8><NN hi><NN lo><DN hi><DN lo><data 1>
+						return "ASON1 NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16) + 
+								" Data " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'B9':
+						// ASOF1 Format: [<MjPri><MinPri=3><CANID>]<B9><NN hi><NN lo><DN hi><DN lo><data 1>
+						return "ASOF1 NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16) + 
+								" Data " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'BD':
+						// ARSON1 Format: [<MjPri><MinPri=3><CANID>]<BD><NN hi><NN lo><DN hi><DN lo><data 1>
+						return "ARSON1 NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16) + 
+								" Data " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'BE':
+						// ARSOF1 Format: [<MjPri><MinPri=3><CANID>]<BE><NN hi><NN lo><DN hi><DN lo><data 1>
+						return "ARSOF1 NodeId " + parseInt(this.message.substr(9, 4), 16) + 
+								" Device " + parseInt(this.message.substr(13, 4), 16) + 
+								" Data " + parseInt(this.message.substr(17, 2), 16);
+						break;
+					case 'BF':
+						// EXTC4 Format: [<MjPri><MinPri=3><CANID>]<BF><Ext-OPC><byte1><byte2><byte3><byte4>
+						return "EXTC4 Ext_OPC " + parseInt(this.message.substr(9, 2), 16) + 
+								" Byte1 " + parseInt(this.message.substr(11, 2), 16) +
+								" Byte2 " + parseInt(this.message.substr(13, 2), 16) +
+								" Byte3 " + parseInt(this.message.substr(15, 2), 16) +
+								" Byte4 " + parseInt(this.message.substr(17, 2), 16);
+						break;
+
+						
 					case 'D2':
 						// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
 						return "EVULN Node " + parseInt(this.message.substr(9, 4), 16) + 
