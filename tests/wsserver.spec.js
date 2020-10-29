@@ -121,7 +121,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N91" + decToHex(value.nodeId, 4) + decToHex(value.eventId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 10);
+		}, 20);
 	})
 
 		
@@ -133,7 +133,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N90" + decToHex(value.nodeId, 4) + decToHex(value.eventId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 10);
+		}, 20);
 	})
 
 
@@ -164,7 +164,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N99" + decToHex(value.nodeId, 4) + decToHex(value.deviceNumber, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 10);
+		}, 20);
 	})
 
 
@@ -176,7 +176,7 @@ describe('Websocket server tests', function(){
 			expected = ":SB780N98" + decToHex(value.nodeId, 4) + decToHex(value.deviceNumber, 4) + ";";
 			expect(mock_Cbus.getSendArray()[0]).to.equal(expected);
 			done();
-		}, 10);
+		}, 20);
 	})
 
 
@@ -376,7 +376,7 @@ describe('Websocket server tests', function(){
 			expected4 = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
 			expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			done();
-		}, 10);
+		}, 50);
 	})
 		
 	function GetTestCase_REQUEST_ALL_EVENT_VARIABLES () {
