@@ -54,6 +54,7 @@
 						// RESTP Format: [<MjPri><MinPri=3><CANID>]<0A>
 						return "RESTP";
 						break;
+				// 0B reserved
 					case '0C':
 						// RSTAT Format: [<MjPri><MinPri=3><CANID>]<0C>
 						return "RSTAT";
@@ -62,6 +63,7 @@
 						// QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
 						return "QNN";
 						break;
+				// 0E - 0F reserved
 					case '10':
 						// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
 						return "RQNP";
@@ -70,6 +72,7 @@
 						// RQMN Format: [<MjPri><MinPri=3><CANID>]<11>
 						return "RQMN";
 						break;
+				// 12 - 20 reserved
 					case '21':
 						// KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
 						return "KLOC Session " + parseInt(message.substr(9, 2), 16);
@@ -82,10 +85,12 @@
 						// DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
 						return "DKEEP Session " + parseInt(message.substr(9, 2), 16);
 						break;
+				// 24- 2F reserved
 					case '30':
 						// DBG1 Format: [<MjPri><MinPri=2><CANID>]<30><Status>
 						return "DBG1 Status " + parseInt(message.substr(9, 2), 16);
 						break;
+				// 31 - 3E reserved
 					case '3F':
 						// EXTC Format: [<MjPri><MinPri=2><CANID>]<3F><Ext_OPC>
 						return "EXTC Ext_OPC " + parseInt(message.substr(9, 2), 16);
@@ -143,11 +148,13 @@
 						return "DFNOF Session " + parseInt(message.substr(9, 2), 16) +
 								" Function number " + parseInt(message.substr(11, 2), 16);
 						break;
+				// 4B reserved
 					case '4C':
 						// SSTAT Format: [<MjPri><MinPri=3><CANID>]<4C><Session><Status>
 						return "SSTAT Session " + parseInt(message.substr(9, 2), 16) +
 								" Status " + parseInt(message.substr(11, 2), 16);
 						break;
+				// 4D - 4F reserved
 					case '50':
 						// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
 						return "RQNN Node " + parseInt(message.substr(9, 4), 16);
@@ -204,6 +211,7 @@
 						// ENUM Format: [<MjPri><MinPri=3><CANID>]<5D><NN hi><NN lo>
 						return "ENUM Node " + parseInt(message.substr(9, 4), 16);
 						break;
+				// 5E reserved
 					case '5F':
 						// EXTC1 Format: [[<MjPri><MinPri=3><CANID>]<5F><Ext_OPC><byte>
 						return "EXTC1 Ext_OPC " + parseInt(message.substr(9, 2), 16) +
@@ -226,6 +234,7 @@
 								" Data2 " + parseInt(message.substr(11, 2), 16) +
 								" Data3 " + parseInt(message.substr(13, 2), 16);
 						break;
+				// 64 - 6E reserved
 					case '6F':
 						// CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
 						return "CMDERR Node " + parseInt(message.substr(9, 4), 16) + 
@@ -261,6 +270,7 @@
 						return "CANID Node " + parseInt(message.substr(9, 4), 16) + 
 								" CAN_ID " + parseInt(message.substr(13, 2), 16);
 						break;
+				// 76 - 7E reserved
 					case '7F':
 						// EXTC2 Format: [<MjPri><MinPri=3><CANID>]<7F><Ext_OPC><byte1><byte2>
 						return "EXTC2 Ext_OPC " + parseInt(message.substr(9, 2), 16) + 
@@ -274,6 +284,7 @@
 								" Byte1 " + parseInt(message.substr(13, 2), 16) +
 								" Byte2 " + parseInt(message.substr(15, 2), 16);
 						break;
+				// 81 reserved
 					case '82':
 						// WCVO Format: [<MjPri><MinPri=2><CANID>]<82><Session><High CV#><Low CV#><Val>
 						return "WCVO Session " + parseInt(message.substr(9, 2), 16) + 
@@ -298,6 +309,7 @@
 								" CV " + parseInt(message.substr(11, 4), 16) +
 								" Value " + parseInt(message.substr(15, 2), 16);
 						break;
+				// 86 - 8F reserved
 					case '90':
 						// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 						return "ACON Node " + parseInt(message.substr(9, 4), 16) + 
@@ -392,6 +404,7 @@
 								" Byte2 " + parseInt(message.substr(15, 2), 16) +
 								" Byte3 " + parseInt(message.substr(17, 2), 16);
 						break;
+				// A1 reserved
 					case 'A2':
 						// WCVS Format: [<MjPri><MinPri=2><CANID>]<A2><Session><High CV#><LowCV#><Mode><CVval>
 						return "WCVS Session " + parseInt(message.substr(9, 2), 16) + 
@@ -399,6 +412,7 @@
 								" Mode " + parseInt(message.substr(15, 2), 16) +
 								" Value " + parseInt(message.substr(17, 2), 16);
 						break;
+				// A2 - AF reserved
 					case 'B0':
 						// ACON1 Format: [<MjPri><MinPri=3><CANID>]<B0><NN hi><NN lo><EN hi><EN lo><data>
 						return "ACON1 NodeId " + parseInt(message.substr(9, 4), 16) + 
@@ -443,6 +457,7 @@
 								" ModuleId " + parseInt(message.substr(15, 2), 16) + 
 								" flags " + parseInt(message.substr(17, 2), 16);
 						break;
+				// B7 reserved
 					case 'B8':
 						// ASON1 Format: [<MjPri><MinPri=3><CANID>]<B8><NN hi><NN lo><DN hi><DN lo><data 1>
 						return "ASON1 NodeId " + parseInt(message.substr(9, 4), 16) + 
@@ -455,6 +470,7 @@
 								" Device " + parseInt(message.substr(13, 4), 16) + 
 								" Data " + parseInt(message.substr(17, 2), 16);
 						break;
+				// BA - BC reserved
 					case 'BD':
 						// ARSON1 Format: [<MjPri><MinPri=3><CANID>]<BD><NN hi><NN lo><DN hi><DN lo><data 1>
 						return "ARSON1 NodeId " + parseInt(message.substr(9, 4), 16) + 
@@ -475,12 +491,169 @@
 								" Byte3 " + parseInt(message.substr(15, 2), 16) +
 								" Byte4 " + parseInt(message.substr(17, 2), 16);
 						break;
-
-						
+					case 'C0':
+						// RDCC5 Format: [[<MjPri><MinPri=2><CANID>]<C0><REP><Byte0>..<Byte4>
+						return "RDCC5 Repetitions " + parseInt(message.substr(9, 2), 16) + 
+								" Byte0 " + parseInt(message.substr(11, 2), 16) +
+								" Byte1 " + parseInt(message.substr(13, 2), 16) +
+								" Byte2 " + parseInt(message.substr(15, 2), 16) +
+								" Byte3 " + parseInt(message.substr(17, 2), 16) +
+								" Byte4 " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'C1':
+						// WCVOA Format: [<MjPri><MinPri=2><CANID>]<C1><AddrH><AddrL><High CV#><Low CV#><Mode><Val>
+						return "WCVOA Address " + parseInt(message.substr(9, 4), 16) + 
+								" CV " + parseInt(message.substr(13, 4), 16) +
+								" Mode " + parseInt(message.substr(17, 2), 16) +
+								" Value " + parseInt(message.substr(19, 2), 16);
+						break;
+				// C2 - CE reserved
+					case 'CF':
+						// FCLK Format: [<MjPri><MinPri=3><CANID>]<CF><mins><hrs><wdmon><div><mday><temp>
+						return "FCLK Minutes " + parseInt(message.substr(9, 2), 16) + 
+								" Hours " + parseInt(message.substr(11, 2), 16) +
+								" WDMON " + parseInt(message.substr(13, 2), 16) +
+								" DIV " + parseInt(message.substr(15, 2), 16) +
+								" MDAY " + parseInt(message.substr(17, 2), 16) +
+								" Temp " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'D0':
+						// ACON2 Format: [<MjPri><MinPri=3><CANID>]<D0><NN hi><NN lo><EN hi><EN lo><data1><data2>
+						return "ACON2 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'D1':
+						// ACOF2 Format: [<MjPri><MinPri=3><CANID>]<D1><NN hi><NN lo><EN hi><EN lo><data1><data2>
+						return "ACOF2 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16);
+						break;
 					case 'D2':
-						// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo>
+						// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
 						return "EVULN Node " + parseInt(message.substr(9, 4), 16) + 
-								" Event " + parseInt(message.substr(13, 4), 16);
+								" Event " + parseInt(message.substr(13, 4), 16) +
+								" Event Value Index " + parseInt(message.substr(17, 2), 16) +
+								" Event Value " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'D3':
+						// EVANS Format: [<MjPri><MinPri=3><CANID>]<D3><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+						return "EVANS Node " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) +
+								" Event Value Index " + parseInt(message.substr(17, 2), 16) +
+								" Event Value " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'D4':
+						// ARON2 Format: [<MjPri><MinPri=3><CANID>]<D4><NN hi><NN lo><EN hi><EN lo><data1><data2>
+						return "ARON2 Node " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) +
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'D5':
+						// AROF2 Format: [<MjPri><MinPri=3><CANID>]<D5><NN hi><NN lo><EN hi><EN lo><data1><data2>
+						return "AROF2 Node " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) +
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16);
+						break;
+				// D6 - D7 reserved
+					case 'D8':
+						// ASON2 Format: [<MjPri><MinPri=3><CANID>]<D8><NN hi><NN lo><DN hi><DN lo><data1><data2>
+						return "ASON2 Node " + parseInt(message.substr(9, 4), 16) + 
+								" Device " + parseInt(message.substr(13, 4), 16) +
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'D9':
+						// ASOF2 Format: [<MjPri><MinPri=3><CANID>]<D9><NN hi><NN lo><DN hi><DN lo><data1><data2>
+						return "ASOF2 Node " + parseInt(message.substr(9, 4), 16) + 
+								" Device " + parseInt(message.substr(13, 4), 16) +
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16);
+				// DA - DC reserved
+					case 'DD':
+						// ARSON2 Format: [<MjPri><MinPri=3><CANID>]<DD><NN hi><NN lo><DN hi><DN lo><data1><data2>
+						return "ASON2 Node " + parseInt(message.substr(9, 4), 16) + 
+								" Device " + parseInt(message.substr(13, 4), 16) +
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'DE':
+						// ARSOF2 Format: [<MjPri><MinPri=3><CANID>]<DE><NN hi><NN lo><DN hi><DN lo><data1><data2>
+						return "ASOF2 Node " + parseInt(message.substr(9, 4), 16) + 
+								" Device " + parseInt(message.substr(13, 4), 16) +
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16);
+					case 'DF':
+						// EXTC5 Format: [<MjPri><MinPri=3><CANID>]<DF><Ext-OPC><byte1><byte2><byte3><byte4><byte5>
+						return "EXTC5 Ext_OPC " + parseInt(message.substr(9, 2), 16) + 
+								" Byte1 " + parseInt(message.substr(11, 2), 16) +
+								" Byte2 " + parseInt(message.substr(13, 2), 16) +
+								" Byte3 " + parseInt(message.substr(15, 2), 16) +
+								" Byte4 " + parseInt(message.substr(17, 2), 16) +
+								" Byte5 " + parseInt(message.substr(19, 2), 16);
+						break;
+					case 'E0':
+						// RDCC6 Format: [[<MjPri><MinPri=2><CANID>]<E0><REP><Byte0>..<Byte5>
+						return "RDCC6 Repetitions " + parseInt(message.substr(9, 2), 16) + 
+								" Byte0 " + parseInt(message.substr(11, 2), 16) +
+								" Byte1 " + parseInt(message.substr(13, 2), 16) +
+								" Byte2 " + parseInt(message.substr(15, 2), 16) +
+								" Byte3 " + parseInt(message.substr(17, 2), 16) +
+								" Byte4 " + parseInt(message.substr(19, 2), 16) +
+								" Byte5 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'E1':
+						// PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
+						return "PLOC Session " + parseInt(message.substr(9, 2), 16) + 
+								" Address " + parseInt(message.substr(11, 4), 16) +
+								" Speed/Dir " + parseInt(message.substr(15, 2), 16) +
+								" Fn1 " + parseInt(message.substr(17, 2), 16) +
+								" Fn2 " + parseInt(message.substr(19, 2), 16) +
+								" Fn3 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'E2':
+						// NAME Format: [[<MjPri><MinPri=3><CANID>]<E2><char1><char2><char3><char4><char5><char6><char7>
+						return "NAME " + parseInt(message.substr(9, 14), 16);
+						break;
+					case 'E3':
+						// STAT Format: [<MjPri><MinPri=2><CANID>]<E3><NN hi><NN lo><CS num><flags><Major rev><Minor rev><Build no.>
+						return "STAT Node " + parseInt(message.substr(9, 4), 16) + 
+								" CSnum " + parseInt(message.substr(13, 2), 16) +
+								" Flags " + parseInt(message.substr(15, 2), 16) +
+								" Major " + parseInt(message.substr(17, 2), 16) +
+								" Minor " + parseInt(message.substr(19, 2), 16) +
+								" Build " + parseInt(message.substr(21, 2), 16);
+						break;
+				// E4 - EE reserved
+					case 'EF':
+						// PARAMS Format: [<MjPri><MinPri=3><CANID>]<EF><PARA 1><PARA 2><PARA 3><PARA 4><PARA 5><PARA 6><PARA 7>
+						return "PARAMS Param1 " + parseInt(message.substr(9, 2), 16) + 
+								" Param2 " + parseInt(message.substr(11, 2), 16) +
+								" Param3 " + parseInt(message.substr(13, 2), 16) +
+								" Param4 " + parseInt(message.substr(15, 2), 16) +
+								" Param5 " + parseInt(message.substr(17, 2), 16) +
+								" Param6 " + parseInt(message.substr(19, 2), 16) +
+								" Param7 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F0':
+						// ACON3 Format: [<MjPri><MinPri=3><CANID>]<F0><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+						return "ACON3 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16) +
+								" Data3 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F1':
+						// ACOF3 Format: [<MjPri><MinPri=3><CANID>]<F1><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+						return "ACOF3 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16) +
+								" Data3 " + parseInt(message.substr(21, 2), 16);
 						break;
 					case 'F2':
 						// ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
@@ -490,6 +663,109 @@
 								" EN1 " + parseInt(message.substr(17, 2), 16) + 
 								" EN0 " + parseInt(message.substr(19, 2), 16) + 
 								" Event Index " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F3':
+						// ARON3 Format: [<MjPri><MinPri=3><CANID>]<F3><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+						return "ARON3 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16) +
+								" Data3 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F4':
+						// AROF3 Format: [<MjPri><MinPri=3><CANID>]<F4><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+						return "AROF3 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16) +
+								" Data3 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F5':
+						// EVLRNI Format: [<MjPri><MinPri=3><CANID>]<F5><NN hi><NN lo><EN hi><EN lo><EN#><EV#><EV val>
+						return "EVLRNI NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Event Index " + parseInt(message.substr(17, 2), 16) +
+								" Event Variable Index " + parseInt(message.substr(19, 2), 16) +
+								" Value " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F6':
+						// ACDAT Format: [<MjPri><MinPri=3><CANID>]<F6><NN hi><NNlo><data1><data2><data3><data4><data5>
+						return "ACDAT NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Data1 " + parseInt(message.substr(13, 2), 16) +
+								" Data2 " + parseInt(message.substr(15, 2), 16) +
+								" Data3 " + parseInt(message.substr(17, 2), 16) +
+								" Data4 " + parseInt(message.substr(19, 2), 16) +
+								" Data5 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F7':
+						// ARDAT Format: [<MjPri><MinPri=3><CANID>]<F7><NN hi><NNlo><data1><data2><data3><data4><data5>
+						return "ARDAT NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Data1 " + parseInt(message.substr(13, 2), 16) +
+								" Data2 " + parseInt(message.substr(15, 2), 16) +
+								" Data3 " + parseInt(message.substr(17, 2), 16) +
+								" Data4 " + parseInt(message.substr(19, 2), 16) +
+								" Data5 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F8':
+						// ASON3 Format: [<MjPri><MinPri=3><CANID>]<F8><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+						return "ASON3 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16) +
+								" Data3 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'F9':
+						// ASOF3 Format: [<MjPri><MinPri=3><CANID>]<F9><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+						return "ASOF3 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16) +
+								" Data3 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'FA':
+						// DDES Format: [<MjPri><MinPri=3><CANID>]<FA><DN hi><DN lo><data1><data2><data3><data4><data5>
+						return "DDES Device " + parseInt(message.substr(9, 4), 16) + 
+								" Data1 " + parseInt(message.substr(13, 2), 16) +
+								" Data2 " + parseInt(message.substr(15, 2), 16) +
+								" Data3 " + parseInt(message.substr(17, 2), 16) +
+								" Data4 " + parseInt(message.substr(19, 2), 16) +
+								" Data5 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'FB':
+						// DDRS Format: [<MjPri><MinPri=3><CANID>]<FB><DN hi><DN lo><data1><data2><data3><data4><data5>
+						return "DDRS Device " + parseInt(message.substr(9, 4), 16) + 
+								" Data1 " + parseInt(message.substr(13, 2), 16) +
+								" Data2 " + parseInt(message.substr(15, 2), 16) +
+								" Data3 " + parseInt(message.substr(17, 2), 16) +
+								" Data4 " + parseInt(message.substr(19, 2), 16) +
+								" Data5 " + parseInt(message.substr(21, 2), 16);
+						break;
+				// FC reserved
+					case 'FD':
+						// ARSON3 Format: [<MjPri><MinPri=3><CANID>]<FD><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+						return "ARSON3 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16) +
+								" Data3 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'FE':
+						// ARSOF3 Format: [<MjPri><MinPri=3><CANID>]<FF><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+						return "ARSOF3 NodeId " + parseInt(message.substr(9, 4), 16) + 
+								" Event " + parseInt(message.substr(13, 4), 16) + 
+								" Data1 " + parseInt(message.substr(17, 2), 16) +
+								" Data2 " + parseInt(message.substr(19, 2), 16) +
+								" Data3 " + parseInt(message.substr(21, 2), 16);
+						break;
+					case 'FF':
+						// EXTC6 Format: [<MjPri><MinPri=3><CANID>]<DF><Ext-OPC><byte1><byte2><byte3><byte4><byte5><byte6>
+						return "EXTC6 Ext_OPC " + parseInt(message.substr(9, 2), 16) + 
+								" Byte1 " + parseInt(message.substr(11, 2), 16) +
+								" Byte2 " + parseInt(message.substr(13, 2), 16) +
+								" Byte3 " + parseInt(message.substr(15, 2), 16) +
+								" Byte4 " + parseInt(message.substr(17, 2), 16) +
+								" Byte5 " + parseInt(message.substr(19, 2), 16) +
+								" Byte6 " + parseInt(message.substr(21, 2), 16);
 						break;
 					default:
 						return "No translation for Opcode";
