@@ -287,7 +287,7 @@ describe('Websocket server tests', function(){
 			expected4 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";		// RQEVN
 			expect(mock_Cbus.getSendArray()[4]).to.equal(expected4);
 			done();
-		}, 10);
+		}, 20);
 	})
 
 
