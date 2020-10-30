@@ -39,3 +39,4 @@ websocket_Server(server, node)
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
+require("openurl").open("http://localhost:3000")
