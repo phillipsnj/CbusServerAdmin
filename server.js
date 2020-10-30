@@ -39,3 +39,5 @@ websocket_Server(server, node)
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
+// open webpage in default browser
+require("openurl").open("http://localhost:" + PORT)
