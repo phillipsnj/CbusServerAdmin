@@ -257,7 +257,7 @@
 						break;
 					case '73':
 						// RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
-						return "NVRD Node " + parseInt(message.substr(9, 4), 16) + 
+						return "RQNPN Node " + parseInt(message.substr(9, 4), 16) + 
 								" Node Parameter Index " + parseInt(message.substr(13, 2), 16);
 						break;
 					case '74':
@@ -374,8 +374,8 @@
 								" Parameter Value " + parseInt(message.substr(15, 2), 16);
 						break;
 					case '9C':
-						// RETVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
-						return "RETVAL Node " + parseInt(message.substr(9, 4), 16) + 
+						// REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
+						return "REVAL Node " + parseInt(message.substr(9, 4), 16) + 
 								" Event Index " + parseInt(message.substr(13, 2), 16) + 
 								" Event Value Index " + parseInt(message.substr(15, 2), 16);
 						break;
@@ -533,7 +533,7 @@
 						break;
 					case 'D2':
 						// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-						return "EVULN Node " + parseInt(message.substr(9, 4), 16) + 
+						return "EVLRN Node " + parseInt(message.substr(9, 4), 16) + 
 								" Event " + parseInt(message.substr(13, 4), 16) +
 								" Event Value Index " + parseInt(message.substr(17, 2), 16) +
 								" Event Value " + parseInt(message.substr(19, 2), 16);
