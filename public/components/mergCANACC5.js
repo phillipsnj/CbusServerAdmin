@@ -27,6 +27,9 @@ Vue.component('merg-canacc5', {
         getInfo() {
             this.$store.state.node_component = "nodeInfo"
         },
+        getParameters() {
+            this.$store.state.node_component = "nodeParameters"
+        },
         getVariables() {
             this.$store.state.node_component = "merg-canacc5-node-variables"
         },
@@ -41,6 +44,7 @@ Vue.component('merg-canacc5', {
       <h1>canacc5</h1>
       <v-tabs>
         <v-tab :key="1" @click="getInfo()">Info</v-tab>
+        <v-tab :key="4" @click="getParameters()">Parameters</v-tab>
         <v-tab :key="2" @click="getVariables()" v-if="node.flim">Variables</v-tab>
         <v-tab :key="3" @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
         <v-tab-item :key="1">
@@ -51,6 +55,9 @@ Vue.component('merg-canacc5', {
         </v-tab-item>
         <v-tab-item :key="3">
           <!--                    <merg-default-node-events :nodeId="node.node"></merg-default-node-events>-->
+        </v-tab-item>
+        <v-tab-item :key="4">
+          <!--                    <nodeInfo :nodeId="node.node"></nodeInfo>-->
         </v-tab-item>
       </v-tabs>
       <v-container v-if="$store.state.debug">
@@ -177,10 +184,7 @@ Vue.component('merg-canacc5-node-events', {
                     :items-per-page="20"
                     class="elevation-1"
                     item-key="id">
-        <template v-slot:top>
-        </template>
         <template v-slot:item.eventName="{ item }">
-          <!--                    <displayEventName :id="item.id"></displayEventName>-->
           <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -231,7 +235,7 @@ Vue.component('merg-canacc5-node-event-variables', {
     },
     template: `
       <v-container>
-      <p>Event ID :: {{ $store.state.selected_action_id }}</p>
+      <p>Event Index :: {{ $store.state.selected_action_id }}</p>
       <node-event-variable-bit-array v-bind:nodeId="$store.state.selected_node_id"
                                      v-bind:action="$store.state.selected_action_id"
                                      varId="1"
