@@ -25,19 +25,24 @@ Vue.component('nodeParameters', {
       <p v-if="$store.state.debug">{{ node.parameters }}</p>
       <v-container>
         <v-row>
-          <nodeValue name="NodeId" :value="nodeId"></nodeValue>
-          <nodeParameter :nodeId="nodeId" parId="1" name="Manufacturer Id"></nodeParameter>
-          <nodeValue name="Module" :value="node.module"></nodeValue>
+          <nodeParameter :nodeId="nodeId" parId="0" name="0: Number of Node Parameters"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="1" name="1: Manufacturer Id"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="2" name="2: Minor Version"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="3" name="3: Module Id"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="4" name="4: Supported Events"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="5" name="5: Event Variables"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="6" name="6: Node Variables"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="7" name="7: Major Version"></nodeParameter>
+          <nodeParameter :nodeId="nodeId" parId="8" name="8: Node Flags"></nodeParameter>
+        </v-row>
+        <v-row>
+	      <p>Translated values</p>
+        </v-row>
+        <v-row>
           <nodeValue name="Version" :value="moduleVersion"></nodeValue>
           <nodeValue name="Flim" :value="node.flim"></nodeValue>
           <nodeValue name="Consumer" :value="node.consumer"></nodeValue>
           <nodeValue name="Producer" :value="node.producer"></nodeValue>
-          <nodeValue name="Learn" :value="node.learn"></nodeValue>
-          <nodeParameter :nodeId="nodeId" parId="6" name="Variables"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="5" name="Event Variables"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="4" name="Supported Events"></nodeParameter>
-          <nodeValue name="Stored Events" :value="node.EvCount"></nodeValue>
-          <nodeValue name="Actual Events" :value="Object.values(node.actions).length"></nodeValue>
         </v-row>
       </v-container>
       </div>`
