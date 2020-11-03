@@ -4,6 +4,10 @@
       "name": "Universal",
       "component": "merg-canmio"
     },
+    "2": {
+      "name": "CANACC5",
+      "component": "merg-canacc5"
+    },
     "3": {
       "name": "CANACC8",
       "component": "merg-canacc8"
