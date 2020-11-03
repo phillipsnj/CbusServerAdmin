@@ -1,3 +1,5 @@
+
+
 Vue.component('merg-canacc5', {
     name: "merg-canacc5",
     //mixins: [nodeMixin],
@@ -140,7 +142,8 @@ Vue.component('merg-canacc5-node-events', {
                 {text: 'Event', value: 'eventName'},
                 {text: 'Action ID', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
-            ]
+            ],
+			addEventDialog: false
         }
     },
     methods: {
@@ -184,6 +187,19 @@ Vue.component('merg-canacc5-node-events', {
                     :items-per-page="20"
                     class="elevation-1"
                     item-key="id">
+					
+        <template v-slot:top>
+            <v-toolbar flat>
+		      <v-btn color="blue darken-1" @click.stop="addEventDialog = true" outlined>Add New Event</v-btn>
+
+		  	  <v-dialog	v-model="addEventDialog" max-width="250">
+			  <add-new-event v-on:close-addEventDialog="addEventDialog=false"></add-new-event>
+			</v-dialog>
+			  
+            </v-toolbar>
+        </template>
+					
+					
         <template v-slot:item.eventName="{ item }">
           <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
         </template>
@@ -369,3 +385,76 @@ Vue.component('merg-canacc5-variable-channel', {
       <!--      </v-card>-->
     `
 })
+
+
+
+Vue.component('add-new-event', {
+  data: function () {
+    return {
+        nodeId: 0,
+        producerNode: null,
+        newEvent: null,
+    }
+  },
+  mounted() {
+     this.nodeId = this.$store.state.selected_node_id
+  },
+  methods: {
+	close() {
+		console.log(`Close addEventDialog`)
+		this.$emit('close-addEventDialog')
+	},
+	save() {
+		var producerNodeHex = parseInt(this.producerNode).toString(16).padStart(4, '0');
+		var newEventHex = parseInt(this.newEvent).toString(16).padStart(4, '0');
+		var eventName = producerNodeHex + newEventHex;
+		console.log(`CANACC5: addEventDialog nodeId ` + this.nodeId + " eventName " + eventName)
+
+        this.$root.send('TEACH_EVENT', {
+            "nodeId": this.nodeId,
+            "eventName": eventName,
+            "eventId": 1,
+            "eventVal": 0})
+		
+		this.$emit('close-addEventDialog')
+    }
+  },
+  template: `<v-card ref="form">
+				  <v-card-title class="headline">Add New Event</v-card-title>
+				  
+				  <v-card-text>
+					<v-container>
+					  <v-layout row>
+						  <v-text-field 
+							ref="producerNode" 
+							v-model=producerNode 
+							label="ProducerNode" 
+							placeholder="decimal number" 
+							outlined
+							single-line
+							type="number"
+							>
+						  </v-text-field>
+					  </v-layout>
+					  <v-layout row>
+						  <v-text-field 
+							ref="newEvent" 
+							v-model=newEvent 
+							label="Event Number" 
+							placeholder="decimal number" 
+							outlined
+							single-line
+							type="number">
+						  </v-text-field>
+					  </v-layout>
+					</v-container>
+				  </v-card-text>
+				  
+				  <v-card-actions>
+					<v-btn text @click="close">Cancel</v-btn>
+					<v-btn text @click="save">Save</v-btn>
+				  </v-card-actions>
+				</v-card>`
+})
+
+
