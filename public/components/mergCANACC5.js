@@ -2,7 +2,6 @@
 
 Vue.component('merg-canacc5', {
     name: "merg-canacc5",
-    //mixins: [nodeMixin],
     data: function () {
         return {
             nodeId: 0,
@@ -36,10 +35,9 @@ Vue.component('merg-canacc5', {
             this.$store.state.node_component = "merg-canacc5-node-variables"
         },
         getEvents() {
-            //console.log(`mergDefault - NERD : ${this.nodeId}`)
-            //this.$root.send('NERD', {'nodeId': this.nodeId})
             this.$store.state.node_component = "merg-canacc5-node-events"
         }
+		
     },
     template: `
       <v-container>
@@ -75,17 +73,12 @@ Vue.component('merg-canacc5', {
 
 Vue.component('merg-canacc5-node-variables', {
     name: "merg-canacc5-node-variables",
-    //props: ['nodeId'],
     mounted() {
         this.$root.send('REQUEST_ALL_NODE_VARIABLES', {
             "nodeId": this.nodeId,
             "variables": this.node.parameters[6],
             "delay": 20
         })
-        /*        for (let i = 1; i <= this.node.parameters[6]; i++) {
-                    let time = i*100
-                    setTimeout(this.getVariable,time,i)
-                }*/
     },
     computed: {
         nodeId: function () {
@@ -95,11 +88,6 @@ Vue.component('merg-canacc5-node-variables', {
             return this.$store.state.nodes[this.$store.state.selected_node_id]
         },
     },
-    /*methods: {
-        getVariable: function (parameter) {
-            this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": parameter})
-        }
-    },*/
     template: `
       <v-container>
       <v-row v-if="$store.state.debug">
@@ -132,7 +120,6 @@ Vue.component('merg-canacc5-node-variables', {
 
 Vue.component('merg-canacc5-node-events', {
     name: "merg-canacc5-node-events",
-    //props: ['nodeId'],
     data: function () {
         return {
             eventDialog: false,
@@ -149,10 +136,6 @@ Vue.component('merg-canacc5-node-events', {
     methods: {
         editEvent: function (item) {
             console.log(`editEvent(${item.event})`)
-            /*for (let i = 1; i <= this.node.parameters[5]; i++) {
-                this.$root.send('REQUEST_EVENT_VARIABLE', {"nodeId": this.nodeId, "eventIndex": item.actionId, "eventVariableId": i})
-            }*/
-            //this.eventDialog = true
             this.editedEvent = item
             this.$store.state.selected_action_id = item.actionId
             this.$store.state.node_component = "merg-canacc5-node-event-variables"
@@ -192,7 +175,7 @@ Vue.component('merg-canacc5-node-events', {
             <v-toolbar flat>
 		      <v-btn color="blue darken-1" @click.stop="addEventDialog = true" outlined>Add New Event</v-btn>
 
-		  	  <v-dialog	v-model="addEventDialog" max-width="250">
+		  	  <v-dialog	v-model="addEventDialog" max-width="300">
 			  <add-new-event v-on:close-addEventDialog="addEventDialog=false"></add-new-event>
 			</v-dialog>
 			  
@@ -216,7 +199,6 @@ Vue.component('merg-canacc5-node-events', {
 
 Vue.component('merg-canacc5-node-event-variables', {
     name: "merg-canacc5-node-event-variables",
-    //props: ['nodeId', 'actionId'],
     mounted() {
         console.log(`merg-canacc5-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
         this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
@@ -238,7 +220,6 @@ Vue.component('merg-canacc5-node-event-variables', {
     },
     methods: {
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
-            // eslint-disable-next-line no-console
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
             this.$root.send('EVLRN', {
                 "nodeId": this.node.node,
@@ -348,7 +329,7 @@ Vue.component('merg-canacc5-variable-channel', {
         <v-row>
           <div>Channel {{ channelId }} Variable {{ variableValue }} Local {{ variableLocal }}Repeat {{ repeat }} Pulse {{ pulse }}</div>
         </v-row>-->
-      <v-card class="xs6 md3 pa-3" flat max-width="344" min-width="250">
+      <v-card class="xs6 md3 pa-3" flat max-width="344" min-width="350">
       <v-card-title>Channel {{ channelId }}</v-card-title>
       <v-card-subtitle v-if="pulse > 0">Pulse {{ pulse }} ms</v-card-subtitle>
       <v-card-subtitle v-else>Continuous</v-card-subtitle>
@@ -420,38 +401,45 @@ Vue.component('add-new-event', {
     }
   },
   template: `<v-card ref="form">
-				  <v-card-title class="headline">Add New Event</v-card-title>
+				  <v-card-title class="headline" class="justify-center">Add New Event</v-card-title>
 				  
 				  <v-card-text>
 					<v-container>
 					  <v-layout row>
+							<v-subheader>Producer Node</v-subheader>
+							<v-flex xs5 sm5 md5 lg5 x5 >
 						  <v-text-field 
 							ref="producerNode" 
 							v-model=producerNode 
-							label="ProducerNode" 
-							placeholder="decimal number" 
+							label="Producer Node" 
+							placeholder="1 to 65535" 
 							outlined
 							single-line
 							type="number"
 							>
 						  </v-text-field>
+						  </v-flex>
 					  </v-layout>
 					  <v-layout row>
+							<v-subheader>Event Number</v-subheader>
+							<v-flex xs5 sm5 md5 lg5 x5 >
 						  <v-text-field 
 							ref="newEvent" 
 							v-model=newEvent 
 							label="Event Number" 
-							placeholder="decimal number" 
+							placeholder="1 to 65535" 
 							outlined
 							single-line
 							type="number">
 						  </v-text-field>
+						  </v-flex>
 					  </v-layout>
 					</v-container>
 				  </v-card-text>
 				  
 				  <v-card-actions>
 					<v-btn text @click="close">Cancel</v-btn>
+					<v-spacer></v-spacer>
 					<v-btn text @click="save">Save</v-btn>
 				  </v-card-actions>
 				</v-card>`
