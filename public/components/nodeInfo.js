@@ -44,9 +44,9 @@ Vue.component('nodeInfo', {
     groupList() {
         let output = []
         for (let node in this.$store.state.layout.nodeDetails) {
-            console.log(`grouplist ${node} `)
+            //console.log(`grouplist ${node} `)
             if (this.$store.state.layout.nodeDetails[node].group) {
-                console.log(`groupList :: ${this.$store.state.layout.nodeDetails[node].group}`)
+                //console.log(`groupList :: ${this.$store.state.layout.nodeDetails[node].group}`)
                 output.push(this.$store.state.layout.nodeDetails[node].group)
             }
         }

@@ -22,24 +22,6 @@ Vue.component('nodes-list', {
     mounted() {
         //this.node_list = Object.values(this.$store.state.nodes)
         this.update_node_list()
-        /*for (let node of Object.values(this.$store.state.nodes)){
-            let new_node = {}
-            new_node.node = node.node
-            new_node.module = node.module
-            new_node.flim = node.flim
-            new_node.status = node.status
-            if (node.node in this.$store.state.layout.nodeDetails) {
-                new_node.name = this.$store.state.layout.nodeDetails[node.node].name
-                new_node.group = this.$store.state.layout.nodeDetails[node.node].group
-                new_node.colour = this.$store.state.layout.nodeDetails[node.node].colour
-            } else {
-                new_node.name = `Node ${node.node}`
-                new_node.group = ''
-                new_node.colour = 'black'
-            }
-            console.log(`Node : ${node.node}`)
-            this.node_list.push(new_node)
-        }*/
     },
     watch: {
         nodes() {
@@ -61,12 +43,13 @@ Vue.component('nodes-list', {
         },
         update_node_list: function () {
             this.node_list = []
-            for (let node of Object.values(this.$store.state.nodes)){
+            for (let node of Object.values(this.$store.state.nodes)) {
                 let new_node = {}
                 new_node.node = node.node
                 new_node.module = node.module
                 new_node.flim = node.flim
                 new_node.status = node.status
+                new_node.component = node.component
                 if (node.node in this.$store.state.layout.nodeDetails) {
                     new_node.name = this.$store.state.layout.nodeDetails[node.node].name
                     new_node.group = this.$store.state.layout.nodeDetails[node.node].group
@@ -108,7 +91,7 @@ Vue.component('nodes-list', {
                     :search="search">
         <template v-slot:top>
           <v-toolbar flat>
-            <v-toolbar-title>Modules</v-toolbar-title>  
+            <v-toolbar-title>Modules</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-text-field
                 v-model="search"

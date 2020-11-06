@@ -116,20 +116,7 @@ class cbusAdmin extends EventEmitter {
                     this.config.nodes[ref].learn = (msg.flags() & 16) ? true : false
                 }
                 this.config.nodes[ref].status = true
-                //this.saveConfig()
-                //this.cbusSend(this.RQNPN(msg.nodeId(), 0))// Get the number of Parameters
-                //this.cbusSend(this.RQNPN(msg.nodeId(),5))// Get the number of Event Variables
-                //this.cbusSend(this.RQNPN(msg.nodeId(), 6))// Get the number of Node Variables
                 this.cbusSend((this.RQEVN(msg.nodeId())))
-                //this.cbusSend(this.NVRD(msg.nodeId(),1))//
-                /*let nodes = []
-                for (let node in this.config.nodes){
-                    nodes.push(this.config.nodes[node])
-                }
-                this.emit('nodes', nodes);*/
-                //
-                //this.cbusSend(this.RQNPN(msg.nodeId(), 0)) //Get the number of node Parameters
-                //this.cbusSend(this.NERD(msg.nodeId())) // Read back all stored events in a node
                 this.saveConfig()
             },
             '90': (msg) => {//Accessory On Long Event
