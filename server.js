@@ -4,8 +4,14 @@ const express = require('express')
 //const socketio = require('socket.io')
 var winston = require('./config/winston.js');
 
-
 var serveStatic = require('serve-static')
+
+var startClient;
+process.argv.forEach(function (val) {
+	if (val == "--startClient") {startClient = true;}
+});
+
+
 
 const app = express()
 const server = http.createServer(app)
@@ -36,8 +42,9 @@ let node = new admin.cbusAdmin(file,NET_ADDRESS,NET_PORT);
 const websocket_Server = require('./wsserver')
 websocket_Server(server, node)
 
-
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
-// open webpage in default browser
-require("openurl").open("http://localhost:" + PORT)
+if (Boolean(startClient)) {
+	// open webpage in default browser
+	require("openurl").open("http://localhost:" + PORT)
+}
