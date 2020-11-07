@@ -375,6 +375,7 @@ Vue.component('add-new-event', {
         nodeId: 0,
         producerNode: null,
         newEvent: null,
+        addEventOutput: '',
     }
   },
   mounted() {
@@ -385,23 +386,36 @@ Vue.component('add-new-event', {
 		console.log(`Close addEventDialog`)
 		this.$emit('close-addEventDialog')
 	},
+
 	save() {
 		var producerNodeHex = parseInt(this.producerNode).toString(16).padStart(4, '0');
 		var newEventHex = parseInt(this.newEvent).toString(16).padStart(4, '0');
 		var eventName = producerNodeHex + newEventHex;
 		console.log(`CANACC5: addEventDialog nodeId ` + this.nodeId + " eventName " + eventName)
 
-        this.$root.send('TEACH_EVENT', {
-            "nodeId": this.nodeId,
-            "eventName": eventName,
-            "eventId": 1,
-            "eventVal": 0})
-		
-		this.$emit('close-addEventDialog')
+		var found = undefined;
+		var eventList = Object.values(this.$store.state.nodes[this.$store.state.selected_node_id].actions);
+		for (var eIndex = 0; eIndex < eventList.length; eIndex++) {
+			if ( eventList[eIndex].event == eventName) {found = eventName;}
+		}
+
+		if (found == undefined)
+		{
+			this.$root.send('TEACH_EVENT', {
+				"nodeId": this.nodeId,
+				"eventName": eventName,
+				"eventId": 1,
+				"eventVal": 0})
+			this.addEventOutput = "Event added";
+		}
+		else{
+			this.addEventOutput = "Event already exists";
+		}
     }
   },
+  
   template: `<v-card ref="form">
-				  <v-card-title class="headline" class="justify-center">Add New Event</v-card-title>
+				  <v-card-title class="justify-center">Add New Event</v-card-title>
 				  
 				  <v-card-text>
 					<v-container>
@@ -434,6 +448,10 @@ Vue.component('add-new-event', {
 						  </v-text-field>
 						  </v-flex>
 					  </v-layout>
+		            <v-layout row>
+						{{ addEventOutput }}
+					</v-layout>
+
 					</v-container>
 				  </v-card-text>
 				  
