@@ -6,7 +6,7 @@ Vue.component('events', {
                 search: '',
                 expanded: [],
                 headers: [
-                    {text: 'Event Name', value: 'EventName', sortable: false},
+                    {text: 'Event Name', value: 'EventName'},
                     {text: 'Group', value: 'group'},
                     {text: 'NodeId', value: 'nodeId'},
                     {text: 'EventId', value: 'eventId'},
@@ -118,47 +118,11 @@ Vue.component('events', {
                 this.editDialog = true
             },
             teachEvent(item) {
-                // this.editedIndex = this.events.indexOf(item)
                 this.editedEvent = Object.assign({}, item)
-                /*this.nodeList = [0]
-                this.$root.nodes.forEach(function (arrayItem) {
-                    this.nodeList.push(arrayItem.node)
-                })*/
-                //this.teachEventOutput = JSON.stringify(this.editedEvent)
-                //this.editedEvent = item
                 this.teachDialog = true
             },
-            /*checkNode() {
-                /!*this.teachEventOutput = 'getEventVariables()'*!/
-
-                let input = Object.values(this.SelectedEventNode.actions)
-                const found = input.find(o => o.event === this.editedEvent.id)
-                console.log(`checkNode() ${this.SelectedEventNode.node} ${this.SelectedEventNode.consumer} : ${this.editedEvent.id} : found ${JSON.stringify(found)} : ${JSON.stringify(input)}`)
-                /!*this.teachEventOutput = JSON.stringify(Object.values(this.SelectedEventNode.actions))*!/
-                if (typeof (found) != "undefined") {
-                    this.teachEventStatus = false
-                    this.teachEventOutput = "Event already taught"
-                } else {
-                    if (this.SelectedEventNode.consumer) {
-                        if (this.SelectedEventNode.flim) {
-                            this.teachEventStatus = true
-                            this.teachEventOutput = "Event is Ok"
-                        } else {
-                            this.teachEventStatus = false
-                            this.teachEventOutput = "Node not in Flim mode"
-                        }
-                    } else {
-                        this.teachEventStatus = false
-                        this.teachEventOutput = "Node not a consumer"
-                    }
-                }
-            },*/
             close() {
                 this.dialog = false
-                /*                setTimeout(() => {
-                                    this.editedItem = Object.assign({}, this.defaultItem)
-                                    this.editedIndex = -1
-                                }, 300)*/
             },
             update(Event) {
                 console.log(`Event Details ${JSON.stringify(this.$store.state.eventDetails)}`)
@@ -169,37 +133,9 @@ Vue.component('events', {
                 this.$root.send('UPDATE_LAYOUT_DETAILS', this.$store.state.layout)
                 this.editDialog = false
             },
-            /*teach(selectedNode, selectedEvent) {
-                // eslint-disable-next-line no-console
-                console.log(`TEACH_EVENT : ${selectedNode.node} : ${selectedNode.module} : ${selectedEvent.id}`)
-                if (selectedNode.module == 'canmio-universal') {
-                    this.$root.send('TEACH_EVENT', {
-                        "nodeId": selectedNode.node,
-                        "eventName": selectedEvent.id,
-                        "eventId": 2,
-                        "eventVal": 2
-                    })
-                } else {
-                    this.$root.send('TEACH_EVENT', {
-                        "nodeId": selectedNode.node,
-                        "eventName": selectedEvent.id,
-                        "eventId": 1,
-                        "eventVal": 0
-                    })
-                }
-                this.close()
-            }*/
-        }
-        ,
+        },
         template: `
           <div>
-          <!--<v-toolbar light>
-            <v-toolbar-title>Events</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-toolbar-items>-->
-          <!--<v-btn color="success" v-on:click="QNN">QNN()</v-btn>-->
-          <!--</v-toolbar-items>
-        </v-toolbar>-->
           <v-data-table :headers="headers"
                         :items="this.$store.state.events"
                         item-key="id"
@@ -234,14 +170,6 @@ Vue.component('events', {
               <td>{{ props.item.nodeId }}</td>
               <td>{{ props.item.eventId }}</td>
               <td>{{ props.item.type }}</td>
-              <!--<td>
-                  <v-badge color="red" v-if="props.item.status === 'off'">
-                      <template v-slot:badge>Off</template>
-                  </v-badge>
-                  <v-badge color="green" v-else>
-                      <template v-slot:badge>On</template>
-                  </v-badge>
-              </td>-->
               <td>{{ props.item.count }}</td>
             </template>
             <template v-slot:item.EventName="{ item }">
