@@ -52,12 +52,9 @@ Vue.component('add-new-event-dialog', {
 							<v-subheader>Producer Node</v-subheader>
 							<v-flex xs5 sm5 md5 lg5 x5 >
 						  <v-text-field 
-							ref="producerNode" 
 							v-model=producerNode 
-							label="Producer Node" 
 							placeholder="1 to 65535" 
 							outlined
-							single-line
 							type="number"
 							>
 						  </v-text-field>
@@ -67,12 +64,9 @@ Vue.component('add-new-event-dialog', {
 							<v-subheader>Event Number</v-subheader>
 							<v-flex xs5 sm5 md5 lg5 x5 >
 						  <v-text-field 
-							ref="newEvent" 
 							v-model=newEvent 
-							label="Event Number" 
 							placeholder="1 to 65535" 
 							outlined
-							single-line
 							type="number">
 						  </v-text-field>
 						  </v-flex>
