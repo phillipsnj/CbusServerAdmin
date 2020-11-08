@@ -130,7 +130,7 @@ Vue.component('merg-canacc5-node-events', {
                 {text: 'Action ID', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
-			addEventDialog: false
+			addNewEventDialog: false
         }
     },
     methods: {
@@ -173,10 +173,10 @@ Vue.component('merg-canacc5-node-events', {
 					
         <template v-slot:top>
             <v-toolbar flat>
-		      <v-btn color="blue darken-1" @click.stop="addEventDialog = true" outlined>Add New Event</v-btn>
+		      <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
 
-		  	  <v-dialog	v-model="addEventDialog" max-width="300">
-			  <add-new-event v-on:close-addEventDialog="addEventDialog=false"></add-new-event>
+		  	  <v-dialog	v-model="addNewEventDialog" max-width="300">
+			  <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
 			</v-dialog>
 			  
             </v-toolbar>
@@ -366,101 +366,4 @@ Vue.component('merg-canacc5-variable-channel', {
       <!--      </v-card>-->
     `
 })
-
-
-
-Vue.component('add-new-event', {
-  data: function () {
-    return {
-        nodeId: 0,
-        producerNode: null,
-        newEvent: null,
-        addEventOutput: '',
-    }
-  },
-  mounted() {
-     this.nodeId = this.$store.state.selected_node_id
-  },
-  methods: {
-	close() {
-		console.log(`Close addEventDialog`)
-		this.$emit('close-addEventDialog')
-	},
-
-	save() {
-		var producerNodeHex = parseInt(this.producerNode).toString(16).padStart(4, '0');
-		var newEventHex = parseInt(this.newEvent).toString(16).padStart(4, '0');
-		var eventName = producerNodeHex + newEventHex;
-		console.log(`CANACC5: addEventDialog nodeId ` + this.nodeId + " eventName " + eventName)
-
-		var found = undefined;
-		var eventList = Object.values(this.$store.state.nodes[this.$store.state.selected_node_id].actions);
-		for (var eIndex = 0; eIndex < eventList.length; eIndex++) {
-			if ( eventList[eIndex].event == eventName) {found = eventName;}
-		}
-
-		if (found == undefined)
-		{
-			this.$root.send('TEACH_EVENT', {
-				"nodeId": this.nodeId,
-				"eventName": eventName,
-				"eventId": 1,
-				"eventVal": 0})
-			this.addEventOutput = "Event added";
-		}
-		else{
-			this.addEventOutput = "Event already exists";
-		}
-    }
-  },
-  
-  template: `<v-card ref="form">
-				  <v-card-title class="justify-center">Add New Event</v-card-title>
-				  
-				  <v-card-text>
-					<v-container>
-					  <v-layout row>
-							<v-subheader>Producer Node</v-subheader>
-							<v-flex xs5 sm5 md5 lg5 x5 >
-						  <v-text-field 
-							ref="producerNode" 
-							v-model=producerNode 
-							label="Producer Node" 
-							placeholder="1 to 65535" 
-							outlined
-							single-line
-							type="number"
-							>
-						  </v-text-field>
-						  </v-flex>
-					  </v-layout>
-					  <v-layout row>
-							<v-subheader>Event Number</v-subheader>
-							<v-flex xs5 sm5 md5 lg5 x5 >
-						  <v-text-field 
-							ref="newEvent" 
-							v-model=newEvent 
-							label="Event Number" 
-							placeholder="1 to 65535" 
-							outlined
-							single-line
-							type="number">
-						  </v-text-field>
-						  </v-flex>
-					  </v-layout>
-		            <v-layout row>
-						{{ addEventOutput }}
-					</v-layout>
-
-					</v-container>
-				  </v-card-text>
-				  
-				  <v-card-actions>
-					<v-btn text @click="close">Cancel</v-btn>
-					<v-spacer></v-spacer>
-					<v-btn text @click="save">Save</v-btn>
-				  </v-card-actions>
-				</v-card>`
-})
-
 

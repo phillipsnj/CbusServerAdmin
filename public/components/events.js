@@ -148,6 +148,8 @@ Vue.component('events', {
               <v-toolbar flat>
                 <v-toolbar-title>Events Table</v-toolbar-title>
                 <v-spacer></v-spacer>
+				<v-btn color="blue darken-1" @click.stop="sendEventDialog = true" outlined>Send Event</v-btn>
+                <v-spacer></v-spacer>
                 <v-text-field
                     v-model="search"
                     append-icon="search"
