@@ -17,6 +17,7 @@ Vue.component('events', {
                 ],
                 dialog: false,
                 editDialog: false,
+                sendEventDialog: false,
                 teachDialog: false,
                 editedIndex: -1,
                 editedEvent: {
@@ -165,6 +166,11 @@ Vue.component('events', {
                   <events-teach-event :editedEvent="editedEvent"
                                       v-on:close-dialog="teachDialog=false"></events-teach-event>
                 </v-dialog>
+				
+				<v-dialog v-model="sendEventDialog" max-width="500">
+					<send-event-dialog v-on:close-sendEventDialog="sendEventDialog=false"></send-event-dialog>
+				</v-dialog>
+
               </v-toolbar>
             </template>
             <template v-slot:items="props">
