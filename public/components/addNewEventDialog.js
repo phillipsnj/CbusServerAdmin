@@ -5,6 +5,10 @@ Vue.component('add-new-event-dialog', {
         producerNode: null,
         newEvent: null,
         addEventOutput: '',
+		rules: {
+			required: value => !!value || 'Required',
+		},
+
     }
   },
   mounted() {
@@ -20,7 +24,7 @@ Vue.component('add-new-event-dialog', {
 		var producerNodeHex = parseInt(this.producerNode).toString(16).padStart(4, '0');
 		var newEventHex = parseInt(this.newEvent).toString(16).padStart(4, '0');
 		var eventName = producerNodeHex + newEventHex;
-		console.log(`CANACC5: addEventDialog nodeId ` + this.nodeId + " eventName " + eventName)
+		console.log(`addEventDialog: nodeId ` + this.nodeId + " eventName " + eventName)
 
 		var found = undefined;
 		var eventList = Object.values(this.$store.state.nodes[this.$store.state.selected_node_id].actions);
@@ -49,25 +53,31 @@ Vue.component('add-new-event-dialog', {
 				  <v-card-text>
 					<v-container>
 					  <v-layout row>
-							<v-subheader>Producer Node</v-subheader>
 							<v-flex xs5 sm5 md5 lg5 x5 >
+							<v-subheader>Producer Node</v-subheader>
+						  </v-flex>
+						  <v-flex xs5 sm5 md5 lg5 x5 >
 						  <v-text-field 
+							autofocus
 							v-model=producerNode 
 							placeholder="1 to 65535" 
 							outlined
 							type="number"
-							>
+							:rules="[rules.required]">
 						  </v-text-field>
 						  </v-flex>
 					  </v-layout>
 					  <v-layout row>
+						  <v-flex xs5 sm5 md5 lg5 x5 >
 							<v-subheader>Event Number</v-subheader>
-							<v-flex xs5 sm5 md5 lg5 x5 >
+						  </v-flex>
+						  <v-flex xs5 sm5 md5 lg5 x5 >
 						  <v-text-field 
 							v-model=newEvent 
 							placeholder="1 to 65535" 
 							outlined
-							type="number">
+							type="number"
+							:rules="[rules.required]">
 						  </v-text-field>
 						  </v-flex>
 					  </v-layout>
