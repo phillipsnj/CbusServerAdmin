@@ -104,7 +104,7 @@ Vue.component('merg-canacc5-node-variables', {
       </v-row>
 
  	  <v-row>
-	  <node-variable-byteslider v-bind:nodeId="node.node" nodeVariableIndex=9 title="Feedback Delay" units="ms" scaling=0.5>
+	  <node-variable-byteslider nodeVariableIndex=9 title="Feedback Delay" units="ms" scaling=0.5>
 	  </node-variable-byteslider>
 	  </v-row>
 	  
@@ -386,7 +386,7 @@ Vue.component('merg-canacc5-variable-channel', {
 
 Vue.component('node-variable-byteslider', {
     name: "node-variable-byteslider",
-    props: ["nodeId", "nodeVariableIndex", "title", "units", "scaling"],
+    props: ["nodeVariableIndex", "title", "units", "scaling"],
     data: function () {
         return {
             variableLocal: 0,
@@ -404,6 +404,9 @@ Vue.component('node-variable-byteslider', {
         }
     },
     computed: {
+		nodeId: function () {
+			return this.$store.state.selected_node_id;
+		},
         variableValue: function () {
             return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.nodeVariableIndex]
         },
@@ -414,7 +417,7 @@ Vue.component('node-variable-byteslider', {
             this.min = 0
         },
         updateNV: function () {
-            this.variableLocal = this.sliderValue / this.scaling
+            this.variableLocal = this.sliderValue / this.scaling;
             this.$root.send('UPDATE_NODE_VARIABLE', {
                 "nodeId": this.nodeId,
                 "variableId":this.nodeVariableIndex,
