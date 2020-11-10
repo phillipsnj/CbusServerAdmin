@@ -102,6 +102,12 @@ Vue.component('merg-canacc5-node-variables', {
 
         </merg-canacc5-variable-channel>
       </v-row>
+
+ 	  <v-row>
+	  <node-variable-byteslider nodeVariableIndex=9 title="Feedback Delay" units="ms" scaling=0.5>
+	  </node-variable-byteslider>
+	  </v-row>
+	  
       <v-row v-if="$store.state.debug">
         <node-variable v-bind:nodeId="node.node"
                        v-bind:varId="n"
@@ -244,14 +250,24 @@ Vue.component('merg-canacc5-node-event-variables', {
                                      name="Inverted Outputs">
       </node-event-variable-bit-array>
 
+		<node-event-variable-bit v-bind:node="$store.state.selected_node_id"
+								 v-bind:action="$store.state.selected_action_id"
+                                 :variable="3"
+								 :bit="7"
+								 name="Feedback">
+		</node-event-variable-bit>
+
+
       <v-row v-if="$store.state.debug">
         <node-event-variable v-bind:nodeId="$store.state.selected_node_id"
                              v-bind:actionId="$store.state.selected_action_id"
                              v-bind:varId="n"
                              v-for="n in node.parameters[5]"
                              :key="n">
-
         </node-event-variable>
+		
+
+		
       </v-row>
       <v-row v-if="$store.state.debug">
         <p>{{ node.actions[actionId] }}</p>
@@ -366,4 +382,5 @@ Vue.component('merg-canacc5-variable-channel', {
       <!--      </v-card>-->
     `
 })
+
 
