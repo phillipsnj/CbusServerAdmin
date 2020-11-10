@@ -469,3 +469,77 @@ Vue.component('node-variable2', {
       </v-container>
     `
 })
+
+Vue.component('node-variable-byteslider', {
+    name: "node-variable-byteslider",
+    props: ["nodeVariableIndex", "title", "units", "scaling"],
+    data: function () {
+        return {
+            variableLocal: 0,
+            sliderValue: 0,
+            max: Math.floor(255 * this.scaling),
+            min: 0,
+        }
+    },
+    mounted() {
+        this.updateVariables()
+    },
+    watch: {
+        variableValue() {
+            this.updateVariables()
+        }
+    },
+    computed: {
+		nodeId: function () {
+			return this.$store.state.selected_node_id;
+		},
+        variableValue: function () {
+            return this.$store.state.nodes[this.$store.state.selected_node_id].variables[this.nodeVariableIndex]
+        },
+    },
+    methods: {
+        updateVariables() {
+            this.sliderValue = this.variableValue * this.scaling
+            this.min = 0
+        },
+        updateNV: function () {
+            this.variableLocal = this.sliderValue / this.scaling;
+            this.$root.send('UPDATE_NODE_VARIABLE', {
+                "nodeId": this.nodeId,
+                "variableId":this.nodeVariableIndex,
+                "variableValue": this.variableLocal
+            })
+        }
+    },
+    template: `
+      <v-card class="xs6 md3 pa-3" flat max-width="344" min-width="350">
+      <v-card-title>{{ title }}</v-card-title>
+      <v-card-subtitle>{{ sliderValue }} {{ units }}</v-card-subtitle>
+      <v-card-text>
+        <v-slider
+            v-model="sliderValue"
+            class="align-center"
+            :max="max"
+            :min="min"
+            step="1"
+            tick-size="4"
+            hide-details
+            @change="updateNV()"
+        >
+          <template v-slot:prepend>
+            <v-icon color="blue" @click="updateNV()">
+              mdi-minus
+            </v-icon>
+          </template>
+          <template v-slot:append>
+            <v-icon color="blue" @click="updateNV()">
+              mdi-plus
+            </v-icon>
+          </template>
+        </v-slider>
+      </v-card-text>
+      </v-card>
+    `
+})
+
+
