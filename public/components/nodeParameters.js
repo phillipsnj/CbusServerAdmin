@@ -3,7 +3,7 @@ Vue.component('nodeParameters', {
 
     mounted() {
         this.$root.send('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": this.node.node, "parameters": 20, "delay":30})
-        console.log(`nodeParamters : ${this.nodeId}`)
+        console.log(`nodeParameters : ${this.nodeId}`)
     },
     computed: {
 
@@ -55,40 +55,6 @@ Vue.component('nodeParameters', {
           <nodeValue name="Producer" :value="node.producer"></nodeValue>
         </v-row>
       </v-container>
-      </div>`
-})
-
-Vue.component('nodeDetail', {
-    name: "nodeParameter",
-    props: ['nodeId', 'parId', 'name'],
-    template: `
-      <div>
-      <v-card class="xs6 md3 pa-3" flat>
-        <v-text-field
-            :label="name"
-            v-model="$store.state.nodes[nodeId].parameters[parId]"
-            outlined
-            readonly
-        >
-        </v-text-field>
-      </v-card>
-      </div>`
-})
-
-Vue.component('nodeParameter', {
-    name: "nodeParameter",
-    props: ['nodeId', 'parId', 'name'],
-    template: `
-      <div>
-      <v-card class="xs6 md3 pa-3" flat>
-        <v-text-field
-            :label="name"
-            v-model="$store.state.nodes[nodeId].parameters[parId]"
-            outlined
-            readonly
-        >
-        </v-text-field>
-      </v-card>
       </div>`
 })
 
