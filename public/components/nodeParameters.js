@@ -80,7 +80,7 @@ Vue.component('nodeParameters', {
 			if (index == 3) {name = index + ": Module Id"}
 			if (index == 4) {name = index + ": Number of Supported Events"}
 			if (index == 5) {name = index + ": Number of Event Variables"}
-			if (index == 6) {name = index + ": Number of Node Parameters"}
+			if (index == 6) {name = index + ": Number of Node Variables"}
 			if (index == 7) {name = index + ": Major Version"}
 			if (index == 8) {name = index + ": Node Flags"}
 			if (index == 9) {name = index + ": CPU type"}
