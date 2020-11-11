@@ -30,6 +30,18 @@ Vue.component('nodeParameters', {
 			if (index == 6) {name = index + ": Number of Node Parameters"}
 			if (index == 7) {name = index + ": Major Version"}
 			if (index == 8) {name = index + ": Node Flags"}
+			if (index == 9) {name = index + ": CPU type"}
+			if (index == 10) {name = index + ": Interface Type"}
+			if (index == 11) {name = index + ": CPU Load Address"}
+			if (index == 12) {name = index + ": CPU Load Address"}
+			if (index == 13) {name = index + ": CPU Load Address"}
+			if (index == 14) {name = index + ": CPU Load Address"}
+			if (index == 15) {name = index + ": CPU Manufacturers Code"}
+			if (index == 16) {name = index + ": CPU Manufacturers Code"}
+			if (index == 17) {name = index + ": CPU Manufacturers Code"}
+			if (index == 18) {name = index + ": CPU Manufacturers Code"}
+			if (index == 19) {name = index + ": CPU Manufacturers Code"}
+			if (index == 20) {name = index + ": Beta version number"}
 			return name;
 		},
 	},
