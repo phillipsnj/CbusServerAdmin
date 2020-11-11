@@ -1,12 +1,14 @@
 Vue.component('nodeParameters', {
     name: "nodeParameters",
+
     mounted() {
         this.$root.send('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": this.node.node, "parameters": 20, "delay":30})
         console.log(`nodeParamters : ${this.nodeId}`)
     },
     computed: {
 
-        nodeId: function () {
+        nodeId: function ()
+		{
             return this.$store.state.selected_node_id
         },
         node: function () {
@@ -14,27 +16,35 @@ Vue.component('nodeParameters', {
         },
         moduleVersion: function () {
             return `${this.node.parameters[7]}.${String.fromCharCode(this.node.parameters[2])}`
-        }
+        },
     },
     methods: {
-		update() {}
+		variableName: function (index) {
+			var name = index + ":";
+			if (index == 0) {name = index + ": Number of Node Parameters"}
+			if (index == 1) {name = index + ": Manufacturer Id"}
+			if (index == 2) {name = index + ": Minor Version"}
+			if (index == 3) {name = index + ": Module Id"}
+			if (index == 4) {name = index + ": Number of Supported Events"}
+			if (index == 5) {name = index + ": Number of Event Variables"}
+			if (index == 6) {name = index + ": Number of Node Parameters"}
+			if (index == 7) {name = index + ": Major Version"}
+			if (index == 8) {name = index + ": Node Flags"}
+			return name;
+		},
 	},
     template: `
       <div>
       <!--<h1>Node Parameters {{ nodeId }}</h1>--> 
       <p v-if="$store.state.debug">{{ node.parameters }}</p>
       <v-container>
+
         <v-row>
-          <nodeParameter :nodeId="nodeId" parId="0" name="0: Number of Node Parameters"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="1" name="1: Manufacturer Id"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="2" name="2: Minor Version"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="3" name="3: Module Id"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="4" name="4: Supported Events"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="5" name="5: Event Variables"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="6" name="6: Node Variables"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="7" name="7: Major Version"></nodeParameter>
-          <nodeParameter :nodeId="nodeId" parId="8" name="8: Node Flags"></nodeParameter>
+		<template v-for="(parameter, index) in node.parameters" >
+          <nodeValue :name="variableName(index)" :value="parameter"></nodeValue>
+		</template>
         </v-row>
+		
         <v-row>
 	      <p>Translated values</p>
         </v-row>
