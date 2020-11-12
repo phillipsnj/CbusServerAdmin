@@ -37,36 +37,22 @@ Vue.component('merg-canacc5', {
         getEvents() {
             this.$store.state.node_component = "merg-canacc5-node-events"
         }
-		
+        
     },
     template: `
       <v-container>
-      <h1>canacc5</h1>
-      <v-tabs>
-        <v-tab :key="1" @click="getInfo()">Info</v-tab>
-        <v-tab :key="4" @click="getParameters()">Parameters</v-tab>
-        <v-tab :key="2" @click="getVariables()" v-if="node.flim">Variables</v-tab>
-        <v-tab :key="3" @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
-        <v-tab-item :key="1">
-          <!--                    <nodeInfo :nodeId="node.node"></nodeInfo>-->
-        </v-tab-item>
-        <v-tab-item :key="2">
-          <!--<merg-default-node-variables :nodeId="node.node"></merg-default-node-variables>-->
-        </v-tab-item>
-        <v-tab-item :key="3">
-          <!--                    <merg-default-node-events :nodeId="node.node"></merg-default-node-events>-->
-        </v-tab-item>
-        <v-tab-item :key="4">
-          <!--                    <nodeInfo :nodeId="node.node"></nodeInfo>-->
-        </v-tab-item>
-      </v-tabs>
-      <v-container v-if="$store.state.debug">
-        <p>{{ $store.state.node_component }}</p>
-      </v-container>
-      <component v-bind:is="$store.state.node_component"></component>
-      <v-container v-if="$store.state.debug">
-        <p>{{ JSON.stringify(node) }}</p>
-      </v-container>
+        <h1>canacc5</h1>
+        <v-tabs>
+          <v-tab @click="getInfo()">Info</v-tab>
+          <v-tab @click="getParameters()">Parameters</v-tab>
+          <v-tab @click="getVariables()" v-if="node.flim">Variables</v-tab>
+          <v-tab @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
+        </v-tabs>
+        <!-- actual component selected from tab options now in node_component, so display it -->
+        <component v-bind:is="$store.state.node_component"></component>
+        <v-container v-if="$store.state.debug">
+          <p>{{ JSON.stringify(node) }}</p>
+        </v-container>
       </v-container>
     `
 })
@@ -103,11 +89,11 @@ Vue.component('merg-canacc5-node-variables', {
         </merg-canacc5-variable-channel>
       </v-row>
 
- 	  <v-row>
-	  <node-variable-byteslider nodeVariableIndex=9 title="Feedback Delay" units="ms" scaling=0.5>
-	  </node-variable-byteslider>
-	  </v-row>
-	  
+      <v-row>
+      <node-variable-byteslider nodeVariableIndex=9 title="Feedback Delay" units="ms" scaling=0.5>
+      </node-variable-byteslider>
+      </v-row>
+      
       <v-row v-if="$store.state.debug">
         <node-variable v-bind:nodeId="node.node"
                        v-bind:varId="n"
@@ -131,12 +117,13 @@ Vue.component('merg-canacc5-node-events', {
             eventDialog: false,
             editedEvent: {event: "0", variables: [], actionId: 1},
             headers: [
-                {text: 'Event Name', value: 'event'},
-                {text: 'Event', value: 'eventName'},
-                {text: 'Action ID', value: 'actionId'},
+                {text: 'Event Name', value: 'eventName'},
+                {text: 'Producing Node', value: 'nodeNumber'},
+                {text: 'Event Number', value: 'eventNumber'},
+                {text: 'Event Index', value: 'eventIndex'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
-			addNewEventDialog: false
+            addNewEventDialog: false
         }
     },
     methods: {
@@ -176,26 +163,39 @@ Vue.component('merg-canacc5-node-events', {
                     :items-per-page="20"
                     class="elevation-1"
                     item-key="id">
-					
+                    
         <template v-slot:top>
             <v-toolbar flat>
-		      <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
+              <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
 
-		  	  <v-dialog	v-model="addNewEventDialog" max-width="300">
-			  <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
-			</v-dialog>
-			  
+              <v-dialog v-model="addNewEventDialog" max-width="300">
+              <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
+            </v-dialog>
+              
             </v-toolbar>
         </template>
-					
-					
+              
         <template v-slot:item.eventName="{ item }">
           <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
         </template>
-        <template v-slot:item.actions="{ item }">
+              
+         <template v-slot:item.nodeNumber="{ item }">
+          <div>{{ parseInt(item.event.substr(0,4), 16) }}</div>
+        </template>
+                    
+         <template v-slot:item.eventNumber="{ item }">
+          <div>{{ parseInt(item.event.substr(4,4), 16) }}</div>
+        </template>
+ 
+         <template v-slot:item.eventIndex="{ item }">
+          <div>{{ item.actionId }}</div>
+        </template>
+ 
+         <template v-slot:item.actions="{ item }">
           <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
           <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
         </template>
+
       </v-data-table>
       <v-row v-if="$store.state.debug">
         <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
@@ -250,12 +250,12 @@ Vue.component('merg-canacc5-node-event-variables', {
                                      name="Inverted Outputs">
       </node-event-variable-bit-array>
 
-		<node-event-variable-bit v-bind:node="$store.state.selected_node_id"
-								 v-bind:action="$store.state.selected_action_id"
+        <node-event-variable-bit v-bind:node="$store.state.selected_node_id"
+                                 v-bind:action="$store.state.selected_action_id"
                                  :variable="3"
-								 :bit="7"
-								 name="Feedback">
-		</node-event-variable-bit>
+                                 :bit="7"
+                                 name="Feedback">
+        </node-event-variable-bit>
 
 
       <v-row v-if="$store.state.debug">
@@ -265,9 +265,9 @@ Vue.component('merg-canacc5-node-event-variables', {
                              v-for="n in node.parameters[5]"
                              :key="n">
         </node-event-variable>
-		
+        
 
-		
+        
       </v-row>
       <v-row v-if="$store.state.debug">
         <p>{{ node.actions[actionId] }}</p>
