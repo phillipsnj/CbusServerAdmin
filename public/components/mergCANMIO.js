@@ -40,6 +40,9 @@ Vue.component('merg-canmio', {
         getInfo() {
             this.$store.state.node_component = "nodeInfo"
         },
+        getParameters() {
+            this.$store.state.node_component = "nodeParameters"
+        },
         getVariables() {
             this.$store.state.node_component = "merg-canmio-node-variables"
         },
@@ -145,6 +148,7 @@ Vue.component('merg-canmio', {
       <h1>mergCANMIO</h1>
       <v-tabs>
         <v-tab :key="1" @click="getInfo()">Info</v-tab>
+        <v-tab :key="4" @click="getParameters()">Parameters</v-tab>
         <v-tab :key="2" @click="getVariables()">Variables</v-tab>
         <v-tab :key="5" @click="getIOChannels()">IO Channels</v-tab>
         <v-tab :key="3" @click="getEvents()">Events</v-tab>
