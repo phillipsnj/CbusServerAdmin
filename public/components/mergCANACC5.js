@@ -117,6 +117,7 @@ Vue.component('merg-canacc5-node-events', {
             eventDialog: false,
             editedEvent: {event: "0", variables: [], actionId: 1},
             headers: [
+                {text: 'Event Name', value: 'eventName'},
                 {text: 'Producing Node', value: 'nodeNumber'},
                 {text: 'Event Number', value: 'eventNumber'},
                 {text: 'Event Index', value: 'eventIndex'},
@@ -173,7 +174,11 @@ Vue.component('merg-canacc5-node-events', {
               
             </v-toolbar>
         </template>
-                    
+              
+        <template v-slot:item.eventName="{ item }">
+          <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
+        </template>
+              
          <template v-slot:item.nodeNumber="{ item }">
           <div>{{ parseInt(item.event.substr(0,4), 16) }}</div>
         </template>
