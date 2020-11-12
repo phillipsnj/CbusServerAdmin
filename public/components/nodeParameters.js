@@ -115,6 +115,7 @@ Vue.component('nodeParameters', {
         </v-row>
         <v-row>
           <nodeValue name="Module Manufacturer" :value="moduleManufacturer"></nodeValue>
+          <nodeValue name="Module" :value="node.module"></nodeValue>
           <nodeValue name="Version" :value="moduleVersion"></nodeValue>
           <nodeValue name="Flim" :value="node.flim"></nodeValue>
           <nodeValue name="Consumer" :value="node.consumer"></nodeValue>
