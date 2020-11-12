@@ -46,7 +46,7 @@ Vue.component('merg-canacc5', {
           <v-tab @click="getInfo()">Info</v-tab>
           <v-tab @click="getParameters()">Parameters</v-tab>
           <v-tab @click="getVariables()" v-if="node.flim">Variables</v-tab>
-          <v-tab @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
+          <v-tab @click="getEvents()" v-if="node.EvCount > 0">Stored Events</v-tab>
         </v-tabs>
         <!-- actual component selected from tab options now in node_component, so display it -->
         <component v-bind:is="$store.state.node_component"></component>
@@ -119,8 +119,9 @@ Vue.component('merg-canacc5-node-events', {
             headers: [
                 {text: 'Event Name', value: 'eventName'},
                 {text: 'Producing Node', value: 'nodeNumber'},
-                {text: 'Event Number', value: 'eventNumber'},
+                {text: 'Event/Device Number', value: 'eventNumber'},
                 {text: 'Event Index', value: 'eventIndex'},
+                {text: 'Type', value: 'eventType'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
             addNewEventDialog: false
@@ -137,7 +138,13 @@ Vue.component('merg-canacc5-node-events', {
         deleteEvent: function (event) {
             console.log(`deleteEvent : ${this.node.node} : ${event}`)
             this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
-        }
+        },
+        getProducerNodeNumber: function(item) {
+          return parseInt(item.event.substr(0,4), 16)
+        },
+        getEventNumber: function(item) {
+          return parseInt(item.event.substr(4,4), 16)
+        },
     },
     mounted() {
         if (this.node.EvCount > 0) {
@@ -180,17 +187,21 @@ Vue.component('merg-canacc5-node-events', {
         </template>
               
          <template v-slot:item.nodeNumber="{ item }">
-          <div>{{ parseInt(item.event.substr(0,4), 16) }}</div>
+          <div>{{ (getProducerNodeNumber(item) == 0) ? "" : getProducerNodeNumber(item) }}</div>
         </template>
                     
          <template v-slot:item.eventNumber="{ item }">
-          <div>{{ parseInt(item.event.substr(4,4), 16) }}</div>
+          <div>{{ getEventNumber(item) }}</div>
         </template>
  
          <template v-slot:item.eventIndex="{ item }">
           <div>{{ item.actionId }}</div>
         </template>
  
+         <template v-slot:item.eventType="{ item }">
+          <div>{{ (getProducerNodeNumber(item) == 0) ? "Short" : "Long" }}</div>
+        </template>
+                    
          <template v-slot:item.actions="{ item }">
           <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
           <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
