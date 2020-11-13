@@ -598,7 +598,7 @@ class cbusAdmin extends EventEmitter {
         } else {
             let output = {}
             output['id'] = eId
-            output['nodeId'] = 0					// short events have a node id of 0 in event tables
+            output['nodeId'] = nodeId
             output['eventId'] = deviceNumber
             output['status'] = 'on'
             output['type'] = 'short'
@@ -619,7 +619,7 @@ class cbusAdmin extends EventEmitter {
         } else {
             let output = {}
             output['id'] = eId
-            output['nodeId'] = 0					// short events have a node id of 0 in event tables
+            output['nodeId'] = nodeId
             output['eventId'] = deviceNumber
             output['status'] = 'off'
             output['type'] = 'short'
