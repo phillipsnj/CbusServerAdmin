@@ -140,6 +140,8 @@ Vue.component('merg-default-node-events', {
     },
     mounted() {
         if (this.node.EvCount > 0) {
+            console.log(`REQUEST_CLEAR_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('CLEAR_NODE_EVENTS', {'nodeId': this.nodeId})
             console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
             this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
         }
