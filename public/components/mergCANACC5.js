@@ -233,12 +233,12 @@ Vue.component('merg-canacc5-node-event-variables', {
     methods: {
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
-            this.$root.send('EVLRN', {
+			this.$root.send('UPDATE_EVENT_VARIABLE', {
                 "nodeId": this.node.node,
-                "actionId": actionId,
+                "eventIndex": actionId,
                 "eventName": eventName,
-                "eventId": eventId,
-                "eventVal": eventVal
+                "eventVariableId": eventId,
+                "eventVariableValue": eventVal
             })
         }
     },
