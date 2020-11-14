@@ -120,7 +120,6 @@ Vue.component('merg-canacc5-node-events', {
                 {text: 'Event Name', value: 'eventName'},
                 {text: 'Producing Node', value: 'nodeNumber'},
                 {text: 'Event/Device Number', value: 'eventNumber'},
-                {text: 'Event Index', value: 'eventIndex'},
                 {text: 'Type', value: 'eventType'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
@@ -192,10 +191,6 @@ Vue.component('merg-canacc5-node-events', {
                     
          <template v-slot:item.eventNumber="{ item }">
           <div>{{ getEventNumber(item) }}</div>
-        </template>
- 
-         <template v-slot:item.eventIndex="{ item }">
-          <div>{{ item.actionId }}</div>
         </template>
  
          <template v-slot:item.eventType="{ item }">
