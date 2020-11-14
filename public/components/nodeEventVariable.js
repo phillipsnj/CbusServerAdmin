@@ -92,13 +92,6 @@ Vue.component('node-event-variable-select', {
                 "eventVariableId": this.varId,
                 "eventVariableValue": this.variableLocal
             })
-            /*this.$root.send('EVLRN', {
-                "nodeId": this.nodeId,
-                "actionId": this.actionId,
-                "eventName": this.eventName,
-                "eventId": this.varId,
-                "eventVal": this.variableLocal
-            })*/
         }
     },
     template: `
