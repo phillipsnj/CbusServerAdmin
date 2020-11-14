@@ -50,7 +50,7 @@
     },
     "62": {
       "name": "CANINP",
-      "component": "merg-canace8c"
+      "component": "mergDefault"
     },
     "63": {
       "name": "CANOUT",

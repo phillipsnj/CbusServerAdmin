@@ -67,7 +67,7 @@ Vue.component('nodeInfo', {
                         :text-color="nodeDetails.colour"
           >
           </v-text-field>
-          <displayNodeName :id="nodeId"></displayNodeName>
+          <!--<displayNodeName :id="nodeId"></displayNodeName>-->
         </v-col>
         <v-col cols="12" sm="6" md="4">
           <v-select

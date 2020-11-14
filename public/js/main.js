@@ -22,6 +22,7 @@ const store = new Vuex.Store({
         layout:{},
         display_component: "nodes-list",
         node_component: "nodeInfo",
+        edit_event_component: "merg-default-node-event-variables",
         selected_node_id: 0,
         selected_action_id: "",
         canmio_happening_actions: {},
@@ -59,7 +60,9 @@ socket.on('cbusNoSupport', function (data) {
 
 
 socket.on('cbusTraffic', function (data) {
-    console.log(`cbusTraffic : ` + data.direction + " " + data.raw + " " + data.translated)
+    if (store.state.debug) {
+        console.log(`cbusTraffic : ` + data.direction + " " + data.raw + " " + data.translated)
+    }
 });
 
 

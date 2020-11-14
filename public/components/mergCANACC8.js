@@ -16,6 +16,7 @@ Vue.component('merg-canacc8', {
     },
     mounted() {
         this.nodeId = this.$store.state.selected_node_id
+        this.$store.state.edit_event_component = "merg-canacc8-node-event-variables"
         this.getInfo()
     },
     computed: {
@@ -33,7 +34,8 @@ Vue.component('merg-canacc8', {
         getEvents() {
             //console.log(`mergDefault - NERD : ${this.nodeId}`)
             //this.$root.send('NERD', {'nodeId': this.nodeId})
-            this.$store.state.node_component = "merg-canacc8-node-events"
+            //this.$store.state.node_component = "merg-canacc8-node-events"
+            this.$store.state.node_component = "merg-default-node-events"
         }
     },
     template: `
