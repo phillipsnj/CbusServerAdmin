@@ -114,9 +114,11 @@ Vue.component('merg-default-node-events', {
             eventDialog: false,
             editedEvent: {event: "0", variables: [], actionId: 1},
             headers: [
-                {text: 'Event Name', value: 'event'},
-                {text: 'Event', value: 'eventName'},
-                {text: 'Action ID', value: 'actionId'},
+                {text: 'Event Name', value: 'eventName'},
+                {text: 'Producing Node', value: 'nodeNumber'},
+                {text: 'Event/Device Number', value: 'eventNumber'},
+                {text: 'Type', value: 'eventType'},
+                {text: 'Event Index', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
             addNewEventDialog: false,
@@ -137,7 +139,13 @@ Vue.component('merg-default-node-events', {
         deleteEvent: function (event) {
             console.log(`deleteEvent : ${this.node.node} : ${JSON.stringify(event)}`)
             this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
-        }
+        },
+        getProducerNodeNumber: function(item) {
+          return parseInt(item.event.substr(0,4), 16)
+        },
+        getEventNumber: function(item) {
+          return parseInt(item.event.substr(4,4), 16)
+        },
     },
     mounted() {
         if (this.node.EvCount > 0) {
@@ -186,9 +194,21 @@ Vue.component('merg-default-node-events', {
 		  
 		  
           <template v-slot:item.eventName="{ item }">
-            <!--                    <displayEventName :id="item.id"></displayEventName>-->
             <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
           </template>
+		  
+          <template v-slot:item.nodeNumber="{ item }">
+            <div>{{ (getProducerNodeNumber(item) == 0) ? "" : getProducerNodeNumber(item) }}</div>
+          </template>
+                    
+          <template v-slot:item.eventNumber="{ item }">
+            <div>{{ getEventNumber(item) }}</div>
+          </template>
+ 
+          <template v-slot:item.eventType="{ item }">
+            <div>{{ (getProducerNodeNumber(item) == 0) ? "Short" : "Long" }}</div>
+          </template>
+                    
           <template v-slot:item.actions="{ item }">
             <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
             <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
