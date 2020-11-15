@@ -45,6 +45,12 @@ Vue.component('add-new-event-dialog', {
                 "eventId": 1,
                 "eventVal": 0})
             this.addEventOutput = "Event added";
+			
+            console.log(`REQUEST_CLEAR_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('CLEAR_NODE_EVENTS', {'nodeId': this.nodeId})
+            console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
+
         }
         else{
             this.addEventOutput = "Event already exists";
