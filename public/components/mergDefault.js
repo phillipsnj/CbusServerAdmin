@@ -16,6 +16,7 @@ Vue.component('mergDefault', {
     },
     mounted() {
         this.nodeId = this.$store.state.selected_node_id
+        this.$store.state.edit_event_component = "merg-default-node-event-variables"
         this.getInfo()
     },
     computed: {
@@ -107,7 +108,7 @@ Vue.component('merg-default-node-variables', {
 
 Vue.component('merg-default-node-events', {
     name: "merg-default-node-events",
-    //props: ['nodeId'],
+    //props: ['editComponent'],
     data: function () {
         return {
             eventDialog: false,
@@ -129,7 +130,7 @@ Vue.component('merg-default-node-events', {
             //this.eventDialog = true
             this.editedEvent = item
             this.$store.state.selected_action_id = item.actionId
-            this.$store.state.node_component = "merg-default-node-event-variables"
+            this.$store.state.node_component = this.$store.state.edit_event_component
 
         },
         deleteEvent: function (event) {
@@ -139,6 +140,8 @@ Vue.component('merg-default-node-events', {
     },
     mounted() {
         if (this.node.EvCount > 0) {
+            console.log(`REQUEST_CLEAR_ALL_NODE_EVENTS : ${this.nodeId}`)
+            this.$root.send('CLEAR_NODE_EVENTS', {'nodeId': this.nodeId})
             console.log(`REQUEST_ALL_NODE_EVENTS : ${this.nodeId}`)
             this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
         }
@@ -164,7 +167,7 @@ Vue.component('merg-default-node-events', {
                       item-key="id">
           <template v-slot:top>
             <v-toolbar flat>
-              <v-toolbar-title>Events for {{ node.node }}</v-toolbar-title>
+              <v-toolbar-title>Default Events for {{ node.node }}</v-toolbar-title> 
               <v-divider
                   class="mx-4"
                   inset
