@@ -10,11 +10,13 @@ Vue.component('add-new-event-dialog', {
         rules: {
             required: value => !!value || 'Required',
         },
+        visible: true,
 
     }
   },
   mounted() {
-     this.nodeId = this.$store.state.selected_node_id
+     this.nodeId = this.$store.state.selected_node_id;
+     <!-- setInterval(() => this.visible = !this.visible, 1000); -->
   },
   methods: {
     close() {
@@ -47,7 +49,19 @@ Vue.component('add-new-event-dialog', {
         else{
             this.addEventOutput = "Event already exists";
         }
-    }
+    },
+    
+    longButton() {
+        this.eventNumberLabel = 'Event Number';
+        this.visible = true;
+    },
+
+    shortButton() {
+        this.eventNumberLabel = 'Device Number';
+        this.visible = false;
+        this.producerNode = 0;
+    },
+
   },
   
     template: `<v-card ref="form">
@@ -58,18 +72,21 @@ Vue.component('add-new-event-dialog', {
                     
                     <v-layout row>
                         <v-radio-group v-model="radioGroup">
-                            <v-radio label="Long" value="LONG" @click="eventNumberLabel = 'Event Number'"></v-radio>
+                            <v-radio label="Long" value="LONG" 
+                                @click="longButton">
+                            </v-radio>
                             <v-radio label="Short" value="SHORT" 
-                                @click="eventNumberLabel = 'Device Number'">
-                                </v-radio>
+                                @click="shortButton">
+                            </v-radio>
                         </v-radio-group>
                     </v-layout>
 
-                    <v-layout row v-if="radioGroup == 'LONG'">
+                    <!-- <v-layout row v-if="radioGroup == 'LONG'"> -->
+                    <v-layout row :style="{visibility: visible ? 'visible' : 'hidden'}">
                         <v-flex xs5 sm5 md5 lg5 x5 >
                             <v-subheader>Producer Node</v-subheader>
                         </v-flex>
-                        <v-flex xs5 sm5 md5 lg5 x5 >
+                        <v-flex xs6 sm6 md6 lg6 x6 >
                             <v-text-field 
                                 autofocus
                                 v-model=producerNode 
@@ -84,7 +101,7 @@ Vue.component('add-new-event-dialog', {
                         <v-flex xs5 sm5 md5 lg5 x5 >
                             <v-subheader>{{ eventNumberLabel }}</v-subheader>
                         </v-flex>
-                        <v-flex xs5 sm5 md5 lg5 x5 >
+                        <v-flex xs6 sm6 md6 lg6 x6 >
                             <v-text-field 
                                 v-model=newEvent 
                                 placeholder="1 to 65535" 
