@@ -118,7 +118,8 @@ Vue.component('merg-default-node-events', {
                 {text: 'Event', value: 'eventName'},
                 {text: 'Action ID', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
-            ]
+            ],
+            addNewEventDialog: false,
         }
     },
     methods: {
@@ -173,8 +174,17 @@ Vue.component('merg-default-node-events', {
                   inset
                   vertical
               ></v-divider>
+
+              <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
+
+              <v-dialog v-model="addNewEventDialog" max-width="300">
+              <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
+
+            </v-dialog>
             </v-toolbar>
           </template>
+		  
+		  
           <template v-slot:item.eventName="{ item }">
             <!--                    <displayEventName :id="item.id"></displayEventName>-->
             <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
