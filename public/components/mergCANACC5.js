@@ -120,7 +120,6 @@ Vue.component('merg-canacc5-node-events', {
                 {text: 'Event Name', value: 'eventName'},
                 {text: 'Producing Node', value: 'nodeNumber'},
                 {text: 'Event/Device Number', value: 'eventNumber'},
-                {text: 'Event Index', value: 'eventIndex'},
                 {text: 'Type', value: 'eventType'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
@@ -194,10 +193,6 @@ Vue.component('merg-canacc5-node-events', {
           <div>{{ getEventNumber(item) }}</div>
         </template>
  
-         <template v-slot:item.eventIndex="{ item }">
-          <div>{{ item.actionId }}</div>
-        </template>
- 
          <template v-slot:item.eventType="{ item }">
           <div>{{ (getProducerNodeNumber(item) == 0) ? "Short" : "Long" }}</div>
         </template>
@@ -238,12 +233,12 @@ Vue.component('merg-canacc5-node-event-variables', {
     methods: {
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
-            this.$root.send('EVLRN', {
+			this.$root.send('UPDATE_EVENT_VARIABLE', {
                 "nodeId": this.node.node,
-                "actionId": actionId,
+                "eventIndex": actionId,
                 "eventName": eventName,
-                "eventId": eventId,
-                "eventVal": eventVal
+                "eventVariableId": eventId,
+                "eventVariableValue": eventVal
             })
         }
     },
