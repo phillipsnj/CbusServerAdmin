@@ -174,8 +174,10 @@ class cbusAdmin extends EventEmitter {
                 if (!(ref in this.config.nodes[msg.nodeId()].actions)) {
                     this.config.nodes[msg.nodeId()].actions[msg.actionEventId()] = {
                         "event": msg.actionId(),
+                        "eventName": msg.actionId(),
+                        "actionId": msg.actionEventId(),
+                        "eventIndex": msg.actionEventId(),
                         "variables": [this.config.nodes[msg.nodeId()].parameters[5]],
-                        "actionId": msg.actionEventId()
                     }
                     if (this.config.nodes[msg.nodeId()].module == "Universal") {
                         setTimeout(()=>{this.cbusSend(this.REVAL(msg.nodeId(), msg.actionEventId(), 0))},50*ref)
