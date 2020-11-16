@@ -5,14 +5,6 @@ Vue.component('merg-canacc5', {
     data: function () {
         return {
             nodeId: 0,
-            headers: [
-                {text: 'id', value: 'id'},
-                {text: 'nodeId', value: 'nodeId'},
-                {text: 'eventId', value: 'eventId'},
-                {text: 'type', value: 'type'},
-                {text: 'status', value: 'status'},
-                {text: 'count', value: 'count'}
-            ]
         }
     },
     mounted() {
@@ -121,6 +113,7 @@ Vue.component('merg-canacc5-node-events', {
                 {text: 'Producing Node', value: 'nodeNumber'},
                 {text: 'Event/Device Number', value: 'eventNumber'},
                 {text: 'Type', value: 'eventType'},
+                {text: 'Event Index', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
             addNewEventDialog: false
@@ -215,7 +208,7 @@ Vue.component('merg-canacc5-node-event-variables', {
         console.log(`merg-canacc5-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
         this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
             "nodeId": this.$store.state.selected_node_id,
-            "eventIndex": this.$store.state.selected_action_id,
+            "eventIndex": this.$store.state.selected_action_id,            
             "variables": this.node.parameters[5]
         })
     },
