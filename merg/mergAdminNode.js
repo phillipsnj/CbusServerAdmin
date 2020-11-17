@@ -168,13 +168,12 @@ class cbusAdmin extends EventEmitter {
                 this.emit('cbusError', this.cbusErrors)
             },
             'F2': (msg) => {//ENSRP Response to NERD/NENRD
+				// ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
                 //winston.debug({message: `ENSRP (F2) Response to NERD : Node : ${msg.nodeId()} Action : ${msg.actionId()} Action Number : ${msg.actionEventId()}`});
-                //winston.debug({message: `Number of Event Variables ${this.config.nodes[msg.nodeId()].parameters[5]}`});
                 const ref = msg.actionEventId()
                 if (!(ref in this.config.nodes[msg.nodeId()].actions)) {
                     this.config.nodes[msg.nodeId()].actions[msg.actionEventId()] = {
                         "event": msg.actionId(),
-                        "eventName": msg.actionId(),
                         "actionId": msg.actionEventId(),
                         "eventIndex": msg.actionEventId(),
                         "variables": [this.config.nodes[msg.nodeId()].parameters[5]],
