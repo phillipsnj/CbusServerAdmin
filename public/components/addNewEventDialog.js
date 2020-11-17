@@ -1,4 +1,5 @@
 Vue.component('add-new-event-dialog', {
+  props: {eventVariableIndex: {type: Number, default: 1}, eventVariableValue: {type: Number, default: 0}},
   data: function () {
     return {
         nodeId: 0,
@@ -42,8 +43,8 @@ Vue.component('add-new-event-dialog', {
             this.$root.send('TEACH_EVENT', {
                 "nodeId": this.nodeId,
                 "eventName": eventName,
-                "eventId": 1,
-                "eventVal": 0})
+                "eventId": this.eventVariableIndex,
+                "eventVal": this.eventVariableValue})
             this.addEventOutput = "Event added";
 			
             console.log(`REQUEST_CLEAR_ALL_NODE_EVENTS : ${this.nodeId}`)
