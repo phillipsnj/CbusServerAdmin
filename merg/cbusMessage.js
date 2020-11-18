@@ -44,15 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeNEVAL(message) {
-        // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
-        return {'nodeId': parseInt(message.substr(9, 4), 16),
-                'eventIndex': parseInt(message.substr(13, 2), 16),
-                'eventVariableIndex': parseInt(message.substr(15, 2), 16),
-                'eventVariableValue': parseInt(message.substr(17, 2), 16),
-        }
-    }
-
     static decodeNUMEV (message) {
         // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
         return {'nodeId': parseInt(message.substr(9, 4), 16),
@@ -473,6 +464,24 @@ class cbusMessage {
     exports.encodeREVAL = function(nodeId, eventIndex, eventVariableIndex) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
         return header() + '9C' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
+    }
+
+
+    // B5 NEVAL
+    //
+    exports.decodeNEVAL = function(message) {
+        // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
+        return {'mnemonic': 'NEVAL',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16),
+                'eventIndex': parseInt(message.substr(13, 2), 16),
+                'eventVariableIndex': parseInt(message.substr(15, 2), 16),
+                'eventVariableValue': parseInt(message.substr(17, 2), 16),
+        }
+    }
+    exports.encodeNEVAL = function(nodeId, eventIndex, eventVariableIndex, eventVariableValue) {
+        // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
+        return header() + 'B5' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
     }
 
 
