@@ -44,14 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeDFUN (message) {
-        // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
-        return {'session': parseInt(message.substr(9, 2), 16),
-                'Fn1': parseInt(message.substr(11, 2), 16),
-                'Fn2': parseInt(message.substr(13, 2), 16),
-        }
-    }
-
     static decodeDKEEP (message) {
         // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
         return {'session': parseInt(message.substr(9, 2), 16)
@@ -465,6 +457,20 @@ class cbusMessage {
         return header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
     }
 
+
+    // DFUN
+    //
+    exports.decodeDFUN = function(message) {
+        // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
+        return {'session': parseInt(message.substr(9, 2), 16),
+                'Fn1': parseInt(message.substr(11, 2), 16),
+                'Fn2': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeDFUN = function(session, Fn1, Fn2) {
+        // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
+        return header() + '60' + decToHex(session, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + ';';
+    }
 
 
 

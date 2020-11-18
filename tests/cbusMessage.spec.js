@@ -126,5 +126,40 @@ describe('cbusMessage tests', function(){
 	})
 
 
+	function GetTestCase_DFUN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) session = 0;
+			if (NN == 2) session = 1;
+			if (NN == 3) session = 65535;
+			for (Fn1Index = 1; Fn1Index < 4; Fn1Index++) {
+				if (Fn1Index == 1) Fn1 = 0;
+				if (Fn1Index == 2) Fn1 = 1;
+				if (Fn1Index == 3) Fn1 = 255;
+				for (Fn2Index = 1; Fn2Index < 4; Fn2Index++) {
+					if (Fn2Index == 1) Fn2 = 0;
+					if (Fn2Index == 2) Fn2 = 1;
+					if (Fn2Index == 3) Fn2 = 255;
+					testCases.push({'session':session, 'Fn1':Fn1, 'Fn2':Fn2});
+				}
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("DFUN test session ${value.session} Fn1 ${value.Fn1} Fn2 ${value.Fn2}", GetTestCase_DFUN(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN DFUN test ' + JSON.stringify(value)});
+		expected = ":SB780N60" + decToHex(value.session, 2) + decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + ";";
+        var encode = cbusMsg.encodeDFUN(value.session, value.Fn1, value.Fn2);
+        var decode = cbusMsg.decodeDFUN(encode);
+		winston.info({message: 'cbusMessage test: DFUN encode ' + encode});
+		winston.info({message: 'cbusMessage test: DFUN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.session = value.session);
+        expect(decode.Fn1 = value.Fn1);
+        expect(decode.Fn2 = value.Fn2);
+	})
+
 
 })
