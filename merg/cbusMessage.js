@@ -44,12 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeDKEEP (message) {
-        // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
-        return {'session': parseInt(message.substr(9, 2), 16)
-        }
-    }
-    
     static decodeDSPD (message) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = parseInt(message.substr(11, 2), 16)
@@ -473,4 +467,16 @@ class cbusMessage {
     }
 
 
+    // DKEEP
+    //
+    exports.decodeDKEEP = function(message) {
+        // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
+        return {'session': parseInt(message.substr(9, 2), 16)
+        }
+    }
+    exports.encodeDKEEP = function(session) {
+        // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
+        return header() + '23' + decToHex(session, 2) + ';';
+    }
+    
 

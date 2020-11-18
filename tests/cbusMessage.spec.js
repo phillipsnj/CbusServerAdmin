@@ -128,10 +128,10 @@ describe('cbusMessage tests', function(){
 
 	function GetTestCase_DFUN () {
 		var testCases = [];
-		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) session = 0;
-			if (NN == 2) session = 1;
-			if (NN == 3) session = 65535;
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
 			for (Fn1Index = 1; Fn1Index < 4; Fn1Index++) {
 				if (Fn1Index == 1) Fn1 = 0;
 				if (Fn1Index == 2) Fn1 = 1;
@@ -159,6 +159,31 @@ describe('cbusMessage tests', function(){
         expect(decode.session = value.session);
         expect(decode.Fn1 = value.Fn1);
         expect(decode.Fn2 = value.Fn2);
+	})
+
+
+	function GetTestCase_DKEEP () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+
+			testCases.push({'session':session});
+		}
+		return testCases;
+	}
+
+
+	itParam("DKEEP test session ${value.session}", GetTestCase_DKEEP(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN DKEEP test ' + JSON.stringify(value)});
+		expected = ":SB780N23" + decToHex(value.session, 2) + ";";
+        var encode = cbusMsg.encodeDKEEP(value.session);
+        var decode = cbusMsg.decodeDKEEP(encode);
+		winston.info({message: 'cbusMessage test: DKEEP encode ' + encode});
+		winston.info({message: 'cbusMessage test: DKEEP decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.session = value.session);
 	})
 
 
