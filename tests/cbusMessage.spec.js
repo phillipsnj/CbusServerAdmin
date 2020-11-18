@@ -40,13 +40,6 @@ describe('cbusMessage tests', function(){
 									{ node: 65535, event: 65535 }
 								];
 
-	it("Wait.....", function (done) {
-		setTimeout(function(){
-			done();
-		}, 1000);
-	})
-
-
 	
 	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		winston.info({message: 'cbusMessage test: BEGIN ACOF test ' + JSON.stringify(value)});
@@ -102,6 +95,36 @@ describe('cbusMessage tests', function(){
         expect(decode.eventNumber = value.event);
 		done();ent
 	})
+
+
+	function GetTestCase_CMDERR () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (errorIndex = 1; errorIndex < 4; errorIndex++) {
+				if (errorIndex == 1) error = 0;
+				if (errorIndex == 2) error = 1;
+				if (errorIndex == 3) error = 255;
+				testCases.push({'nodeId':nodeId, 'error':error});
+			}
+		}
+		return testCases;
+	}
+
+	itParam("CMDERR test nodeId ${value.nodeId} error ${value.error}", GetTestCase_CMDERR(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN CMDERR test ' + JSON.stringify(value)});
+		expected = ":SB780N6F" + decToHex(value.nodeId, 4) + decToHex(value.error, 2) + ";";
+        var encode = cbusMsg.encodeCMDERR(value.nodeId, value.error);
+        var decode = cbusMsg.decodeCMDERR(encode);
+		winston.info({message: 'cbusMessage test: CMDERR encode ' + encode});
+		winston.info({message: 'cbusMessage test: CMDERR decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.node);
+        expect(decode.error = value.error);
+	})
+
 
 
 })

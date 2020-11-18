@@ -44,13 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeCMDERR(message) {
-        // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-		return {'nodeId': parseInt(message.substr(9, 4), 16), 
-                'error': parseInt(message.substr(13, 2), 16),
-        }
-    }
-
     static decodeDFUN (message) {
         // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
         return {'session': parseInt(message.substr(9, 2), 16),
@@ -459,11 +452,19 @@ class cbusMessage {
     }
 
 
+    // CMDERR
+    //
+    exports.decodeCMDERR = function(message) {
+        // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
+		return {'nodeId': parseInt(message.substr(9, 4), 16), 
+                'error': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeCMDERR = function(nodeId, error) {
+        // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
+        return header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
+    }
 
 
-/* 
-module.exports = {
-    cbusMessage: cbusMessage
-}
 
- */
+
