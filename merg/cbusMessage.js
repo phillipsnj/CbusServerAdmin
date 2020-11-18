@@ -44,14 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeENRSP(message) {
-        // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
-        return {'nodeId': parseInt(message.substr(9, 4), 16),
-                'eventName': message.substr(13, 8),
-                'eventIndex': parseInt(message.substr(21, 2), 16),
-        }
-    }
-    
     static decodeERR (message) {
         // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
         return {'data1': parseInt(message.substr(9, 2), 16),
@@ -488,4 +480,20 @@ class cbusMessage {
     }
     
 
+    // ENRSP
+    //
+    exports.decodeENRSP = function(message) {
+        // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
+        return {'nodeId': parseInt(message.substr(9, 4), 16),
+                'eventName': message.substr(13, 8),
+                'eventIndex': parseInt(message.substr(21, 2), 16),
+        }
+    }
+    exports.encodeENRSP = function(nodeId, eventName, eventIndex) {
+        // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
+        return header() + 'F2' + decToHex(nodeId, 4) + eventName + decToHex(eventIndex, 2) + ';';
+    }
+
+
+    
     

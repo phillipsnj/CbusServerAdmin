@@ -222,5 +222,42 @@ describe('cbusMessage tests', function(){
         expect(decode.direction = value.direction);
 	})
 
+	function GetTestCase_ENRSP () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+            for (EV = 1; EV < 4; EV++) {
+                if (EV == 1) event = '00000000';
+                if (EV == 2) event = '00000001';
+                if (EV == 3) event = 'FFFFFFFF';
+                for (EVindex = 1; EVindex < 4; EVindex++) {
+                    if (EVindex == 1) eventIndex = 0;
+                    if (EVindex == 2) eventIndex = 1;
+                    if (EVindex == 3) eventIndex = 255;
+					testCases.push({'nodeId':nodeId, 'event':event, 'eventIndex':eventIndex});
+				}
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("ENRSP test nodeId ${value.nodeId} event ${value.event} eventIndex ${value.eventIndex}", GetTestCase_ENRSP(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN ENRSP test ' + JSON.stringify(value)});
+        // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
+		expected = ":SB780NF2" + decToHex(value.nodeId, 4) + value.event + decToHex(value.eventIndex, 2) + ";";
+        var encode = cbusMsg.encodeENRSP(value.nodeId, value.event, value.eventIndex);
+        var decode = cbusMsg.decodeENRSP(encode);
+		winston.info({message: 'cbusMessage test: ENRSP encode ' + encode});
+		winston.info({message: 'cbusMessage test: ENRSP decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.event = value.event);
+        expect(decode.eventIndex = value.eventIndex);
+	})
+
+
 
 })
