@@ -112,11 +112,6 @@ class cbusMessage {
         return ':SB780N'
     }
 
-    static encodeRQNPN(nodeId, param) {//Read Node Parameter
-        // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
-        return cbusMessage.header + '73' + decToHex(nodeId, 4) + decToHex(param, 2) + ';'
-    }
-
     static encodeSNN(nodeId) {
 		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
         if (nodeId >= 0 && nodeId <= 0xFFFF) {
@@ -326,6 +321,22 @@ class cbusMessage {
     exports.encodeNENRD = function(nodeId, eventIndex) {
 		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
         return header() + '72' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + ';'
+    }
+
+
+    // 73 RQNPN
+    //
+    exports.decodeRQNPN = function(message) {
+        // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
+		return {'mnemonic': 'RQNPN',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'ParameterIndex': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeRQNPN = function(nodeId, ParameterIndex) {
+        // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
+        return header() + '73' + decToHex(nodeId, 4) + decToHex(ParameterIndex, 2) + ';'
     }
 
 
