@@ -112,11 +112,6 @@ class cbusMessage {
         return ':SB780N'
     }
 
-    static encodeREVAL(nodeId, eventIndex, eventVariableIndex) {
-        // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
-        return cbusMessage.header + '9C' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
-    }
-
     static encodeRQEVN(nodeId) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
         return cbusMessage.header + '58' + decToHex(nodeId, 4) + ';'
@@ -410,6 +405,23 @@ class cbusMessage {
     exports.encodeASOF = function(nodeId, deviceNumber) {
 		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
         return header() + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+    }
+
+
+    // 9C REVAL
+    //
+    exports.decodeREVAL = function(message) {
+        // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
+        return {'mnemonic': 'REVAL',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'eventIndex': parseInt(message.substr(13, 2), 16), 
+                'eventVariableIndex': parseInt(message.substr(15, 2), 16), 
+        }
+    }
+    exports.encodeREVAL = function(nodeId, eventIndex, eventVariableIndex) {
+        // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
+        return header() + '9C' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
     }
 
 

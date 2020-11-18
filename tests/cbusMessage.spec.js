@@ -499,6 +499,43 @@ describe('cbusMessage tests', function(){
 	})
 
 
+	function GetTestCase_REVAL () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (ENindex = 1; ENindex < 4; ENindex++) {
+				if (ENindex == 1) eventIndex = 0;
+				if (ENindex == 2) eventIndex = 1;
+				if (ENindex == 3) eventIndex = 255;
+				for (EVindex = 1; EVindex < 4; EVindex++) {
+					if (EVindex == 1) eventVariableIndex = 0;
+					if (EVindex == 2) eventVariableIndex = 1;
+					if (EVindex == 3) eventVariableIndex = 255;
+					testCases.push({'nodeId':nodeId, 'eventIndex':eventIndex, 'eventVariableIndex':eventVariableIndex});
+				}
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("REVAL test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex}", GetTestCase_REVAL(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN REVAL test ' + JSON.stringify(value)});
+		expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + ";";
+        var encode = cbusMsg.encodeREVAL(value.nodeId, value.eventIndex, value.eventVariableIndex);
+        var decode = cbusMsg.decodeREVAL(encode);
+		winston.info({message: 'cbusMessage test: REVAL encode ' + encode});
+		winston.info({message: 'cbusMessage test: REVAL decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.eventIndex = value.eventIndex);
+        expect(decode.eventVariableIndex = value.eventVariableIndex);
+        expect(decode.mnemonic = 'REVAL');
+	})
+
+
 
 
 
