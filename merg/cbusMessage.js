@@ -112,11 +112,6 @@ class cbusMessage {
         return ':SB780N'
     }
 
-    static encodeRQNP() {//Request Node Parameters
-		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
-        return cbusMessage.header + '10' + ';'
-    }
-
     static encodeRQNPN(nodeId, param) {//Read Node Parameter
         // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
         return cbusMessage.header + '73' + decToHex(nodeId, 4) + decToHex(param, 2) + ';'
@@ -142,6 +137,18 @@ class cbusMessage {
     }
 
 
+
+    // 10 RQNP
+    //
+    exports.decodeRQNP = function(message) {
+        return {'mnemonic': 'RQNP',
+                'opCode': message.substr(7, 2),
+        }
+    }
+    exports.encodeRQNP = function() {//Request Node Parameters
+		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
+        return header() + '10' + ';'
+    }
 
 
     // 23 DKEEP
@@ -227,7 +234,7 @@ class cbusMessage {
 
     // 58 RQEVN
     //
-    exports.decodeRQEVN = function(message) {
+    exports.decode = function(message) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
         return {'mnemonic': 'RQEVN',
                 'opCode': message.substr(7, 2),
