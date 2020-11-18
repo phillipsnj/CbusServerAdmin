@@ -468,6 +468,23 @@ class cbusMessage {
     }
 
 
+    // 9B PARAN
+    //
+    exports.decodePARAN = function(message) {
+        // PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
+        return {'mnemonic': 'PARAN',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'parameterIndex': parseInt(message.substr(13, 2), 16),
+                'parameterValue': parseInt(message.substr(15, 2), 16),
+        }
+    }
+    exports.encodePARAN = function(nodeId, parameterIndex, parameterValue) {
+        // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
+        return header() + '9B' + decToHex(nodeId, 4) + decToHex(parameterIndex, 2) + decToHex(parameterValue, 2) + ';'
+    }
+
+
     // 9C REVAL
     //
     exports.decodeREVAL = function(message) {

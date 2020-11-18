@@ -692,6 +692,45 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 9B PARAN
+    //
+	function GetTestCase_PARAN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (PI = 1; PI < 4; PI++) {
+				if (PI == 1) parameterIndex = 0;
+				if (PI == 2) parameterIndex = 1;
+				if (PI == 3) parameterIndex = 255;
+				for (PV = 1; PV < 4; PV++) {
+					if (PV == 1) parameterValue = 0;
+					if (PV == 2) parameterValue = 1;
+					if (PV == 3) parameterValue = 255;
+					testCases.push({'nodeId':nodeId, 'parameterIndex':parameterIndex, 'parameterValue':parameterValue});
+				}
+			}
+		}
+		return testCases;
+	}
+
+	itParam("PARAN test nodeId ${value.nodeId} parameterIndex ${value.parameterIndex} parameterValue ${value.parameterValue}", GetTestCase_PARAN(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN PARAN test ' + JSON.stringify(value)});
+		expected = ":SB780N9B" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + ";";
+        var encode = cbusMsg.encodePARAN(value.nodeId, value.eventIndex, value.eventVariableIndex);
+        var decode = cbusMsg.decodePARAN(encode);
+		winston.info({message: 'cbusMessage test: PARAN encode ' + encode});
+		winston.info({message: 'cbusMessage test: PARAN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.parameterIndex = value.parameterIndex);
+        expect(decode.parameterValue = value.parameterValue);
+        expect(decode.mnemonic = 'PARAN');
+        expect(decode.opCode = '9B');
+	})
+
+
     // 9C REVAL
     //
 	function GetTestCase_REVAL () {
