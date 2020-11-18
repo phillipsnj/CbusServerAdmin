@@ -855,6 +855,79 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // E1 PLOC
+    //
+	function GetTestCase_PLOC () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (AD = 1; AD < 4; AD++) {
+				if (AD == 1) address = 0;
+				if (AD == 2) address = 1;
+				if (AD == 3) address = 65535;
+                for (SP = 1; SP < 4; SP++) {
+                    if (SP == 1) speed = 0;
+                    if (SP == 2) speed = 1;
+                    if (SP == 3) speed = 127;
+                    for (DIR = 1; DIR < 3; DIR++) {
+                        if (DIR == 1) direction = 'Reverse';
+                        if (DIR == 2) direction = 'Forward';
+                        for (Fn1Index = 1; Fn1Index < 4; Fn1Index++) {
+                            if (Fn1Index == 1) Fn1 = 0;
+                            if (Fn1Index == 2) Fn1 = 1;
+                            if (Fn1Index == 3) Fn1 = 255;
+                            for (Fn2Index = 1; Fn2Index < 4; Fn2Index++) {
+                                if (Fn2Index == 1) Fn2 = 0;
+                                if (Fn2Index == 2) Fn2 = 1;
+                                if (Fn2Index == 3) Fn2 = 255;
+                                for (Fn3Index = 1; Fn3Index < 4; Fn3Index++) {
+                                    if (Fn3Index == 1) Fn3 = 0;
+                                    if (Fn3Index == 2) Fn3 = 1;
+                                    if (Fn3Index == 3) Fn3 = 255;
+                                    testCases.push({'session':session, 
+                                        'address':address,
+                                        'speed': speed,
+                                        'direction': direction,
+                                        'Fn1':Fn1, 
+                                        'Fn2':Fn2,
+                                        'Fn3':Fn3});
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+		}
+		return testCases;
+	}
+
+	itParam("PLOC test session ${value.session} address ${value.address} speed ${value.speed} direction ${value.direction} Fn1 ${value.Fn1} Fn2 ${value.Fn2} Fn3 ${value.Fn3}",
+        GetTestCase_PLOC(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN PLOC test ' + JSON.stringify(value)});
+            // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
+            var speedDir = value.speed + parseInt((value.direction == 'Reverse') ? 0 : 128)
+            expected = ":SB780NE1" + decToHex(value.session, 2) + decToHex(value.address, 4) + decToHex(speedDir, 2) +
+                decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + decToHex(value.Fn3, 2) + ";";
+            var encode = cbusMsg.encodePLOC(value.session, value.address, value.speed, value.direction, value.Fn1, value.Fn2, value.Fn3);
+            var decode = cbusMsg.decodePLOC(encode);
+            winston.info({message: 'cbusMessage test: PLOC encode ' + encode});
+            winston.info({message: 'cbusMessage test: PLOC decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected);
+            expect(decode.nodeId = value.nodeId);
+            expect(decode.session = value.session);
+            expect(decode.address = value.address);
+            expect(decode.speed = value.speed);
+            expect(decode.direction = value.direction);
+            expect(decode.Fn1 = value.Fn1);
+            expect(decode.Fn2 = value.Fn2);
+            expect(decode.Fn3 = value.Fn3);            
+            expect(decode.mnemonic = 'PLOC');
+            expect(decode.opCode = 'E1');
+	})
+
+
     // F2 ENRSP
     //
 	function GetTestCase_ENRSP () {

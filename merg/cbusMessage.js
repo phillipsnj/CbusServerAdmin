@@ -44,13 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodePARAN (message) {
-        // PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
-        return {'nodeId': parseInt(message.substr(9, 4), 16), 
-                'parameterIndex': parseInt(message.substr(13, 2), 16),
-                'parameterValue': parseInt(message.substr(15, 2), 16),
-        }
-    }
 
     static decodePLOC (message) {
         // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
@@ -534,6 +527,29 @@ class cbusMessage {
     exports.encodeEVLRN = function(eventName, eventVariableIndex, eventVariableValue) {
 		// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
         return header() + 'D2' + eventName + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
+    }
+    
+
+    // E1 PLOC
+    //
+    exports.decodePLOC = function(message) {
+        // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
+        var speedDir = parseInt(message.substr(15, 2), 16)
+        return {'mnemonic': 'PLOC',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'address': parseInt(message.substr(11, 4), 16),
+                'speed': speedDir % 128,
+                'direction': (speedDir > 127) ? 'Forward' : 'Reverse',
+                'Fn1': parseInt(message.substr(17, 2), 16),
+                'Fn2': parseInt(message.substr(19, 2), 16),
+                'Fn3': parseInt(message.substr(21, 2), 16),
+        }
+    }
+    exports.encodePLOC = function(session, address, speed, direction, Fn1, Fn2, Fn3) {
+        // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
+        var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
+        return header() + 'E1' + decToHex(session, 2) + decToHex(address, 4) + decToHex(speedDir, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + decToHex(Fn3, 2) + ';';
     }
     
 
