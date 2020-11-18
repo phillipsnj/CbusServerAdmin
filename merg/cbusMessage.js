@@ -112,23 +112,6 @@ class cbusMessage {
         return ':SB780N'
     }
 
-    static encodeNNLRN(nodeId) {
-		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
-		if (nodeId >= 0 && nodeId <= 0xFFFF) {
-			return cbusMessage.header + '53' + decToHex(nodeId, 4) + ';'
-		}
-    }
-
-    static encodeNNULN(nodeId) {
-		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
-        return cbusMessage.header + '54' + decToHex(nodeId, 4) + ';'
-    }
-
-    static encodeNVRD(nodeId, nodeVariableIndex) {
-		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
-        return cbusMessage.header + '71' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + ';'
-    }
-
     static encodeNVSET(nodeId, nodeVariableIndex, nodeVariableValue) {
 		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
         return cbusMessage.header + '96' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
@@ -227,6 +210,21 @@ class cbusMessage {
     }
 
 
+    // 54 NNULN
+    //
+    exports.decodeNNULN = function(message) {
+		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
+        return {'mnemonic': 'NNULN',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16),
+        }
+    }
+    exports.encodeNNULN = function(nodeId) {
+		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
+        return header() + '54' + decToHex(nodeId, 4) + ';'
+    }
+
+
     // 57 NERD
     //
     exports.decodeNERD = function(message) {
@@ -289,6 +287,22 @@ class cbusMessage {
     exports.encodeCMDERR = function(nodeId, error) {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
         return header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
+    }
+
+
+    // 71 NVRD
+    //
+    exports.decodeNVRD = function(message) {
+		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
+		return {'mnemonic': 'NVRD',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeNVRD = function(nodeId, nodeVariableIndex) {
+		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
+        return header() + '71' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + ';'
     }
 
 

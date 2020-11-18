@@ -41,7 +41,7 @@ describe('cbusMessage tests', function(){
 								];
 
 	
-	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ACOF test ' + JSON.stringify(value)});
 		expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
         var encode = cbusMsg.encodeACOF(value.node, value.event);
@@ -51,11 +51,11 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.node);
         expect(decode.eventNumber = value.event);
-		done();ent
+        expect(decode.mnemonic = 'ACOF');
 	})
 
 
-	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ACON test ' + JSON.stringify(value)});
 		expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
         var encode = cbusMsg.encodeACON(value.node, value.event);
@@ -65,11 +65,11 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.node);
         expect(decode.eventNumber = value.event);
-		done();ent
+        expect(decode.mnemonic = 'ACON');
 	})
 
 
-	itParam("ASOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	itParam("ASOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ASOF test ' + JSON.stringify(value)});
 		expected = ":SB780N99" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
         var encode = cbusMsg.encodeASOF(value.node, value.event);
@@ -79,11 +79,11 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.node);
         expect(decode.eventNumber = value.event);
-		done();ent
+        expect(decode.mnemonic = 'ASOF');
 	})
 
 
-	itParam("ASON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+	itParam("ASON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ASON test ' + JSON.stringify(value)});
 		expected = ":SB780N98" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
         var encode = cbusMsg.encodeASON(value.node, value.event);
@@ -93,7 +93,7 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.node);
         expect(decode.eventNumber = value.event);
-		done();ent
+        expect(decode.mnemonic = 'ASON');		
 	})
 
 
@@ -123,6 +123,7 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.node);
         expect(decode.error = value.error);
+        expect(decode.mnemonic = 'CMDERR');
 	})
 
 
@@ -159,6 +160,7 @@ describe('cbusMessage tests', function(){
         expect(decode.session = value.session);
         expect(decode.Fn1 = value.Fn1);
         expect(decode.Fn2 = value.Fn2);
+        expect(decode.mnemonic = 'DFUN');
 	})
 
 
@@ -184,6 +186,7 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: DKEEP decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected);
         expect(decode.session = value.session);
+        expect(decode.mnemonic = 'DKEEP');
 	})
 
 
@@ -220,6 +223,7 @@ describe('cbusMessage tests', function(){
         expect(decode.session = value.session);
         expect(decode.speed = value.speed);
         expect(decode.direction = value.direction);
+        expect(decode.mnemonic = 'DSPD');
 	})
 
 	function GetTestCase_ENRSP () {
@@ -256,6 +260,7 @@ describe('cbusMessage tests', function(){
         expect(decode.nodeId = value.nodeId);
         expect(decode.event = value.event);
         expect(decode.eventIndex = value.eventIndex);
+        expect(decode.mnemonic = 'ENRSP');
 	})
 
 
@@ -292,6 +297,7 @@ describe('cbusMessage tests', function(){
         expect(decode.eventName = value.eventName);
         expect(decode.eventVariableIndex = value.eventVariableIndex);
         expect(decode.eventVariableValue = value.eventVariableValue);
+        expect(decode.mnemonic = 'EVLRN');        
 	})
 
 
@@ -315,6 +321,8 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: EVULN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected);
         expect(decode.eventName = value.eventName);
+        expect(decode.mnemonic = 'EVULN');
+        
 	})
 
 	function GetTestCase_NENRD () {
@@ -344,6 +352,8 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.nodeId);
         expect(decode.eventIndex = value.eventIndex);
+        expect(decode.mnemonic = 'NENRD');
+        
 	})
 
 
@@ -367,6 +377,8 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: NERD decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.nodeId);
+        expect(decode.mnemonic = 'NERD');
+        
 	})
 
 
@@ -391,6 +403,62 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: NNLRN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.nodeId);
+        expect(decode.mnemonic = 'NNLRN');
+	})
+
+
+	function GetTestCase_NNULN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+
+	itParam("NNULN test nodeId ${value.nodeId}", GetTestCase_NNULN(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN NNULN test ' + JSON.stringify(value)});
+		expected = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
+        var encode = cbusMsg.encodeNNULN(value.nodeId);
+        var decode = cbusMsg.decodeNNULN(encode);
+		winston.info({message: 'cbusMessage test: NNULN encode ' + encode});
+		winston.info({message: 'cbusMessage test: NNULN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.mnemonic = 'NNULN');
+	})
+
+
+	function GetTestCase_NVRD () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (NVindex = 1; NVindex < 4; NVindex++) {
+				if (NVindex == 1) nvIndex = 0;
+				if (NVindex == 2) nvIndex = 1;
+				if (NVindex == 3) nvIndex = 255;
+				testCases.push({'nodeId':nodeId, 'nvIndex':nvIndex});
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("NVRD test nodeId ${value.nodeId} nvIndex ${value.nvIndex}", GetTestCase_NVRD(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN NVRD test ' + JSON.stringify(value)});
+		expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + ";";
+        var encode = cbusMsg.encodeNVRD(value.nodeId, value.nvIndex);
+        var decode = cbusMsg.decodeNVRD(encode);
+		winston.info({message: 'cbusMessage test: NVRD encode ' + encode});
+		winston.info({message: 'cbusMessage test: NVRD decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.mnemonic = 'NVRD');
 	})
 
 
