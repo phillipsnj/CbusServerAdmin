@@ -104,21 +104,10 @@ class cbusMessage {
         }
     }
 
-    //
-    // Encoding methods
-    //
-
-    static header() {
-        return ':SB780N'
-    }
-
-    static encodeQLOC(sessionId) {
-		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
-        return cbusMessage.header + '22' + decToHex(sessionId, 2) + ';';
-    }
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const header = function() {
         return ':SB780N'
@@ -128,7 +117,7 @@ class cbusMessage {
 
     // 10 RQNP
     //
-    exports.decodeRQNP = function(message) {
+    exports.decodeQLOC = function(message) {
         return {'mnemonic': 'RQNP',
                 'opCode': message.substr(7, 2),
         }
@@ -136,6 +125,21 @@ class cbusMessage {
     exports.encodeRQNP = function() {//Request Node Parameters
 		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
         return header() + '10' + ';'
+    }
+
+
+    // 22 QLOC
+    //
+    exports.decodeDKEEP = function(message) {
+		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
+        return {'mnemonic': 'QLOC',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16)
+        }
+    }
+    exports.encodeQLOC = function(session) {
+		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
+        return header() + '22' + decToHex(session, 2) + ';';
     }
 
 

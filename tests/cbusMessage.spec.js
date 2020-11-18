@@ -56,6 +56,33 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 22 QLOC
+    //
+	function GetTestCase_QLOC () {
+		var testCases = [];
+		for (S = 1; S < 4; S++) {
+			if (S == 1) session = 0;
+			if (S == 2) session = 1;
+			if (S == 3) session = 255;
+			testCases.push({'session':session});
+		}
+		return testCases;
+	}
+
+	itParam("QLOC test session ${value.session}", GetTestCase_QLOC(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN QLOC test ' + JSON.stringify(value)});
+		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
+        var encode = cbusMsg.encodeQLOC(value.session);
+        var decode = cbusMsg.decodeQLOC(encode);
+		winston.info({message: 'cbusMessage test: QLOC encode ' + encode});
+		winston.info({message: 'cbusMessage test: QLOC decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.session = value.session);
+        expect(decode.mnemonic = 'QLOC');
+        expect(decode.opCode = '22');
+	})
+
+
     // 23 DKEEP
     //
 	function GetTestCase_DKEEP () {
