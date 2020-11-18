@@ -45,29 +45,6 @@ class cbusMessage {
     //
 
 
-    static decodePLOC (message) {
-        // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
-        var speedDir = parseInt(message.substr(15, 2), 16)
-        return {'session': parseInt(message.substr(9, 2), 16),
-                'address': parseInt(message.substr(11, 4), 16),
-                'speed': speedDir % 128,
-                'direction': (speedDir > 127) ? 'Forward' : 'Reverse',
-                'Fn1': parseInt(message.substr(17, 2), 16),
-                'Fn2': parseInt(message.substr(19, 2), 16),
-                'Fn3': parseInt(message.substr(21, 2), 16),
-        }
-    }
-    
-    static decodePNN (message) {
-        // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
-        return {'nodeId': parseInt(message.substr(9, 4), 16),
-                'manufacturerId': parseInt(message.substr(13, 2), 16), 
-                'moduleId': parseInt(message.substr(15, 2), 16), 
-                'flags': parseInt(message.substr(17, 2), 16),
-        }
-    }
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -510,6 +487,24 @@ class cbusMessage {
     exports.encodeNEVAL = function(nodeId, eventIndex, eventVariableIndex, eventVariableValue) {
         // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
         return header() + 'B5' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
+    }
+
+
+    // B6 PNN
+    //
+    exports.decodePNN = function(message) {
+        // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
+        return {'mnemonic': 'PNN',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16),
+                'manufacturerId': parseInt(message.substr(13, 2), 16), 
+                'moduleId': parseInt(message.substr(15, 2), 16), 
+                'flags': parseInt(message.substr(17, 2), 16),
+        }
+    }
+    exports.encodePNN = function(nodeId, manufacturerId, moduleId, flags) {
+        // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
+        return header() + 'B6' + decToHex(nodeId, 4) + decToHex(manufacturerId, 2) + decToHex(moduleId, 2) + decToHex(flags, 2) + ';'
     }
 
 

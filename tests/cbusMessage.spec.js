@@ -816,6 +816,52 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // B6 PNN
+    //
+	function GetTestCase_PNN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (MAN = 1; MAN < 4; MAN++) {
+				if (MAN == 1) manufacturerId = 0;
+				if (MAN == 2) manufacturerId = 1;
+				if (MAN == 3) manufacturerId = 255;
+                for (MOD = 1; MOD < 4; MOD++) {
+                    if (MOD == 1) moduleId = 0;
+                    if (MOD == 2) moduleId = 1;
+                    if (MOD == 3) moduleId = 255;
+                    for (FL = 1; FL < 4; FL++) {
+                        if (FL == 1) flags = 0;
+                        if (FL == 2) flags = 1;
+                        if (FL == 3) flags = 255;
+                        testCases.push({'nodeId':nodeId, 'manufacturerId':manufacturerId, 'moduleId':moduleId, 'flags':flags});
+                    }
+                }
+			}
+		}
+		return testCases;
+	}
+    // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
+	itParam("PNN test nodeId ${value.nodeId} manufacturerId ${value.manufacturerId} moduleId ${value.moduleId} flags ${value.flags}", 
+        GetTestCase_PNN(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN NEVAL test ' + JSON.stringify(value)});
+            expected = ":SB780NB6" + decToHex(value.nodeId, 4) + decToHex(value.manufacturerId, 2) + decToHex(value.moduleId, 2) + decToHex(value.flags, 2) + ";";
+            var encode = cbusMsg.encodePNN(value.nodeId, value.manufacturerId, value.moduleId, value.flags);
+            var decode = cbusMsg.decodePNN(encode);
+            winston.info({message: 'cbusMessage test: PNN encode ' + encode});
+            winston.info({message: 'cbusMessage test: PNN decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected);
+            expect(decode.nodeId = value.nodeId);
+            expect(decode.manufacturerId = value.manufacturerId);
+            expect(decode.moduleId = value.moduleId);
+            expect(decode.flags = value.flags);
+            expect(decode.mnemonic = 'PNN');
+            expect(decode.opCode = 'B6');
+	})
+
+
     // D2 EVLRN
     //
 	function GetTestCase_EVLRN () {
