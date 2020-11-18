@@ -44,15 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeDSPD (message) {
-        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
-        var speedDir = parseInt(message.substr(11, 2), 16)
-        return {'session': parseInt(message.substr(9, 2), 16),
-                'speed': speedDir % 128,
-                'direction': (speedDir > 127) ? 'Forward' : 'Reverse',
-        }
-    }
-    
     static decodeENRSP(message) {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
         return {'nodeId': parseInt(message.substr(9, 4), 16),
@@ -480,3 +471,21 @@ class cbusMessage {
     }
     
 
+    // DSPD
+    //
+    exports.decodeDSPD = function(message) {
+        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
+        var speedDir = parseInt(message.substr(11, 2), 16)
+        return {'session': parseInt(message.substr(9, 2), 16),
+                'speed': speedDir % 128,
+                'direction': (speedDir > 127) ? 'Forward' : 'Reverse',
+        }
+    }
+    exports.encodeDSPD = function(session, speed, direction) {
+        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
+        var speedDir = speed + (direction == 'Reverse') ? 0 : 128
+        return header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
+    }
+    
+
+    

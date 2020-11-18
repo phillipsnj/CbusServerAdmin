@@ -187,4 +187,40 @@ describe('cbusMessage tests', function(){
 	})
 
 
+	function GetTestCase_DSPD () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (speedIndex = 1; speedIndex < 4; speedIndex++) {
+				if (speedIndex == 1) speed = 0;
+				if (speedIndex == 2) speed = 1;
+				if (speedIndex == 3) speed = 255;
+				for (directionIndex = 1; directionIndex < 3; directionIndex++) {
+					if (directionIndex == 1) direction = 'Forward';
+					if (directionIndex == 2) direction = 'Reverse';
+					testCases.push({'session':session, 'speed':speed, 'direction':direction});
+				}
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("DSPD test session ${value.session} speed ${value.speed} direction ${value.direction}", GetTestCase_DSPD(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN DSPD test ' + JSON.stringify(value)});
+        var speedDir = value.speed + (value.direction == 'Reverse') ? 0 : 128
+		expected = ":SB780N27" + decToHex(value.session, 2) + decToHex(speedDir, 2) + ";";
+        var encode = cbusMsg.encodeDSPD(value.session, value.speed, value.direction);
+        var decode = cbusMsg.decodeDSPD(encode);
+		winston.info({message: 'cbusMessage test: DSPD encode ' + encode});
+		winston.info({message: 'cbusMessage test: DSPD decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.session = value.session);
+        expect(decode.speed = value.speed);
+        expect(decode.direction = value.direction);
+	})
+
+
 })
