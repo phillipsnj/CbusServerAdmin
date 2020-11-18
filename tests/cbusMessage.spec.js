@@ -317,6 +317,36 @@ describe('cbusMessage tests', function(){
         expect(decode.eventName = value.eventName);
 	})
 
+	function GetTestCase_NENRD () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (Eindex = 1; Eindex < 4; Eindex++) {
+				if (Eindex == 1) eventIndex = 0;
+				if (Eindex == 2) eventIndex = 1;
+				if (Eindex == 3) eventIndex = 255;
+				testCases.push({'nodeId':nodeId, 'eventIndex':eventIndex});
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("NENRD test nodeId ${value.nodeId} eventIndex ${value.eventIndex}", GetTestCase_NENRD(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN NENRD test ' + JSON.stringify(value)});
+		expected = ":SB780N72" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + ";";
+        var encode = cbusMsg.encodeNENRD(value.nodeId, value.eventIndex);
+        var decode = cbusMsg.decodeNENRD(encode);
+		winston.info({message: 'cbusMessage test: NENRD encode ' + encode});
+		winston.info({message: 'cbusMessage test: NENRD decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.eventIndex = value.eventIndex);
+	})
+
+
 
 
 

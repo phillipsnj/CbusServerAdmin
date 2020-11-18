@@ -112,11 +112,6 @@ class cbusMessage {
         return ':SB780N'
     }
 
-    static encodeNENRD(nodeId, eventIndex) {
-		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
-        return cbusMessage.header + '72' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + ';'
-    }
-
     static encodeNERD(nodeId) {//Request All Events
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
         return cbusMessage.header + '57' + decToHex(nodeId, 4) + ';'
@@ -176,167 +171,6 @@ class cbusMessage {
         return cbusMessage.header + '22' + decToHex(sessionId, 2) + ';';
     }
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    nodeId() {
-        return parseInt(this.message.substr(9, 4), 16);
-    }
-
-    sessionId() {
-        return parseInt(this.message.substr(9, 2), 16);
-    }
-
-    locoId() {
-        return parseInt(this.message.substr(11, 4), 16);
-    }
-
-    locoSpeed() {
-        return parseInt(this.message.substr(15, 2), 16);
-    }
-
-    locoF1() {
-        return parseInt(this.message.substr(17, 2), 16);
-    }
-
-    locoF2() {
-        return parseInt(this.message.substr(19, 2), 16);
-    }
-
-    locoF3() {
-        return parseInt(this.message.substr(21, 2), 16);
-    }
-
-    eventId() {
-        return parseInt(this.message.substr(13, 4), 16);
-    }
-
-    fullEventId() {
-        return this.message.substr(9, 8);
-    }
-
-    shortEventId() {
-        return '0000'+this.message.substr(13, 4);
-    }
-
-    manufId() {
-        return parseInt(this.message.substr(13, 2), 16);
-    }
-
-    moduleId() {
-        return parseInt(this.message.substr(15, 2), 16);
-    }
-
-    flags() {
-        return parseInt(this.message.substr(17, 2), 16);
-    }
-
-    paramId() {
-        return parseInt(this.message.substr(13, 2), 16);
-    }
-
-    errorId() {
-        return parseInt(this.message.substr(13, 2), 16);
-    }
-
-    actionId() {
-        return this.message.substr(13, 8);
-    }
-
-    actionEventId() {
-        return parseInt(this.message.substr(21, 2), 16);
-    }
-
-    actionEventIndex() {
-        return parseInt(this.message.substr(13, 2), 16);
-    }
-
-    actionEventVarId() {
-        return parseInt(this.message.substr(15, 2), 16);
-    }
-
-    actionEventVarVal() {
-        return parseInt(this.message.substr(17, 2), 16);
-    }
-
-    variableId() {
-        return parseInt(this.message.substr(13, 2), 16);
-    }
-
-    variableVal() {
-        return parseInt(this.message.substr(15, 2), 16);
-    }
-
-    paramValue() {
-        return parseInt(this.message.substr(15, 2), 16);
-    }
-
-    eventNo() {
-        return parseInt(this.message.substr(17, 2), 16);
-    }
-
-    eventValue() {
-        return parseInt(this.message.substr(15, 2), 16);
-    }
-
-    eventIndex() {
-        return this.message.substr(9, 8)
-
-    }
-
-    eventVariableIndex() {
-        return parseInt(this.message.substr(13, 2), 16);
-        //return this.message.substr(13, 2)
-    }
-
-    getInt(start, length) {
-        return parseInt(this.message.substr(start, length), 16);
-    }
-
-    getStr(start, length) {
-        return this.message.substr(start, length)
-    }
-
-    index() {
-        return parseInt(this.message.substr(13, 2), 16);
-    }
-
-    value() {
-        return parseInt(this.message.substr(15, 2), 16);
-    }
-
-    data() {
-        var data = [];
-        var dataStr = this.message.substr(7, this.message.length - 7);
-        for (var i = 0; i < dataStr.length - 1; i += 2)
-            data.push(dataStr.substr(i, 2));
-        return data;
-    }
-
-    messageOutput() {
-        return this.message
-    }
-	
-	
-	translateMessage()
-	{
-		return translator.translateCbusMessage(this.message);
-	}
-	
 }
 
 
@@ -428,6 +262,22 @@ class cbusMessage {
     exports.encodeCMDERR = function(nodeId, error) {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
         return header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
+    }
+
+
+    // 72 NENRD
+    //
+    exports.decodeNENRD = function(message) {
+		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
+		return {'mnemonic': 'NENRD',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'eventIndex': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeNENRD = function(nodeId, eventIndex) {
+		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
+        return header() + '72' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + ';'
     }
 
 
