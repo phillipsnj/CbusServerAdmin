@@ -44,7 +44,7 @@ describe('cbusMessage tests', function(){
     // 10 RQNP
     //
 	it("RQNP test", function () {
-		winston.info({message: 'mergAdminNode test: BEGIN RQNP test '});
+		winston.info({message: 'cbusMessage test: BEGIN RQNP test '});
 		expected = ":SB780N10" + ";";
         var encode = cbusMsg.encodeRQNP();
         var decode = cbusMsg.decodeRQNP(encode);
@@ -70,7 +70,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("KLOC test session ${value.session}", GetTestCase_KLOC(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN KLOC test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN KLOC test ' + JSON.stringify(value)});
 		expected = ":SB780N21" + decToHex(value.session, 2) + ";";
         var encode = cbusMsg.encodeKLOC(value.session);
         var decode = cbusMsg.decodeKLOC(encode);
@@ -97,7 +97,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("QLOC test session ${value.session}", GetTestCase_QLOC(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN QLOC test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN QLOC test ' + JSON.stringify(value)});
 		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
         var encode = cbusMsg.encodeQLOC(value.session);
         var decode = cbusMsg.decodeQLOC(encode);
@@ -125,7 +125,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("DKEEP test session ${value.session}", GetTestCase_DKEEP(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN DKEEP test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN DKEEP test ' + JSON.stringify(value)});
 		expected = ":SB780N23" + decToHex(value.session, 2) + ";";
         var encode = cbusMsg.encodeDKEEP(value.session);
         var decode = cbusMsg.decodeDKEEP(encode);
@@ -161,7 +161,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("DSPD test session ${value.session} speed ${value.speed} direction ${value.direction}", GetTestCase_DSPD(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN DSPD test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN DSPD test ' + JSON.stringify(value)});
         var speedDir = value.speed + (value.direction == 'Reverse') ? 0 : 128
 		expected = ":SB780N27" + decToHex(value.session, 2) + decToHex(speedDir, 2) + ";";
         var encode = cbusMsg.encodeDSPD(value.session, value.speed, value.direction);
@@ -191,7 +191,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("SNN test nodeId ${value.nodeId}", GetTestCase_SNN(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN SNN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN SNN test ' + JSON.stringify(value)});
 		expected = ":SB780N42" + decToHex(value.nodeId, 4) + ";";
         var encode = cbusMsg.encodeSNN(value.nodeId);
         var decode = cbusMsg.decodeSNN(encode);
@@ -218,7 +218,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("NNLRN test nodeId ${value.nodeId}", GetTestCase_NNLRN(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN NNLRN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN NNLRN test ' + JSON.stringify(value)});
 		expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
         var encode = cbusMsg.encodeNNLRN(value.nodeId);
         var decode = cbusMsg.decodeNNLRN(encode);
@@ -246,7 +246,7 @@ describe('cbusMessage tests', function(){
 
 
 	itParam("NNULN test nodeId ${value.nodeId}", GetTestCase_NNULN(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN NNULN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN NNULN test ' + JSON.stringify(value)});
 		expected = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
         var encode = cbusMsg.encodeNNULN(value.nodeId);
         var decode = cbusMsg.decodeNNULN(encode);
@@ -273,7 +273,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("NERD test nodeId ${value.nodeId}", GetTestCase_NERD(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN NERD test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN NERD test ' + JSON.stringify(value)});
 		expected = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
         var encode = cbusMsg.encodeNERD(value.nodeId);
         var decode = cbusMsg.decodeNERD(encode);
@@ -300,7 +300,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("RQEVN test nodeId ${value.nodeId}", GetTestCase_RQEVN(),  function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN RQEVN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN RQEVN test ' + JSON.stringify(value)});
 		expected = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
         var encode = cbusMsg.encodeRQEVN(value.nodeId);
         var decode = cbusMsg.decodeRQEVN(encode);
@@ -337,7 +337,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("DFUN test session ${value.session} Fn1 ${value.Fn1} Fn2 ${value.Fn2}", GetTestCase_DFUN(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN DFUN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN DFUN test ' + JSON.stringify(value)});
 		expected = ":SB780N60" + decToHex(value.session, 2) + decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + ";";
         var encode = cbusMsg.encodeDFUN(value.session, value.Fn1, value.Fn2);
         var decode = cbusMsg.decodeDFUN(encode);
@@ -371,7 +371,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("CMDERR test nodeId ${value.nodeId} error ${value.error}", GetTestCase_CMDERR(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN CMDERR test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN CMDERR test ' + JSON.stringify(value)});
 		expected = ":SB780N6F" + decToHex(value.nodeId, 4) + decToHex(value.error, 2) + ";";
         var encode = cbusMsg.encodeCMDERR(value.nodeId, value.error);
         var decode = cbusMsg.decodeCMDERR(encode);
@@ -405,7 +405,7 @@ describe('cbusMessage tests', function(){
 
 
 	itParam("NVRD test nodeId ${value.nodeId} nvIndex ${value.nvIndex}", GetTestCase_NVRD(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN NVRD test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN NVRD test ' + JSON.stringify(value)});
 		expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + ";";
         var encode = cbusMsg.encodeNVRD(value.nodeId, value.nvIndex);
         var decode = cbusMsg.decodeNVRD(encode);
@@ -438,7 +438,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("NENRD test nodeId ${value.nodeId} eventIndex ${value.eventIndex}", GetTestCase_NENRD(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN NENRD test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN NENRD test ' + JSON.stringify(value)});
 		expected = ":SB780N72" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + ";";
         var encode = cbusMsg.encodeNENRD(value.nodeId, value.eventIndex);
         var decode = cbusMsg.decodeNENRD(encode);
@@ -472,7 +472,7 @@ describe('cbusMessage tests', function(){
 
 
 	itParam("RQNPN test nodeId ${value.nodeId} paramIndex ${value.paramIndex}", GetTestCase_RQNPN(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN RQNPN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN RQNPN test ' + JSON.stringify(value)});
 		expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.paramIndex, 2) + ";";
         var encode = cbusMsg.encodeRQNPN(value.nodeId, value.paramIndex);
         var decode = cbusMsg.decodeRQNPN(encode);
@@ -483,6 +483,40 @@ describe('cbusMessage tests', function(){
         expect(decode.ParameterIndex = value.paramIndex);
         expect(decode.mnemonic = 'RQNPN');
         expect(decode.opCode = '73');
+	})
+
+
+    // 74 NUMEV
+    //
+	function GetTestCase_NUMEV () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (Pindex = 1; Pindex < 4; Pindex++) {
+				if (Pindex == 1) eventCount = 0;
+				if (Pindex == 2) eventCount = 1;
+				if (Pindex == 3) eventCount = 255;
+				testCases.push({'nodeId':nodeId, 'eventCount':eventCount});
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("NUMEV test nodeId ${value.nodeId} eventCount ${value.eventCount}", GetTestCase_NUMEV(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN RQNNUMEVPN test ' + JSON.stringify(value)});
+		expected = ":SB780N74" + decToHex(value.nodeId, 4) + decToHex(value.eventCount, 2) + ";";
+        var encode = cbusMsg.encodeNUMEV(value.nodeId, value.eventCount);
+        var decode = cbusMsg.decodeNUMEV(encode);
+		winston.info({message: 'cbusMessage test: NUMEV encode ' + encode});
+		winston.info({message: 'cbusMessage test: NUMEV decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.eventCount = value.eventCount);
+        expect(decode.mnemonic = 'NUMEV');
+        expect(decode.opCode = '74');
 	})
 
 
@@ -534,7 +568,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("EVULN test eventName ${value.eventName}", GetTestCase_EVULN(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN EVULN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN EVULN test ' + JSON.stringify(value)});
 		expected = ":SB780N95" + value.eventName + ";";
         var encode = cbusMsg.encodeEVULN(value.eventName);
         var decode = cbusMsg.decodeEVULN(encode);
@@ -571,7 +605,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("NVSET test nodeId ${value.nodeId} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVSET(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN NVSET test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN NVSET test ' + JSON.stringify(value)});
 		expected = ":SB780N96" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + decToHex(value.nvValue, 2) + ";";
         var encode = cbusMsg.encodeNVSET(value.nodeId, value.nvIndex, value.nvValue);
         var decode = cbusMsg.decodeNVSET(encode);
@@ -643,7 +677,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("REVAL test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex}", GetTestCase_REVAL(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN REVAL test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN REVAL test ' + JSON.stringify(value)});
 		expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + ";";
         var encode = cbusMsg.encodeREVAL(value.nodeId, value.eventIndex, value.eventVariableIndex);
         var decode = cbusMsg.decodeREVAL(encode);
@@ -688,7 +722,7 @@ describe('cbusMessage tests', function(){
 
 	itParam("NEVAL test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex} eventVariableValue ${value.eventVariableValue}", 
         GetTestCase_NEVAL(), function (value) {
-            winston.info({message: 'mergAdminNode test: BEGIN NEVAL test ' + JSON.stringify(value)});
+            winston.info({message: 'cbusMessage test: BEGIN NEVAL test ' + JSON.stringify(value)});
             expected = ":SB780NB5" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + decToHex(value.eventVariableValue, 2) + ";";
             var encode = cbusMsg.encodeNEVAL(value.nodeId, value.eventIndex, value.eventVariableIndex, value.eventVariableValue);
             var decode = cbusMsg.decodeNEVAL(encode);
@@ -728,7 +762,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("EVLRN test eventName ${value.eventName} eventVariableIndex ${value.eventVariableIndex} eventVariableValue ${value.eventVariableValue}", GetTestCase_EVLRN(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN EVLRN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN EVLRN test ' + JSON.stringify(value)});
 		expected = ":SB780ND2" + value.eventName + decToHex(value.eventVariableIndex, 2) + decToHex(value.eventVariableValue, 2) + ";";
         var encode = cbusMsg.encodeEVLRN(value.eventName, value.eventVariableIndex, value.eventVariableValue);
         var decode = cbusMsg.decodeEVLRN(encode);
@@ -767,7 +801,7 @@ describe('cbusMessage tests', function(){
 	}
 
 	itParam("ENRSP test nodeId ${value.nodeId} event ${value.event} eventIndex ${value.eventIndex}", GetTestCase_ENRSP(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN ENRSP test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN ENRSP test ' + JSON.stringify(value)});
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
 		expected = ":SB780NF2" + decToHex(value.nodeId, 4) + value.event + decToHex(value.eventIndex, 2) + ";";
         var encode = cbusMsg.encodeENRSP(value.nodeId, value.event, value.eventIndex);

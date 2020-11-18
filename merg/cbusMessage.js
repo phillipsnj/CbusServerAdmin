@@ -44,13 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeNUMEV (message) {
-        // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
-        return {'nodeId': parseInt(message.substr(9, 4), 16),
-                'eventCount': parseInt(message.substr(13, 2), 16),
-        }
-    }
-    
     static decodeNVANS (message) {
         // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
         return {'nodeId': parseInt(message.substr(9, 4), 16), 
@@ -353,6 +346,22 @@ class cbusMessage {
         return header() + '73' + decToHex(nodeId, 4) + decToHex(ParameterIndex, 2) + ';'
     }
 
+
+    // 74 NUMEV
+    //
+    exports.decodeNUMEV = function(message) {
+        // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
+        return {'mnemonic': 'NUMEV',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16),
+                'eventCount': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeNUMEV = function(nodeId, eventCount) {
+        // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
+        return header() + '74' + decToHex(nodeId, 4) + decToHex(eventCount, 2) + ';'
+    }
+    
 
     // 90 ACON
     //
