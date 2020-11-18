@@ -717,8 +717,8 @@ describe('cbusMessage tests', function(){
 
 	itParam("PARAN test nodeId ${value.nodeId} parameterIndex ${value.parameterIndex} parameterValue ${value.parameterValue}", GetTestCase_PARAN(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN PARAN test ' + JSON.stringify(value)});
-		expected = ":SB780N9B" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + ";";
-        var encode = cbusMsg.encodePARAN(value.nodeId, value.eventIndex, value.eventVariableIndex);
+		expected = ":SB780N9B" + decToHex(value.nodeId, 4) + decToHex(value.parameterIndex, 2) + decToHex(value.parameterValue, 2) + ";";
+        var encode = cbusMsg.encodePARAN(value.nodeId, value.parameterIndex, value.parameterValue);
         var decode = cbusMsg.decodePARAN(encode);
 		winston.info({message: 'cbusMessage test: PARAN encode ' + encode});
 		winston.info({message: 'cbusMessage test: PARAN decode ' + JSON.stringify(decode)});

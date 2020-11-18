@@ -1,58 +1,23 @@
-var translator = require('./translateCbusMessage.js')
-
-
-function pad(num, len) { //add zero's to ensure hex values have correct number of characters
-    var padded = "00000000" + num;
-    return padded.substr(-len);
-}
-
-function decToHex(num, len) {
-    let output = Number(num).toString(16).toUpperCase()
-    var padded = "00000000" + output
-    //return (num + Math.pow(16, len)).toString(16).slice(-len).toUpperCase()
-    return padded.substr(-len)
-}
-
-
-
-
-
-
-class cbusMessage {
-    constructor(msg) {
-        this.message = msg.toString();
-    }
-
-    deCodeCbusMsg() {
-        const event = this.message;
-        const header = parseInt(event.substr(2, 4), 16);
-        const pr1 = header >>> 14;
-        const pr2 = header >>> 12 & 3;
-        const canNodeId = header >>> 5 & 31;
-        const type = event.substr(6, 1);
-        const opCode = event.substr(7, 2);
-        const nodeId = parseInt(event.substr(9, 4), 16);
-        const eventId = event.substr(13, 4);
-        return ` PR1:${pr1} PR2:${pr2} CanId:${canNodeId} type:${type} opCode:${opCode} Cbus NodeId:${nodeId} Event Id:${eventId}`;
-    }
-
-    opCode() {
-        return this.message.substr(7, 2);
-    }
-
-    //
-    // Decoding methods
-    //
-
-
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// cbusMessage encode & decoding functions
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+'use strict';
+
+    function decToHex(num, len) {
+        return parseInt(num).toString(16).toUpperCase().padStart(len, '0');
+    }
 
     const header = function() {
         return ':SB780N'
     }
 
+    //
+    // Functions strictly arranged by numerical opcode to ensure that it's easy to spot if a function already exists
+    //
+    //
+    
 
 
     // 10 RQNP
