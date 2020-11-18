@@ -117,7 +117,7 @@ class cbusMessage {
 
     // 10 RQNP
     //
-    exports.decodeQLOC = function(message) {
+    exports.decodeRQNP = function(message) {
         return {'mnemonic': 'RQNP',
                 'opCode': message.substr(7, 2),
         }
@@ -130,7 +130,7 @@ class cbusMessage {
 
     // 22 QLOC
     //
-    exports.decodeDKEEP = function(message) {
+    exports.decodeQLOC = function(message) {
 		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
         return {'mnemonic': 'QLOC',
                 'opCode': message.substr(7, 2),
@@ -243,7 +243,7 @@ class cbusMessage {
 
     // 58 RQEVN
     //
-    exports.decode = function(message) {
+    exports.decodeRQEVN = function(message) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
         return {'mnemonic': 'RQEVN',
                 'opCode': message.substr(7, 2),
