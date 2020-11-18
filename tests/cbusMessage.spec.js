@@ -370,6 +370,30 @@ describe('cbusMessage tests', function(){
 	})
 
 
+	function GetTestCase_NNLRN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+
+	itParam("NNLRN test nodeId ${value.nodeId}", GetTestCase_NNLRN(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN NNLRN test ' + JSON.stringify(value)});
+		expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
+        var encode = cbusMsg.encodeNNLRN(value.nodeId);
+        var decode = cbusMsg.decodeNNLRN(encode);
+		winston.info({message: 'cbusMessage test: NNLRN encode ' + encode});
+		winston.info({message: 'cbusMessage test: NNLRN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+	})
+
+
 
 
 

@@ -210,11 +210,28 @@ class cbusMessage {
     }
     
 
+    // 53 NNLRN
+    //
+    exports.decodeNNLRN = function(message) {
+		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
+        return {'mnemonic': 'NNLRN',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16),
+        }
+    }
+    exports.encodeNNLRN = function(nodeId) {
+		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
+		if (nodeId >= 0 && nodeId <= 0xFFFF) {
+			return header() + '53' + decToHex(nodeId, 4) + ';'
+		}
+    }
+
+
     // 57 NERD
     //
-    exports.decodeNERD = function(nodeId) {
+    exports.decodeNERD = function(message) {
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
-        return {'mnemonic': 'DSPD',
+        return {'mnemonic': 'NERD',
                 'opCode': message.substr(7, 2),
                 'nodeId': parseInt(message.substr(9, 4), 16),
         }
