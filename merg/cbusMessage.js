@@ -44,14 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeNVANS (message) {
-        // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
-        return {'nodeId': parseInt(message.substr(9, 4), 16), 
-                'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
-                'nodeVariableValue': parseInt(message.substr(15, 2), 16),
-        }
-    }
-    
     static decodePARAN (message) {
         // PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
         return {'nodeId': parseInt(message.substr(9, 4), 16), 
@@ -426,6 +418,23 @@ class cbusMessage {
         return header() + '96' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
     }
 
+
+    // 97 NVANS
+    //
+    exports.decodeNVANS = function(message) {
+        // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
+        return {'mnemonic': 'NVANS',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
+                'nodeVariableValue': parseInt(message.substr(15, 2), 16),
+        }
+    }
+    exports.encodeNVANS = function(nodeId, nodeVariableIndex, nodeVariableValue) {
+        // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
+        return header() + '97' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
+    }
+    
 
     // 98 ASON
     //
