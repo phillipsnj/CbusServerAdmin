@@ -44,15 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeERR (message) {
-        // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
-        return {'mnemonic': 'ERR',
-                'data1': parseInt(message.substr(9, 2), 16),
-                'data2': parseInt(message.substr(11, 2), 16),
-                'data3': parseInt(message.substr(13, 2), 16),
-        }
-    }
-
     static decodeKLOC (message) {
         // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
         return {'session': parseInt(message.substr(9, 2), 16)
@@ -119,11 +110,6 @@ class cbusMessage {
 
     static header() {
         return ':SB780N'
-    }
-
-    static encodeEVULN(eventName) {
-		// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
-        return cbusMessage.header + '95' + eventName + ';'
     }
 
     static encodeNENRD(nodeId, eventIndex) {
@@ -474,6 +460,21 @@ class cbusMessage {
     exports.encodeACOF = function(nodeId, eventNumber) {
 		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
         return header() + '91' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
+    }
+
+
+    // 95 EVULN
+    //
+    exports.decodeEVULN = function(message) {
+		// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+        return {'mnemonic': 'EVULN',
+                'opCode': message.substr(7, 2),
+                'eventName': message.substr(9, 8),
+        }
+    }
+    exports.encodeEVULN = function(eventName) {
+		// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
+        return header() + '95' + eventName + ';'
     }
 
 
