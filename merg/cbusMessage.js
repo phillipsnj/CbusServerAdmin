@@ -112,11 +112,6 @@ class cbusMessage {
         return ':SB780N'
     }
 
-    static encodeNVSET(nodeId, nodeVariableIndex, nodeVariableValue) {
-		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-        return cbusMessage.header + '96' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
-    }
-
     static encodeREVAL(nodeId, eventIndex, eventVariableIndex) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
         return cbusMessage.header + '9C' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
@@ -366,6 +361,23 @@ class cbusMessage {
     exports.encodeEVULN = function(eventName) {
 		// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
         return header() + '95' + eventName + ';'
+    }
+
+
+    // 96 NVSET
+    //
+    exports.decodeNVSET = function(message) {
+		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+        return {'mnemonic': 'NVSET',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeVariableIndex': parseInt(message.substr(13, 2), 16), 
+                'nodeVariableValue': parseInt(message.substr(15, 2), 16), 
+        }
+    }
+    exports.encodeNVSET = function(nodeId, nodeVariableIndex, nodeVariableValue) {
+		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
+        return header() + '96' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
     }
 
 

@@ -458,7 +458,44 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: NVRD decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected);
         expect(decode.nodeId = value.nodeId);
+        expect(decode.nodeVariableIndex = value.nvIndex);
         expect(decode.mnemonic = 'NVRD');
+	})
+
+
+	function GetTestCase_NVSET () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			for (NVindex = 1; NVindex < 4; NVindex++) {
+				if (NVindex == 1) nvIndex = 0;
+				if (NVindex == 2) nvIndex = 1;
+				if (NVindex == 3) nvIndex = 255;
+				for (NVvalue = 1; NVvalue < 4; NVvalue++) {
+					if (NVvalue == 1) nvValue = 0;
+					if (NVvalue == 2) nvValue = 1;
+					if (NVvalue == 3) nvValue = 255;
+					testCases.push({'nodeId':nodeId, 'nvIndex':nvIndex, 'nvValue':nvValue});
+				}
+			}
+		}
+		return testCases;
+	}
+
+	itParam("NVSET test nodeId ${value.nodeId} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVSET(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN NVSET test ' + JSON.stringify(value)});
+		expected = ":SB780N96" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + decToHex(value.nvValue, 2) + ";";
+        var encode = cbusMsg.encodeNVSET(value.nodeId, value.nvIndex, value.nvValue);
+        var decode = cbusMsg.decodeNVSET(encode);
+		winston.info({message: 'cbusMessage test: NVSET encode ' + encode});
+		winston.info({message: 'cbusMessage test: NVSET decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.nodeVariableIndex = value.nvIndex);
+        expect(decode.nodeVariableValue = value.nvValue);
+        expect(decode.mnemonic = 'NVSET');
 	})
 
 
