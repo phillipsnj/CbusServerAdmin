@@ -44,12 +44,6 @@ class cbusMessage {
     // Decoding methods
     //
 
-    static decodeKLOC (message) {
-        // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
-        return {'session': parseInt(message.substr(9, 2), 16)
-        }
-    }
-    
     static decodeNEVAL(message) {
         // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
         return {'nodeId': parseInt(message.substr(9, 4), 16),
@@ -127,6 +121,21 @@ class cbusMessage {
         return header() + '10' + ';'
     }
 
+
+    // 21 KLOC
+    //
+    exports.decodeKLOC = function(message) {
+        // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
+        return {'mnemonic': 'KLOC',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16)
+        }
+    }
+    exports.encodeKLOC = function(session) {
+        // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
+        return header() + '21' + decToHex(session, 2) + ';';
+    }
+    
 
     // 22 QLOC
     //

@@ -56,6 +56,33 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 21 KLOC
+    //
+	function GetTestCase_KLOC () {
+		var testCases = [];
+		for (S = 1; S < 4; S++) {
+			if (S == 1) session = 0;
+			if (S == 2) session = 1;
+			if (S == 3) session = 255;
+			testCases.push({'session':session});
+		}
+		return testCases;
+	}
+
+	itParam("KLOC test session ${value.session}", GetTestCase_KLOC(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN KLOC test ' + JSON.stringify(value)});
+		expected = ":SB780N21" + decToHex(value.session, 2) + ";";
+        var encode = cbusMsg.encodeKLOC(value.session);
+        var decode = cbusMsg.decodeKLOC(encode);
+		winston.info({message: 'cbusMessage test: KLOC encode ' + encode});
+		winston.info({message: 'cbusMessage test: KLOC decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.session = value.session);
+        expect(decode.mnemonic = 'KLOC');
+        expect(decode.opCode = '21');
+	})
+
+
     // 22 QLOC
     //
 	function GetTestCase_QLOC () {
