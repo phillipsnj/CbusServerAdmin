@@ -536,6 +536,30 @@ describe('cbusMessage tests', function(){
 	})
 
 
+	function GetTestCase_RQEVN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+	itParam("RQEVN test nodeId ${value.nodeId}", GetTestCase_RQEVN(),  function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN RQEVN test ' + JSON.stringify(value)});
+		expected = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
+        var encode = cbusMsg.encodeRQEVN(value.nodeId);
+        var decode = cbusMsg.decodeRQEVN(encode);
+		winston.info({message: 'cbusMessage test: RQEVN encode ' + encode});
+		winston.info({message: 'cbusMessage test: RQEVN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.mnemonic = 'RQEVN');
+	})
+
+
 
 
 
