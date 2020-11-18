@@ -123,6 +123,33 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 42 SNN
+    //
+	function GetTestCase_SNN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+	itParam("SNN test nodeId ${value.nodeId}", GetTestCase_SNN(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN SNN test ' + JSON.stringify(value)});
+		expected = ":SB780N42" + decToHex(value.nodeId, 4) + ";";
+        var encode = cbusMsg.encodeSNN(value.nodeId);
+        var decode = cbusMsg.decodeSNN(encode);
+		winston.info({message: 'cbusMessage test: SNN encode ' + encode});
+		winston.info({message: 'cbusMessage test: SNN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+        expect(decode.mnemonic = 'SNN');
+        expect(decode.opCode = '42');
+	})
+
+
     // 53 NNLRN
     //
 	function GetTestCase_NNLRN () {

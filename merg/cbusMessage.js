@@ -112,13 +112,6 @@ class cbusMessage {
         return ':SB780N'
     }
 
-    static encodeSNN(nodeId) {
-		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
-        if (nodeId >= 0 && nodeId <= 0xFFFF) {
-            return cbusMessage.header + '42' + decToHex(nodeId, 4) + ';'
-        }
-    }
-
     static encodeQLOC(sessionId) {
 		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
         return cbusMessage.header + '22' + decToHex(sessionId, 2) + ';';
@@ -161,7 +154,7 @@ class cbusMessage {
     }
     
 
-    // 47 DSPD
+    // 27 DSPD
     //
     exports.decodeDSPD = function(message) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
@@ -179,6 +172,23 @@ class cbusMessage {
         return header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
     }
     
+
+    // 42 SNN
+    //
+    exports.decodeSNN = function(message) {
+		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
+        return {'mnemonic': 'SNN',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16)
+        }
+    }
+    exports.encodeSNN = function(nodeId) {
+		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
+        if (nodeId >= 0 && nodeId <= 0xFFFF) {
+            return header() + '42' + decToHex(nodeId, 4) + ';'
+        }
+    }
+
 
     // 53 NNLRN
     //
