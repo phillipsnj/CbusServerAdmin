@@ -295,5 +295,29 @@ describe('cbusMessage tests', function(){
 	})
 
 
+	function GetTestCase_EVULN () {
+		var testCases = [];
+		for (EV = 1; EV < 4; EV++) {
+			if (EV == 1) eventName = '00000000';
+			if (EV == 2) eventName = '00000001';
+			if (EV == 3) eventName = 'FFFFFFFF';
+			testCases.push({'event':eventName});
+		}
+		return testCases;
+	}
+
+	itParam("EVULN test eventName ${value.eventName}", GetTestCase_EVULN(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN EVULN test ' + JSON.stringify(value)});
+		expected = ":SB780N95" + value.eventName + ";";
+        var encode = cbusMsg.encodeEVULN(value.eventName);
+        var decode = cbusMsg.decodeEVULN(encode);
+		winston.info({message: 'cbusMessage test: EVULN encode ' + encode});
+		winston.info({message: 'cbusMessage test: EVULN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.eventName = value.eventName);
+	})
+
+
+
 
 })
