@@ -259,5 +259,41 @@ describe('cbusMessage tests', function(){
 	})
 
 
+	function GetTestCase_EVLRN () {
+		var testCases = [];
+		for (EV = 1; EV < 4; EV++) {
+			if (EV == 1) eventName = '00000000';
+			if (EV == 2) eventName = '00000001';
+			if (EV == 3) eventName = 'FFFFFFFF';
+			for (EVindex = 1; EVindex < 4; EVindex++) {
+				if (EVindex == 1) eventVariableIndex = 0;
+				if (EVindex == 2) eventVariableIndex = 1;
+				if (EVindex == 3) eventVariableIndex = 255;
+				for (EVvalue = 1; EVvalue < 4; EVvalue++) {
+					if (EVvalue == 1) eventVariableValue = 0;
+					if (EVvalue == 2) eventVariableValue = 1;
+					if (EVvalue == 3) eventVariableValue = 255;
+					testCases.push({'eventName':eventName, 'eventVariableIndex':eventVariableIndex, 'eventVariableValue':eventVariableValue});
+				}
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("EVLRN test eventName ${value.eventName} eventVariableIndex ${value.eventVariableIndex} eventVariableValue ${value.eventVariableValue}", GetTestCase_EVLRN(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN EVLRN test ' + JSON.stringify(value)});
+		expected = ":SB780ND2" + value.eventName + decToHex(value.eventVariableIndex, 2) + decToHex(value.eventVariableValue, 2) + ";";
+        var encode = cbusMsg.encodeEVLRN(value.eventName, value.eventVariableIndex, value.eventVariableValue);
+        var decode = cbusMsg.decodeEVLRN(encode);
+		winston.info({message: 'cbusMessage test: EVLRN encode ' + encode});
+		winston.info({message: 'cbusMessage test: EVLRN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.eventName = value.eventName);
+        expect(decode.eventVariableIndex = value.eventVariableIndex);
+        expect(decode.eventVariableValue = value.eventVariableValue);
+	})
+
+
 
 })

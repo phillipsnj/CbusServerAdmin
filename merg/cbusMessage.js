@@ -46,7 +46,8 @@ class cbusMessage {
 
     static decodeERR (message) {
         // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
-        return {'data1': parseInt(message.substr(9, 2), 16),
+        return {'mnemonic': 'ERR',
+                'data1': parseInt(message.substr(9, 2), 16),
                 'data2': parseInt(message.substr(11, 2), 16),
                 'data3': parseInt(message.substr(13, 2), 16),
         }
@@ -118,11 +119,6 @@ class cbusMessage {
 
     static header() {
         return ':SB780N'
-    }
-
-    static encodeEVLRN(eventName, eventVariableIndex, veventVariableValue) {
-		// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-        return cbusMessage.header + 'D2' + eventName + decToHex(eventVariableIndex, 2) + decToHex(veventVariableValue, 2) + ';'
     }
 
     static encodeEVULN(eventName) {
@@ -365,96 +361,13 @@ class cbusMessage {
 
 
 
-    // ACOF
-    //
-    exports.decodeACOF = function(message) {
-		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
-		return {'nodeId': parseInt(message.substr(9, 4), 16), 
-                'eventNumber': parseInt(message.substr(13, 4), 16),
-        }
-    }
-    exports.encodeACOF = function(nodeId, eventNumber) {
-		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
-        return header() + '91' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
-    }
-
-
-    // ACON
-    //
-    exports.decodeACON = function(message) {
-		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
-		return {'nodeId': parseInt(message.substr(9, 4), 16), 
-                'eventNumber': parseInt(message.substr(13, 4), 16),
-        }
-    }
-    exports.encodeACON = function(nodeId, eventNumber) {
-		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
-        return header() + '90' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
-    }
-
-
-    // ASOF
-    //
-    exports.decodeASOF = function(message) {
-		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
-		return {'nodeId': parseInt(message.substr(9, 4), 16), 
-                'eventNumber': parseInt(message.substr(13, 4), 16),
-        }
-    }
-    exports.encodeASOF = function(nodeId, deviceNumber) {
-		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
-        return header() + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
-    }
-
-
-    // ASON
-    //
-    exports.decodeASON = function(message) {
-		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
-		return {'nodeId': parseInt(message.substr(9, 4), 16), 
-                'eventNumber': parseInt(message.substr(13, 4), 16),
-        }
-    }
-    exports.encodeASON = function(nodeId, deviceNumber) {
-		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
-        return header() + '98' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
-    }
-
-
-    // CMDERR
-    //
-    exports.decodeCMDERR = function(message) {
-        // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-		return {'nodeId': parseInt(message.substr(9, 4), 16), 
-                'error': parseInt(message.substr(13, 2), 16),
-        }
-    }
-    exports.encodeCMDERR = function(nodeId, error) {
-        // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-        return header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
-    }
-
-
-    // DFUN
-    //
-    exports.decodeDFUN = function(message) {
-        // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
-        return {'session': parseInt(message.substr(9, 2), 16),
-                'Fn1': parseInt(message.substr(11, 2), 16),
-                'Fn2': parseInt(message.substr(13, 2), 16),
-        }
-    }
-    exports.encodeDFUN = function(session, Fn1, Fn2) {
-        // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
-        return header() + '60' + decToHex(session, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + ';';
-    }
-
-
-    // DKEEP
+    // 23 DKEEP
     //
     exports.decodeDKEEP = function(message) {
         // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
-        return {'session': parseInt(message.substr(9, 2), 16)
+        return {'mnemonic': 'DKEEP',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16)
         }
     }
     exports.encodeDKEEP = function(session) {
@@ -463,12 +376,14 @@ class cbusMessage {
     }
     
 
-    // DSPD
+    // 47 DSPD
     //
     exports.decodeDSPD = function(message) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = parseInt(message.substr(11, 2), 16)
-        return {'session': parseInt(message.substr(9, 2), 16),
+        return {'mnemonic': 'DSPD',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
                 'speed': speedDir % 128,
                 'direction': (speedDir > 127) ? 'Forward' : 'Reverse',
         }
@@ -480,11 +395,144 @@ class cbusMessage {
     }
     
 
-    // ENRSP
+    // 60 DFUN
+    //
+    exports.decodeDFUN = function(message) {
+        // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
+        return {'mnemonic': 'DFUN',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'Fn1': parseInt(message.substr(11, 2), 16),
+                'Fn2': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeDFUN = function(session, Fn1, Fn2) {
+        // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
+        return header() + '60' + decToHex(session, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + ';';
+    }
+
+
+    // 63 ERR
+    //
+    exports.decodeERR = function(message) {
+        // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
+        return {'mnemonic': 'ERR',
+                'opCode': message.substr(7, 2),
+                'data1': parseInt(message.substr(9, 2), 16),
+                'data2': parseInt(message.substr(11, 2), 16),
+                'data3': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeERR = function(data1, data2, data3) {
+        // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
+        return header() + '63' + decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
+    }
+
+    
+    // 6F CMDERR
+    //
+    exports.decodeCMDERR = function(message) {
+        // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
+		return {'mnemonic': 'CMDERR',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'error': parseInt(message.substr(13, 2), 16),
+        }
+    }
+    exports.encodeCMDERR = function(nodeId, error) {
+        // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
+        return header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
+    }
+
+
+    // 90 ACON
+    //
+    exports.decodeACON = function(message) {
+		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
+		return {'mnemonic': 'ACON',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+        }
+    }
+    exports.encodeACON = function(nodeId, eventNumber) {
+		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
+        return header() + '90' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
+    }
+
+
+    // 91 ACOF
+    //
+    exports.decodeACOF = function(message) {
+		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
+		return {'mnemonic': 'ACOF',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+        }
+    }
+    exports.encodeACOF = function(nodeId, eventNumber) {
+		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
+        return header() + '91' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
+    }
+
+
+    // 98 ASON
+    //
+    exports.decodeASON = function(message) {
+		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
+		return {'mnemonic': 'ASON',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+        }
+    }
+    exports.encodeASON = function(nodeId, deviceNumber) {
+		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
+        return header() + '98' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+    }
+
+
+    // 99 ASOF
+    //
+    exports.decodeASOF = function(message) {
+		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
+		return {'mnemonic': 'ASOF',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+        }
+    }
+    exports.encodeASOF = function(nodeId, deviceNumber) {
+		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
+        return header() + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+    }
+
+
+    // D2 EVLRN
+    //
+    exports.decodeEVLRN = function(message) {
+		// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+        return {'mnemonic': 'EVLRN',
+                'opCode': message.substr(7, 2),
+                'eventName': message.substr(9, 8),
+                'eventVariableIndex': parseInt(message.substr(17, 2), 16),
+                'eventVariableValue': parseInt(message.substr(19, 2), 16),
+        }
+    }
+    exports.encodeEVLRN = function(eventName, eventVariableIndex, eventVariableValue) {
+		// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+        return header() + 'D2' + eventName + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
+    }
+    
+
+    // F2 ENRSP
     //
     exports.decodeENRSP = function(message) {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
-        return {'nodeId': parseInt(message.substr(9, 4), 16),
+        return {'mnemonic': 'ENRSP',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16),
                 'eventName': message.substr(13, 8),
                 'eventIndex': parseInt(message.substr(21, 2), 16),
         }
@@ -495,5 +543,4 @@ class cbusMessage {
     }
 
 
-    
     
