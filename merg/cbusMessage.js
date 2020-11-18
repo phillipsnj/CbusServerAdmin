@@ -112,11 +112,6 @@ class cbusMessage {
         return ':SB780N'
     }
 
-    static encodeNERD(nodeId) {//Request All Events
-		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
-        return cbusMessage.header + '57' + decToHex(nodeId, 4) + ';'
-    }
-
     static encodeNNLRN(nodeId) {
 		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
 		if (nodeId >= 0 && nodeId <= 0xFFFF) {
@@ -214,6 +209,21 @@ class cbusMessage {
         return header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
     }
     
+
+    // 57 NERD
+    //
+    exports.decodeNERD = function(nodeId) {
+		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
+        return {'mnemonic': 'DSPD',
+                'opCode': message.substr(7, 2),
+                'nodeId': parseInt(message.substr(9, 4), 16),
+        }
+    }
+    exports.encodeNERD = function(nodeId) {
+		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
+        return header() + '57' + decToHex(nodeId, 4) + ';'
+    }
+
 
     // 60 DFUN
     //

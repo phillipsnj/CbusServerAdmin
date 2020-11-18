@@ -347,6 +347,29 @@ describe('cbusMessage tests', function(){
 	})
 
 
+	function GetTestCase_NERD () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeId = 0;
+			if (NN == 2) nodeId = 1;
+			if (NN == 3) nodeId = 65535;
+			testCases.push({'nodeId':nodeId});
+		}
+		return testCases;
+	}
+
+	itParam("NERD test nodeId ${value.nodeId}", GetTestCase_NERD(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN NERD test ' + JSON.stringify(value)});
+		expected = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
+        var encode = cbusMsg.encodeNERD(value.nodeId);
+        var decode = cbusMsg.decodeNERD(encode);
+		winston.info({message: 'cbusMessage test: NERD encode ' + encode});
+		winston.info({message: 'cbusMessage test: NERD decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected);
+        expect(decode.nodeId = value.nodeId);
+	})
+
+
 
 
 
