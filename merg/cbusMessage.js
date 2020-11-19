@@ -19,6 +19,56 @@
     //
     
 
+    exports.decode = function(message) {
+        var opCode = message.substr(7, 2);
+        switch (opCode) {
+        case '10':
+            return exports.decodeRQNP(message);
+            break;
+        case '21':
+            return exports.decodeKLOC(message);
+            break;
+        case '22':
+            return exports.decodeQLOC(message);
+            break;
+        case '23':
+            return exports.decodeDKEEP(message);
+            break;
+        case '27':
+            return exports.decodeDSPD(message);
+            break;
+        case '42':
+            return exports.decodeSNN(message);
+            break;
+        case '53':
+            return exports.decodeNNLRN(message);
+            break;
+        case '54':
+            return exports.decodeNNULN(message);
+            break;
+        case '57':
+            return exports.decodeNERD(message);
+            break;
+        case '58':
+            return exports.decodeRQEVN(message);
+            break;
+        case '60':
+            return exports.decodeDFUN(message);
+            break;
+        case '6F':
+            return exports.decodeCMDERR(message);
+            break;
+
+
+
+
+        default:
+            return {'mnemonic': 'UNSUPPORTED', 'opCode': message.substr(7, 2)}
+            break;
+        }
+    }
+
+
 
     // 10 RQNP
     //
@@ -92,7 +142,7 @@
     }
     exports.encodeDSPD = function(session, speed, direction) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
-        var speedDir = speed + (direction == 'Reverse') ? 0 : 128
+        var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
         return header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
     }
     
