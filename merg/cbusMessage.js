@@ -58,6 +58,60 @@
         case '6F':
             return exports.decodeCMDERR(message);
             break;
+        case '71':
+            return exports.decodeNVRD(message);
+            break;
+        case '72':
+            return exports.decodeNENRD(message);
+            break;
+        case '73':
+            return exports.decodeRQNPN(message);
+            break;
+        case '74':
+            return exports.decodeNUMEV(message);
+            break;
+        case '90':
+            return exports.decodeACON(message);
+            break;
+        case '91':
+            return exports.decodeACOF(message);
+            break;
+        case '95':
+            return exports.decodeEVULN(message);
+            break;
+        case '96':
+            return exports.decodeNVSET(message);
+            break;
+        case '97':
+            return exports.decodeNVANS(message);
+            break;
+        case '98':
+            return exports.decodeASON(message);
+            break;
+        case '99':
+            return exports.decodeASOF(message);
+            break;
+        case '9B':
+            return exports.decodePARAN(message);
+            break;
+        case '9C':
+            return exports.decodeREVAL(message);
+            break;
+        case 'B5':
+            return exports.decodeNEVAL(message);
+            break;
+        case 'B6':
+            return exports.decodePNN(message);
+            break;
+        case 'D2':
+            return exports.decodeEVLRN(message);
+            break;
+        case 'E1':
+            return exports.decodePLOC(message);
+            break;
+        case 'F2':
+            return exports.decodeENRSP(message);
+            break;
 
 
 
