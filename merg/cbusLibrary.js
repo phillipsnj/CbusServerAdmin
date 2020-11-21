@@ -354,12 +354,12 @@ class cbusLibrary {
 		return {'mnemonic': 'CMDERR',
                 'opCode': message.substr(7, 2),
                 'nodeId': parseInt(message.substr(9, 4), 16), 
-                'error': parseInt(message.substr(13, 2), 16),
+                'errorNumber': parseInt(message.substr(13, 2), 16),
         }
     }
-    encodeCMDERR = function(nodeId, error) {
+    encodeCMDERR = function(nodeId, errorNumber) {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-        return this.header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
+        return this.header() + '6F' + decToHex(nodeId, 4) + decToHex(errorNumber, 2) + ';';
     }
 
 

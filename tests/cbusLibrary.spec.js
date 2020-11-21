@@ -386,25 +386,25 @@ describe('cbusMessage tests', function(){
 			if (NN == 2) nodeId = 1;
 			if (NN == 3) nodeId = 65535;
 			for (errorIndex = 1; errorIndex < 4; errorIndex++) {
-				if (errorIndex == 1) error = 0;
-				if (errorIndex == 2) error = 1;
-				if (errorIndex == 3) error = 255;
-				testCases.push({'nodeId':nodeId, 'error':error});
+				if (errorIndex == 1) errorNumber = 0;
+				if (errorIndex == 2) errorNumber = 1;
+				if (errorIndex == 3) errorNumber = 255;
+				testCases.push({'nodeId':nodeId, 'errorNumber':errorNumber});
 			}
 		}
 		return testCases;
 	}
 
-	itParam("CMDERR test nodeId ${value.nodeId} error ${value.error}", GetTestCase_CMDERR(), function (value) {
+	itParam("CMDERR test nodeId ${value.nodeId} errorNumber ${value.errorNumber}", GetTestCase_CMDERR(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN CMDERR test ' + JSON.stringify(value)});
-		expected = ":SB780N6F" + decToHex(value.nodeId, 4) + decToHex(value.error, 2) + ";";
-        var encode = cbusLib.encodeCMDERR(value.nodeId, value.error);
+		expected = ":SB780N6F" + decToHex(value.nodeId, 4) + decToHex(value.errorNumber, 2) + ";";
+        var encode = cbusLib.encodeCMDERR(value.nodeId, value.errorNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: CMDERR encode ' + encode});
 		winston.info({message: 'cbusMessage test: CMDERR decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
-        expect(decode.error).to.equal(value.error, 'error');
+        expect(decode.errorNumber).to.equal(value.errorNumber, 'errorNumber');
 		expect(decode.mnemonic).to.equal('CMDERR', 'mnemonic');
 		expect(decode.opCode).to.equal('6F', 'opCode');
 	})
