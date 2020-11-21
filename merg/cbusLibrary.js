@@ -87,6 +87,9 @@ class cbusLibrary {
         case '60':
             return this.decodeDFUN(message);
             break;
+        case '63':
+            return this.decodeERR(message);
+            break;
         case '6F':
             return this.decodeCMDERR(message);
             break;
@@ -330,16 +333,17 @@ class cbusLibrary {
     //
     decodeERR = function(message) {
         // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
+        // data 3 is currently assigned to error number
         return {'mnemonic': 'ERR',
                 'opCode': message.substr(7, 2),
                 'data1': parseInt(message.substr(9, 2), 16),
                 'data2': parseInt(message.substr(11, 2), 16),
-                'data3': parseInt(message.substr(13, 2), 16),
+                'errorNumber': parseInt(message.substr(13, 2), 16),
         }
     }
-    encodeERR = function(data1, data2, data3) {
+    encodeERR = function(data1, data2, errorNumber) {
         // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
-        return this.header() + '63' + decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
+        return this.header() + '63' + decToHex(data1, 2) + decToHex(data2, 2) + decToHex(errorNumber, 2) + ';';
     }
 
     

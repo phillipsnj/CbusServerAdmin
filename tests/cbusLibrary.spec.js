@@ -336,6 +336,47 @@ describe('cbusMessage tests', function(){
 	})
 
 
+
+
+    // 63 ERR
+    //
+	function GetTestCase_ERR () {
+		var testCases = [];
+		for (D1 = 1; D1 < 4; D1++) {
+			if (D1 == 1) data1 = 0;
+			if (D1 == 2) data1 = 1;
+			if (D1 == 3) data1 = 255;
+            for (D2 = 1; D2 < 4; D2++) {
+                if (D2 == 1) data2 = 0;
+                if (D2 == 2) data2 = 1;
+                if (D2 == 3) data2 = 255;
+                for (errorIndex = 1; errorIndex < 4; errorIndex++) {
+                    if (errorIndex == 1) errorNumber = 0;
+                    if (errorIndex == 2) errorNumber = 1;
+                    if (errorIndex == 3) errorNumber = 255;
+                    testCases.push({'data1':data1, 'data2':data2, 'errorNumber':errorNumber});
+                }
+            }
+		}
+		return testCases;
+	}
+
+	itParam("ERR test data1 ${value.data1} data2 ${value.data2} errorNumber ${value.errorNumber}", GetTestCase_ERR(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN ERR test ' + JSON.stringify(value)});
+		expected = ":SB780N63" + decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.errorNumber, 2) + ";";
+        var encode = cbusLib.encodeERR(value.data1, value.data2, value.errorNumber);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ERR encode ' + encode});
+		winston.info({message: 'cbusMessage test: ERR decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.data1).to.equal(value.data1, 'data1');
+        expect(decode.data2).to.equal(value.data2, 'data2');
+        expect(decode.errorNumber).to.equal(value.errorNumber, 'errorNumber');
+		expect(decode.mnemonic).to.equal('ERR', 'mnemonic');
+		expect(decode.opCode).to.equal('63', 'opCode');
+	})
+
+
     // 6F CMDERR
     //
 	function GetTestCase_CMDERR () {
