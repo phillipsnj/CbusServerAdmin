@@ -1,14 +1,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // cbusLibrary
-// encode & decoding functions
+// Includes encode & decoding functions
+//
+//		expects the 'raw' CBUS message in the 'Grid connect' CAN over serial message syntax
+//
+//     : <S | X> <IDENTIFIER> <N> <DATA-0> <DATA-1> … <DATA-7> ;
+//
+//          Each byte occupies two character positions, starting at position 0
+//          For CBUS, an 11 bit CAN identifier is used, and occupies character positions 2 to 5
+//          The actual CBUS data starts at character position 7
+//          The CBUS opCode is always character positions 7 & 8
+//          Any further CBUS data (dependant on opCode) starts at character position 9
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 'use strict';
 
-    function decToHex(num, len) {
-        return parseInt(num).toString(16).toUpperCase().padStart(len, '0');
-    }
+    function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
     const header = function() {
         return ':SB780N'
