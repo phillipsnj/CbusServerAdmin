@@ -2,7 +2,8 @@ const expect = require('chai').expect;
 var itParam = require('mocha-param');
 var winston = require('./config/winston_test.js');
 
-const cbusMsg = require('./../merg/cbusMessage.js')
+//const cbusMessage = require('./../merg/cbusMessage.js')
+const cbusMsg = require('./../merg/cbusLibrary.js')
 
 function decToHex(num, len) {
     let output = Number(num).toString(16).toUpperCase()
@@ -12,6 +13,8 @@ function decToHex(num, len) {
 
 describe('cbusMessage tests', function(){
 
+//        let cbusMsg = new cbusMessage.cbusMessage(':SB780N10;');
+
 
 
 	before(function(done) {
@@ -20,7 +23,7 @@ describe('cbusMessage tests', function(){
 		winston.info({message: '------------------------ cbusMessage tests -------------------------'});
 		winston.info({message: '======================================================================'});
 		winston.info({message: ' '});
-
+        
 		done();
 	});
 
@@ -29,6 +32,7 @@ describe('cbusMessage tests', function(){
 	});																										
 	
 	
+
     // 10 RQNP
     //
 	it("RQNP test", function () {
@@ -1019,3 +1023,4 @@ describe('cbusMessage tests', function(){
 
 
 })
+
