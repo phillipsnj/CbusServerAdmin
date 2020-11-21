@@ -13,11 +13,8 @@
         return ':SB780N'
     }
 
-class cbusMessage {
-    constructor(message) {
-        if (message != undefined) {
-            this.message = message.toString();
-        }
+class cbusLibrary {
+    constructor() {
     }
     
     //
@@ -640,7 +637,7 @@ class cbusMessage {
 
 }
 
-module.exports = new cbusMessage();
+module.exports = new cbusLibrary();
 
 
 /* module.exports = {
