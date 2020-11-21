@@ -13,108 +13,113 @@
         return ':SB780N'
     }
 
+class cbusMessage {
+    constructor(message) {
+        if (message != undefined) {
+            this.message = message.toString();
+        }
+    }
+    
     //
     // Functions strictly arranged by numerical opcode to ensure that it's easy to spot if a function already exists
     //
     //
     
 
-    exports.decode = function(message) {
+    decode = function(message) {
+        if (message == undefined) message = this.message;
         var opCode = message.substr(7, 2);
         switch (opCode) {
         case '10':
-            return exports.decodeRQNP(message);
+            return this.decodeRQNP(message);
             break;
         case '21':
-            return exports.decodeKLOC(message);
+            return this.decodeKLOC(message);
             break;
         case '22':
-            return exports.decodeQLOC(message);
+            return this.decodeQLOC(message);
             break;
         case '23':
-            return exports.decodeDKEEP(message);
+            return this.decodeDKEEP(message);
             break;
         case '27':
-            return exports.decodeDSPD(message);
+            return this.decodeDSPD(message);
             break;
         case '42':
-            return exports.decodeSNN(message);
+            return this.decodeSNN(message);
             break;
         case '53':
-            return exports.decodeNNLRN(message);
+            return this.decodeNNLRN(message);
             break;
         case '54':
-            return exports.decodeNNULN(message);
+            return this.decodeNNULN(message);
             break;
         case '57':
-            return exports.decodeNERD(message);
+            return this.decodeNERD(message);
             break;
         case '58':
-            return exports.decodeRQEVN(message);
+            return this.decodeRQEVN(message);
             break;
         case '60':
-            return exports.decodeDFUN(message);
+            return this.decodeDFUN(message);
             break;
         case '6F':
-            return exports.decodeCMDERR(message);
+            return this.decodeCMDERR(message);
             break;
         case '71':
-            return exports.decodeNVRD(message);
+            return this.decodeNVRD(message);
             break;
         case '72':
-            return exports.decodeNENRD(message);
+            return this.decodeNENRD(message);
             break;
         case '73':
-            return exports.decodeRQNPN(message);
+            return this.decodeRQNPN(message);
             break;
         case '74':
-            return exports.decodeNUMEV(message);
+            return this.decodeNUMEV(message);
             break;
         case '90':
-            return exports.decodeACON(message);
+            return this.decodeACON(message);
             break;
         case '91':
-            return exports.decodeACOF(message);
+            return this.decodeACOF(message);
             break;
         case '95':
-            return exports.decodeEVULN(message);
+            return this.decodeEVULN(message);
             break;
         case '96':
-            return exports.decodeNVSET(message);
+            return this.decodeNVSET(message);
             break;
         case '97':
-            return exports.decodeNVANS(message);
+            return this.decodeNVANS(message);
             break;
         case '98':
-            return exports.decodeASON(message);
+            return this.decodeASON(message);
             break;
         case '99':
-            return exports.decodeASOF(message);
+            return this.decodeASOF(message);
             break;
         case '9B':
-            return exports.decodePARAN(message);
+            return this.decodePARAN(message);
             break;
         case '9C':
-            return exports.decodeREVAL(message);
+            return this.decodeREVAL(message);
             break;
         case 'B5':
-            return exports.decodeNEVAL(message);
+            return this.decodeNEVAL(message);
             break;
         case 'B6':
-            return exports.decodePNN(message);
+            return this.decodePNN(message);
             break;
         case 'D2':
-            return exports.decodeEVLRN(message);
+            return this.decodeEVLRN(message);
             break;
         case 'E1':
-            return exports.decodePLOC(message);
+            return this.decodePLOC(message);
             break;
         case 'F2':
-            return exports.decodeENRSP(message);
+            return this.decodeENRSP(message);
             break;
-
-
-
 
         default:
             return {'mnemonic': 'UNSUPPORTED', 'opCode': message.substr(7, 2)}
@@ -126,12 +131,12 @@
 
     // 10 RQNP
     //
-    exports.decodeRQNP = function(message) {
+    decodeRQNP = function(message) {
         return {'mnemonic': 'RQNP',
                 'opCode': message.substr(7, 2),
         }
     }
-    exports.encodeRQNP = function() {//Request Node Parameters
+    encodeRQNP = function() {//Request Node Parameters
 		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
         return header() + '10' + ';'
     }
@@ -139,14 +144,14 @@
 
     // 21 KLOC
     //
-    exports.decodeKLOC = function(message) {
+    decodeKLOC = function(message) {
         // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
         return {'mnemonic': 'KLOC',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16)
         }
     }
-    exports.encodeKLOC = function(session) {
+    encodeKLOC = function(session) {
         // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
         return header() + '21' + decToHex(session, 2) + ';';
     }
@@ -154,14 +159,14 @@
 
     // 22 QLOC
     //
-    exports.decodeQLOC = function(message) {
+    decodeQLOC = function(message) {
 		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
         return {'mnemonic': 'QLOC',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16)
         }
     }
-    exports.encodeQLOC = function(session) {
+    encodeQLOC = function(session) {
 		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
         return header() + '22' + decToHex(session, 2) + ';';
     }
@@ -169,14 +174,14 @@
 
     // 23 DKEEP
     //
-    exports.decodeDKEEP = function(message) {
+    decodeDKEEP = function(message) {
         // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
         return {'mnemonic': 'DKEEP',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16)
         }
     }
-    exports.encodeDKEEP = function(session) {
+    encodeDKEEP = function(session) {
         // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
         return header() + '23' + decToHex(session, 2) + ';';
     }
@@ -184,7 +189,7 @@
 
     // 27 DSPD
     //
-    exports.decodeDSPD = function(message) {
+    decodeDSPD = function(message) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = parseInt(message.substr(11, 2), 16)
         return {'mnemonic': 'DSPD',
@@ -194,7 +199,7 @@
                 'direction': (speedDir > 127) ? 'Forward' : 'Reverse',
         }
     }
-    exports.encodeDSPD = function(session, speed, direction) {
+    encodeDSPD = function(session, speed, direction) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
         return header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
@@ -203,14 +208,14 @@
 
     // 42 SNN
     //
-    exports.decodeSNN = function(message) {
+    decodeSNN = function(message) {
 		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
         return {'mnemonic': 'SNN',
                 'opCode': message.substr(7, 2),
                 'nodeId': parseInt(message.substr(9, 4), 16)
         }
     }
-    exports.encodeSNN = function(nodeId) {
+    encodeSNN = function(nodeId) {
 		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
         if (nodeId >= 0 && nodeId <= 0xFFFF) {
             return header() + '42' + decToHex(nodeId, 4) + ';'
@@ -220,14 +225,14 @@
 
     // 53 NNLRN
     //
-    exports.decodeNNLRN = function(message) {
+    decodeNNLRN = function(message) {
 		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
         return {'mnemonic': 'NNLRN',
                 'opCode': message.substr(7, 2),
                 'nodeId': parseInt(message.substr(9, 4), 16),
         }
     }
-    exports.encodeNNLRN = function(nodeId) {
+    encodeNNLRN = function(nodeId) {
 		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
 		if (nodeId >= 0 && nodeId <= 0xFFFF) {
 			return header() + '53' + decToHex(nodeId, 4) + ';'
@@ -237,14 +242,14 @@
 
     // 54 NNULN
     //
-    exports.decodeNNULN = function(message) {
+    decodeNNULN = function(message) {
 		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
         return {'mnemonic': 'NNULN',
                 'opCode': message.substr(7, 2),
                 'nodeId': parseInt(message.substr(9, 4), 16),
         }
     }
-    exports.encodeNNULN = function(nodeId) {
+    encodeNNULN = function(nodeId) {
 		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
         return header() + '54' + decToHex(nodeId, 4) + ';'
     }
@@ -252,14 +257,14 @@
 
     // 57 NERD
     //
-    exports.decodeNERD = function(message) {
+    decodeNERD = function(message) {
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
         return {'mnemonic': 'NERD',
                 'opCode': message.substr(7, 2),
                 'nodeId': parseInt(message.substr(9, 4), 16),
         }
     }
-    exports.encodeNERD = function(nodeId) {
+    encodeNERD = function(nodeId) {
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
         return header() + '57' + decToHex(nodeId, 4) + ';'
     }
@@ -267,14 +272,14 @@
 
     // 58 RQEVN
     //
-    exports.decodeRQEVN = function(message) {
+    decodeRQEVN = function(message) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
         return {'mnemonic': 'RQEVN',
                 'opCode': message.substr(7, 2),
                 'nodeId': parseInt(message.substr(9, 4), 16),
         }
     }
-    exports.encodeRQEVN = function(nodeId) {
+    encodeRQEVN = function(nodeId) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
         return header() + '58' + decToHex(nodeId, 4) + ';'
     }
@@ -282,7 +287,7 @@
 
     // 60 DFUN
     //
-    exports.decodeDFUN = function(message) {
+    decodeDFUN = function(message) {
         // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
         return {'mnemonic': 'DFUN',
                 'opCode': message.substr(7, 2),
@@ -291,7 +296,7 @@
                 'Fn2': parseInt(message.substr(13, 2), 16),
         }
     }
-    exports.encodeDFUN = function(session, Fn1, Fn2) {
+    encodeDFUN = function(session, Fn1, Fn2) {
         // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
         return header() + '60' + decToHex(session, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + ';';
     }
@@ -299,7 +304,7 @@
 
     // 63 ERR
     //
-    exports.decodeERR = function(message) {
+    decodeERR = function(message) {
         // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
         return {'mnemonic': 'ERR',
                 'opCode': message.substr(7, 2),
@@ -308,7 +313,7 @@
                 'data3': parseInt(message.substr(13, 2), 16),
         }
     }
-    exports.encodeERR = function(data1, data2, data3) {
+    encodeERR = function(data1, data2, data3) {
         // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
         return header() + '63' + decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
     }
@@ -316,7 +321,7 @@
     
     // 6F CMDERR
     //
-    exports.decodeCMDERR = function(message) {
+    decodeCMDERR = function(message) {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
 		return {'mnemonic': 'CMDERR',
                 'opCode': message.substr(7, 2),
@@ -324,7 +329,7 @@
                 'error': parseInt(message.substr(13, 2), 16),
         }
     }
-    exports.encodeCMDERR = function(nodeId, error) {
+    encodeCMDERR = function(nodeId, error) {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
         return header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
     }
@@ -332,7 +337,7 @@
 
     // 71 NVRD
     //
-    exports.decodeNVRD = function(message) {
+    decodeNVRD = function(message) {
 		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
 		return {'mnemonic': 'NVRD',
                 'opCode': message.substr(7, 2),
@@ -340,7 +345,7 @@
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
         }
     }
-    exports.encodeNVRD = function(nodeId, nodeVariableIndex) {
+    encodeNVRD = function(nodeId, nodeVariableIndex) {
 		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
         return header() + '71' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + ';'
     }
@@ -348,7 +353,7 @@
 
     // 72 NENRD
     //
-    exports.decodeNENRD = function(message) {
+    decodeNENRD = function(message) {
 		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
 		return {'mnemonic': 'NENRD',
                 'opCode': message.substr(7, 2),
@@ -356,7 +361,7 @@
                 'eventIndex': parseInt(message.substr(13, 2), 16),
         }
     }
-    exports.encodeNENRD = function(nodeId, eventIndex) {
+    encodeNENRD = function(nodeId, eventIndex) {
 		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
         return header() + '72' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + ';'
     }
@@ -364,7 +369,7 @@
 
     // 73 RQNPN
     //
-    exports.decodeRQNPN = function(message) {
+    decodeRQNPN = function(message) {
         // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
 		return {'mnemonic': 'RQNPN',
                 'opCode': message.substr(7, 2),
@@ -372,7 +377,7 @@
                 'ParameterIndex': parseInt(message.substr(13, 2), 16),
         }
     }
-    exports.encodeRQNPN = function(nodeId, ParameterIndex) {
+    encodeRQNPN = function(nodeId, ParameterIndex) {
         // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
         return header() + '73' + decToHex(nodeId, 4) + decToHex(ParameterIndex, 2) + ';'
     }
@@ -380,7 +385,7 @@
 
     // 74 NUMEV
     //
-    exports.decodeNUMEV = function(message) {
+    decodeNUMEV = function(message) {
         // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
         return {'mnemonic': 'NUMEV',
                 'opCode': message.substr(7, 2),
@@ -388,7 +393,7 @@
                 'eventCount': parseInt(message.substr(13, 2), 16),
         }
     }
-    exports.encodeNUMEV = function(nodeId, eventCount) {
+    encodeNUMEV = function(nodeId, eventCount) {
         // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
         return header() + '74' + decToHex(nodeId, 4) + decToHex(eventCount, 2) + ';'
     }
@@ -396,7 +401,7 @@
 
     // 90 ACON
     //
-    exports.decodeACON = function(message) {
+    decodeACON = function(message) {
 		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		return {'mnemonic': 'ACON',
                 'opCode': message.substr(7, 2),
@@ -404,7 +409,7 @@
                 'eventNumber': parseInt(message.substr(13, 4), 16),
         }
     }
-    exports.encodeACON = function(nodeId, eventNumber) {
+    encodeACON = function(nodeId, eventNumber) {
 		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
         return header() + '90' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
     }
@@ -412,7 +417,7 @@
 
     // 91 ACOF
     //
-    exports.decodeACOF = function(message) {
+    decodeACOF = function(message) {
 		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
 		return {'mnemonic': 'ACOF',
                 'opCode': message.substr(7, 2),
@@ -420,7 +425,7 @@
                 'eventNumber': parseInt(message.substr(13, 4), 16),
         }
     }
-    exports.encodeACOF = function(nodeId, eventNumber) {
+    encodeACOF = function(nodeId, eventNumber) {
 		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
         return header() + '91' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
     }
@@ -428,14 +433,14 @@
 
     // 95 EVULN
     //
-    exports.decodeEVULN = function(message) {
+    decodeEVULN = function(message) {
 		// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
         return {'mnemonic': 'EVULN',
                 'opCode': message.substr(7, 2),
                 'eventName': message.substr(9, 8),
         }
     }
-    exports.encodeEVULN = function(eventName) {
+    encodeEVULN = function(eventName) {
 		// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
         return header() + '95' + eventName + ';'
     }
@@ -443,7 +448,7 @@
 
     // 96 NVSET
     //
-    exports.decodeNVSET = function(message) {
+    decodeNVSET = function(message) {
 		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
         return {'mnemonic': 'NVSET',
                 'opCode': message.substr(7, 2),
@@ -452,7 +457,7 @@
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16), 
         }
     }
-    exports.encodeNVSET = function(nodeId, nodeVariableIndex, nodeVariableValue) {
+    encodeNVSET = function(nodeId, nodeVariableIndex, nodeVariableValue) {
 		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
         return header() + '96' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
     }
@@ -460,7 +465,7 @@
 
     // 97 NVANS
     //
-    exports.decodeNVANS = function(message) {
+    decodeNVANS = function(message) {
         // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
         return {'mnemonic': 'NVANS',
                 'opCode': message.substr(7, 2),
@@ -469,7 +474,7 @@
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16),
         }
     }
-    exports.encodeNVANS = function(nodeId, nodeVariableIndex, nodeVariableValue) {
+    encodeNVANS = function(nodeId, nodeVariableIndex, nodeVariableValue) {
         // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
         return header() + '97' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
     }
@@ -477,7 +482,7 @@
 
     // 98 ASON
     //
-    exports.decodeASON = function(message) {
+    decodeASON = function(message) {
 		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
 		return {'mnemonic': 'ASON',
                 'opCode': message.substr(7, 2),
@@ -485,7 +490,7 @@
                 'eventNumber': parseInt(message.substr(13, 4), 16),
         }
     }
-    exports.encodeASON = function(nodeId, deviceNumber) {
+    encodeASON = function(nodeId, deviceNumber) {
 		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
         return header() + '98' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
     }
@@ -493,7 +498,7 @@
 
     // 99 ASOF
     //
-    exports.decodeASOF = function(message) {
+    decodeASOF = function(message) {
 		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
 		return {'mnemonic': 'ASOF',
                 'opCode': message.substr(7, 2),
@@ -501,7 +506,7 @@
                 'eventNumber': parseInt(message.substr(13, 4), 16),
         }
     }
-    exports.encodeASOF = function(nodeId, deviceNumber) {
+    encodeASOF = function(nodeId, deviceNumber) {
 		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
         return header() + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
     }
@@ -509,7 +514,7 @@
 
     // 9B PARAN
     //
-    exports.decodePARAN = function(message) {
+    decodePARAN = function(message) {
         // PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
         return {'mnemonic': 'PARAN',
                 'opCode': message.substr(7, 2),
@@ -518,7 +523,7 @@
                 'parameterValue': parseInt(message.substr(15, 2), 16),
         }
     }
-    exports.encodePARAN = function(nodeId, parameterIndex, parameterValue) {
+    encodePARAN = function(nodeId, parameterIndex, parameterValue) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
         return header() + '9B' + decToHex(nodeId, 4) + decToHex(parameterIndex, 2) + decToHex(parameterValue, 2) + ';'
     }
@@ -526,7 +531,7 @@
 
     // 9C REVAL
     //
-    exports.decodeREVAL = function(message) {
+    decodeREVAL = function(message) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
         return {'mnemonic': 'REVAL',
                 'opCode': message.substr(7, 2),
@@ -535,7 +540,7 @@
                 'eventVariableIndex': parseInt(message.substr(15, 2), 16), 
         }
     }
-    exports.encodeREVAL = function(nodeId, eventIndex, eventVariableIndex) {
+    encodeREVAL = function(nodeId, eventIndex, eventVariableIndex) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
         return header() + '9C' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
     }
@@ -543,7 +548,7 @@
 
     // B5 NEVAL
     //
-    exports.decodeNEVAL = function(message) {
+    decodeNEVAL = function(message) {
         // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
         return {'mnemonic': 'NEVAL',
                 'opCode': message.substr(7, 2),
@@ -553,7 +558,7 @@
                 'eventVariableValue': parseInt(message.substr(17, 2), 16),
         }
     }
-    exports.encodeNEVAL = function(nodeId, eventIndex, eventVariableIndex, eventVariableValue) {
+    encodeNEVAL = function(nodeId, eventIndex, eventVariableIndex, eventVariableValue) {
         // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
         return header() + 'B5' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
     }
@@ -561,7 +566,7 @@
 
     // B6 PNN
     //
-    exports.decodePNN = function(message) {
+    decodePNN = function(message) {
         // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
         return {'mnemonic': 'PNN',
                 'opCode': message.substr(7, 2),
@@ -571,7 +576,7 @@
                 'flags': parseInt(message.substr(17, 2), 16),
         }
     }
-    exports.encodePNN = function(nodeId, manufacturerId, moduleId, flags) {
+    encodePNN = function(nodeId, manufacturerId, moduleId, flags) {
         // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
         return header() + 'B6' + decToHex(nodeId, 4) + decToHex(manufacturerId, 2) + decToHex(moduleId, 2) + decToHex(flags, 2) + ';'
     }
@@ -579,7 +584,7 @@
 
     // D2 EVLRN
     //
-    exports.decodeEVLRN = function(message) {
+    decodeEVLRN = function(message) {
 		// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
         return {'mnemonic': 'EVLRN',
                 'opCode': message.substr(7, 2),
@@ -588,7 +593,7 @@
                 'eventVariableValue': parseInt(message.substr(19, 2), 16),
         }
     }
-    exports.encodeEVLRN = function(eventName, eventVariableIndex, eventVariableValue) {
+    encodeEVLRN = function(eventName, eventVariableIndex, eventVariableValue) {
 		// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
         return header() + 'D2' + eventName + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
     }
@@ -596,7 +601,7 @@
 
     // E1 PLOC
     //
-    exports.decodePLOC = function(message) {
+    decodePLOC = function(message) {
         // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
         var speedDir = parseInt(message.substr(15, 2), 16)
         return {'mnemonic': 'PLOC',
@@ -610,7 +615,7 @@
                 'Fn3': parseInt(message.substr(21, 2), 16),
         }
     }
-    exports.encodePLOC = function(session, address, speed, direction, Fn1, Fn2, Fn3) {
+    encodePLOC = function(session, address, speed, direction, Fn1, Fn2, Fn3) {
         // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
         var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
         return header() + 'E1' + decToHex(session, 2) + decToHex(address, 4) + decToHex(speedDir, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + decToHex(Fn3, 2) + ';';
@@ -619,7 +624,7 @@
 
     // F2 ENRSP
     //
-    exports.decodeENRSP = function(message) {
+    decodeENRSP = function(message) {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
         return {'mnemonic': 'ENRSP',
                 'opCode': message.substr(7, 2),
@@ -628,10 +633,18 @@
                 'eventIndex': parseInt(message.substr(21, 2), 16),
         }
     }
-    exports.encodeENRSP = function(nodeId, eventName, eventIndex) {
+    encodeENRSP = function(nodeId, eventName, eventIndex) {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
         return header() + 'F2' + decToHex(nodeId, 4) + eventName + decToHex(eventIndex, 2) + ';';
     }
 
+}
 
-    
+module.exports = new cbusMessage();
+
+
+/* module.exports = {
+    cbusMessage: cbusMessage
+}
+ */
+
