@@ -16,22 +16,40 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 'use strict';
 
-    function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
-
-    const header = function() {
-        return ':SB780N'
-    }
+function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
 class cbusLibrary {
     constructor() {
+        this.canHeader = {
+                    'pr1': 3,
+                    'pr2': 2,
+                    'canId': 0,
+        }
+        this.majorPri = 2
+        this.minorPri = 3
+        this.canId = 60
     }
-    
-    //
-    // Functions strictly arranged by numerical opcode to ensure that it's easy to spot if a function already exists
-    //
-    //
-    
 
+    //
+    // header() provides the prefix to add to CBUS data to compose a transmittable message
+    //
+    header = function() {
+		var identifier = parseInt(this.majorPri << 14) + parseInt(this.minorPri << 12) + parseInt(this.canId << 5) 
+        return ':S' + decToHex(identifier, 4) + 'N'
+    }
+
+
+    //
+    //
+    // Decode / Encode Functions strictly arranged by numerical opcode to ensure that it's easy to spot if a function already exists
+    //
+    //
+
+
+    //
+    // As a full message contains the opCode, a single function can be used to decode any message
+    // and it then works out which decoding routine to call dependant on the opCode
+    //
     decode = function(message) {
         if (message == undefined) message = this.message;
         var opCode = message.substr(7, 2);
@@ -144,7 +162,7 @@ class cbusLibrary {
     }
     encodeRQNP = function() {//Request Node Parameters
 		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
-        return header() + '10' + ';'
+        return this.header() + '10' + ';'
     }
 
 
@@ -159,7 +177,7 @@ class cbusLibrary {
     }
     encodeKLOC = function(session) {
         // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
-        return header() + '21' + decToHex(session, 2) + ';';
+        return this.header() + '21' + decToHex(session, 2) + ';';
     }
     
 
@@ -174,7 +192,7 @@ class cbusLibrary {
     }
     encodeQLOC = function(session) {
 		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
-        return header() + '22' + decToHex(session, 2) + ';';
+        return this.header() + '22' + decToHex(session, 2) + ';';
     }
 
 
@@ -189,7 +207,7 @@ class cbusLibrary {
     }
     encodeDKEEP = function(session) {
         // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
-        return header() + '23' + decToHex(session, 2) + ';';
+        return this.header() + '23' + decToHex(session, 2) + ';';
     }
     
 
@@ -208,7 +226,7 @@ class cbusLibrary {
     encodeDSPD = function(session, speed, direction) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
-        return header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
+        return this.header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
     }
     
 
@@ -224,7 +242,7 @@ class cbusLibrary {
     encodeSNN = function(nodeId) {
 		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
         if (nodeId >= 0 && nodeId <= 0xFFFF) {
-            return header() + '42' + decToHex(nodeId, 4) + ';'
+            return this.header() + '42' + decToHex(nodeId, 4) + ';'
         }
     }
 
@@ -241,7 +259,7 @@ class cbusLibrary {
     encodeNNLRN = function(nodeId) {
 		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
 		if (nodeId >= 0 && nodeId <= 0xFFFF) {
-			return header() + '53' + decToHex(nodeId, 4) + ';'
+			return this.header() + '53' + decToHex(nodeId, 4) + ';'
 		}
     }
 
@@ -257,7 +275,7 @@ class cbusLibrary {
     }
     encodeNNULN = function(nodeId) {
 		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
-        return header() + '54' + decToHex(nodeId, 4) + ';'
+        return this.header() + '54' + decToHex(nodeId, 4) + ';'
     }
 
 
@@ -272,7 +290,7 @@ class cbusLibrary {
     }
     encodeNERD = function(nodeId) {
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
-        return header() + '57' + decToHex(nodeId, 4) + ';'
+        return this.header() + '57' + decToHex(nodeId, 4) + ';'
     }
 
 
@@ -287,7 +305,7 @@ class cbusLibrary {
     }
     encodeRQEVN = function(nodeId) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
-        return header() + '58' + decToHex(nodeId, 4) + ';'
+        return this.header() + '58' + decToHex(nodeId, 4) + ';'
     }
 
 
@@ -304,7 +322,7 @@ class cbusLibrary {
     }
     encodeDFUN = function(session, Fn1, Fn2) {
         // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
-        return header() + '60' + decToHex(session, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + ';';
+        return this.header() + '60' + decToHex(session, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + ';';
     }
 
 
@@ -321,7 +339,7 @@ class cbusLibrary {
     }
     encodeERR = function(data1, data2, data3) {
         // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
-        return header() + '63' + decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
+        return this.header() + '63' + decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
     }
 
     
@@ -337,7 +355,7 @@ class cbusLibrary {
     }
     encodeCMDERR = function(nodeId, error) {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-        return header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
+        return this.header() + '6F' + decToHex(nodeId, 4) + decToHex(error, 2) + ';';
     }
 
 
@@ -353,7 +371,7 @@ class cbusLibrary {
     }
     encodeNVRD = function(nodeId, nodeVariableIndex) {
 		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
-        return header() + '71' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + ';'
+        return this.header() + '71' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + ';'
     }
 
 
@@ -369,7 +387,7 @@ class cbusLibrary {
     }
     encodeNENRD = function(nodeId, eventIndex) {
 		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
-        return header() + '72' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + ';'
+        return this.header() + '72' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + ';'
     }
 
 
@@ -385,7 +403,7 @@ class cbusLibrary {
     }
     encodeRQNPN = function(nodeId, ParameterIndex) {
         // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
-        return header() + '73' + decToHex(nodeId, 4) + decToHex(ParameterIndex, 2) + ';'
+        return this.header() + '73' + decToHex(nodeId, 4) + decToHex(ParameterIndex, 2) + ';'
     }
 
 
@@ -401,7 +419,7 @@ class cbusLibrary {
     }
     encodeNUMEV = function(nodeId, eventCount) {
         // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
-        return header() + '74' + decToHex(nodeId, 4) + decToHex(eventCount, 2) + ';'
+        return this.header() + '74' + decToHex(nodeId, 4) + decToHex(eventCount, 2) + ';'
     }
     
 
@@ -417,7 +435,7 @@ class cbusLibrary {
     }
     encodeACON = function(nodeId, eventNumber) {
 		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
-        return header() + '90' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
+        return this.header() + '90' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
     }
 
 
@@ -433,7 +451,7 @@ class cbusLibrary {
     }
     encodeACOF = function(nodeId, eventNumber) {
 		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
-        return header() + '91' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
+        return this.header() + '91' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
     }
 
 
@@ -448,7 +466,7 @@ class cbusLibrary {
     }
     encodeEVULN = function(eventName) {
 		// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
-        return header() + '95' + eventName + ';'
+        return this.header() + '95' + eventName + ';'
     }
 
 
@@ -465,7 +483,7 @@ class cbusLibrary {
     }
     encodeNVSET = function(nodeId, nodeVariableIndex, nodeVariableValue) {
 		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-        return header() + '96' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
+        return this.header() + '96' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
     }
 
 
@@ -482,7 +500,7 @@ class cbusLibrary {
     }
     encodeNVANS = function(nodeId, nodeVariableIndex, nodeVariableValue) {
         // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
-        return header() + '97' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
+        return this.header() + '97' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
     }
     
 
@@ -498,7 +516,7 @@ class cbusLibrary {
     }
     encodeASON = function(nodeId, deviceNumber) {
 		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
-        return header() + '98' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+        return this.header() + '98' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
     }
 
 
@@ -514,7 +532,7 @@ class cbusLibrary {
     }
     encodeASOF = function(nodeId, deviceNumber) {
 		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
-        return header() + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+        return this.header() + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
     }
 
 
@@ -531,7 +549,7 @@ class cbusLibrary {
     }
     encodePARAN = function(nodeId, parameterIndex, parameterValue) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
-        return header() + '9B' + decToHex(nodeId, 4) + decToHex(parameterIndex, 2) + decToHex(parameterValue, 2) + ';'
+        return this.header() + '9B' + decToHex(nodeId, 4) + decToHex(parameterIndex, 2) + decToHex(parameterValue, 2) + ';'
     }
 
 
@@ -548,7 +566,7 @@ class cbusLibrary {
     }
     encodeREVAL = function(nodeId, eventIndex, eventVariableIndex) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
-        return header() + '9C' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
+        return this.header() + '9C' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
     }
 
 
@@ -566,7 +584,7 @@ class cbusLibrary {
     }
     encodeNEVAL = function(nodeId, eventIndex, eventVariableIndex, eventVariableValue) {
         // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
-        return header() + 'B5' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
+        return this.header() + 'B5' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
     }
 
 
@@ -584,7 +602,7 @@ class cbusLibrary {
     }
     encodePNN = function(nodeId, manufacturerId, moduleId, flags) {
         // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
-        return header() + 'B6' + decToHex(nodeId, 4) + decToHex(manufacturerId, 2) + decToHex(moduleId, 2) + decToHex(flags, 2) + ';'
+        return this.header() + 'B6' + decToHex(nodeId, 4) + decToHex(manufacturerId, 2) + decToHex(moduleId, 2) + decToHex(flags, 2) + ';'
     }
 
 
@@ -601,7 +619,7 @@ class cbusLibrary {
     }
     encodeEVLRN = function(eventName, eventVariableIndex, eventVariableValue) {
 		// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-        return header() + 'D2' + eventName + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
+        return this.header() + 'D2' + eventName + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
     }
     
 
@@ -624,7 +642,7 @@ class cbusLibrary {
     encodePLOC = function(session, address, speed, direction, Fn1, Fn2, Fn3) {
         // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
         var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
-        return header() + 'E1' + decToHex(session, 2) + decToHex(address, 4) + decToHex(speedDir, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + decToHex(Fn3, 2) + ';';
+        return this.header() + 'E1' + decToHex(session, 2) + decToHex(address, 4) + decToHex(speedDir, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + decToHex(Fn3, 2) + ';';
     }
     
 
@@ -641,7 +659,7 @@ class cbusLibrary {
     }
     encodeENRSP = function(nodeId, eventName, eventIndex) {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
-        return header() + 'F2' + decToHex(nodeId, 4) + eventName + decToHex(eventIndex, 2) + ';';
+        return this.header() + 'F2' + decToHex(nodeId, 4) + eventName + decToHex(eventIndex, 2) + ';';
     }
 
 }
