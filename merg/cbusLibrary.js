@@ -13,6 +13,8 @@
 //          The CBUS opCode is always character positions 7 & 8
 //          Any further CBUS data (dependant on opCode) starts at character position 9
 //
+//      All formats & naming conventions taken from CBUS specification
+//
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 'use strict';
 
@@ -244,13 +246,13 @@ class cbusLibrary {
 		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
         return {'mnemonic': 'SNN',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16)
+                'nodeNumber': parseInt(message.substr(9, 4), 16)
         }
     }
-    encodeSNN = function(nodeId) {
+    encodeSNN = function(nodeNumber) {
 		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
-        if (nodeId >= 0 && nodeId <= 0xFFFF) {
-            return this.header() + '42' + decToHex(nodeId, 4) + ';'
+        if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
+            return this.header() + '42' + decToHex(nodeNumber, 4) + ';'
         }
     }
 
@@ -261,13 +263,13 @@ class cbusLibrary {
 		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
         return {'mnemonic': 'NNLRN',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
         }
     }
-    encodeNNLRN = function(nodeId) {
+    encodeNNLRN = function(nodeNumber) {
 		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
-		if (nodeId >= 0 && nodeId <= 0xFFFF) {
-			return this.header() + '53' + decToHex(nodeId, 4) + ';'
+		if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
+			return this.header() + '53' + decToHex(nodeNumber, 4) + ';'
 		}
     }
 
@@ -278,12 +280,12 @@ class cbusLibrary {
 		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
         return {'mnemonic': 'NNULN',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
         }
     }
-    encodeNNULN = function(nodeId) {
+    encodeNNULN = function(nodeNumber) {
 		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
-        return this.header() + '54' + decToHex(nodeId, 4) + ';'
+        return this.header() + '54' + decToHex(nodeNumber, 4) + ';'
     }
 
 
@@ -293,12 +295,12 @@ class cbusLibrary {
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
         return {'mnemonic': 'NERD',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
         }
     }
-    encodeNERD = function(nodeId) {
+    encodeNERD = function(nodeNumber) {
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
-        return this.header() + '57' + decToHex(nodeId, 4) + ';'
+        return this.header() + '57' + decToHex(nodeNumber, 4) + ';'
     }
 
 
@@ -308,12 +310,12 @@ class cbusLibrary {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
         return {'mnemonic': 'RQEVN',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
         }
     }
-    encodeRQEVN = function(nodeId) {
+    encodeRQEVN = function(nodeNumber) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
-        return this.header() + '58' + decToHex(nodeId, 4) + ';'
+        return this.header() + '58' + decToHex(nodeNumber, 4) + ';'
     }
 
 
@@ -358,13 +360,13 @@ class cbusLibrary {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
 		return {'mnemonic': 'CMDERR',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'errorNumber': parseInt(message.substr(13, 2), 16),
         }
     }
-    encodeCMDERR = function(nodeId, errorNumber) {
+    encodeCMDERR = function(nodeNumber, errorNumber) {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-        return this.header() + '6F' + decToHex(nodeId, 4) + decToHex(errorNumber, 2) + ';';
+        return this.header() + '6F' + decToHex(nodeNumber, 4) + decToHex(errorNumber, 2) + ';';
     }
 
 
@@ -374,13 +376,13 @@ class cbusLibrary {
 		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
 		return {'mnemonic': 'NVRD',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
         }
     }
-    encodeNVRD = function(nodeId, nodeVariableIndex) {
+    encodeNVRD = function(nodeNumber, nodeVariableIndex) {
 		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
-        return this.header() + '71' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + ';'
+        return this.header() + '71' + decToHex(nodeNumber, 4) + decToHex(nodeVariableIndex, 2) + ';'
     }
 
 
@@ -390,13 +392,13 @@ class cbusLibrary {
 		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
 		return {'mnemonic': 'NENRD',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventIndex': parseInt(message.substr(13, 2), 16),
         }
     }
-    encodeNENRD = function(nodeId, eventIndex) {
+    encodeNENRD = function(nodeNumber, eventIndex) {
 		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
-        return this.header() + '72' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + ';'
+        return this.header() + '72' + decToHex(nodeNumber, 4) + decToHex(eventIndex, 2) + ';'
     }
 
 
@@ -406,13 +408,13 @@ class cbusLibrary {
         // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
 		return {'mnemonic': 'RQNPN',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'ParameterIndex': parseInt(message.substr(13, 2), 16),
         }
     }
-    encodeRQNPN = function(nodeId, ParameterIndex) {
+    encodeRQNPN = function(nodeNumber, ParameterIndex) {
         // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
-        return this.header() + '73' + decToHex(nodeId, 4) + decToHex(ParameterIndex, 2) + ';'
+        return this.header() + '73' + decToHex(nodeNumber, 4) + decToHex(ParameterIndex, 2) + ';'
     }
 
 
@@ -422,13 +424,13 @@ class cbusLibrary {
         // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
         return {'mnemonic': 'NUMEV',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventCount': parseInt(message.substr(13, 2), 16),
         }
     }
-    encodeNUMEV = function(nodeId, eventCount) {
+    encodeNUMEV = function(nodeNumber, eventCount) {
         // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
-        return this.header() + '74' + decToHex(nodeId, 4) + decToHex(eventCount, 2) + ';'
+        return this.header() + '74' + decToHex(nodeNumber, 4) + decToHex(eventCount, 2) + ';'
     }
     
 
@@ -438,13 +440,13 @@ class cbusLibrary {
 		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		return {'mnemonic': 'ACON',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
         }
     }
-    encodeACON = function(nodeId, eventNumber) {
+    encodeACON = function(nodeNumber, eventNumber) {
 		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
-        return this.header() + '90' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
+        return this.header() + '90' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) + ';';
     }
 
 
@@ -454,13 +456,13 @@ class cbusLibrary {
 		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
 		return {'mnemonic': 'ACOF',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
         }
     }
-    encodeACOF = function(nodeId, eventNumber) {
+    encodeACOF = function(nodeNumber, eventNumber) {
 		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
-        return this.header() + '91' + decToHex(nodeId, 4) + decToHex(eventNumber, 4) + ';';
+        return this.header() + '91' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) + ';';
     }
 
 
@@ -485,14 +487,14 @@ class cbusLibrary {
 		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
         return {'mnemonic': 'NVSET',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16), 
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16), 
         }
     }
-    encodeNVSET = function(nodeId, nodeVariableIndex, nodeVariableValue) {
+    encodeNVSET = function(nodeNumber, nodeVariableIndex, nodeVariableValue) {
 		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-        return this.header() + '96' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
+        return this.header() + '96' + decToHex(nodeNumber, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
     }
 
 
@@ -502,14 +504,14 @@ class cbusLibrary {
         // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
         return {'mnemonic': 'NVANS',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16),
         }
     }
-    encodeNVANS = function(nodeId, nodeVariableIndex, nodeVariableValue) {
+    encodeNVANS = function(nodeNumber, nodeVariableIndex, nodeVariableValue) {
         // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
-        return this.header() + '97' + decToHex(nodeId, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
+        return this.header() + '97' + decToHex(nodeNumber, 4) + decToHex(nodeVariableIndex, 2) + decToHex(nodeVariableValue, 2) + ';'
     }
     
 
@@ -519,13 +521,13 @@ class cbusLibrary {
 		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
 		return {'mnemonic': 'ASON',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
         }
     }
-    encodeASON = function(nodeId, deviceNumber) {
+    encodeASON = function(nodeNumber, deviceNumber) {
 		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
-        return this.header() + '98' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+        return this.header() + '98' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) + ';';
     }
 
 
@@ -535,13 +537,13 @@ class cbusLibrary {
 		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
 		return {'mnemonic': 'ASOF',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
         }
     }
-    encodeASOF = function(nodeId, deviceNumber) {
+    encodeASOF = function(nodeNumber, deviceNumber) {
 		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
-        return this.header() + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+        return this.header() + '99' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) + ';';
     }
 
 
@@ -551,14 +553,14 @@ class cbusLibrary {
         // PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
         return {'mnemonic': 'PARAN',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'parameterIndex': parseInt(message.substr(13, 2), 16),
                 'parameterValue': parseInt(message.substr(15, 2), 16),
         }
     }
-    encodePARAN = function(nodeId, parameterIndex, parameterValue) {
+    encodePARAN = function(nodeNumber, parameterIndex, parameterValue) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
-        return this.header() + '9B' + decToHex(nodeId, 4) + decToHex(parameterIndex, 2) + decToHex(parameterValue, 2) + ';'
+        return this.header() + '9B' + decToHex(nodeNumber, 4) + decToHex(parameterIndex, 2) + decToHex(parameterValue, 2) + ';'
     }
 
 
@@ -568,14 +570,14 @@ class cbusLibrary {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
         return {'mnemonic': 'REVAL',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16), 
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventIndex': parseInt(message.substr(13, 2), 16), 
                 'eventVariableIndex': parseInt(message.substr(15, 2), 16), 
         }
     }
-    encodeREVAL = function(nodeId, eventIndex, eventVariableIndex) {
+    encodeREVAL = function(nodeNumber, eventIndex, eventVariableIndex) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
-        return this.header() + '9C' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
+        return this.header() + '9C' + decToHex(nodeNumber, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
     }
 
 
@@ -585,15 +587,15 @@ class cbusLibrary {
         // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
         return {'mnemonic': 'NEVAL',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventIndex': parseInt(message.substr(13, 2), 16),
                 'eventVariableIndex': parseInt(message.substr(15, 2), 16),
                 'eventVariableValue': parseInt(message.substr(17, 2), 16),
         }
     }
-    encodeNEVAL = function(nodeId, eventIndex, eventVariableIndex, eventVariableValue) {
+    encodeNEVAL = function(nodeNumber, eventIndex, eventVariableIndex, eventVariableValue) {
         // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
-        return this.header() + 'B5' + decToHex(nodeId, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
+        return this.header() + 'B5' + decToHex(nodeNumber, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
     }
 
 
@@ -603,15 +605,15 @@ class cbusLibrary {
         // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
         return {'mnemonic': 'PNN',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'manufacturerId': parseInt(message.substr(13, 2), 16), 
                 'moduleId': parseInt(message.substr(15, 2), 16), 
                 'flags': parseInt(message.substr(17, 2), 16),
         }
     }
-    encodePNN = function(nodeId, manufacturerId, moduleId, flags) {
+    encodePNN = function(nodeNumber, manufacturerId, moduleId, flags) {
         // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
-        return this.header() + 'B6' + decToHex(nodeId, 4) + decToHex(manufacturerId, 2) + decToHex(moduleId, 2) + decToHex(flags, 2) + ';'
+        return this.header() + 'B6' + decToHex(nodeNumber, 4) + decToHex(manufacturerId, 2) + decToHex(moduleId, 2) + decToHex(flags, 2) + ';'
     }
 
 
@@ -661,14 +663,14 @@ class cbusLibrary {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
         return {'mnemonic': 'ENRSP',
                 'opCode': message.substr(7, 2),
-                'nodeId': parseInt(message.substr(9, 4), 16),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventName': message.substr(13, 8),
                 'eventIndex': parseInt(message.substr(21, 2), 16),
         }
     }
-    encodeENRSP = function(nodeId, eventName, eventIndex) {
+    encodeENRSP = function(nodeNumber, eventName, eventIndex) {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
-        return this.header() + 'F2' + decToHex(nodeId, 4) + eventName + decToHex(eventIndex, 2) + ';';
+        return this.header() + 'F2' + decToHex(nodeNumber, 4) + eventName + decToHex(eventIndex, 2) + ';';
     }
 
 }
@@ -676,8 +678,4 @@ class cbusLibrary {
 module.exports = new cbusLibrary();
 
 
-/* module.exports = {
-    cbusMessage: cbusMessage
-}
- */
 

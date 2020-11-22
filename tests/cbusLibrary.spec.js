@@ -207,23 +207,23 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_SNN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
-			testCases.push({'nodeId':nodeId});
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
 		}
 		return testCases;
 	}
 
-	itParam("SNN test nodeId ${value.nodeId}", GetTestCase_SNN(), function (value) {
+	itParam("SNN test nodeNumber ${value.nodeNumber}", GetTestCase_SNN(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN SNN test ' + JSON.stringify(value)});
-		expected = ":SB780N42" + decToHex(value.nodeId, 4) + ";";
-        var encode = cbusLib.encodeSNN(value.nodeId);
+		expected = ":SB780N42" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeSNN(value.nodeNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: SNN encode ' + encode});
 		winston.info({message: 'cbusMessage test: SNN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
 		expect(decode.mnemonic).to.equal('SNN', 'mnemonic');
 		expect(decode.opCode).to.equal('42', 'opCode');
 	})
@@ -234,23 +234,23 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NNLRN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
-			testCases.push({'nodeId':nodeId});
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
 		}
 		return testCases;
 	}
 
-	itParam("NNLRN test nodeId ${value.nodeId}", GetTestCase_NNLRN(), function (value) {
+	itParam("NNLRN test nodeNumber ${value.nodeNumber}", GetTestCase_NNLRN(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN NNLRN test ' + JSON.stringify(value)});
-		expected = ":SB780N53" + decToHex(value.nodeId, 4) + ";";
-        var encode = cbusLib.encodeNNLRN(value.nodeId);
+		expected = ":SB780N53" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeNNLRN(value.nodeNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NNLRN encode ' + encode});
 		winston.info({message: 'cbusMessage test: NNLRN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
 		expect(decode.mnemonic).to.equal('NNLRN', 'mnemonic');
 		expect(decode.opCode).to.equal('53', 'opCode');
 	})
@@ -261,24 +261,24 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NNULN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
-			testCases.push({'nodeId':nodeId});
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
 		}
 		return testCases;
 	}
 
 
-	itParam("NNULN test nodeId ${value.nodeId}", GetTestCase_NNULN(), function (value) {
+	itParam("NNULN test nodeNumber ${value.nodeNumber}", GetTestCase_NNULN(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN NNULN test ' + JSON.stringify(value)});
-		expected = ":SB780N54" + decToHex(value.nodeId, 4) + ";";
-        var encode = cbusLib.encodeNNULN(value.nodeId);
+		expected = ":SB780N54" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeNNULN(value.nodeNumber);
         var decode = cbusLib.decodeNNULN(encode);
 		winston.info({message: 'cbusMessage test: NNULN encode ' + encode});
 		winston.info({message: 'cbusMessage test: NNULN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
 		expect(decode.mnemonic).to.equal('NNULN', 'mnemonic');
 		expect(decode.opCode).to.equal('54', 'opCode');
 	})
@@ -289,23 +289,23 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NERD () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
-			testCases.push({'nodeId':nodeId});
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
 		}
 		return testCases;
 	}
 
-	itParam("NERD test nodeId ${value.nodeId}", GetTestCase_NERD(), function (value) {
+	itParam("NERD test nodeNumber ${value.nodeNumber}", GetTestCase_NERD(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN NERD test ' + JSON.stringify(value)});
-		expected = ":SB780N57" + decToHex(value.nodeId, 4) + ";";
-        var encode = cbusLib.encodeNERD(value.nodeId);
+		expected = ":SB780N57" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeNERD(value.nodeNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NERD encode ' + encode});
 		winston.info({message: 'cbusMessage test: NERD decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
 		expect(decode.mnemonic).to.equal('NERD', 'mnemonic');
 		expect(decode.opCode).to.equal('57', 'opCode');
 	})
@@ -316,23 +316,23 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_RQEVN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
-			testCases.push({'nodeId':nodeId});
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
 		}
 		return testCases;
 	}
 
-	itParam("RQEVN test nodeId ${value.nodeId}", GetTestCase_RQEVN(),  function (value) {
+	itParam("RQEVN test nodeNumber ${value.nodeNumber}", GetTestCase_RQEVN(),  function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN RQEVN test ' + JSON.stringify(value)});
-		expected = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
-        var encode = cbusLib.encodeRQEVN(value.nodeId);
+		expected = ":SB780N58" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeRQEVN(value.nodeNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: RQEVN encode ' + encode});
 		winston.info({message: 'cbusMessage test: RQEVN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
 		expect(decode.mnemonic).to.equal('RQEVN', 'mnemonic');
 		expect(decode.opCode).to.equal('58', 'opCode');
 	})
@@ -423,28 +423,28 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_CMDERR () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (errorIndex = 1; errorIndex < 4; errorIndex++) {
 				if (errorIndex == 1) errorNumber = 0;
 				if (errorIndex == 2) errorNumber = 1;
 				if (errorIndex == 3) errorNumber = 255;
-				testCases.push({'nodeId':nodeId, 'errorNumber':errorNumber});
+				testCases.push({'nodeNumber':nodeNumber, 'errorNumber':errorNumber});
 			}
 		}
 		return testCases;
 	}
 
-	itParam("CMDERR test nodeId ${value.nodeId} errorNumber ${value.errorNumber}", GetTestCase_CMDERR(), function (value) {
+	itParam("CMDERR test nodeNumber ${value.nodeNumber} errorNumber ${value.errorNumber}", GetTestCase_CMDERR(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN CMDERR test ' + JSON.stringify(value)});
-		expected = ":SB780N6F" + decToHex(value.nodeId, 4) + decToHex(value.errorNumber, 2) + ";";
-        var encode = cbusLib.encodeCMDERR(value.nodeId, value.errorNumber);
+		expected = ":SB780N6F" + decToHex(value.nodeNumber, 4) + decToHex(value.errorNumber, 2) + ";";
+        var encode = cbusLib.encodeCMDERR(value.nodeNumber, value.errorNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: CMDERR encode ' + encode});
 		winston.info({message: 'cbusMessage test: CMDERR decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.errorNumber).to.equal(value.errorNumber, 'errorNumber');
 		expect(decode.mnemonic).to.equal('CMDERR', 'mnemonic');
 		expect(decode.opCode).to.equal('6F', 'opCode');
@@ -456,29 +456,29 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NVRD () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (NVindex = 1; NVindex < 4; NVindex++) {
 				if (NVindex == 1) nvIndex = 0;
 				if (NVindex == 2) nvIndex = 1;
 				if (NVindex == 3) nvIndex = 255;
-				testCases.push({'nodeId':nodeId, 'nvIndex':nvIndex});
+				testCases.push({'nodeNumber':nodeNumber, 'nvIndex':nvIndex});
 			}
 		}
 		return testCases;
 	}
 
 
-	itParam("NVRD test nodeId ${value.nodeId} nvIndex ${value.nvIndex}", GetTestCase_NVRD(), function (value) {
+	itParam("NVRD test nodeNumber ${value.nodeNumber} nvIndex ${value.nvIndex}", GetTestCase_NVRD(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN NVRD test ' + JSON.stringify(value)});
-		expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + ";";
-        var encode = cbusLib.encodeNVRD(value.nodeId, value.nvIndex);
+		expected = ":SB780N71" + decToHex(value.nodeNumber, 4) + decToHex(value.nvIndex, 2) + ";";
+        var encode = cbusLib.encodeNVRD(value.nodeNumber, value.nvIndex);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NVRD encode ' + encode});
 		winston.info({message: 'cbusMessage test: NVRD decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.nodeVariableIndex).to.equal(value.nvIndex, 'nodeVariableIndex');
 		expect(decode.mnemonic).to.equal('NVRD', 'mnemonic');
 		expect(decode.opCode).to.equal('71', 'opCode');
@@ -490,28 +490,28 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NENRD () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (Eindex = 1; Eindex < 4; Eindex++) {
 				if (Eindex == 1) eventIndex = 0;
 				if (Eindex == 2) eventIndex = 1;
 				if (Eindex == 3) eventIndex = 255;
-				testCases.push({'nodeId':nodeId, 'eventIndex':eventIndex});
+				testCases.push({'nodeNumber':nodeNumber, 'eventIndex':eventIndex});
 			}
 		}
 		return testCases;
 	}
 
-	itParam("NENRD test nodeId ${value.nodeId} eventIndex ${value.eventIndex}", GetTestCase_NENRD(), function (value) {
+	itParam("NENRD test nodeNumber ${value.nodeNumber} eventIndex ${value.eventIndex}", GetTestCase_NENRD(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN NENRD test ' + JSON.stringify(value)});
-		expected = ":SB780N72" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + ";";
-        var encode = cbusLib.encodeNENRD(value.nodeId, value.eventIndex);
+		expected = ":SB780N72" + decToHex(value.nodeNumber, 4) + decToHex(value.eventIndex, 2) + ";";
+        var encode = cbusLib.encodeNENRD(value.nodeNumber, value.eventIndex);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NENRD encode ' + encode});
 		winston.info({message: 'cbusMessage test: NENRD decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventIndex).to.equal(value.eventIndex, 'eventIndex');
 		expect(decode.mnemonic).to.equal('NENRD', 'mnemonic');
 		expect(decode.opCode).to.equal('72', 'opCode');
@@ -523,29 +523,29 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_RQNPN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (Pindex = 1; Pindex < 4; Pindex++) {
 				if (Pindex == 1) paramIndex = 0;
 				if (Pindex == 2) paramIndex = 1;
 				if (Pindex == 3) paramIndex = 255;
-				testCases.push({'nodeId':nodeId, 'paramIndex':paramIndex});
+				testCases.push({'nodeNumber':nodeNumber, 'paramIndex':paramIndex});
 			}
 		}
 		return testCases;
 	}
 
 
-	itParam("RQNPN test nodeId ${value.nodeId} paramIndex ${value.paramIndex}", GetTestCase_RQNPN(), function (value) {
+	itParam("RQNPN test nodeNumber ${value.nodeNumber} paramIndex ${value.paramIndex}", GetTestCase_RQNPN(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN RQNPN test ' + JSON.stringify(value)});
-		expected = ":SB780N73" + decToHex(value.nodeId, 4) + decToHex(value.paramIndex, 2) + ";";
-        var encode = cbusLib.encodeRQNPN(value.nodeId, value.paramIndex);
+		expected = ":SB780N73" + decToHex(value.nodeNumber, 4) + decToHex(value.paramIndex, 2) + ";";
+        var encode = cbusLib.encodeRQNPN(value.nodeNumber, value.paramIndex);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: RQNPN encode ' + encode});
 		winston.info({message: 'cbusMessage test: RQNPN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.ParameterIndex).to.equal(value.paramIndex, 'ParameterIndex');
 		expect(decode.mnemonic).to.equal('RQNPN', 'mnemonic');
 		expect(decode.opCode).to.equal('73', 'opCode');
@@ -557,29 +557,29 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NUMEV () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (Pindex = 1; Pindex < 4; Pindex++) {
 				if (Pindex == 1) eventCount = 0;
 				if (Pindex == 2) eventCount = 1;
 				if (Pindex == 3) eventCount = 255;
-				testCases.push({'nodeId':nodeId, 'eventCount':eventCount});
+				testCases.push({'nodeNumber':nodeNumber, 'eventCount':eventCount});
 			}
 		}
 		return testCases;
 	}
 
 
-	itParam("NUMEV test nodeId ${value.nodeId} eventCount ${value.eventCount}", GetTestCase_NUMEV(), function (value) {
+	itParam("NUMEV test nodeNumber ${value.nodeNumber} eventCount ${value.eventCount}", GetTestCase_NUMEV(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN RQNNUMEVPN test ' + JSON.stringify(value)});
-		expected = ":SB780N74" + decToHex(value.nodeId, 4) + decToHex(value.eventCount, 2) + ";";
-        var encode = cbusLib.encodeNUMEV(value.nodeId, value.eventCount);
+		expected = ":SB780N74" + decToHex(value.nodeNumber, 4) + decToHex(value.eventCount, 2) + ";";
+        var encode = cbusLib.encodeNUMEV(value.nodeNumber, value.eventCount);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NUMEV encode ' + encode});
 		winston.info({message: 'cbusMessage test: NUMEV decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventCount).to.equal(value.eventCount, 'eventCount');
 		expect(decode.mnemonic).to.equal('NUMEV', 'mnemonic');
 		expect(decode.opCode).to.equal('74', 'opCode');
@@ -588,26 +588,26 @@ describe('cbusMessage tests', function(){
 
     // 90 ACON
     //
-	var TestCases_NodeEvent = 	[	{ nodeId: 0, eventNumber: 0 },
-									{ nodeId: 0, eventNumber: 1 },
-									{ nodeId: 0, eventNumber: 65535 },
-									{ nodeId: 1, eventNumber: 0 },
-									{ nodeId: 1, eventNumber: 1 },
-									{ nodeId: 1, eventNumber: 65535 },
-									{ nodeId: 65535, eventNumber: 0 },
-									{ nodeId: 65535, eventNumber: 1 },
-									{ nodeId: 65535, eventNumber: 65535 }
+	var TestCases_NodeEvent = 	[	{ nodeNumber: 0, eventNumber: 0 },
+									{ nodeNumber: 0, eventNumber: 1 },
+									{ nodeNumber: 0, eventNumber: 65535 },
+									{ nodeNumber: 1, eventNumber: 0 },
+									{ nodeNumber: 1, eventNumber: 1 },
+									{ nodeNumber: 1, eventNumber: 65535 },
+									{ nodeNumber: 65535, eventNumber: 0 },
+									{ nodeNumber: 65535, eventNumber: 1 },
+									{ nodeNumber: 65535, eventNumber: 65535 }
 								];
 	
-	itParam("ACON test nodeId ${value.nodeId} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
+	itParam("ACON test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ACON test ' + JSON.stringify(value)});
-		expected = ":SB780N90" + decToHex(value.nodeId, 4) + decToHex(value.eventNumber, 4) + ";";
-        var encode = cbusLib.encodeACON(value.nodeId, value.eventNumber);
+		expected = ":SB780N90" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + ";";
+        var encode = cbusLib.encodeACON(value.nodeNumber, value.eventNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ACON encode ' + encode});
 		winston.info({message: 'cbusMessage test: ACON decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
 		expect(decode.mnemonic).to.equal('ACON', 'mnemonic');
 		expect(decode.opCode).to.equal('90', 'opCode');
@@ -616,15 +616,15 @@ describe('cbusMessage tests', function(){
 
     // 91 ACOF
     //
-	itParam("ACOF test nodeId ${value.nodeId} event ${value.eventNumber}", TestCases_NodeEvent, function (value) {
+	itParam("ACOF test nodeNumber ${value.nodeNumber} event ${value.eventNumber}", TestCases_NodeEvent, function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ACOF test ' + JSON.stringify(value)});
-		expected = ":SB780N91" + decToHex(value.nodeId, 4) + decToHex(value.eventNumber, 4) + ";";
-        var encode = cbusLib.encodeACOF(value.nodeId, value.eventNumber);
+		expected = ":SB780N91" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + ";";
+        var encode = cbusLib.encodeACOF(value.nodeNumber, value.eventNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ACOF encode ' + encode});
 		winston.info({message: 'cbusMessage test: ACOF decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
 		expect(decode.mnemonic).to.equal('ACOF', 'mnemonic');
 		expect(decode.opCode).to.equal('91', 'opCode');
@@ -663,9 +663,9 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NVSET () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (NVindex = 1; NVindex < 4; NVindex++) {
 				if (NVindex == 1) nvIndex = 0;
 				if (NVindex == 2) nvIndex = 1;
@@ -674,22 +674,22 @@ describe('cbusMessage tests', function(){
 					if (NVvalue == 1) nvValue = 0;
 					if (NVvalue == 2) nvValue = 1;
 					if (NVvalue == 3) nvValue = 255;
-					testCases.push({'nodeId':nodeId, 'nvIndex':nvIndex, 'nvValue':nvValue});
+					testCases.push({'nodeNumber':nodeNumber, 'nvIndex':nvIndex, 'nvValue':nvValue});
 				}
 			}
 		}
 		return testCases;
 	}
 
-	itParam("NVSET test nodeId ${value.nodeId} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVSET(), function (value) {
+	itParam("NVSET test nodeNumber ${value.nodeNumber} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVSET(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN NVSET test ' + JSON.stringify(value)});
-		expected = ":SB780N96" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + decToHex(value.nvValue, 2) + ";";
-        var encode = cbusLib.encodeNVSET(value.nodeId, value.nvIndex, value.nvValue);
+		expected = ":SB780N96" + decToHex(value.nodeNumber, 4) + decToHex(value.nvIndex, 2) + decToHex(value.nvValue, 2) + ";";
+        var encode = cbusLib.encodeNVSET(value.nodeNumber, value.nvIndex, value.nvValue);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NVSET encode ' + encode});
 		winston.info({message: 'cbusMessage test: NVSET decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.nodeVariableIndex).to.equal(value.nvIndex, 'nodeVariableIndex');
         expect(decode.nodeVariableValue).to.equal(value.nvValue, 'nodeVariableValue');
 		expect(decode.mnemonic).to.equal('NVSET', 'mnemonic');
@@ -702,9 +702,9 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NVANS () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (NVindex = 1; NVindex < 4; NVindex++) {
 				if (NVindex == 1) nvIndex = 0;
 				if (NVindex == 2) nvIndex = 1;
@@ -713,22 +713,22 @@ describe('cbusMessage tests', function(){
 					if (NVvalue == 1) nvValue = 0;
 					if (NVvalue == 2) nvValue = 1;
 					if (NVvalue == 3) nvValue = 255;
-					testCases.push({'nodeId':nodeId, 'nvIndex':nvIndex, 'nvValue':nvValue});
+					testCases.push({'nodeNumber':nodeNumber, 'nvIndex':nvIndex, 'nvValue':nvValue});
 				}
 			}
 		}
 		return testCases;
 	}
 
-	itParam("NVANS test nodeId ${value.nodeId} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVANS(), function (value) {
+	itParam("NVANS test nodeNumber ${value.nodeNumber} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVANS(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN NVANS test ' + JSON.stringify(value)});
-		expected = ":SB780N97" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + decToHex(value.nvValue, 2) + ";";
-        var encode = cbusLib.encodeNVANS(value.nodeId, value.nvIndex, value.nvValue);
+		expected = ":SB780N97" + decToHex(value.nodeNumber, 4) + decToHex(value.nvIndex, 2) + decToHex(value.nvValue, 2) + ";";
+        var encode = cbusLib.encodeNVANS(value.nodeNumber, value.nvIndex, value.nvValue);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NVANS encode ' + encode});
 		winston.info({message: 'cbusMessage test: NVANS decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.nodeVariableIndex).to.equal(value.nvIndex, 'nodeVariableIndex');
         expect(decode.nodeVariableValue).to.equal(value.nvValue, 'nodeVariableValue');
 		expect(decode.mnemonic).to.equal('NVANS', 'mnemonic');
@@ -738,15 +738,15 @@ describe('cbusMessage tests', function(){
 
     // 98 ASON
     //
-	itParam("ASON test nodeId ${value.nodeId} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
+	itParam("ASON test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ASON test ' + JSON.stringify(value)});
-		expected = ":SB780N98" + decToHex(value.nodeId, 4) + decToHex(value.eventNumber, 4) + ";";
-        var encode = cbusLib.encodeASON(value.nodeId, value.eventNumber);
+		expected = ":SB780N98" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + ";";
+        var encode = cbusLib.encodeASON(value.nodeNumber, value.eventNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ASON encode ' + encode});
 		winston.info({message: 'cbusMessage test: ASON decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
 		expect(decode.mnemonic).to.equal('ASON', 'mnemonic');
 		expect(decode.opCode).to.equal('98', 'opCode');
@@ -755,15 +755,15 @@ describe('cbusMessage tests', function(){
 
     // 99 ASOF
     //
-	itParam("ASOF test nodeId ${value.nodeId} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
+	itParam("ASOF test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ASOF test ' + JSON.stringify(value)});
-		expected = ":SB780N99" + decToHex(value.nodeId, 4) + decToHex(value.eventNumber, 4) + ";";
-        var encode = cbusLib.encodeASOF(value.nodeId, value.eventNumber);
+		expected = ":SB780N99" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + ";";
+        var encode = cbusLib.encodeASOF(value.nodeNumber, value.eventNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ASOF encode ' + encode});
 		winston.info({message: 'cbusMessage test: ASOF decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
 		expect(decode.mnemonic).to.equal('ASOF', 'mnemonic');
 		expect(decode.opCode).to.equal('99', 'opCode');
@@ -775,9 +775,9 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_PARAN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (PI = 1; PI < 4; PI++) {
 				if (PI == 1) parameterIndex = 0;
 				if (PI == 2) parameterIndex = 1;
@@ -786,22 +786,22 @@ describe('cbusMessage tests', function(){
 					if (PV == 1) parameterValue = 0;
 					if (PV == 2) parameterValue = 1;
 					if (PV == 3) parameterValue = 255;
-					testCases.push({'nodeId':nodeId, 'parameterIndex':parameterIndex, 'parameterValue':parameterValue});
+					testCases.push({'nodeNumber':nodeNumber, 'parameterIndex':parameterIndex, 'parameterValue':parameterValue});
 				}
 			}
 		}
 		return testCases;
 	}
 
-	itParam("PARAN test nodeId ${value.nodeId} parameterIndex ${value.parameterIndex} parameterValue ${value.parameterValue}", GetTestCase_PARAN(), function (value) {
+	itParam("PARAN test nodeNumber ${value.nodeNumber} parameterIndex ${value.parameterIndex} parameterValue ${value.parameterValue}", GetTestCase_PARAN(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN PARAN test ' + JSON.stringify(value)});
-		expected = ":SB780N9B" + decToHex(value.nodeId, 4) + decToHex(value.parameterIndex, 2) + decToHex(value.parameterValue, 2) + ";";
-        var encode = cbusLib.encodePARAN(value.nodeId, value.parameterIndex, value.parameterValue);
+		expected = ":SB780N9B" + decToHex(value.nodeNumber, 4) + decToHex(value.parameterIndex, 2) + decToHex(value.parameterValue, 2) + ";";
+        var encode = cbusLib.encodePARAN(value.nodeNumber, value.parameterIndex, value.parameterValue);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: PARAN encode ' + encode});
 		winston.info({message: 'cbusMessage test: PARAN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.parameterIndex).to.equal(value.parameterIndex, 'parameterIndex');
         expect(decode.parameterValue).to.equal(value.parameterValue, 'parameterValue');
 		expect(decode.mnemonic).to.equal('PARAN', 'mnemonic');
@@ -814,9 +814,9 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_REVAL () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (ENindex = 1; ENindex < 4; ENindex++) {
 				if (ENindex == 1) eventIndex = 0;
 				if (ENindex == 2) eventIndex = 1;
@@ -825,22 +825,22 @@ describe('cbusMessage tests', function(){
 					if (EVindex == 1) eventVariableIndex = 0;
 					if (EVindex == 2) eventVariableIndex = 1;
 					if (EVindex == 3) eventVariableIndex = 255;
-					testCases.push({'nodeId':nodeId, 'eventIndex':eventIndex, 'eventVariableIndex':eventVariableIndex});
+					testCases.push({'nodeNumber':nodeNumber, 'eventIndex':eventIndex, 'eventVariableIndex':eventVariableIndex});
 				}
 			}
 		}
 		return testCases;
 	}
 
-	itParam("REVAL test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex}", GetTestCase_REVAL(), function (value) {
+	itParam("REVAL test nodeNumber ${value.nodeNumber} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex}", GetTestCase_REVAL(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN REVAL test ' + JSON.stringify(value)});
-		expected = ":SB780N9C" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + ";";
-        var encode = cbusLib.encodeREVAL(value.nodeId, value.eventIndex, value.eventVariableIndex);
+		expected = ":SB780N9C" + decToHex(value.nodeNumber, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + ";";
+        var encode = cbusLib.encodeREVAL(value.nodeNumber, value.eventIndex, value.eventVariableIndex);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: REVAL encode ' + encode});
 		winston.info({message: 'cbusMessage test: REVAL decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventIndex).to.equal(value.eventIndex, 'eventIndex');
         expect(decode.eventVariableIndex).to.equal(value.eventVariableIndex, 'eventVariableIndex');
 		expect(decode.mnemonic).to.equal('REVAL', 'mnemonic');
@@ -853,9 +853,9 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_NEVAL () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (ENindex = 1; ENindex < 4; ENindex++) {
 				if (ENindex == 1) eventIndex = 0;
 				if (ENindex == 2) eventIndex = 1;
@@ -868,7 +868,7 @@ describe('cbusMessage tests', function(){
                         if (EVvalue == 1) eventVariableValue = 0;
                         if (EVvalue == 2) eventVariableValue = 1;
                         if (EVvalue == 3) eventVariableValue = 255;
-                        testCases.push({'nodeId':nodeId, 'eventIndex':eventIndex, 'eventVariableIndex':eventVariableIndex, 'eventVariableValue':eventVariableValue});
+                        testCases.push({'nodeNumber':nodeNumber, 'eventIndex':eventIndex, 'eventVariableIndex':eventVariableIndex, 'eventVariableValue':eventVariableValue});
                     }
                 }
 			}
@@ -876,16 +876,16 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("NEVAL test nodeId ${value.nodeId} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex} eventVariableValue ${value.eventVariableValue}", 
+	itParam("NEVAL test nodeNumber ${value.nodeNumber} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex} eventVariableValue ${value.eventVariableValue}", 
         GetTestCase_NEVAL(), function (value) {
             winston.info({message: 'cbusMessage test: BEGIN NEVAL test ' + JSON.stringify(value)});
-            expected = ":SB780NB5" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + decToHex(value.eventVariableValue, 2) + ";";
-            var encode = cbusLib.encodeNEVAL(value.nodeId, value.eventIndex, value.eventVariableIndex, value.eventVariableValue);
+            expected = ":SB780NB5" + decToHex(value.nodeNumber, 4) + decToHex(value.eventIndex, 2) + decToHex(value.eventVariableIndex, 2) + decToHex(value.eventVariableValue, 2) + ";";
+            var encode = cbusLib.encodeNEVAL(value.nodeNumber, value.eventIndex, value.eventVariableIndex, value.eventVariableValue);
             var decode = cbusLib.decode(encode);
             winston.info({message: 'cbusMessage test: NEVAL encode ' + encode});
             winston.info({message: 'cbusMessage test: NEVAL decode ' + JSON.stringify(decode)});
             expect(encode).to.equal(expected, 'encode');
-            expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
             expect(decode.eventIndex).to.equal(value.eventIndex, 'eventIndex');
             expect(decode.eventVariableIndex).to.equal(value.eventVariableIndex, 'eventVariableIndex');
             expect(decode.eventVariableValue).to.equal(value.eventVariableValue, 'eventVariableValue');
@@ -899,9 +899,9 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_PNN () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (MAN = 1; MAN < 4; MAN++) {
 				if (MAN == 1) manufacturerId = 0;
 				if (MAN == 2) manufacturerId = 1;
@@ -914,7 +914,7 @@ describe('cbusMessage tests', function(){
                         if (FL == 1) flags = 0;
                         if (FL == 2) flags = 1;
                         if (FL == 3) flags = 255;
-                        testCases.push({'nodeId':nodeId, 'manufacturerId':manufacturerId, 'moduleId':moduleId, 'flags':flags});
+                        testCases.push({'nodeNumber':nodeNumber, 'manufacturerId':manufacturerId, 'moduleId':moduleId, 'flags':flags});
                     }
                 }
 			}
@@ -922,16 +922,16 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
     // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
-	itParam("PNN test nodeId ${value.nodeId} manufacturerId ${value.manufacturerId} moduleId ${value.moduleId} flags ${value.flags}", 
+	itParam("PNN test nodeNumber ${value.nodeNumber} manufacturerId ${value.manufacturerId} moduleId ${value.moduleId} flags ${value.flags}", 
         GetTestCase_PNN(), function (value) {
             winston.info({message: 'cbusMessage test: BEGIN NEVAL test ' + JSON.stringify(value)});
-            expected = ":SB780NB6" + decToHex(value.nodeId, 4) + decToHex(value.manufacturerId, 2) + decToHex(value.moduleId, 2) + decToHex(value.flags, 2) + ";";
-            var encode = cbusLib.encodePNN(value.nodeId, value.manufacturerId, value.moduleId, value.flags);
+            expected = ":SB780NB6" + decToHex(value.nodeNumber, 4) + decToHex(value.manufacturerId, 2) + decToHex(value.moduleId, 2) + decToHex(value.flags, 2) + ";";
+            var encode = cbusLib.encodePNN(value.nodeNumber, value.manufacturerId, value.moduleId, value.flags);
             var decode = cbusLib.decode(encode);
             winston.info({message: 'cbusMessage test: PNN encode ' + encode});
             winston.info({message: 'cbusMessage test: PNN decode ' + JSON.stringify(decode)});
             expect(encode).to.equal(expected, 'encode');
-            expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
             expect(decode.manufacturerId).to.equal(value.manufacturerId, 'manufacturerId');
             expect(decode.moduleId).to.equal(value.moduleId, 'moduleId');
             expect(decode.flags).to.equal(value.flags, 'flags');
@@ -1039,7 +1039,7 @@ describe('cbusMessage tests', function(){
             winston.info({message: 'cbusMessage test: PLOC encode ' + encode});
             winston.info({message: 'cbusMessage test: PLOC decode ' + JSON.stringify(decode)});
             expect(encode).to.equal(expected, 'encode');
-            expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
             expect(decode.session).to.equal(value.session, 'session');
             expect(decode.address).to.equal(value.address, 'address');
             expect(decode.speed).to.equal(value.speed, 'speed');
@@ -1057,9 +1057,9 @@ describe('cbusMessage tests', function(){
 	function GetTestCase_ENRSP () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
             for (EV = 1; EV < 4; EV++) {
                 if (EV == 1) eventName = '00000000';
                 if (EV == 2) eventName = '00000001';
@@ -1068,23 +1068,23 @@ describe('cbusMessage tests', function(){
                     if (EVindex == 1) eventIndex = 0;
                     if (EVindex == 2) eventIndex = 1;
                     if (EVindex == 3) eventIndex = 255;
-					testCases.push({'nodeId':nodeId, 'eventName':eventName, 'eventIndex':eventIndex});
+					testCases.push({'nodeNumber':nodeNumber, 'eventName':eventName, 'eventIndex':eventIndex});
 				}
 			}
 		}
 		return testCases;
 	}
 
-	itParam("ENRSP test nodeId ${value.nodeId} eventName ${value.eventName} eventIndex ${value.eventIndex}", GetTestCase_ENRSP(), function (value) {
+	itParam("ENRSP test nodeNumber ${value.nodeNumber} eventName ${value.eventName} eventIndex ${value.eventIndex}", GetTestCase_ENRSP(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ENRSP test ' + JSON.stringify(value)});
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
-		expected = ":SB780NF2" + decToHex(value.nodeId, 4) + value.eventName + decToHex(value.eventIndex, 2) + ";";
-        var encode = cbusLib.encodeENRSP(value.nodeId, value.eventName, value.eventIndex);
+		expected = ":SB780NF2" + decToHex(value.nodeNumber, 4) + value.eventName + decToHex(value.eventIndex, 2) + ";";
+        var encode = cbusLib.encodeENRSP(value.nodeNumber, value.eventName, value.eventIndex);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ENRSP encode ' + encode});
 		winston.info({message: 'cbusMessage test: ENRSP decode ' + JSON.stringify(decode)});
         expect(encode).to.equal(expected, 'encode');
-        expect(decode.nodeId).to.equal(value.nodeId, 'nodeId');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventName).to.equal(value.eventName, 'eventName');
         expect(decode.eventIndex).to.equal(value.eventIndex, 'eventIndex');
         expect(decode.mnemonic).to.equal('ENRSP', 'mnemonic');
