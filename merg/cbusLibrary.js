@@ -21,22 +21,27 @@ function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().pad
 class cbusLibrary {
     constructor() {
         this.canHeader = {
-                    'pr1': 3,
-                    'pr2': 2,
-                    'canId': 0,
+                    'MjPri': 2,
+                    'MinPri': 3,
+                    'CAN_ID': 60,
         }
-        this.majorPri = 2
-        this.minorPri = 3
-        this.canId = 60
     }
 
     //
     // header() provides the prefix to add to CBUS data to compose a transmittable message
     //
     header = function() {
-		var identifier = parseInt(this.majorPri << 14) + parseInt(this.minorPri << 12) + parseInt(this.canId << 5) 
+		var identifier = parseInt(this.canHeader.MjPri << 14) + parseInt(this.canHeader.MinPri << 12) + parseInt(this.canHeader.CAN_ID << 5) 
         return ':S' + decToHex(identifier, 4) + 'N'
     }
+
+    getCanHeader() {return this.canHeader}
+    setCanHeader(MjPri, MinPri, CAN_ID) {
+        if (MjPri != undefined) { this.canHeader.MjPri = MjPri}
+        if (MinPri != undefined) { this.canHeader.MinPri = MinPri}
+        if (CAN_ID != undefined) { this.canHeader.CAN_ID = CAN_ID}
+    }
+    
 
 
     //

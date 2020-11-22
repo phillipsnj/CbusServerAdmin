@@ -19,10 +19,51 @@ describe('cbusMessage tests', function(){
 		done();
 	});
 
+	beforeEach(function() {
+        // ensure expected CAN header is reset before each test run
+        cbusLib.setCanHeader(2, 3, 60)
+	});
+
 	after(function() {
 
 	});																										
+
 	
+	function GetTestCase_canHeader () {
+		var testCases = [];
+		for (MJ = 1; MJ < 4; MJ++) {
+			if (MJ == 1) MjPri = 0;
+			if (MJ == 2) MjPri = 1;
+			if (MJ == 3) MjPri = 3;
+			for (MN = 1; MN < 4; MN++) {
+				if (MN == 1) MinPri = 0;
+				if (MN == 2) MinPri = 1;
+				if (MN == 3) MinPri = 3;
+				for (ID = 1; ID < 4; ID++) {
+					if (ID == 1) CAN_ID = '0';
+					if (ID == 2) CAN_ID = '1';
+					if (ID == 3) CAN_ID = '127';
+					testCases.push({'MjPri':MjPri, 'MinPri':MinPri, 'CAN_ID':CAN_ID});
+				}
+			}
+		}
+		return testCases;
+	}
+
+	itParam("canHeader test MjPri ${value.MjPri} MinPri ${value.MinPri} CAN_ID ${value.CAN_ID}", GetTestCase_canHeader(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN canHeader test ' + JSON.stringify(value)});
+		var identifier = parseInt(value.MjPri << 14) + parseInt(value.MinPri << 12) + parseInt(value.CAN_ID << 5) 
+		expected = ":S" + decToHex(identifier, 4) + "N10" + ";";
+        cbusLib.setCanHeader(value.MjPri, value.MinPri, value.CAN_ID)
+        var encode = cbusLib.encodeRQNP();
+        var canHeader = cbusLib.getCanHeader();
+		winston.info({message: 'cbusMessage test: canHeader encode ' + encode});
+		winston.info({message: 'cbusMessage test: canHeader decode ' + JSON.stringify(canHeader)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(canHeader.MjPri).to.equal(value.MjPri, 'MjPri');
+		expect(canHeader.MinPri).to.equal(value.MinPri, 'MinPri');
+		expect(canHeader.CAN_ID).to.equal(value.CAN_ID, 'CAN_ID');
+	})
 	
 
     // 10 RQNP
