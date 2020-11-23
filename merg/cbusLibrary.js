@@ -695,6 +695,9 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventIndex': parseInt(message.substr(13, 2), 16), 
                 'eventVariableIndex': parseInt(message.substr(15, 2), 16), 
+                'text': "REVAL Node " + parseInt(message.substr(9, 4), 16) + 
+					" Event Index " + parseInt(message.substr(13, 2), 16) + 
+					" Event VariableIndex " + parseInt(message.substr(15, 2), 16)
         }
     }
     encodeREVAL = function(nodeNumber, eventIndex, eventVariableIndex) {
@@ -748,6 +751,9 @@ class cbusLibrary {
                 'eventName': message.substr(9, 8),
                 'eventVariableIndex': parseInt(message.substr(17, 2), 16),
                 'eventVariableValue': parseInt(message.substr(19, 2), 16),
+                'text': "REVAL eventName " + message.substr(9, 8) + 
+					" Event Variable Index " + parseInt(message.substr(17, 2), 16) + 
+					" Event Variable Value " + parseInt(message.substr(19, 2), 16)
         }
     }
     encodeEVLRN = function(eventName, eventVariableIndex, eventVariableValue) {
