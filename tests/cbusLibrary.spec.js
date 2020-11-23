@@ -423,6 +423,33 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 59 WRACK
+    //
+	function GetTestCase_WRACK () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
+		}
+		return testCases;
+	}
+
+	itParam("WRACK test nodeNumber ${value.nodeNumber}", GetTestCase_WRACK(),  function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN RQEVN test ' + JSON.stringify(value)});
+		expected = ":SB780N59" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeWRACK(value.nodeNumber);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: WRACK encode ' + encode});
+		winston.info({message: 'cbusMessage test: WRACK decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+		expect(decode.mnemonic).to.equal('WRACK', 'mnemonic');
+		expect(decode.opCode).to.equal('59', 'opCode');
+	})
+
+
     // 60 DFUN
     //
 	function GetTestCase_DFUN () {

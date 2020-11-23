@@ -103,6 +103,9 @@ class cbusLibrary {
         case '58':
             return this.decodeRQEVN(message);
             break;
+        case '59':
+            return this.decodeWRACK(message);
+            break;
         case '60':
             return this.decodeDFUN(message);
             break;
@@ -404,6 +407,22 @@ class cbusLibrary {
     encodeRQEVN = function(nodeNumber) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
         return this.header() + '58' + decToHex(nodeNumber, 4) + ';'
+    }
+
+
+    // 59 WRACK
+    //
+    decodeWRACK = function(message) {
+		// WRACK Format: [<MjPri><MinPri=3><CANID>]<59><NN hi><NN lo>
+        return {'mnemonic': 'WRACK',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': "WRACK Node " + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeWRACK = function(nodeNumber) {
+		// WRACK Format: [<MjPri><MinPri=3><CANID>]<59><NN hi><NN lo>
+        return this.header() + '59' + decToHex(nodeNumber, 4) + ';'
     }
 
 
