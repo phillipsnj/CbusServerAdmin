@@ -85,6 +85,9 @@ class cbusLibrary {
         case '42':
             return this.decodeSNN(message);
             break;
+		case '50':
+            return this.decodeRQNN(message);
+            break;
         case '52':
             return this.decodeNNACK(message);
             break;
@@ -311,6 +314,22 @@ class cbusLibrary {
         }
     }
 
+
+    // 50 RQNN
+    //
+    decodeRQNN = function(message) {
+		// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
+        return {'mnemonic': 'RQNN',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'RQNN Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeRQNN = function(nodeNumber) {
+		// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
+        return this.header() + '50' + decToHex(nodeNumber, 4) + ';'
+    }
+    
 
     // 52 NNACK
     //

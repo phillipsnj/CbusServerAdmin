@@ -259,6 +259,33 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 50 RQNN
+    //
+	function GetTestCase_RQNN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
+		}
+		return testCases;
+	}
+
+	itParam("RQNN test nodeNumber ${value.nodeNumber}", GetTestCase_RQNN(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN RQNN test ' + JSON.stringify(value)});
+		expected = ":SB780N50" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeRQNN(value.nodeNumber);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RQNN encode ' + encode});
+		winston.info({message: 'cbusMessage test: RQNN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+		expect(decode.mnemonic).to.equal('RQNN', 'mnemonic');
+		expect(decode.opCode).to.equal('50', 'opCode');
+	})
+
+
     // 52 NNACK
     //
 	function GetTestCase_NNACK () {
