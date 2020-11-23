@@ -529,7 +529,7 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventCount': parseInt(message.substr(13, 2), 16),
                 'text': "NUMEV Node " + parseInt(message.substr(9, 4), 16) + 
-								" Number of Events " + parseInt(message.substr(13, 2), 16)
+								" Event Count " + parseInt(message.substr(13, 2), 16)
         }
     }
     encodeNUMEV = function(nodeNumber, eventCount) {
@@ -546,6 +546,8 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
+                'text': "ACON Node " + parseInt(message.substr(9, 4), 16) + 
+								" eventNumber " + parseInt(message.substr(13, 4), 16)
         }
     }
     encodeACON = function(nodeNumber, eventNumber) {
@@ -562,6 +564,8 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
+                'text': "ACOF Node " + parseInt(message.substr(9, 4), 16) + 
+								" eventNumber " + parseInt(message.substr(13, 4), 16)
         }
     }
     encodeACOF = function(nodeNumber, eventNumber) {
@@ -577,6 +581,7 @@ class cbusLibrary {
         return {'mnemonic': 'EVULN',
                 'opCode': message.substr(7, 2),
                 'eventName': message.substr(9, 8),
+                'text': "EVULN eventName " + message.substr(9, 8),
         }
     }
     encodeEVULN = function(eventName) {
@@ -594,6 +599,9 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16), 
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16), 
+                'text':  "NVSET Node " + parseInt(message.substr(9, 4), 16) + 
+								" Node Variable Index " + parseInt(message.substr(13, 2), 16) +
+								" Node Variable Value " + parseInt(message.substr(15, 2), 16)
         }
     }
     encodeNVSET = function(nodeNumber, nodeVariableIndex, nodeVariableValue) {
@@ -611,6 +619,9 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16),
+                'text':  "NVANS Node " + parseInt(message.substr(9, 4), 16) + 
+								" Node Variable Index " + parseInt(message.substr(13, 2), 16) +
+								" Node Variable Value " + parseInt(message.substr(15, 2), 16)
         }
     }
     encodeNVANS = function(nodeNumber, nodeVariableIndex, nodeVariableValue) {
