@@ -331,13 +331,41 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: BEGIN NNULN test ' + JSON.stringify(value)});
 		expected = ":SB780N54" + decToHex(value.nodeNumber, 4) + ";";
         var encode = cbusLib.encodeNNULN(value.nodeNumber);
-        var decode = cbusLib.decodeNNULN(encode);
+        var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NNULN encode ' + encode});
 		winston.info({message: 'cbusMessage test: NNULN decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
 		expect(decode.mnemonic).to.equal('NNULN', 'mnemonic');
 		expect(decode.opCode).to.equal('54', 'opCode');
+	})
+
+
+    // 55 NNCLR
+    //
+	function GetTestCase_NNCLR () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
+		}
+		return testCases;
+	}
+
+
+	itParam("NNCLR test nodeNumber ${value.nodeNumber}", GetTestCase_NNCLR(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN NNCLR test ' + JSON.stringify(value)});
+		expected = ":SB780N55" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeNNCLR(value.nodeNumber);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: NNCLR encode ' + encode});
+		winston.info({message: 'cbusMessage test: NNCLR decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+		expect(decode.mnemonic).to.equal('NNCLR', 'mnemonic');
+		expect(decode.opCode).to.equal('55', 'opCode');
 	})
 
 

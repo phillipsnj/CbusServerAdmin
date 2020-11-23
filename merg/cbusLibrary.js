@@ -94,6 +94,9 @@ class cbusLibrary {
         case '54':
             return this.decodeNNULN(message);
             break;
+        case '55':
+            return this.decodeNNCLR(message);
+            break;
         case '57':
             return this.decodeNERD(message);
             break;
@@ -347,11 +350,28 @@ class cbusLibrary {
         return {'mnemonic': 'NNULN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'NNLRN Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNULN = function(nodeNumber) {
 		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
         return this.header() + '54' + decToHex(nodeNumber, 4) + ';'
+    }
+
+
+    // 55 NNCLR
+    //
+    decodeNNCLR = function(message) {
+		// NNCLR Format: [<MjPri><MinPri=3><CANID>]<55><NN hi><NN lo>>
+        return {'mnemonic': 'NNCLR',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'NNCLR Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeNNCLR = function(nodeNumber) {
+		// NNCLR Format: [<MjPri><MinPri=3><CANID>]<55><NN hi><NN lo>>
+        return this.header() + '55' + decToHex(nodeNumber, 4) + ';'
     }
 
 
