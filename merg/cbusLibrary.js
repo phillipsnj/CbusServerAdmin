@@ -637,7 +637,9 @@ class cbusLibrary {
 		return {'mnemonic': 'ASON',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
-                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'text': "ASON Node " + parseInt(message.substr(9, 4), 16) + 
+								" Device Number " + parseInt(message.substr(13, 4), 16)
         }
     }
     encodeASON = function(nodeNumber, deviceNumber) {
@@ -653,7 +655,9 @@ class cbusLibrary {
 		return {'mnemonic': 'ASOF',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
-                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'text': "ASOF Node " + parseInt(message.substr(9, 4), 16) + 
+					" Device Number " + parseInt(message.substr(13, 4), 16)
         }
     }
     encodeASOF = function(nodeNumber, deviceNumber) {
@@ -671,6 +675,9 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'parameterIndex': parseInt(message.substr(13, 2), 16),
                 'parameterValue': parseInt(message.substr(15, 2), 16),
+                'text': "PARAN Node " + parseInt(message.substr(9, 4), 16) + 
+					" Parameter Index " + parseInt(message.substr(13, 2), 16) + 
+					" Parameter Value " + parseInt(message.substr(15, 2), 16)
         }
     }
     encodePARAN = function(nodeNumber, parameterIndex, parameterValue) {

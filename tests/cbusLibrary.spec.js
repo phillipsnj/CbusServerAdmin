@@ -832,7 +832,7 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: ASON decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
-        expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+        expect(decode.deviceNumber).to.equal(value.eventNumber, 'deviceNumber');
 		expect(decode.mnemonic).to.equal('ASON', 'mnemonic');
 		expect(decode.opCode).to.equal('98', 'opCode');
 	})
@@ -849,7 +849,7 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: ASOF decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
-        expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+        expect(decode.deviceNumber).to.equal(value.eventNumber, 'deviceNumber');
 		expect(decode.mnemonic).to.equal('ASOF', 'mnemonic');
 		expect(decode.opCode).to.equal('99', 'opCode');
 	})
