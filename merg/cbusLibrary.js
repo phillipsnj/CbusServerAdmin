@@ -85,6 +85,9 @@ class cbusLibrary {
         case '42':
             return this.decodeSNN(message);
             break;
+        case '52':
+            return this.decodeNNACK(message);
+            break;
         case '53':
             return this.decodeNNLRN(message);
             break;
@@ -292,6 +295,24 @@ class cbusLibrary {
         if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
             return this.header() + '42' + decToHex(nodeNumber, 4) + ';'
         }
+    }
+
+
+    // 52 NNACK
+    //
+    decodeNNACK = function(message) {
+		// NNACK Format: [<MjPri><MinPri=3><CANID>]<52><NN hi><NN lo>
+        return {'mnemonic': 'NNACK',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'NNACK Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeNNACK = function(nodeNumber) {
+		// NNACK Format: [<MjPri><MinPri=3><CANID>]<52><NN hi><NN lo>
+		if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
+			return this.header() + '52' + decToHex(nodeNumber, 4) + ';'
+		}
     }
 
 

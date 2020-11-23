@@ -259,6 +259,33 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 52 NNACK
+    //
+	function GetTestCase_NNACK () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
+		}
+		return testCases;
+	}
+
+	itParam("NNACK test nodeNumber ${value.nodeNumber}", GetTestCase_NNACK(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN NNACK test ' + JSON.stringify(value)});
+		expected = ":SB780N52" + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeNNACK(value.nodeNumber);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: NNACK encode ' + encode});
+		winston.info({message: 'cbusMessage test: NNACK decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+		expect(decode.mnemonic).to.equal('NNACK', 'mnemonic');
+		expect(decode.opCode).to.equal('52', 'opCode');
+	})
+
+
     // 53 NNLRN
     //
 	function GetTestCase_NNLRN () {
