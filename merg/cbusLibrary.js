@@ -382,6 +382,7 @@ class cbusLibrary {
         return {'mnemonic': 'NERD',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'NERD Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNERD = function(nodeNumber) {
@@ -397,6 +398,7 @@ class cbusLibrary {
         return {'mnemonic': 'RQEVN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'RQEVN Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeRQEVN = function(nodeNumber) {
@@ -414,6 +416,9 @@ class cbusLibrary {
                 'session': parseInt(message.substr(9, 2), 16),
                 'Fn1': parseInt(message.substr(11, 2), 16),
                 'Fn2': parseInt(message.substr(13, 2), 16),
+                'text': "DFUN Session " + parseInt(message.substr(9, 2), 16) +
+								" Fn1 " + parseInt(message.substr(11, 2), 16) +
+								" Fn2 " + parseInt(message.substr(13, 2), 16),
         }
     }
     encodeDFUN = function(session, Fn1, Fn2) {
@@ -432,6 +437,9 @@ class cbusLibrary {
                 'data1': parseInt(message.substr(9, 2), 16),
                 'data2': parseInt(message.substr(11, 2), 16),
                 'errorNumber': parseInt(message.substr(13, 2), 16),
+                'text': "ERR Data1 " + parseInt(message.substr(9, 2), 16) +
+								" Data2 " + parseInt(message.substr(11, 2), 16) +
+								" errorNumber " + parseInt(message.substr(13, 2), 16),
         }
     }
     encodeERR = function(data1, data2, errorNumber) {
@@ -448,6 +456,8 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'errorNumber': parseInt(message.substr(13, 2), 16),
+                'text': "CMDERR Node " + parseInt(message.substr(9, 4), 16) + 
+								" errorNumber " + parseInt(message.substr(13, 2), 16)
         }
     }
     encodeCMDERR = function(nodeNumber, errorNumber) {
@@ -464,6 +474,8 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
+                'text': "NVRD Node " + parseInt(message.substr(9, 4), 16) + 
+								" Node Variable Index " + parseInt(message.substr(13, 2), 16)
         }
     }
     encodeNVRD = function(nodeNumber, nodeVariableIndex) {
@@ -480,6 +492,8 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventIndex': parseInt(message.substr(13, 2), 16),
+                'text': "NENRD Node " + parseInt(message.substr(9, 4), 16) + 
+								" Event Index " + parseInt(message.substr(13, 2), 16)
         }
     }
     encodeNENRD = function(nodeNumber, eventIndex) {
@@ -496,6 +510,8 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'ParameterIndex': parseInt(message.substr(13, 2), 16),
+                'text': "RQNPN Node " + parseInt(message.substr(9, 4), 16) + 
+								" Node Parameter Index " + parseInt(message.substr(13, 2), 16)
         }
     }
     encodeRQNPN = function(nodeNumber, ParameterIndex) {
@@ -512,6 +528,8 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventCount': parseInt(message.substr(13, 2), 16),
+                'text': "NUMEV Node " + parseInt(message.substr(9, 4), 16) + 
+								" Number of Events " + parseInt(message.substr(13, 2), 16)
         }
     }
     encodeNUMEV = function(nodeNumber, eventCount) {
