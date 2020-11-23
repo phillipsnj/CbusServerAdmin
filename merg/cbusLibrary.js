@@ -67,6 +67,9 @@ class cbusLibrary {
         case '10':
             return this.decodeRQNP(message);
             break;
+        case '11':
+            return this.decodeRQMN(message);
+            break;
         case '21':
             return this.decodeKLOC(message);
             break;
@@ -172,7 +175,7 @@ class cbusLibrary {
         // QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
         return {'mnemonic': 'QNN',
                 'opCode': message.substr(7, 2),
-                'text': 'QNN'
+                'text': 'QNN',
         }
     }
     encodeQNN = function() {//Request Node Parameters
@@ -184,13 +187,30 @@ class cbusLibrary {
     // 10 RQNP
     //
     decodeRQNP = function(message) {
+		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
         return {'mnemonic': 'RQNP',
                 'opCode': message.substr(7, 2),
+                'text': 'RQNP',
         }
     }
     encodeRQNP = function() {//Request Node Parameters
 		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
         return this.header() + '10' + ';'
+    }
+
+
+    // 11 RQMN
+    //
+    decodeRQMN = function(message) {
+		// RQMN Format: [<MjPri><MinPri=3><CANID>]<11>
+        return {'mnemonic': 'RQMN',
+                'opCode': message.substr(7, 2),
+                'text': 'RQMN',
+        }
+    }
+    encodeRQMN = function() {//Request Node Parameters
+		// RQMN Format: [<MjPri><MinPri=3><CANID>]<11>
+        return this.header() + '11' + ';'
     }
 
 

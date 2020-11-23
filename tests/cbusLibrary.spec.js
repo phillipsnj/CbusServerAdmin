@@ -96,6 +96,21 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 11 RQMN
+    //
+	it("RQMN test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RQMN test '});
+		expected = ":SB780N11" + ";";
+        var encode = cbusLib.encodeRQMN();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RQMN encode ' + encode});
+		winston.info({message: 'cbusMessage test: RQMN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RQMN', 'mnemonic');
+		expect(decode.opCode).to.equal('11', 'opCode');
+	})
+
+
     // 21 KLOC
     //
 	function GetTestCase_KLOC () {
