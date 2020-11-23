@@ -66,6 +66,21 @@ describe('cbusMessage tests', function(){
 	})
 	
 
+    // 0D QNN
+    //
+	it("QNN test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN QNN test '});
+		expected = ":SB780N0D" + ";";
+        var encode = cbusLib.encodeQNN();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: QNN encode ' + encode});
+		winston.info({message: 'cbusMessage test: QNN decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('QNN', 'mnemonic');
+		expect(decode.opCode).to.equal('0D', 'opCode');
+	})
+
+
     // 10 RQNP
     //
 	it("RQNP test", function () {

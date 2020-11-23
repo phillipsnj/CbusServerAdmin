@@ -61,6 +61,9 @@ class cbusLibrary {
         if (message == undefined) message = this.message;
         var opCode = message.substr(7, 2);
         switch (opCode) {
+        case '0D':
+            return this.decodeQNN(message);
+            break;
         case '10':
             return this.decodeRQNP(message);
             break;
@@ -161,6 +164,21 @@ class cbusLibrary {
         }
     }
 
+
+
+    // 0D QNN
+    //
+    decodeQNN = function(message) {
+        // QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
+        return {'mnemonic': 'QNN',
+                'opCode': message.substr(7, 2),
+                'text': 'QNN'
+        }
+    }
+    encodeQNN = function() {//Request Node Parameters
+        // QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
+        return this.header() + '0D' + ';'
+    }
 
 
     // 10 RQNP
