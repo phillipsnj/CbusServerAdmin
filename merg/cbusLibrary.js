@@ -223,7 +223,8 @@ class cbusLibrary {
         // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
         return {'mnemonic': 'KLOC',
                 'opCode': message.substr(7, 2),
-                'session': parseInt(message.substr(9, 2), 16)
+                'session': parseInt(message.substr(9, 2), 16),
+                'text': 'KLOC Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeKLOC = function(session) {
@@ -238,7 +239,8 @@ class cbusLibrary {
 		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
         return {'mnemonic': 'QLOC',
                 'opCode': message.substr(7, 2),
-                'session': parseInt(message.substr(9, 2), 16)
+                'session': parseInt(message.substr(9, 2), 16),
+                'text': 'QLOC Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeQLOC = function(session) {
@@ -253,7 +255,8 @@ class cbusLibrary {
         // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
         return {'mnemonic': 'DKEEP',
                 'opCode': message.substr(7, 2),
-                'session': parseInt(message.substr(9, 2), 16)
+                'session': parseInt(message.substr(9, 2), 16),
+                'text': 'DKEEP Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeDKEEP = function(session) {
@@ -267,11 +270,13 @@ class cbusLibrary {
     decodeDSPD = function(message) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = parseInt(message.substr(11, 2), 16)
+        var direction = (speedDir > 127) ? 'Forward' : 'Reverse'
         return {'mnemonic': 'DSPD',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
                 'speed': speedDir % 128,
-                'direction': (speedDir > 127) ? 'Forward' : 'Reverse',
+                'direction': direction,
+                'text': 'QLOC Session ' + parseInt(message.substr(9, 2), 16) + ' Speed ' + speedDir % 128 + ' Direction ' + direction,
         }
     }
     encodeDSPD = function(session, speed, direction) {
@@ -287,7 +292,8 @@ class cbusLibrary {
 		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
         return {'mnemonic': 'SNN',
                 'opCode': message.substr(7, 2),
-                'nodeNumber': parseInt(message.substr(9, 4), 16)
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'SNN Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeSNN = function(nodeNumber) {
@@ -323,6 +329,7 @@ class cbusLibrary {
         return {'mnemonic': 'NNLRN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'NNLRN Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNLRN = function(nodeNumber) {
