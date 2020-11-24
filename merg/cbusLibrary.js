@@ -61,6 +61,9 @@ class cbusLibrary {
         if (message == undefined) message = this.message;
         var opCode = message.substr(7, 2);
         switch (opCode) {
+        case '00':
+            return this.decodeACK(message);
+            break;
         case '0D':
             return this.decodeQNN(message);
             break;
@@ -181,13 +184,28 @@ class cbusLibrary {
 
 
 
+    // 00 ACK
+    //
+    decodeACK = function(message) {
+        // ACK Format: [<MjPri><MinPri=3><CANID>]<00>
+        return {'mnemonic': 'ACK',
+                'opCode': message.substr(7, 2),
+                'text': 'ACK (00)',
+        }
+    }
+    encodeACK = function() {//Request Node Parameters
+        // ACK Format: [<MjPri><MinPri=3><CANID>]<00>
+        return this.header() + '00' + ';'
+    }
+
+
     // 0D QNN
     //
     decodeQNN = function(message) {
         // QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
         return {'mnemonic': 'QNN',
                 'opCode': message.substr(7, 2),
-                'text': 'QNN',
+                'text': 'QNN (0D)',
         }
     }
     encodeQNN = function() {//Request Node Parameters
@@ -202,7 +220,7 @@ class cbusLibrary {
 		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
         return {'mnemonic': 'RQNP',
                 'opCode': message.substr(7, 2),
-                'text': 'RQNP',
+                'text': 'RQNP (10)',
         }
     }
     encodeRQNP = function() {//Request Node Parameters
@@ -217,7 +235,7 @@ class cbusLibrary {
 		// RQMN Format: [<MjPri><MinPri=3><CANID>]<11>
         return {'mnemonic': 'RQMN',
                 'opCode': message.substr(7, 2),
-                'text': 'RQMN',
+                'text': 'RQMN (11)',
         }
     }
     encodeRQMN = function() {//Request Node Parameters
@@ -233,7 +251,7 @@ class cbusLibrary {
         return {'mnemonic': 'KLOC',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
-                'text': 'KLOC Session ' + parseInt(message.substr(9, 2), 16),
+                'text': 'KLOC (21) Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeKLOC = function(session) {
@@ -249,7 +267,7 @@ class cbusLibrary {
         return {'mnemonic': 'QLOC',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
-                'text': 'QLOC Session ' + parseInt(message.substr(9, 2), 16),
+                'text': 'QLOC (22) Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeQLOC = function(session) {
@@ -265,7 +283,7 @@ class cbusLibrary {
         return {'mnemonic': 'DKEEP',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
-                'text': 'DKEEP Session ' + parseInt(message.substr(9, 2), 16),
+                'text': 'DKEEP (23) Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeDKEEP = function(session) {
@@ -285,7 +303,7 @@ class cbusLibrary {
                 'session': parseInt(message.substr(9, 2), 16),
                 'speed': speedDir % 128,
                 'direction': direction,
-                'text': 'QLOC Session ' + parseInt(message.substr(9, 2), 16) + 
+                'text': 'QLOC (27) Session ' + parseInt(message.substr(9, 2), 16) + 
                     ' Speed ' + speedDir % 128 + 
                     ' Direction ' + direction,
         }
@@ -304,7 +322,7 @@ class cbusLibrary {
         return {'mnemonic': 'SNN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'SNN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'SNN (42) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeSNN = function(nodeNumber) {
@@ -322,7 +340,7 @@ class cbusLibrary {
         return {'mnemonic': 'RQNN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'RQNN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'RQNN (RQNN) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeRQNN = function(nodeNumber) {
@@ -338,7 +356,7 @@ class cbusLibrary {
         return {'mnemonic': 'NNACK',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNACK Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNACK (NNACK) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNACK = function(nodeNumber) {
@@ -356,7 +374,7 @@ class cbusLibrary {
         return {'mnemonic': 'NNLRN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNLRN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNLRN (53) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNLRN = function(nodeNumber) {
@@ -374,7 +392,7 @@ class cbusLibrary {
         return {'mnemonic': 'NNULN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNLRN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNLRN (54) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNULN = function(nodeNumber) {
@@ -390,7 +408,7 @@ class cbusLibrary {
         return {'mnemonic': 'NNCLR',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNCLR Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNCLR (55) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNCLR = function(nodeNumber) {
@@ -406,7 +424,7 @@ class cbusLibrary {
         return {'mnemonic': 'NERD',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NERD Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NERD (57) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNERD = function(nodeNumber) {
@@ -422,7 +440,7 @@ class cbusLibrary {
         return {'mnemonic': 'RQEVN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'RQEVN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'RQEVN (58) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeRQEVN = function(nodeNumber) {
@@ -438,7 +456,7 @@ class cbusLibrary {
         return {'mnemonic': 'WRACK',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': "WRACK Node " + parseInt(message.substr(9, 4), 16),
+                'text': "WRACK (59) Node " + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeWRACK = function(nodeNumber) {
@@ -456,7 +474,7 @@ class cbusLibrary {
                 'session': parseInt(message.substr(9, 2), 16),
                 'Fn1': parseInt(message.substr(11, 2), 16),
                 'Fn2': parseInt(message.substr(13, 2), 16),
-                'text': "DFUN Session " + parseInt(message.substr(9, 2), 16) +
+                'text': "DFUN (60) Session " + parseInt(message.substr(9, 2), 16) +
 					" Fn1 " + parseInt(message.substr(11, 2), 16) +
 					" Fn2 " + parseInt(message.substr(13, 2), 16),
         }
@@ -477,7 +495,7 @@ class cbusLibrary {
                 'data1': parseInt(message.substr(9, 2), 16),
                 'data2': parseInt(message.substr(11, 2), 16),
                 'errorNumber': parseInt(message.substr(13, 2), 16),
-                'text': "ERR Data1 " + parseInt(message.substr(9, 2), 16) +
+                'text': "ERR (63) Data1 " + parseInt(message.substr(9, 2), 16) +
 					" Data2 " + parseInt(message.substr(11, 2), 16) +
 					" errorNumber " + parseInt(message.substr(13, 2), 16),
         }
@@ -496,7 +514,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'errorNumber': parseInt(message.substr(13, 2), 16),
-                'text': "CMDERR Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "CMDERR (6F) Node " + parseInt(message.substr(9, 4), 16) + 
 					" errorNumber " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -514,7 +532,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
-                'text': "NVRD Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "NVRD (71) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Node Variable Index " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -532,7 +550,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventIndex': parseInt(message.substr(13, 2), 16),
-                'text': "NENRD Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "NENRD (72) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Event Index " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -550,7 +568,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'ParameterIndex': parseInt(message.substr(13, 2), 16),
-                'text': "RQNPN Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "RQNPN (73) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Node Parameter Index " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -568,7 +586,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventCount': parseInt(message.substr(13, 2), 16),
-                'text': "NUMEV Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "NUMEV (74) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Event Count " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -586,7 +604,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
-                'text': "ACON Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ACON (90) Node " + parseInt(message.substr(9, 4), 16) + 
 					" eventNumber " + parseInt(message.substr(13, 4), 16)
         }
     }
@@ -604,7 +622,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
-                'text': "ACOF Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ACOF (91) Node " + parseInt(message.substr(9, 4), 16) + 
 					" eventNumber " + parseInt(message.substr(13, 4), 16)
         }
     }
@@ -621,7 +639,7 @@ class cbusLibrary {
         return {'mnemonic': 'EVULN',
                 'opCode': message.substr(7, 2),
                 'eventName': message.substr(9, 8),
-                'text': "EVULN eventName " + message.substr(9, 8),
+                'text': "EVULN (95) eventName " + message.substr(9, 8),
         }
     }
     encodeEVULN = function(eventName) {
@@ -639,7 +657,7 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16), 
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16), 
-                'text':  "NVSET Node " + parseInt(message.substr(9, 4), 16) + 
+                'text':  "NVSET (96) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Node Variable Index " + parseInt(message.substr(13, 2), 16) +
 					" Node Variable Value " + parseInt(message.substr(15, 2), 16)
         }
@@ -659,7 +677,7 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16),
-                'text':  "NVANS Node " + parseInt(message.substr(9, 4), 16) + 
+                'text':  "NVANS (97) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Node Variable Index " + parseInt(message.substr(13, 2), 16) +
 					" Node Variable Value " + parseInt(message.substr(15, 2), 16)
         }
@@ -678,7 +696,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'deviceNumber': parseInt(message.substr(13, 4), 16),
-                'text': "ASON Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ASON (98) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Device Number " + parseInt(message.substr(13, 4), 16)
         }
     }
@@ -696,7 +714,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'deviceNumber': parseInt(message.substr(13, 4), 16),
-                'text': "ASOF Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ASOF (99) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Device Number " + parseInt(message.substr(13, 4), 16)
         }
     }
@@ -715,7 +733,7 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'parameterIndex': parseInt(message.substr(13, 2), 16),
                 'parameterValue': parseInt(message.substr(15, 2), 16),
-                'text': "PARAN Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "PARAN (9B) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Parameter Index " + parseInt(message.substr(13, 2), 16) + 
 					" Parameter Value " + parseInt(message.substr(15, 2), 16)
         }
@@ -735,7 +753,7 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventIndex': parseInt(message.substr(13, 2), 16), 
                 'eventVariableIndex': parseInt(message.substr(15, 2), 16), 
-                'text': "REVAL Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "REVAL (9C) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Event Index " + parseInt(message.substr(13, 2), 16) + 
 					" Event VariableIndex " + parseInt(message.substr(15, 2), 16)
         }
@@ -756,7 +774,7 @@ class cbusLibrary {
                 'eventIndex': parseInt(message.substr(13, 2), 16),
                 'eventVariableIndex': parseInt(message.substr(15, 2), 16),
                 'eventVariableValue': parseInt(message.substr(17, 2), 16),
-                'text': "NEVAL NodeId " + parseInt(message.substr(9, 4), 16) + 
+                'text': "NEVAL (B5) NodeId " + parseInt(message.substr(9, 4), 16) + 
 					" Event Index " + parseInt(message.substr(13, 2), 16) + 
 					" Event Variable Index " + parseInt(message.substr(15, 2), 16) + 
 					" Event Variable Value " + parseInt(message.substr(17, 2), 16)
@@ -778,7 +796,7 @@ class cbusLibrary {
                 'manufacturerId': parseInt(message.substr(13, 2), 16), 
                 'moduleId': parseInt(message.substr(15, 2), 16), 
                 'flags': parseInt(message.substr(17, 2), 16),
-                'text': "PNN Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "PNN (B6) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Manufacturer Id " + parseInt(message.substr(13, 2), 16) + 
 					" Module Id " + parseInt(message.substr(15, 2), 16) + 
 					" Flags " + parseInt(message.substr(17, 2), 16)
@@ -799,7 +817,7 @@ class cbusLibrary {
                 'eventName': message.substr(9, 8),
                 'eventVariableIndex': parseInt(message.substr(17, 2), 16),
                 'eventVariableValue': parseInt(message.substr(19, 2), 16),
-                'text': "REVAL eventName " + message.substr(9, 8) + 
+                'text': "REVAL (D2) eventName " + message.substr(9, 8) + 
 					" Event Variable Index " + parseInt(message.substr(17, 2), 16) + 
 					" Event Variable Value " + parseInt(message.substr(19, 2), 16)
         }
@@ -825,7 +843,7 @@ class cbusLibrary {
                 'Fn1': parseInt(message.substr(17, 2), 16),
                 'Fn2': parseInt(message.substr(19, 2), 16),
                 'Fn3': parseInt(message.substr(21, 2), 16),
-                'text': "PLOC Session " + parseInt(message.substr(9, 2), 16) + 
+                'text': "PLOC (E1) Session " + parseInt(message.substr(9, 2), 16) + 
 					" Address " + parseInt(message.substr(11, 4), 16) +
 					" Speed/Dir " + speedDir % 128 +
 					" Direction " + direction +
@@ -850,7 +868,7 @@ class cbusLibrary {
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventName': message.substr(13, 8),
                 'eventIndex': parseInt(message.substr(21, 2), 16),
-                'text': "ENRSP Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ENRSP (F2) Node " + parseInt(message.substr(9, 4), 16) + 
 					" EventName " + message.substr(13, 8) + 
 					" Event Index " + parseInt(message.substr(21, 2), 16)
         }
