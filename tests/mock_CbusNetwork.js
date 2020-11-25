@@ -194,6 +194,14 @@ class mock_CbusNetwork {
 	}
 
 
+	// 47 DSPD
+	outputDSPD(session, speed, direction) {
+		var msgData = cbusLib.encodeDSPD(session, speed, direction);
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+	}
+
+
 	// 50
 	outputRQNN(nodeId) {
 		//Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>

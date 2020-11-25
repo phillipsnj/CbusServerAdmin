@@ -143,6 +143,44 @@ describe('mergAdminNode tests', function(){
 	})
 
 
+    // 47 DSPD
+    //
+	function GetTestCase_DSPD () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (speedIndex = 1; speedIndex < 4; speedIndex++) {
+				if (speedIndex == 1) speed = 0;
+				if (speedIndex == 2) speed = 1;
+				if (speedIndex == 3) speed = 127;
+				for (directionIndex = 1; directionIndex < 3; directionIndex++) {
+					if (directionIndex == 1) direction = 'Forward';
+					if (directionIndex == 2) direction = 'Reverse';
+					testCases.push({'session':session, 'speed':speed, 'direction':direction});
+				}
+			}
+		}
+		return testCases;
+	}
+    //
+	itParam("DSPD test session ${value.session} speed ${value.speed} direction ${value.direction}", GetTestCase_DSPD(), function (done, value) {
+		winston.info({message: 'cbusMessage test: BEGIN DSPD test ' + JSON.stringify(value)});
+        node.on('dccSessions', function tmp(data) {
+			dccSessionsData = data;
+			winston.info({message: 'mergAdminNode Test: DSPD test - message data : ' + JSON.stringify(dccSessionsData)});
+            node.removeListener('dccSessions', tmp);    // remove event listner after first event
+        })
+		mock_Cbus.outputDSPD(value.session, value.speed, value.direction);
+		setTimeout(function(){
+            expect(dccSessionsData[value.session].speed).to.equal(value.speed);
+            expect(dccSessionsData[value.session].direction).to.equal(value.direction);
+			done();
+		}, 10);
+	})
+
+
 
 
 	// 91 ACOF

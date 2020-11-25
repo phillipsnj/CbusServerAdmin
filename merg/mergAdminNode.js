@@ -104,6 +104,20 @@ class cbusAdmin extends EventEmitter {
                 }
                 this.emit('dccSessions', this.dccSessions)
             },
+            '47': (tmp, cbusMsg) => { // DSPD
+                let session = cbusMsg.session
+                let speed = cbusMsg.speed
+                let direction = cbusMsg.direction
+				winston.debug({message: `(47) DCC Speed Change : ${session} : ${direction} : ${speed}`});
+                if (!(session in this.dccSessions)) {
+                    this.dccSessions[session] = {}
+                    this.dccSessions[session].count = 0
+                }
+                this.dccSessions[session].direction = direction
+                this.dccSessions[session].speed = speed
+                this.emit('dccSessions', this.dccSessions)
+                //this.cbusSend(this.QLOC(session))
+            },
             'B6': (msg) => { //PNN Recieved from Node
 				//winston.debug({message: `merg :${JSON.stringify(this.merg)}`});
                 const ref = msg.nodeId()
@@ -324,24 +338,6 @@ class cbusAdmin extends EventEmitter {
                 this.dccSessions[session].F2 = F2
                 this.dccSessions[session].F3 = F3
                 this.emit('dccSessions', this.dccSessions)
-            },
-            '47': (msg) => {
-                let session = msg.sessionId()
-                let speed = msg.locoId()
-                let direction = 'Reverse'
-                if (speed > 127) {
-                    direction = 'Forward'
-                    speed = speed - 128
-                }
-                if (!(session in this.dccSessions)) {
-                    this.dccSessions[session] = {}
-                    this.dccSessions[session].count = 0
-                }
-				winston.debug({message: `(47) DCC Speed Change : ${session} : ${direction} : ${speed}`});
-                this.dccSessions[session].direction = direction
-                this.dccSessions[session].speed = speed
-                this.emit('dccSessions', this.dccSessions)
-                //this.cbusSend(this.QLOC(session))
             },
             '60': (msg) => {
                 let session = msg.sessionId()
