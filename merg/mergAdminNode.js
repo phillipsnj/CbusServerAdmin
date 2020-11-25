@@ -70,10 +70,25 @@ class cbusAdmin extends EventEmitter {
             }, 1000)
         }.bind(this))
         this.actions = { //actions when Opcodes are received
-            '00': (tmp, cbusMsg) => {
+            '00': (tmp, cbusMsg) => { // ACK
 				winston.debug({message: "ACK (00) : No Action"});
             },
-            '23': (tmp, cbusMsg) => {
+            '21': (tmp, cbusMsg) => { // KLOC
+				winston.debug({message: `Session Cleared : ${cbusMsg.session}`});
+                let ref = cbusMsg.opCode
+                let session = cbusMsg.session
+                if (session in this.dccSessions) {
+                    this.dccSessions[session].status = 'In Active'
+                } else {
+					winston.debug({message:`Session ${session} does not exist - adding`});
+                    this.dccSessions[session] = {}
+                    this.dccSessions[session].count = 1
+                    this.dccSessions[session].status = 'In Active'
+                    this.cbusSend(this.QLOC(session))
+                }
+                this.emit('dccSessions', this.dccSessions)
+            },
+            '23': (tmp, cbusMsg) => { // DKEEP
 				winston.debug({message: `Session Keep Alive : ${cbusMsg.session}`});
                 let ref = cbusMsg.opCode
                 let session = cbusMsg.session
@@ -81,7 +96,7 @@ class cbusAdmin extends EventEmitter {
                     this.dccSessions[session].count += 1
                     this.dccSessions[session].status = 'Active'
                 } else {
-					winston.debug({message: `Session ${session} does not exist`});
+					winston.debug({message: `Session ${session} does not exist - adding`});
                     this.dccSessions[session] = {}
                     this.dccSessions[session].count = 1
                     this.dccSessions[session].status = 'Active'
@@ -282,17 +297,6 @@ class cbusAdmin extends EventEmitter {
                     this.config.nodes[msg.nodeId()].EvCount = msg.variableId()
                     this.saveConfig()
                 }
-            },
-            '21': (msg) => {
-				winston.debug({message: `Session Cleared : ${msg.sessionId()}`});
-                let ref = msg.opCode()
-                let session = msg.sessionId()
-                if (session in this.dccSessions) {
-                    this.dccSessions[session].status = 'In Active'
-                } else {
-					winston.debug({message:`Session ${session} does not exist`});
-                }
-                this.emit('dccSessions', this.dccSessions)
             },
             'E1': (msg) => {
                 let session = msg.sessionId()

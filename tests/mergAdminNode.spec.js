@@ -63,6 +63,36 @@ describe('mergAdminNode tests', function(){
 	});
 
 
+    // 21 KLOC
+    //
+	function GetTestCase_KLOC () {
+		var testCases = [];
+		for (S = 1; S < 4; S++) {
+			if (S == 1) session = 0;
+			if (S == 2) session = 1;
+			if (S == 3) session = 255;
+			testCases.push({'session':session});
+		}
+		return testCases;
+	}
+    //
+	itParam("KLOC test session ${value.session}", GetTestCase_KLOC(), function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN KLOC test ' + JSON.stringify(value)});
+        node.dccSessions = []   // clear any pre existing session from previous tests
+        node.on('dccSessions', function tmp(data) {
+			dccSessionsData = data;
+			winston.info({message: 'mergAdminNode Test: KLOC test - message data : ' + JSON.stringify(dccSessionsData)});
+            node.removeListener('dccSessions', tmp);    // remove event listner after first event
+        })
+		mock_Cbus.outputKLOC(value.session);
+		setTimeout(function(){
+			expect(mock_Cbus.getSendArray()[0]).to.equal(cbusLib.encodeQLOC(value.session));
+            expect(dccSessionsData[value.session].status).to.equal('In Active');
+			done();
+		}, 100);
+	})
+
+
     // 22 QLOC
     //
 	function GetTestCase_QLOC () {
@@ -98,9 +128,16 @@ describe('mergAdminNode tests', function(){
     //
 	itParam("DKEEP test session ${value.session}", GetTestCase_DKEEP(), function (done, value) {
 		winston.info({message: 'mergAdminNode test: BEGIN DKEEP test ' + JSON.stringify(value)});
+        node.dccSessions = []   // clear any pre existing session from previous tests
+        node.on('dccSessions', function tmp(data) {
+			dccSessionsData = data;
+			winston.info({message: 'mergAdminNode Test: KLOC test - message data : ' + JSON.stringify(dccSessionsData)});
+            node.removeListener('dccSessions', tmp);    // remove event listner after first event
+        })
 		mock_Cbus.outputDKEEP(value.session);
 		setTimeout(function(){
 			expect(mock_Cbus.getSendArray()[0]).to.equal(cbusLib.encodeQLOC(value.session));
+            expect(dccSessionsData[value.session].status).to.equal('Active');
 			done();
 		}, 10);
 	})
