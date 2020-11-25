@@ -127,14 +127,14 @@ class cbusAdmin extends EventEmitter {
             '59': (msg) => {
 				winston.debug({message: "WRACK (59) : " + msg.opCode() + ' ' + msg.messageOutput() + ' ' + msg.deCodeCbusMsg()});
             },
-            '60': (msg) => {
-                let session = msg.sessionId()
+            '60': (tmp, cbusMsg) => {
+                let session = cbusMsg.session
                 if (!(session in this.dccSessions)) {
                     this.dccSessions[session] = {}
                     this.dccSessions[session].count = 0
                 }
-                let functionRange = msg.getInt(11, 2)
-                let dccNMRA = msg.getInt(13, 2)
+                let functionRange = cbusMsg.Fn1
+                let dccNMRA = cbusMsg.Fn2
                 let func = `F${functionRange}`
                 this.dccSessions[session][func] = dccNMRA
                 let functionArray = []
@@ -167,17 +167,17 @@ class cbusAdmin extends EventEmitter {
                 if (this.dccSessions[session].F5 & 64) functionArray.push(27)
                 if (this.dccSessions[session].F5 & 128) functionArray.push(28)
                 this.dccSessions[session].functions = functionArray
-				winston.debug({message: `DCC Set Engine Function : ${msg.sessionId()} ${functionRange} ${dccNMRA} : ${functionArray}`});
+				winston.debug({message: `DCC Set Engine Function : ${cbusMsg.session} ${functionRange} ${dccNMRA} : ${functionArray}`});
                 this.emit('dccSessions', this.dccSessions)
                 //this.cbusSend(this.QLOC(session))
             },
-            '63': (msg) => {//CMDERR
+            '63': (tmp, cbusMsg) => {//CMDERR
 				//winston.debug({message: `CMD ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`});
                 let output = {}
                 output['type'] = 'DCC'
-                output['Error'] = msg.errorId()
-                output['Message'] = this.merg.dccErrors[msg.errorId()]
-                output['data'] = msg.getStr(9, 4)
+                output['Error'] = cbusMsg.errorNumber
+                output['Message'] = this.merg.dccErrors[cbusMsg.errorNumber]
+                output['data'] = decToHex(cbusMsg.data1, 2) + decToHex(cbusMsg.data2, 2)
                 this.emit('dccError', output)
             },
             '6F': (msg) => {//Cbus Error

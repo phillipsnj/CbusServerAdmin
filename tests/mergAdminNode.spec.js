@@ -82,7 +82,7 @@ describe('mergAdminNode tests', function(){
         node.on('dccSessions', function tmp(data) {
 			dccSessionsData = data;
 			winston.info({message: 'mergAdminNode Test: KLOC test - message data : ' + JSON.stringify(dccSessionsData)});
-            node.removeListener('dccSessions', tmp);    // remove event listner after first event
+            node.removeListener('dccSessions', tmp);    // remove event listener after first event
         })
 		mock_Cbus.outputKLOC(value.session);
 		setTimeout(function(){
@@ -132,7 +132,7 @@ describe('mergAdminNode tests', function(){
         node.on('dccSessions', function tmp(data) {
 			dccSessionsData = data;
 			winston.info({message: 'mergAdminNode Test: KLOC test - message data : ' + JSON.stringify(dccSessionsData)});
-            node.removeListener('dccSessions', tmp);    // remove event listner after first event
+            node.removeListener('dccSessions', tmp);    // remove event listener after first event
         })
 		mock_Cbus.outputDKEEP(value.session);
 		setTimeout(function(){
@@ -170,7 +170,7 @@ describe('mergAdminNode tests', function(){
         node.on('dccSessions', function tmp(data) {
 			dccSessionsData = data;
 			winston.info({message: 'mergAdminNode Test: DSPD test - message data : ' + JSON.stringify(dccSessionsData)});
-            node.removeListener('dccSessions', tmp);    // remove event listner after first event
+            node.removeListener('dccSessions', tmp);    // remove event listener after first event
         })
 		mock_Cbus.outputDSPD(value.session, value.speed, value.direction);
 		setTimeout(function(){
@@ -200,13 +200,97 @@ describe('mergAdminNode tests', function(){
         node.on('requestNodeNumber', function tmp(data) {
             eventReceived = true
 			winston.info({message: 'mergAdminNode Test: RQNN test - event received : ' + eventReceived});
-            node.removeListener('requestNodeNumber', tmp);    // remove event listner after first event
+            node.removeListener('requestNodeNumber', tmp);    // remove event listener after first event
         })
 		mock_Cbus.outputRQNN(value.nodeNumber);
 		setTimeout(function(){
             expect(eventReceived).to.be.true
 			done();
 		}, 100);
+	})
+
+    // 52 NNACK
+    
+    // 59 WRACK
+
+
+
+    // 60 DFUN
+    //
+	function GetTestCase_DFUN () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (Fn1Index = 1; Fn1Index < 4; Fn1Index++) {
+				if (Fn1Index == 1) Fn1 = 0;
+				if (Fn1Index == 2) Fn1 = 1;
+				if (Fn1Index == 3) Fn1 = 255;
+				for (Fn2Index = 1; Fn2Index < 4; Fn2Index++) {
+					if (Fn2Index == 1) Fn2 = 0;
+					if (Fn2Index == 2) Fn2 = 1;
+					if (Fn2Index == 3) Fn2 = 255;
+					testCases.push({'session':session, 'Fn1':Fn1, 'Fn2':Fn2});
+				}
+			}
+		}
+		return testCases;
+	}
+    //
+	itParam("DFUN test session ${value.session} Fn1 ${value.Fn1} Fn2 ${value.Fn2}", GetTestCase_DFUN(), function (done, value) {
+		winston.info({message: 'cbusMessage test: BEGIN DFUN test ' + JSON.stringify(value)});
+        node.on('dccSessions', function tmp(data) {
+			dccSessionsData = data;
+			winston.info({message: 'mergAdminNode Test: DFUN test - message data : ' + JSON.stringify(dccSessionsData)});
+            node.removeListener('dccSessions', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputDFUN(value.session, value.speed, value.direction);
+		setTimeout(function(){
+//            expect(dccSessionsData[value.session].speed).to.equal(value.speed);
+//            expect(dccSessionsData[value.session].direction).to.equal(value.direction);
+			done();
+		}, 10);
+	})
+
+
+    // 63 ERR
+    //
+	function GetTestCase_ERR () {
+		var testCases = [];
+		for (D1 = 1; D1 < 4; D1++) {
+			if (D1 == 1) data1 = 0;
+			if (D1 == 2) data1 = 1;
+			if (D1 == 3) data1 = 255;
+            for (D2 = 1; D2 < 4; D2++) {
+                if (D2 == 1) data2 = 0;
+                if (D2 == 2) data2 = 1;
+                if (D2 == 3) data2 = 255;
+                for (errorIndex = 1; errorIndex < 4; errorIndex++) {
+                    if (errorIndex == 1) errorNumber = 0;
+                    if (errorIndex == 2) errorNumber = 1;
+                    if (errorIndex == 3) errorNumber = 255;
+                    testCases.push({'data1':data1, 'data2':data2, 'errorNumber':errorNumber});
+                }
+            }
+		}
+		return testCases;
+	}
+    //
+	itParam("ERR test data1 ${value.data1} data2 ${value.data2} errorNumber ${value.errorNumber}", GetTestCase_ERR(), function (done, value) {
+		winston.info({message: 'cbusMessage test: BEGIN ERR test ' + JSON.stringify(value)});
+        node.on('dccError', function tmp(data) {
+			errorData = data;
+			winston.info({message: 'mergAdminNode Test: ERR test - message data : ' + JSON.stringify(errorData)});
+            node.removeListener('dccError', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputERR(value.data1, value.data2, value.errorNumber);
+		setTimeout(function(){
+            expect(errorData.type).to.equal('DCC');
+            expect(errorData.data).to.equal(decToHex(value.data1, 2) + decToHex(value.data2, 2));
+            expect(errorData.Error).to.equal(value.errorNumber);
+			done();
+		}, 10);
 	})
 
 

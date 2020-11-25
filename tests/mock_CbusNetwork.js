@@ -221,11 +221,11 @@ class mock_CbusNetwork {
 
 
 	// 63
-	outputERR(data, errorNumber) {
+	outputERR(data1, data2, errorNumber) {
 		// Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
-		var msgData = ':S' + 'B780' + 'N' + '63' + decToHex(data, 4) + decToHex(errorNumber, 2) + ';';
+		var msgData = cbusLib.encodeERR(data1, data2, errorNumber);
 		this.socket.write(msgData);
-		winston.info({message: 'Mock CBUS Network: Output ERR : ' + msgData});
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
 
