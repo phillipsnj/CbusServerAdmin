@@ -210,11 +210,11 @@ class cbusAdmin extends EventEmitter {
                 }
         		winston.info({message: 'mergAdminNode: NUMEV: ' + JSON.stringify(this.config.nodes[cbusMsg.nodeNumber])});
             },
-            '90': (msg) => {//Accessory On Long Event
-                this.eventSend(msg, 'on', 'long')
+            '90': (msg, cbusMsg) => {//Accessory On Long Event
+                this.eventSend(cbusMsg, 'on', 'long')
             },
-            '91': (msg) => {//Accessory Off Long Event
-                this.eventSend(msg, 'off', 'long')
+            '91': (msg, cbusMsg) => {//Accessory Off Long Event
+                this.eventSend(cbusMsg, 'off', 'long')
             },
             '97': (msg) => { //Receive Node Variable Value
 				//winston.debug({message: `NVANS (97) Node ${msg.nodeId()} : ${msg.variableId()} : ${msg.variableVal()}`});
@@ -234,11 +234,11 @@ class cbusAdmin extends EventEmitter {
                 //this.config.nodes[msg.nodeId()].variables[msg.variableId()] = msg.variableVal()
                 //this.saveConfig()
             },
-            '98': (msg) => {//Accessory On Long Event
-                this.eventSend(msg, 'on', 'short')
+            '98': (msg, cbusMsg) => {//Accessory On Long Event
+                this.eventSend(cbusMsg, 'on', 'short')
             },
-            '99': (msg) => {//Accessory Off Long Event
-                this.eventSend(msg, 'off', 'short')
+            '99': (msg, cbusMsg) => {//Accessory Off Long Event
+                this.eventSend(cbusMsg, 'off', 'short')
             },
             '9B': (msg) => {//PARAN Parameter readback by Index
 				//winston.debug({message: `PARAN (9B) ${msg.nodeId()} Parameter ${msg.paramId()} Value ${msg.paramValue()}`});
@@ -430,34 +430,31 @@ class cbusAdmin extends EventEmitter {
         this.emit('events', Object.values(this.config.events))
     }
 
-    eventSend(msg, status, type) {
+    eventSend(cbusMsg, status, type) {
         let eId = ''
+        let eventId = ''
         if (type == 'long') {
-            eId = msg.fullEventId()
+            eId = decToHex(cbusMsg.nodeNumber,4) + decToHex(cbusMsg.eventNumber,4)
+            eventId = cbusMsg.eventNumber
         } else {
-            eId = msg.shortEventId()
+            eId = decToHex(cbusMsg.deviceNumber,8)
+            eventId = cbusMsg.deviceNumber
         }
-		//winston.debug({message: `EventSend :${JSON.stringify(msg)}`});
+		winston.debug({message: `mergAdminNode: EventSend : ` + cbusMsg.text});
         if (eId in this.config.events) {
             this.config.events[eId]['status'] = status
             this.config.events[eId]['count'] += 1
         } else {
             let output = {}
             output['id'] = eId
-            output['nodeId'] = msg.nodeId()
-            output['eventId'] = msg.eventId()
+            output['nodeId'] = cbusMsg.nodeNumber
+            output['eventId'] = eventId
             output['status'] = status
             output['type'] = type
             output['count'] = 1
             this.config.events[eId] = output
         }
-        //this.saveConfig()
-        /*let events = []
-        for (let event in this.config.events){
-            events.push(this.config.events[event])
-        }*/
         this.emit('events', Object.values(this.config.events));
-        //this.client.write('events');
     }
 
     saveConfig() {

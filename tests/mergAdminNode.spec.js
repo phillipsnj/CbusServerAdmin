@@ -353,25 +353,84 @@ describe('mergAdminNode tests', function(){
     //
 	itParam("NUMEV test nodeNumber ${value.nodeNumber} eventCount ${value.eventCount}", GetTestCase_NUMEV(), function (done, value) {
 		winston.info({message: 'cbusMessage test: BEGIN NUMEV test ' + JSON.stringify(value)});
-		setTimeout(function(){
-            mock_Cbus.outputNUMEV(value.nodeNumber, value.eventCount);
-		}, 10);
+        mock_Cbus.outputNUMEV(value.nodeNumber, value.eventCount);
 		setTimeout(function(){
             expect(node.config.nodes[value.nodeNumber].EvCount).to.equal(value.eventCount);
             done()
-		}, 20);
+		}, 10);
 	})
 
 
-	// 90 ACON
+
+
+    // 90 & 91 - ACON & ACOF
     //
-	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
-		winston.info({message: 'mergAdminNode test: BEGIN ACON test ' + JSON.stringify(value)});
+	function GetTestCase_ACONF () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (EN = 1; EN < 4; EN++) {
+				if (EN == 1) eventNumber = 0;
+				if (EN == 2) eventNumber = 1;
+				if (EN == 3) eventNumber = 65535;
+				testCases.push({'nodeNumber':nodeNumber, 'eventNumber':eventNumber});
+			}
+		}
+		return testCases;
+	}
+
+    // 90 ACON Incoming
+    //
+	itParam("ACON incoming test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", GetTestCase_ACONF(), function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN ACON incoming test ' + JSON.stringify(value)});
+        node.config.events = []         // clear events
+        node.on('events', function tmp(data) {
+			eventData = data;
+			winston.info({message: 'mergAdminNode Test: ACON incoming test - message data : ' + JSON.stringify(eventData)});
+            node.removeListener('events', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputACON(value.nodeNumber, value.eventNumber);
+		setTimeout(function(){
+            var ref = decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) 
+            expect(eventData[0].id).to.equal(ref);
+            expect(eventData[0].nodeId).to.equal(value.nodeNumber);
+            expect(eventData[0].eventId).to.equal(value.eventNumber);
+            expect(eventData[0].status).to.equal('on');
+			done();
+		}, 10);
+	})
+
+	// 90 ACON Outgoing
+    //
+	itParam("ACON outgoing test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN ACON outgoing test ' + JSON.stringify(value)});
 		expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 		expect(node.ACON(value.node, value.event)).to.equal(expected);
 		done();
 	})
 
+    // 91 ACOF Incoming
+    //
+	itParam("ACOF incoming test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", GetTestCase_ACONF(), function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN ACOF incoming test ' + JSON.stringify(value)});
+        node.config.events = []         // clear events
+        node.on('events', function tmp(data) {
+			eventData = data;
+			winston.info({message: 'mergAdminNode Test: ACOF incoming test - message data : ' + JSON.stringify(eventData)});
+            node.removeListener('events', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputACOF(value.nodeNumber, value.eventNumber);
+		setTimeout(function(){
+            var ref = decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) 
+            expect(eventData[0].id).to.equal(ref);
+            expect(eventData[0].nodeId).to.equal(value.nodeNumber);
+            expect(eventData[0].eventId).to.equal(value.eventNumber);
+            expect(eventData[0].status).to.equal('off');
+			done();
+		}, 10);
+	})
 
 	// 91 ACOF
     //
@@ -382,36 +441,83 @@ describe('mergAdminNode tests', function(){
 		done();
 	})
 
+
 	function GetTestCase_ACCESSORY_SHORT () {
 		var testCases = [];
 		for (NN = 1; NN < 4; NN++) {
-			if (NN == 1) nodeId = 0;
-			if (NN == 2) nodeId = 1;
-			if (NN == 3) nodeId = 65535;
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
 			for (DN = 1; DN < 4; DN++) {
 				if (DN == 1) deviceNum = 0;
 				if (DN == 2) deviceNum = 1;
 				if (DN == 3) deviceNum = 65535;
-				testCases.push({'nodeId':nodeId, 'deviceNum':deviceNum});
+				testCases.push({'nodeNumber':nodeNumber, 'deviceNum':deviceNum});
 			}
 		}
 		return testCases;
 	}
 
 
-	itParam("ASOF test nodeId ${value.nodeId} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (value) {
-		// Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
-		winston.info({message: 'mergAdminNode test: BEGIN ASOF test ' + JSON.stringify(value)});
-		expected = ":SB780N99" + decToHex(value.nodeId, 4) + decToHex(value.deviceNum, 4) + ";";
-		expect(node.ASOF(value.nodeId, value.deviceNum)).to.equal(expected);
+    // 98 ASON Incoming
+    //
+	itParam("ASON incoming test nodeNumber ${value.nodeNumber} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN ASON incoming test ' + JSON.stringify(value)});
+        node.config.events = []         // clear events
+        node.on('events', function tmp(data) {
+			eventData = data;
+			winston.info({message: 'mergAdminNode Test: ASON incoming test - message data : ' + JSON.stringify(eventData)});
+            node.removeListener('events', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputASON(value.nodeNumber, value.deviceNum);
+		setTimeout(function(){
+            var ref = decToHex(value.deviceNum, 8) 
+            expect(eventData[0].id).to.equal(ref);
+            expect(eventData[0].nodeId).to.equal(value.nodeNumber);
+            expect(eventData[0].eventId).to.equal(value.deviceNum);
+            expect(eventData[0].status).to.equal('on');
+			done();
+		}, 10);
+	})
+
+    // 98 ASON Outgoing
+    //
+	itParam("ASON test nodeNumber ${value.nodeNumber} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (value) {
+		// Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
+		winston.info({message: 'mergAdminNode test: BEGIN ASON test ' + JSON.stringify(value)});
+		expected = ":SB780N98" + decToHex(value.nodeNumber, 4) + decToHex(value.deviceNum, 4) + ";";
+		expect(node.ASON(value.nodeNumber, value.deviceNum)).to.equal(expected);
 	})
 
 
-	itParam("ASON test nodeId ${value.nodeId} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (value) {
-		// Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
-		winston.info({message: 'mergAdminNode test: BEGIN ASON test ' + JSON.stringify(value)});
-		expected = ":SB780N98" + decToHex(value.nodeId, 4) + decToHex(value.deviceNum, 4) + ";";
-		expect(node.ASON(value.nodeId, value.deviceNum)).to.equal(expected);
+    // 99 ASOF Incoming
+    //
+	itParam("ASOF incoming test nodeNumber ${value.nodeNumber} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN ASOF incoming test ' + JSON.stringify(value)});
+        node.config.events = []         // clear events
+        node.on('events', function tmp(data) {
+			eventData = data;
+			winston.info({message: 'mergAdminNode Test: ASOF incoming test - message data : ' + JSON.stringify(eventData)});
+            node.removeListener('events', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputASOF(value.nodeNumber, value.deviceNum);
+		setTimeout(function(){
+            var ref = decToHex(value.deviceNum, 8) 
+            expect(eventData[0].id).to.equal(ref);
+            expect(eventData[0].nodeId).to.equal(value.nodeNumber);
+            expect(eventData[0].eventId).to.equal(value.deviceNum);
+            expect(eventData[0].status).to.equal('off');
+			done();
+		}, 10);
+	})
+
+    // 99 ASOF Outgoing
+    //
+	itParam("ASOF test nodeNumber ${value.nodeNumber} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (value) {
+		// Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
+		winston.info({message: 'mergAdminNode test: BEGIN ASOF test ' + JSON.stringify(value)});
+		expected = ":SB780N99" + decToHex(value.nodeNumber, 4) + decToHex(value.deviceNum, 4) + ";";
+		expect(node.ASOF(value.nodeNumber, value.deviceNum)).to.equal(expected);
 	})
 
 
