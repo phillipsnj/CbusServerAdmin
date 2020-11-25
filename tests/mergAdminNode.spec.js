@@ -23,8 +23,17 @@ describe('mergAdminNode tests', function(){
 		winston.info({message: '======================================================================'});
 		winston.info({message: ' '});
 
-//        node.cbusSend(node.QNN())
-		done();
+        // request nodes & then allow some time to process them
+        winston.info({message: '..................................................'});
+        winston.info({message: 'Start by querying all nodes to populate structures'});
+        winston.info({message: '..................................................'});
+        node.cbusSend(node.QNN())
+		setTimeout(function(){
+            winston.info({message: '............................'});
+            winston.info({message: 'Query completed.............'});
+            winston.info({message: '............................'});
+			done();
+		}, 20);
 	});
     
     beforeEach(function() {
@@ -48,12 +57,6 @@ describe('mergAdminNode tests', function(){
 									{ node: 65535, event: 1 },
 									{ node: 65535, event: 65535 }
 								];
-
-	it("Wait.....", function (done) {
-		setTimeout(function(){
-			done();
-		}, 100);
-	})
 
 
 	it('ACK test', function(done) {
@@ -330,14 +333,35 @@ describe('mergAdminNode tests', function(){
 	})
 
 
-	// 91 ACOF
+    // 74 NUMEV
     //
-	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
-		winston.info({message: 'mergAdminNode test: BEGIN ACOF test ' + JSON.stringify(value)});
-		expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
-		expect(node.ACOF(value.node, value.event)).to.equal(expected);
-		done();
+	function GetTestCase_NUMEV () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (Pindex = 1; Pindex < 4; Pindex++) {
+				if (Pindex == 1) eventCount = 0;
+				if (Pindex == 2) eventCount = 1;
+				if (Pindex == 3) eventCount = 255;
+				testCases.push({'nodeNumber':nodeNumber, 'eventCount':eventCount});
+			}
+		}
+		return testCases;
+	}
+    //
+	itParam("NUMEV test nodeNumber ${value.nodeNumber} eventCount ${value.eventCount}", GetTestCase_NUMEV(), function (done, value) {
+		winston.info({message: 'cbusMessage test: BEGIN NUMEV test ' + JSON.stringify(value)});
+		setTimeout(function(){
+            mock_Cbus.outputNUMEV(value.nodeNumber, value.eventCount);
+		}, 10);
+		setTimeout(function(){
+            expect(node.config.nodes[value.nodeNumber].EvCount).to.equal(value.eventCount);
+            done()
+		}, 20);
 	})
+
 
 	// 90 ACON
     //
@@ -345,6 +369,16 @@ describe('mergAdminNode tests', function(){
 		winston.info({message: 'mergAdminNode test: BEGIN ACON test ' + JSON.stringify(value)});
 		expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
 		expect(node.ACON(value.node, value.event)).to.equal(expected);
+		done();
+	})
+
+
+	// 91 ACOF
+    //
+	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN ACOF test ' + JSON.stringify(value)});
+		expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
+		expect(node.ACOF(value.node, value.event)).to.equal(expected);
 		done();
 	})
 

@@ -726,7 +726,7 @@ describe('cbusMessage tests', function(){
 
 
 	itParam("NUMEV test nodeNumber ${value.nodeNumber} eventCount ${value.eventCount}", GetTestCase_NUMEV(), function (value) {
-		winston.info({message: 'cbusMessage test: BEGIN RQNNUMEVPN test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN NUMEV test ' + JSON.stringify(value)});
 		expected = ":SB780N74" + decToHex(value.nodeNumber, 4) + decToHex(value.eventCount, 2) + ";";
         var encode = cbusLib.encodeNUMEV(value.nodeNumber, value.eventCount);
         var decode = cbusLib.decode(encode);

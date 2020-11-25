@@ -83,7 +83,8 @@ class mock_CbusNetwork {
 					case '58':
 						// Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
 						winston.info({message: 'Mock CBUS Network: received RQEVN'});
-						this.outputNUMEV(msg.nodeId());
+                    	var storedEventsCount = this.getModule(nodeId).getStoredEventsCount();
+						this.outputNUMEV(msg.nodeId(), storedEventsCount);
 						break;
 					case '71':
 						// Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
@@ -239,12 +240,11 @@ class mock_CbusNetwork {
 
 
 	// 74
-	outputNUMEV(nodeId) {
+	outputNUMEV(nodeNumber, eventCount) {
 		// Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
-		var storedEventsCount = this.getModule(nodeId).getStoredEventsCount();
-		var msgData = ':S' + 'B780' + 'N' + '74' + decToHex(nodeId, 4) + decToHex(storedEventsCount, 2) + ';'
-		winston.info({message: 'Mock CBUS Network: Output NUMEV : nodeId [' + nodeId + '] ' + msgData});
+		var msgData = cbusLib.encodeNUMEV(nodeNumber, eventCount);
 		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
 	// 90

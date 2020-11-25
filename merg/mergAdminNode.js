@@ -171,8 +171,8 @@ class cbusAdmin extends EventEmitter {
                 this.emit('dccSessions', this.dccSessions)
                 //this.cbusSend(this.QLOC(session))
             },
-            '63': (tmp, cbusMsg) => {//CMDERR
-				//winston.debug({message: `CMD ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`});
+            '63': (tmp, cbusMsg) => {// ERR - dcc error
+				//winston.debug({message: `DCC ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`});
                 let output = {}
                 output['type'] = 'DCC'
                 output['Error'] = cbusMsg.errorNumber
@@ -180,7 +180,7 @@ class cbusAdmin extends EventEmitter {
                 output['data'] = decToHex(cbusMsg.data1, 2) + decToHex(cbusMsg.data2, 2)
                 this.emit('dccError', output)
             },
-            '6F': (tmp, cbusMsg) => {//Cbus Error
+            '6F': (tmp, cbusMsg) => {// CMDERR - Cbus Error
                 let ref = cbusMsg.nodeNumber.toString() + '-' + cbusMsg.errorNumber.toString()
                 if (ref in this.cbusErrors) {
                     this.cbusErrors[ref].count += 1
@@ -196,19 +196,19 @@ class cbusAdmin extends EventEmitter {
                 }
                 this.emit('cbusError', this.cbusErrors)
             },
-            '74': (msg) => {
-				//winston.debug({message: `NUMNEV (74) : ${msg.nodeId()} :: ${msg.paramId()}`});
-                if (this.config.nodes[msg.nodeId()].EvCount != null) {
-                    if (this.config.nodes[msg.nodeId()].EvCount != msg.variableId()) {
-                        this.config.nodes[msg.nodeId()].EvCount = msg.variableId()
+            '74': (tmp, cbusMsg) => { // NUMEV
+                if (this.config.nodes[cbusMsg.nodeNumber].EvCount != null) {
+                    if (this.config.nodes[cbusMsg.nodeNumber].EvCount != cbusMsg.eventCount) {
+                        this.config.nodes[cbusMsg.nodeNumber].EvCount = cbusMsg.eventCount
                         this.saveConfig()
                     } else {
-						winston.debug({message: `EvCount value has not changed`});
+						winston.debug({message: `mergAdminNode: NUMEV: EvCount value has not changed`});
                     }
                 } else {
-                    this.config.nodes[msg.nodeId()].EvCount = msg.variableId()
+                    this.config.nodes[cbusMsg.nodeNumber].EvCount = cbusMsg.eventCount
                     this.saveConfig()
                 }
+        		winston.info({message: 'mergAdminNode: NUMEV: ' + JSON.stringify(this.config.nodes[cbusMsg.nodeNumber])});
             },
             '90': (msg) => {//Accessory On Long Event
                 this.eventSend(msg, 'on', 'long')
