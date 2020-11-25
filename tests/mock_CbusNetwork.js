@@ -3,6 +3,8 @@ var winston = require('winston');		// use config from root instance
 const net = require('net');
 const cbusMessage = require('./../merg/mergCbusMessage.js')
 
+const cbusLib = require('./../merg/cbusLibrary.js')
+
 //
 //		Grid connect CAN over serial message syntax
 //     : <S | X> <IDENTIFIER> <N> <DATA-0> <DATA-1> … <DATA-7> ;
@@ -35,9 +37,6 @@ class mock_CbusNetwork {
 		this.modules = 	[
 						new CANACC8 (0),
 						new CANSERVO8C (1),
-						new CANMIO_OUT (2),
-						new CANPAN (3),
-						new CANACE8C (4),
 						new CANMIO (65535)
 						]
 
@@ -50,8 +49,9 @@ class mock_CbusNetwork {
 				for (var i = 0; i < msgArray.length - 1; i++) {
 					msgArray[i] = msgArray[i].concat(";");				// add back the ';' terminator that was lost in the split
 					this.sendArray.push(msgArray[i]);					// store the incoming messages so the test can inspect them
+                    var cbusMsg = cbusLib.decode(msgArray[i]);
 					let msg = new cbusMessage.cbusMessage(msgArray[i]);
-					winston.info({message: 'Mock CBUS Network: [' + i + '] ' +  msgArray[i] + " " + msg.translateMessage()});
+					winston.info({message: 'Mock CBUS Network: [' + i + '] ' +  msgArray[i] + " " + cbusMsg.text});
 					switch (msg.opCode()) {
 					case '0D':
 						// Format: <MjPri><MinPri=3><CANID>]<0D>
@@ -59,6 +59,8 @@ class mock_CbusNetwork {
 						for (var i = 0; i < this.modules.length; i++) {
 							this.outputPNN(this.modules[i].getNodeId());
 						}
+						break;
+					case '22':  // QLOC
 						break;
 					case '42':
 						// Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
@@ -117,7 +119,7 @@ class mock_CbusNetwork {
 						winston.info({message: 'Mock CBUS Network: received EVLRN'});
 						break;
 					default:
-						winston.info({message: 'Mock CBUS Network: *************************** received unknown opcode '});
+						winston.info({message: 'Mock CBUS Network: ********************** received unknown opcode ' + msg.opCode()});
 						break;
 					}
 				}
@@ -167,12 +169,28 @@ class mock_CbusNetwork {
 	}
 
 
-	// 21
+	// 00 ACK
+	outputACK() {
+		var msgData = cbusLib.encodeACK();
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+	}
+
+
+	// 21 KLOC
 	outputKLOC(session) {
 		// Format: [<MjPri><MinPri=2><CANID>]<21><Session>
 		var msgData = ':S' + 'B780' + 'N' + '21' + decToHex(session, 2) + ';';
 		this.socket.write(msgData);
 		winston.info({message: 'Mock CBUS Network: Output KLOC : session [' + session + '] ' + msgData});
+	}
+
+
+	// 23 DKEEP
+	outputDKEEP(session) {
+		var msgData = cbusLib.encodeDKEEP(session);
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
 

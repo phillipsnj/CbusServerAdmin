@@ -6,6 +6,7 @@ const jsonfile = require('jsonfile')
 const cbusMessage = require('./mergCbusMessage.js')
 //const merg = jsonfile.readFileSync('./nodeConfig.json')
 
+let cbusLib = require('./cbusLibrary.js')
 
 const EventEmitter = require('events').EventEmitter;
 
@@ -49,10 +50,12 @@ class cbusAdmin extends EventEmitter {
         this.client.on('data', function (data) { //Receives packets from network and process individual Messages
             const outMsg = data.toString().split(";");
             for (var i = 0; i < outMsg.length - 1; i++) {
+                let cbusMsg = cbusLib.decode(outMsg[i])
+				winston.debug({message: "mergAdminNode In " + outMsg[i] + " : " + cbusMsg.text});
                 let msg = new cbusMessage.cbusMessage(outMsg[i] + ';');		// replace terminator removed by 'split' method
 				this.emit('cbusTraffic', {direction: 'In', raw: msg.messageOutput(), translated: msg.translateMessage()});
                 //winston.debug({message: `CbusAdminServer Message Rv: ${i}  ${msg.opCode()} ${msg.nodeId()} ${msg.eventId()} ${msg.messageOutput()} ${msg.header()}`});
-                this.action_message(msg)
+                this.action_message(msg, cbusMsg)
             }
         }.bind(this))
         this.client.on('error', (err) => {
@@ -67,6 +70,25 @@ class cbusAdmin extends EventEmitter {
             }, 1000)
         }.bind(this))
         this.actions = { //actions when Opcodes are received
+            '00': (tmp, cbusMsg) => {
+				winston.debug({message: "ACK (00) : No Action"});
+            },
+            '23': (tmp, cbusMsg) => {
+				winston.debug({message: `Session Keep Alive : ${cbusMsg.session}`});
+                let ref = cbusMsg.opCode
+                let session = cbusMsg.session
+                if (session in this.dccSessions) {
+                    this.dccSessions[session].count += 1
+                    this.dccSessions[session].status = 'Active'
+                } else {
+					winston.debug({message: `Session ${session} does not exist`});
+                    this.dccSessions[session] = {}
+                    this.dccSessions[session].count = 1
+                    this.dccSessions[session].status = 'Active'
+                    this.cbusSend(this.QLOC(session))
+                }
+                this.emit('dccSessions', this.dccSessions)
+            },
             'B6': (msg) => { //PNN Recieved from Node
 				//winston.debug({message: `merg :${JSON.stringify(this.merg)}`});
                 const ref = msg.nodeId()
@@ -241,9 +263,6 @@ class cbusAdmin extends EventEmitter {
                 //this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
                 //this.saveConfig()
             },
-            '01': (msg) => {
-				winston.debug({message: "ACK (01) : " + msg.opCode() + ' ' + msg.messageOutput() + ' ' + msg.deCodeCbusMsg()});
-            },
             '59': (msg) => {
 				winston.debug({message: "WRACK (59) : " + msg.opCode() + ' ' + msg.messageOutput() + ' ' + msg.deCodeCbusMsg()});
             },
@@ -272,22 +291,6 @@ class cbusAdmin extends EventEmitter {
                     this.dccSessions[session].status = 'In Active'
                 } else {
 					winston.debug({message:`Session ${session} does not exist`});
-                }
-                this.emit('dccSessions', this.dccSessions)
-            },
-            '23': (msg) => {
-				winston.debug({message: `Session Keep Alive : ${msg.sessionId()}`});
-                let ref = msg.opCode()
-                let session = msg.sessionId()
-                if (session in this.dccSessions) {
-                    this.dccSessions[session].count += 1
-                    this.dccSessions[session].status = 'Active'
-                } else {
-					winston.debug({message: `Session ${session} does not exist`});
-                    this.dccSessions[session] = {}
-                    this.dccSessions[session].count = 1
-                    this.dccSessions[session].status = 'Active'
-                    this.cbusSend(this.QLOC(session))
                 }
                 this.emit('dccSessions', this.dccSessions)
             },
@@ -398,11 +401,11 @@ class cbusAdmin extends EventEmitter {
         }
     }
 
-    action_message(msg) {
+    action_message(msg, cbusMsg) {
         if (this.actions[msg.opCode()]) {
-            this.actions[msg.opCode()](msg);
+            this.actions[msg.opCode()](msg, cbusMsg);
         } else {
-            this.actions['DEFAULT'](msg);
+            this.actions['DEFAULT'](msg, cbusMsg);
         }
     }
 

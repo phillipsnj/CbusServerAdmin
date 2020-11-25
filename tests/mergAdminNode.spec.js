@@ -2,6 +2,7 @@ const expect = require('chai').expect;
 var itParam = require('mocha-param');
 var winston = require('./config/winston_test.js');
 
+const cbusLib = require('./../merg/cbusLibrary.js')
 
 const NET_PORT = 5550;
 const NET_ADDRESS = "127.0.0.1"
@@ -9,17 +10,10 @@ const admin = require('./../merg/mergAdminNode.js')
 const file = 'config/nodeConfig.json'
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 
-
-
-function decToHex(num, len) {
-    let output = Number(num).toString(16).toUpperCase()
-    var padded = "00000000" + output
-    return padded.substr(-len)
-}
-
+function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
 describe('mergAdminNode tests', function(){
-	let cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
+	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
 	let node = new admin.cbusAdmin(file, NET_ADDRESS,NET_PORT);
 
 	before(function(done) {
@@ -29,12 +23,16 @@ describe('mergAdminNode tests', function(){
 		winston.info({message: '======================================================================'});
 		winston.info({message: ' '});
 
-        node.cbusSend(node.QNN())
+//        node.cbusSend(node.QNN())
 		done();
 	});
+    
+    beforeEach(function() {
+        mock_Cbus.clearSendArray()
+    })
 
 	after(function() {
-		cbus.stopServer();
+		mock_Cbus.stopServer();
 		winston.info({message: 'Close mergAdminNode test Client'});
 
 	});																										
@@ -58,7 +56,60 @@ describe('mergAdminNode tests', function(){
 	})
 
 
-	
+	it('ACK test', function(done) {
+		winston.info({message: 'mergAdminNode Test: ACK test'});
+		mock_Cbus.outputACK();
+        done();
+	});
+
+
+    // 22 QLOC
+    //
+	function GetTestCase_QLOC () {
+		var testCases = [];
+		for (S = 1; S < 4; S++) {
+			if (S == 1) session = 0;
+			if (S == 2) session = 1;
+			if (S == 3) session = 255;
+			testCases.push({'session':session});
+		}
+		return testCases;
+	}
+    //
+	itParam("QLOC test session ${value.session}", GetTestCase_QLOC(), function (value) {
+		winston.info({message: 'mergAdminNode test: BEGIN QLOC test ' + JSON.stringify(value)});
+		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
+		expect(node.QLOC(value.session)).to.equal(expected);
+	})
+
+
+    // 23 DKEEP
+    //
+	function GetTestCase_DKEEP () {
+		var testCases = [];
+		for (S = 1; S < 4; S++) {
+			if (S == 1) session = 0;
+			if (S == 2) session = 1;
+			if (S == 3) session = 255;
+			testCases.push({'session':session});
+		}
+		return testCases;
+	}
+    //
+	itParam("DKEEP test session ${value.session}", GetTestCase_DKEEP(), function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN DKEEP test ' + JSON.stringify(value)});
+		mock_Cbus.outputDKEEP(value.session);
+		setTimeout(function(){
+			expect(mock_Cbus.getSendArray()[0]).to.equal(cbusLib.encodeQLOC(value.session));
+			done();
+		}, 10);
+	})
+
+
+
+
+	// 91 ACOF
+    //
 	itParam("ACOF test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		winston.info({message: 'mergAdminNode test: BEGIN ACOF test ' + JSON.stringify(value)});
 		expected = ":SB780N91" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
@@ -66,6 +117,8 @@ describe('mergAdminNode tests', function(){
 		done();
 	})
 
+	// 90 ACON
+    //
 	itParam("ACON test nodeId ${value.node} event ${value.event}", TestCases_NodeEvent, function (done, value) {
 		winston.info({message: 'mergAdminNode test: BEGIN ACON test ' + JSON.stringify(value)});
 		expected = ":SB780N90" + decToHex(value.node, 4) + decToHex(value.event, 4) + ";";
