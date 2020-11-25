@@ -265,6 +265,15 @@ class mock_CbusNetwork {
 	}
 
 
+	// 97
+	outputNVANS(nodeNumber, nodeVariableIndex, nodeVariableValue) {
+		// Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
+		var msgData = cbusLib.encodeNVANS(nodeNumber, nodeVariableIndex, nodeVariableValue);
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+	}
+
+
 	// 98
 	outputASON(nodeNumber, deviceNumber) {
 		// Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><EN hi><EN lo>

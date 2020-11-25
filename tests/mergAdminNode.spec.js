@@ -459,6 +459,39 @@ describe('mergAdminNode tests', function(){
 	}
 
 
+    // 97 NVANS
+    //
+	function GetTestCase_NVANS () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (NVindex = 1; NVindex < 4; NVindex++) {
+				if (NVindex == 1) nvIndex = 0;
+				if (NVindex == 2) nvIndex = 1;
+				if (NVindex == 3) nvIndex = 255;
+				for (NVvalue = 1; NVvalue < 4; NVvalue++) {
+					if (NVvalue == 1) nvValue = 0;
+					if (NVvalue == 2) nvValue = 1;
+					if (NVvalue == 3) nvValue = 255;
+					testCases.push({'nodeNumber':nodeNumber, 'nvIndex':nvIndex, 'nvValue':nvValue});
+				}
+			}
+		}
+		return testCases;
+	}
+    //
+	itParam("NVANS test nodeNumber ${value.nodeNumber} nvIndex ${value.nvIndex} nvValue ${value.nvValue}", GetTestCase_NVANS(), function (done, value) {
+		winston.info({message: 'cbusMessage test: BEGIN NVANS test ' + JSON.stringify(value)});
+        mock_Cbus.outputNVANS(value.nodeNumber, value.nvIndex, value.nvValue);
+		setTimeout(function(){
+            expect(node.config.nodes[value.nodeNumber].variables[value.nvIndex]).to.equal(value.nvValue)
+            done()
+		}, 10);
+	})
+
+
     // 98 ASON Incoming
     //
 	itParam("ASON incoming test nodeNumber ${value.nodeNumber} deviceNum ${value.deviceNum}", GetTestCase_ACCESSORY_SHORT(), function (done, value) {
