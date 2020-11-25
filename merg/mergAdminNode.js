@@ -216,7 +216,7 @@ class cbusAdmin extends EventEmitter {
             '91': (tmp, cbusMsg) => {//Accessory Off Long Event
                 this.eventSend(cbusMsg, 'off', 'long')
             },
-            '97': (tmp, cbusMsg) => { //Receive Node Variable Value
+            '97': (tmp, cbusMsg) => { // NVANS - Receive Node Variable Value
                 if (this.config.nodes[cbusMsg.nodeNumber].variables[cbusMsg.nodeVariableIndex] != null) {
                     if (this.config.nodes[cbusMsg.nodeNumber].variables[cbusMsg.nodeVariableIndex] != cbusMsg.nodeVariableValue) {
 						winston.debug({message: `Variable ${cbusMsg.nodeVariableIndex} value has changed`});
@@ -237,23 +237,21 @@ class cbusAdmin extends EventEmitter {
             '99': (tmp, cbusMsg) => {//Accessory Off Long Event
                 this.eventSend(cbusMsg, 'off', 'short')
             },
-            '9B': (msg) => {//PARAN Parameter readback by Index
-				//winston.debug({message: `PARAN (9B) ${msg.nodeId()} Parameter ${msg.paramId()} Value ${msg.paramValue()}`});
-                if (this.config.nodes[msg.nodeId()].parameters[msg.paramId()] != null) {
-                    if (this.config.nodes[msg.nodeId()].parameters[msg.paramId()] != msg.paramValue()) {
-						winston.debug({message: `Parameter ${msg.paramId()} value has changed`});
-                        this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
+            '9B': (tmp, cbusMsg) => {//PARAN Parameter readback by Index
+				//winston.debug({message: `PARAN (9B) ${cbusMsg.nodeNumber} Parameter ${cbusMsg.parameterIndex} Value ${msg.paramValue()}`});
+                if (this.config.nodes[cbusMsg.nodeNumber].parameters[cbusMsg.parameterIndex] != null) {
+                    if (this.config.nodes[cbusMsg.nodeNumber].parameters[cbusMsg.parameterIndex] != cbusMsg.parameterValue) {
+						winston.debug({message: `Parameter ${cbusMsg.parameterIndex} value has changed`});
+                        this.config.nodes[cbusMsg.nodeNumber].parameters[cbusMsg.parameterIndex] = cbusMsg.parameterValue
                         this.saveConfig()
                     } else {
-						winston.debug({message: `Parameter ${msg.paramId()} value has not changed`});
+						winston.debug({message: `Parameter ${cbusMsg.parameterIndex} value has not changed`});
                     }
                 } else {
-					winston.debug({message: `Parameter ${msg.paramId()} value does not exist in config`});
-                    this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
+					winston.debug({message: `Parameter ${cbusMsg.parameterIndex} value does not exist in config`});
+                    this.config.nodes[cbusMsg.nodeNumber].parameters[cbusMsg.parameterIndex] = cbusMsg.parameterValue
                     this.saveConfig()
                 }
-                //this.config.nodes[msg.nodeId()].parameters[msg.paramId()] = msg.paramValue()
-                //this.saveConfig()
             },
             'B5': (msg) => {//Read of EV value Response REVAL
 				//winston.debug({message: `REVAL (B5) ${msg.nodeId()} Event : ${msg.actionEventIndex()} Event Variable : ${msg.actionEventVarId()} Event Variable Value : ${msg.actionEventVarVal()}`});

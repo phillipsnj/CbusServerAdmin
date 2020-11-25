@@ -554,6 +554,41 @@ describe('mergAdminNode tests', function(){
 	})
 
 
+    // 9B PARAN
+    //
+	function GetTestCase_PARAN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (PI = 1; PI < 4; PI++) {
+				if (PI == 1) parameterIndex = 0;
+				if (PI == 2) parameterIndex = 1;
+				if (PI == 3) parameterIndex = 255;
+				for (PV = 1; PV < 4; PV++) {
+					if (PV == 1) parameterValue = 0;
+					if (PV == 2) parameterValue = 1;
+					if (PV == 3) parameterValue = 255;
+					testCases.push({'nodeNumber':nodeNumber, 'parameterIndex':parameterIndex, 'parameterValue':parameterValue});
+				}
+			}
+		}
+		return testCases;
+	}
+
+	itParam("PARAN test nodeNumber ${value.nodeNumber} parameterIndex ${value.parameterIndex} parameterValue ${value.parameterValue}", GetTestCase_PARAN(), function (done, value) {
+		winston.info({message: 'cbusMessage test: BEGIN PARAN test ' + JSON.stringify(value)});
+        mock_Cbus.outputPARAN(value.nodeNumber, value.parameterIndex, value.parameterValue);
+		setTimeout(function(){
+            expect(node.config.nodes[value.nodeNumber].parameters[value.parameterIndex]).to.equal(value.parameterValue)
+            done()
+		}, 10);
+	})
+
+
+    // D2 EVLRN
+    //
 	function GetTestCase_EVLRN () {
 		var testCases = [];
 		for (EV = 1; EV < 4; EV++) {

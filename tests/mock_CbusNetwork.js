@@ -93,7 +93,8 @@ class mock_CbusNetwork {
 					case '73':
 						// Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
 						winston.info({message: 'Mock CBUS Network: received RQNPN'});
-						this.outputPARAN(msg.nodeId(), msg.paramId());
+                        var paramValue = this.getModule(msg.nodeId()).getParameter(msg.paramId());
+						this.outputPARAN(msg.nodeId(), msg.paramId(), paramValue);
 						break;
 					case '90':
 						// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
@@ -293,12 +294,11 @@ class mock_CbusNetwork {
 
 
 	// 9B
-	outputPARAN(nodeId, paramId) {
+	outputPARAN(nodeNumber, parameterIndex, parameterValue) {
 		// Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
-		var paramValue = this.getModule(nodeId).getParameter(paramId);
-		var msgData = ':S' + 'B780' + 'N' + '9B' + decToHex(nodeId, 4) + decToHex(paramId, 2) + decToHex(paramValue, 2) + ';'
-		winston.info({message: 'Mock CBUS Network: Output PARAN : nodeId [' + nodeId + '] ' + msgData});
+		var msgData = cbusLib.encodePARAN(nodeNumber, parameterIndex, parameterValue);
 		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
 	
