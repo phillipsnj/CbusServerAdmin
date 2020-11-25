@@ -82,11 +82,11 @@ class cbusLibrary {
         case '23':
             return this.decodeDKEEP(message);
             break;
-        case '27':
-            return this.decodeDSPD(message);
-            break;
         case '42':
             return this.decodeSNN(message);
+            break;
+        case '47':
+            return this.decodeDSPD(message);
             break;
 		case '50':
             return this.decodeRQNN(message);
@@ -292,7 +292,25 @@ class cbusLibrary {
     }
     
 
-    // 27 DSPD
+    // 42 SNN
+    //
+    decodeSNN = function(message) {
+		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
+        return {'mnemonic': 'SNN',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'SNN (42) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeSNN = function(nodeNumber) {
+		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
+        if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
+            return this.header() + '42' + decToHex(nodeNumber, 4) + ';'
+        }
+    }
+
+
+    // 47 DSPD
     //
     decodeDSPD = function(message) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
@@ -311,27 +329,9 @@ class cbusLibrary {
     encodeDSPD = function(session, speed, direction) {
         // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
-        return this.header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
+        return this.header() + '47' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
     }
     
-
-    // 42 SNN
-    //
-    decodeSNN = function(message) {
-		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
-        return {'mnemonic': 'SNN',
-                'opCode': message.substr(7, 2),
-                'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'SNN (42) Node ' + parseInt(message.substr(9, 4), 16),
-        }
-    }
-    encodeSNN = function(nodeNumber) {
-		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
-        if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
-            return this.header() + '42' + decToHex(nodeNumber, 4) + ';'
-        }
-    }
-
 
     // 50 RQNN
     //
