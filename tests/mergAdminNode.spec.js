@@ -181,6 +181,33 @@ describe('mergAdminNode tests', function(){
 	})
 
 
+    // 50 RQNN
+    //
+	function GetTestCase_RQNN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			testCases.push({'nodeNumber':nodeNumber});
+		}
+		return testCases;
+	}
+    //
+	itParam("RQNN test nodeNumber ${value.nodeNumber}", GetTestCase_RQNN(), function (done, value) {
+		winston.info({message: 'cbusMessage test: BEGIN RQNN test ' + JSON.stringify(value)});
+        var eventReceived = false;
+        node.on('requestNodeNumber', function tmp(data) {
+            eventReceived = true
+			winston.info({message: 'mergAdminNode Test: RQNN test - event received : ' + eventReceived});
+            node.removeListener('requestNodeNumber', tmp);    // remove event listner after first event
+        })
+		mock_Cbus.outputRQNN(value.nodeNumber);
+		setTimeout(function(){
+            expect(eventReceived).to.be.true
+			done();
+		}, 100);
+	})
 
 
 	// 91 ACOF
