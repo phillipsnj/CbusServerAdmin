@@ -230,11 +230,11 @@ class mock_CbusNetwork {
 
 
 	// 6F
-	outputCMDERR(nodeId, errorNumber) {
+	outputCMDERR(nodeNumber, errorNumber) {
 		// Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-		var msgData = ':S' + 'B780' + 'N' + '6F' + decToHex(nodeId, 4) + decToHex(errorNumber, 2) + ';';
+		var msgData = cbusLib.encodeCMDERR(nodeNumber, errorNumber);
 		this.socket.write(msgData);
-		winston.info({message: 'Mock CBUS Network: Output CMDERR : nodeId [' + nodeId + '] ' + msgData});
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
 

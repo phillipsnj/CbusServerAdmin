@@ -180,20 +180,18 @@ class cbusAdmin extends EventEmitter {
                 output['data'] = decToHex(cbusMsg.data1, 2) + decToHex(cbusMsg.data2, 2)
                 this.emit('dccError', output)
             },
-            '6F': (msg) => {//Cbus Error
-				//winston.debug({message: `CBUS ERROR Node ${msg.nodeId()} Error ${msg.errorId()}`});
-                let ref = msg.nodeId().toString() + '-' + msg.errorId().toString()
+            '6F': (tmp, cbusMsg) => {//Cbus Error
+                let ref = cbusMsg.nodeNumber.toString() + '-' + cbusMsg.errorNumber.toString()
                 if (ref in this.cbusErrors) {
                     this.cbusErrors[ref].count += 1
                 } else {
                     let output = {}
-                    output['id'] = msg.nodeId().toString() + '-' + msg.errorId().toString()
+                    output['id'] = ref
                     output['type'] = 'CBUS'
-                    output['Error'] = msg.errorId()
-                    output['Message'] = this.merg.cbusErrors[msg.errorId()]
-                    output['node'] = msg.nodeId()
+                    output['Error'] = cbusMsg.errorNumber
+                    output['Message'] = this.merg.cbusErrors[cbusMsg.errorNumber]
+                    output['node'] = cbusMsg.nodeNumber
                     output['count'] = 1
-                    //this.cbusErrors.push(output)
                     this.cbusErrors[ref] = output
                 }
                 this.emit('cbusError', this.cbusErrors)

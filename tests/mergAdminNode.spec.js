@@ -52,7 +52,7 @@ describe('mergAdminNode tests', function(){
 	it("Wait.....", function (done) {
 		setTimeout(function(){
 			done();
-		}, 1000);
+		}, 100);
 	})
 
 
@@ -89,7 +89,7 @@ describe('mergAdminNode tests', function(){
 			expect(mock_Cbus.getSendArray()[0]).to.equal(cbusLib.encodeQLOC(value.session));
             expect(dccSessionsData[value.session].status).to.equal('In Active');
 			done();
-		}, 100);
+		}, 10);
 	})
 
 
@@ -206,7 +206,7 @@ describe('mergAdminNode tests', function(){
 		setTimeout(function(){
             expect(eventReceived).to.be.true
 			done();
-		}, 100);
+		}, 10);
 	})
 
     // 52 NNACK
@@ -289,6 +289,42 @@ describe('mergAdminNode tests', function(){
             expect(errorData.type).to.equal('DCC');
             expect(errorData.data).to.equal(decToHex(value.data1, 2) + decToHex(value.data2, 2));
             expect(errorData.Error).to.equal(value.errorNumber);
+			done();
+		}, 10);
+	})
+
+
+    // 6F CMDERR
+    //
+	function GetTestCase_CMDERR () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (errorIndex = 1; errorIndex < 4; errorIndex++) {
+				if (errorIndex == 1) errorNumber = 0;
+				if (errorIndex == 2) errorNumber = 1;
+				if (errorIndex == 3) errorNumber = 255;
+				testCases.push({'nodeNumber':nodeNumber, 'errorNumber':errorNumber});
+			}
+		}
+		return testCases;
+	}
+    //
+	itParam("CMDERR test nodeNumber ${value.nodeNumber} errorNumber ${value.errorNumber}", GetTestCase_CMDERR(), function (done, value) {
+		winston.info({message: 'cbusMessage test: BEGIN CMDERR test ' + JSON.stringify(value)});
+        node.on('cbusError', function tmp(data) {
+			errorData = data;
+			winston.info({message: 'mergAdminNode Test: ERR test - message data : ' + JSON.stringify(errorData)});
+            node.removeListener('cbusError', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputCMDERR(value.nodeNumber, value.errorNumber);
+		setTimeout(function(){
+            var ref = value.nodeNumber.toString() + '-' + value.errorNumber.toString()
+            expect(errorData[ref].type).to.equal('CBUS');
+            expect(errorData[ref].node).to.equal(value.nodeNumber);
+            expect(errorData[ref].Error).to.equal(value.errorNumber);
 			done();
 		}, 10);
 	})
