@@ -342,6 +342,14 @@ class mock_CbusNetwork {
 	}
 
 
+	// E1
+	outputPLOC(session, address, speed, direction, Fn1, Fn2, Fn3) {
+		var msgData = cbusLib.encodePLOC(session, address, speed, direction, Fn1, Fn2, Fn3);
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+	}
+
+
 	//F2
 	outputENRSP(nodeNumber, eventIndex) {
 		// ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
