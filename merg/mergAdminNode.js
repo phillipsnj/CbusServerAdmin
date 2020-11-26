@@ -273,26 +273,22 @@ class cbusAdmin extends EventEmitter {
                         winston.debug({message: `NEVAL: Event Index ${cbusMsg.eventIndex} Does not exist on config - skipping`});
                 }
             },
-            'B6': (msg) => { //PNN Recieved from Node
-				//winston.debug({message: `merg :${JSON.stringify(this.merg)}`});
-                const ref = msg.nodeId()
-
-                //winston.debug({message: `PNN (B6) Node found ${JSON.stringify(this.config.nodes[ref])`})
+            'B6': (tmp, cbusMsg) => { //PNN Recieved from Node
+                const ref = cbusMsg.nodeNumber
                 if (ref in this.config.nodes) {
                     winston.debug({message: `PNN (B6) Node found ` + JSON.stringify(this.config.nodes[ref])})
-                    this.config.nodes[ref].flim = (msg.flags() & 4) ? true : false
-                    if (this.merg['modules'][msg.moduleId()]) {
-                        this.config.nodes[ref].module = this.merg['modules'][msg.moduleId()]['name']
-                        this.config.nodes[ref].component = this.merg['modules'][msg.moduleId()]['component']
+                    if (this.merg['modules'][cbusMsg.moduleId]) {
+                        this.config.nodes[ref].module = this.merg['modules'][cbusMsg.moduleId]['name']
+                        this.config.nodes[ref].component = this.merg['modules'][cbusMsg.moduleId]['component']
                     } else {
                         this.config.nodes[ref].component = 'mergDefault'
                     }
                 } else {
                     let output = {
-                        "node": msg.nodeId(),
-                        "manuf": msg.manufId(),
-                        "module": msg.moduleId(),
-                        "flags": msg.flags(),
+                        "node": cbusMsg.nodeNumber,
+                        "manuf": cbusMsg.manufacturerId,
+                        "module": cbusMsg.moduleId,
+                        "flags": cbusMsg.flags,
                         "consumer": false,
                         "producer": false,
                         "flim": false,
@@ -302,29 +298,25 @@ class cbusAdmin extends EventEmitter {
                         "variables": [],
                         "actions": {},
                         "status": true
-
                     }
-                    if (this.merg['modules'][msg.moduleId()]) {
-                        output['module'] = this.merg['modules'][msg.moduleId()]['name']
-                        output['component'] = this.merg['modules'][msg.moduleId()]['component']
+                    if (this.merg['modules'][cbusMsg.moduleId]) {
+                        output['module'] = this.merg['modules'][cbusMsg.moduleId]['name']
+                        output['component'] = this.merg['modules'][cbusMsg.moduleId]['component']
                     } else {
                         output['component'] = 'mergDefault'
                     }
-
                     this.config.nodes[ref] = output
-                    //this.saveConfig()
-                    let outFlags = pad(msg.flags().toString(2), 8)
-					//winston.debug({message: `Flags : ${outFlags} : ${outFlags.substr(7, 1)}`});
-                    this.config.nodes[ref].consumer = (msg.flags() & 1) ? true : false
-                    this.config.nodes[ref].producer = (msg.flags() & 2) ? true : false
-                    this.config.nodes[ref].flim = (msg.flags() & 4) ? true : false
-                    this.config.nodes[ref].bootloader = (msg.flags() & 8) ? true : false
-                    this.config.nodes[ref].coe = (msg.flags() & 16) ? true : false
-                    this.config.nodes[ref].learn = (msg.flags() & 16) ? true : false
                 }
-                this.config.nodes[ref].flags = msg.flags()
+                // always update the flags....
+                this.config.nodes[ref].flags = cbusMsg.flags
+                this.config.nodes[ref].flim = (cbusMsg.flags & 4) ? true : false
+                this.config.nodes[ref].consumer = (cbusMsg.flags & 1) ? true : false
+                this.config.nodes[ref].producer = (cbusMsg.flags & 2) ? true : false
+                this.config.nodes[ref].bootloader = (cbusMsg.flags & 8) ? true : false
+                this.config.nodes[ref].coe = (cbusMsg.flags & 16) ? true : false
+                this.config.nodes[ref].learn = (cbusMsg.flags & 16) ? true : false
                 this.config.nodes[ref].status = true
-                this.cbusSend((this.RQEVN(msg.nodeId())))
+                this.cbusSend((this.RQEVN(cbusMsg.nodeNumber)))
                 this.saveConfig()
             },
             'E1': (msg) => {
