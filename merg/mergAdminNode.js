@@ -50,7 +50,7 @@ class cbusAdmin extends EventEmitter {
         this.client.on('data', function (data) { //Receives packets from network and process individual Messages
             const outMsg = data.toString().split(";");
             for (var i = 0; i < outMsg.length - 1; i++) {
-                let cbusMsg = cbusLib.decode(outMsg[i])
+                let cbusMsg = cbusLib.decode(outMsg[i].concat(";"))     // replace terminator removed by 'split' method
 				winston.debug({message: "mergAdminNode In " + outMsg[i] + " : " + cbusMsg.text});
                 let msg = new cbusMessage.cbusMessage(outMsg[i] + ';');		// replace terminator removed by 'split' method
 				this.emit('cbusTraffic', {direction: 'In', raw: msg.messageOutput(), translated: msg.translateMessage()});
@@ -121,11 +121,11 @@ class cbusAdmin extends EventEmitter {
             '50': (tmp, cbusMsg) => {// RQNN -  Node Number
                 this.emit('requestNodeNumber')
             },
-            '52': (msg) => {
-				winston.debug({message: "NNACK (59) : " + msg.opCode() + ' ' + msg.messageOutput() + ' ' + msg.deCodeCbusMsg()});
+            '52': (tmp, cbusMsg) => {
+				winston.debug({message: "NNACK (59) : " + cbusMsg.text});
             },
-            '59': (msg) => {
-				winston.debug({message: "WRACK (59) : " + msg.opCode() + ' ' + msg.messageOutput() + ' ' + msg.deCodeCbusMsg()});
+            '59': (tmp, cbusMsg) => {
+				winston.debug({message: "WRACK (59) : " + cbusMsg.text});
             },
             '60': (tmp, cbusMsg) => {
                 let session = cbusMsg.session
@@ -359,16 +359,16 @@ class cbusAdmin extends EventEmitter {
                 }
                 //this.saveConfig()
             },
-            'DEFAULT': (msg) => {
-				winston.debug({message: "Opcode " + msg.opCode() + ' NodeId ' + msg.nodeId() + ' is not supported by the Admin module'});
-                let ref = msg.opCode()
+            'DEFAULT': (tmp, cbusMsg) => {
+				winston.debug({message: "Opcode " + cbusMsg.opCode + ' is not supported by the Admin module'});
+                let ref = cbusMsg.opCode
                 if (ref in this.cbusNoSupport) {
                     this.cbusNoSupport[ref].msg = msg
                     this.cbusNoSupport[ref].count += 1
                 } else {
                     let output = {}
-                    output['opCode'] = msg.opCode()
-                    output['msg'] = msg
+                    output['opCode'] = cbusMsg.opCode
+                    output['msg'] = {"message": cbusMsg.encoded}
                     output['count'] = 1
                     this.cbusNoSupport[ref] = output
                 }
