@@ -1065,6 +1065,7 @@ describe('mergAdminNode tests', function(){
             })
             mock_Cbus.outputPLOC(value.session, value.address, value.speed, value.direction, value.Fn1, value.Fn2, value.Fn3)
             setTimeout(function(){
+                expect(dccSessionsData[value.session].loco).to.equal(value.address);
                 expect(dccSessionsData[value.session].speed).to.equal(value.speed);
                 expect(dccSessionsData[value.session].direction).to.equal(value.direction);
                 expect(dccSessionsData[value.session].F1).to.equal(value.Fn1);

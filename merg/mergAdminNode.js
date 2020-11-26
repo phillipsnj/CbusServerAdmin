@@ -319,32 +319,22 @@ class cbusAdmin extends EventEmitter {
                 this.cbusSend((this.RQEVN(cbusMsg.nodeNumber)))
                 this.saveConfig()
             },
-            'E1': (msg) => {
-                let session = msg.sessionId()
-                let loco = msg.locoId()
-                let speed = msg.locoSpeed()
-                let direction = 'Reverse'
-                let F1 = msg.locoF1()
-                let F2 = msg.locoF2()
-                let F3 = msg.locoF3()
-				//winston.debug({message: `Engine Report : ${session} : ${speed} : ${direction}`});
-                if (speed > 127) {
-                    direction = 'Forward'
-                    speed = speed - 128
-                }
+            'E1': (tmp, cbusMsg) => { // PLOC
+                let session = cbusMsg.session
                 if (!(session in this.dccSessions)) {
                     this.dccSessions[session] = {}
                     this.dccSessions[session].count = 0
                 }
                 this.dccSessions[session].id = session
-                this.dccSessions[session].loco = loco
-                this.dccSessions[session].direction = direction
-                this.dccSessions[session].speed = speed
+                this.dccSessions[session].loco = cbusMsg.address
+                this.dccSessions[session].direction = cbusMsg.direction
+                this.dccSessions[session].speed = cbusMsg.speed
                 this.dccSessions[session].status = 'Active'
-                this.dccSessions[session].F1 = F1
-                this.dccSessions[session].F2 = F2
-                this.dccSessions[session].F3 = F3
+                this.dccSessions[session].F1 = cbusMsg.Fn1
+                this.dccSessions[session].F2 = cbusMsg.Fn2
+                this.dccSessions[session].F3 = cbusMsg.Fn3
                 this.emit('dccSessions', this.dccSessions)
+                winston.debug({message: `PLOC (E1) ` + JSON.stringify(this.dccSessions[session])})
             },
             'EF': (msg) => {//Request Node Parameter in setup
                 // mode
