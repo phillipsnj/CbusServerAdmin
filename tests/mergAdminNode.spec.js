@@ -1060,7 +1060,7 @@ describe('mergAdminNode tests', function(){
             winston.info({message: 'cbusMessage test: BEGIN PLOC test ' + JSON.stringify(value)});
             node.on('dccSessions', function tmp(data) {
                 dccSessionsData = data;
-                winston.info({message: 'mergAdminNode Test: DSPD test - message data : ' + JSON.stringify(dccSessionsData)});
+                winston.info({message: 'mergAdminNode Test: PLOC test - message data : ' + JSON.stringify(dccSessionsData)});
                 node.removeListener('dccSessions', tmp);    // remove event listener after first event
             })
             mock_Cbus.outputPLOC(value.session, value.address, value.speed, value.direction, value.Fn1, value.Fn2, value.Fn3)
@@ -1074,6 +1074,53 @@ describe('mergAdminNode tests', function(){
                 done();
             }, 10);
 	})
+
+
+    // EF PARAMS
+    
+    
+    // F2 ENRSP test cases
+    //
+	function GetTestCase_ENRSP () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+            for (EV = 1; EV < 4; EV++) {
+                if (EV == 1) eventName = '00000000';
+                if (EV == 2) eventName = '00000001';
+                if (EV == 3) eventName = 'FFFFFFFF';
+                for (EVindex = 1; EVindex < 4; EVindex++) {
+                    if (EVindex == 1) eventIndex = 0;
+                    if (EVindex == 2) eventIndex = 1;
+                    if (EVindex == 3) eventIndex = 255;
+					testCases.push({'nodeNumber':nodeNumber, 'eventName':eventName, 'eventIndex':eventIndex});
+				}
+			}
+		}
+		return testCases;
+	}
+
+    // F2 ENRSP
+    //
+	itParam("ENRSP test: nodeNumber ${value.nodeNumber} eventName ${value.eventName} eventIndex ${value.eventIndex}",
+        GetTestCase_ENRSP(), function (done, value) {
+            winston.info({message: 'cbusMessage test: BEGIN ENRSP test ' + JSON.stringify(value)});
+            // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
+            node.config.nodes[value.nodeNumber].actions=[]  // clear events
+            node.on('nodes', function tmp(data) {
+                nodeData = data;
+                winston.info({message: 'mergAdminNode Test: ENRSP test - message data : ' + JSON.stringify(nodeData)});
+                node.removeListener('nodes', tmp);    // remove event listener after first event
+            })
+            mock_Cbus.outputENRSP(value.nodeNumber, value.eventName, value.eventIndex)
+            setTimeout(function(){
+                expect(nodeData[value.nodeNumber].actions[value.eventIndex].event).to.equal(value.eventName);
+                done();
+            }, 10);
+    })
+
 
 
 })

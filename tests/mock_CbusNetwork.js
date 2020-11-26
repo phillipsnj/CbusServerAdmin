@@ -90,7 +90,7 @@ class mock_CbusNetwork {
                             //}
                             // only output first event (if it exists)
                             if (events.length > 0) {
-                                this.outputENRSP(nodeNumber, 0);
+                                this.outputENRSP(nodeNumber, events[0].eventName, 0);
                             }
                         }
 
@@ -351,10 +351,8 @@ class mock_CbusNetwork {
 
 
 	//F2
-	outputENRSP(nodeNumber, eventIndex) {
+	outputENRSP(nodeNumber, eventName, eventIndex) {
 		// ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
-		var events = this.getModule(nodeNumber).getStoredEvents();
-        var eventName = decToHex(events[eventIndex].eventName, 8)
         var msgData = cbusLib.encodeENRSP(nodeNumber, eventName, eventIndex)
         this.socket.write(msgData);
         winston.info({message: 'CBUS Network Sim:  OUT>>  ' + msgData + " " + cbusLib.decode(msgData).text});
