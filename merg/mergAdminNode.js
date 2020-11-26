@@ -444,67 +444,63 @@ class cbusAdmin extends EventEmitter {
         for (let node in this.config.nodes) {
             this.config.nodes[node].status = false
         }
-        return this.header + '0D' + ';'
+        return cbusLib.encodeQNN();
     }
 
     RQNP() {//Request Node Parameters
-        return this.header + '10' + ';'
+        return cbusLib.encodeRQNP();
     }
 
     RQNPN(nodeId, param) {//Read Node Parameter
-        return this.header + '73' + decToHex(nodeId, 4) + decToHex(param, 2) + ';'
+        return cbusLib.encodeRQNPN(nodeId, param);
     }
 
     NNLRN(nodeId) {
 		if (nodeId >= 0 && nodeId <= 0xFFFF) {
-			return this.header + '53' + decToHex(nodeId, 4) + ';'
+            return cbusLib.encodeNNLRN(nodeId);
 		}
     }
 
     SNN(nodeId) {
         if (nodeId >= 0 && nodeId <= 0xFFFF) {
-            return this.header + '42' + decToHex(nodeId, 4) + ';'
+            return cbusLib.encodeSNN(nodeId);
         }
     }
 
     NNULN(nodeId) {
-        return this.header + '54' + decToHex(nodeId, 4) + ';'
+        return cbusLib.encodeNNULN(nodeId);
     }
 
     NERD(nodeId) {//Request All Events
-        return this.header + '57' + decToHex(nodeId, 4) + ';'
+        return cbusLib.encodeNERD(nodeId);
     }
 
     NENRD(nodeId, eventId) { //Request specific event
-        return this.header + '72' + decToHex(nodeId, 4) + decToHex(eventId, 2) + ';'
+        return cbusLib.encodeNENRD(nodeId, eventId);
     }
 
     REVAL(nodeId, eventId, valueId) {//Read an Events EV by index
-		//winston.debug({message: `Reval NodeId : ${nodeId} EventId : ${eventId} Event Value : ${valueId}`});
-        return this.header + '9C' + decToHex(nodeId, 4) + decToHex(eventId, 2) + decToHex(valueId, 2) + ';'
+        return cbusLib.encodeREVAL(nodeId, eventId, valueId);
     }
 
     EVLRN(event, variableId, valueId) {//Read an Events EV by index
-		//winston.debug({message: `EVLRN Event : ${event} EventId : ${eventId} Event Value : ${valueId}`});
-        return this.header + 'D2' + event + decToHex(variableId, 2) + decToHex(valueId, 2) + ';'
+        return cbusLib.encodeEVLRN(event, variableId, valueId);
     }
 
     EVULN(event) {//Read an Events EV by index
-		//winston.debug({message: `EVULN Event : ${event}`});
-        return this.header + '95' + event + ';'
+        return cbusLib.encodeEVULN(event);
     }
 
     NVRD(nodeId, variableId) {// Read Node Variable
-        return this.header + '71' + decToHex(nodeId, 4) + decToHex(variableId, 2) + ';'
+        return cbusLib.encodeNVRD(nodeId, variableId);
     }
 
     RQEVN(nodeId) {// Read Node Variable
-        return this.header + '58' + decToHex(nodeId, 4) + ';'
+        return cbusLib.encodeRQEVN(nodeId);
     }
 
     NVSET(nodeId, variableId, variableVal) {// Read Node Variable
-		//winston.debug({message: `NVSET NodeId : ${nodeId} VariableId : ${variableId} Variable Value : ${variableVal} :: ${decToHex(variableVal, 2)}`});
-        return this.header + '96' + decToHex(nodeId, 4) + decToHex(variableId, 2) + decToHex(variableVal, 2) + ';'
+        return cbusLib.encodeNVSET(nodeId, variableId, variableVal);
     }
 
     ACON(nodeId, eventId) {
@@ -528,7 +524,7 @@ class cbusAdmin extends EventEmitter {
 		//winston.debug({message: `ACON Output ${this.config.events}`});
         this.emit('events', Object.values(this.config.events))
 
-        return this.header + '90' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
+        return cbusLib.encodeACON(nodeId, eventId);
     }
 
     ACOF(nodeId, eventId) {
@@ -551,7 +547,7 @@ class cbusAdmin extends EventEmitter {
         //this.config.events[eId]['count'] += 1
         this.emit('events', Object.values(this.config.events))
 
-        return this.header + '91' + decToHex(nodeId, 4) + decToHex(eventId, 4) + ';';
+        return cbusLib.encodeACOF(nodeId, eventId);
     }
 
     ASON(nodeId, deviceNumber) {
@@ -572,7 +568,7 @@ class cbusAdmin extends EventEmitter {
         }
         this.emit('events', Object.values(this.config.events))
 		//Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
-        return this.header + '98' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+        return cbusLib.encodeASON(nodeId, deviceNumber);
     }
 
     ASOF(nodeId, deviceNumber) {
@@ -593,11 +589,11 @@ class cbusAdmin extends EventEmitter {
         }
         this.emit('events', Object.values(this.config.events))
 		//Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
-        return this.header + '99' + decToHex(nodeId, 4) + decToHex(deviceNumber, 4) + ';';
+        return cbusLib.encodeASOF(nodeId, deviceNumber);
     }
 
     QLOC(sessionId) {
-        return this.header + '22' + decToHex(sessionId, 2) + ';';
+        return cbusLib.encodeQLOC(sessionId);
     }
 
     /*ENRSP() {

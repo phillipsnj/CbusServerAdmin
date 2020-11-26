@@ -497,6 +497,35 @@ describe('mergAdminNode tests', function(){
 	})
 
 
+    // 72 NENRD test cases
+    //
+	function GetTestCase_NENRD () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (Eindex = 1; Eindex < 4; Eindex++) {
+				if (Eindex == 1) eventIndex = 0;
+				if (Eindex == 2) eventIndex = 1;
+				if (Eindex == 3) eventIndex = 255;
+				testCases.push({'nodeNumber':nodeNumber, 'eventIndex':eventIndex});
+			}
+		}
+		return testCases;
+	}
+
+
+    // 72 NENRD encoding test
+    //
+	itParam("NENRD encoding test nodeNumber ${value.nodeNumber} eventIndex ${value.eventIndex}", GetTestCase_NENRD(), function (value) {
+		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
+		winston.info({message: 'cbusMessage test: BEGIN NENRD test ' + JSON.stringify(value)});
+		expected = ":SB780N72" + decToHex(value.nodeId, 4) + decToHex(value.eventIndex, 2) + ";";
+		expect(node.NENRD(value.nodeId, value.eventIndex)).to.equal(expected);
+    })
+
+
     // 73 RQNPN test cases
     //
 	function GetTestCase_RQNPN () {
