@@ -57,8 +57,11 @@ class mock_CbusNetwork {
 						// Format: <MjPri><MinPri=3><CANID>]<0D>
 						winston.info({message: 'Mock CBUS Network: received QNN'});
 						for (var i = 0; i < this.modules.length; i++) {
-							this.outputPNN(this.modules[i].getNodeId());
-						}
+							this.outputPNN(this.modules[i].getNodeId(), 
+                                this.modules[i].getManufacturerId(),
+                                this.modules[i].getModuleId(), 
+                                this.modules[i].getFlags())
+                        }
 						break;
 					case '22':  // QLOC
 						break;
@@ -85,6 +88,7 @@ class mock_CbusNetwork {
                             //for (var i = 0; i < events.length; i++) {
                                 //this.outputENRSP(nodeNumber, i);
                             //}
+                            // only output first event (if it exists)
                             if (events.length > 0) {
                                 this.outputENRSP(nodeNumber, 0);
                             }
@@ -331,15 +335,10 @@ class mock_CbusNetwork {
 
 	
 	// B6
-	outputPNN(nodeId) {
-		// Format: <0xB6><<NN Hi><NN Lo><Manuf Id><Module Id><Flags>
-		var nodeData = this.getModule(nodeId).getNodeIdHex()
-			+ this.getModule(nodeId).getManufacturerIdHex() 
-			+ this.getModule(nodeId).getModuleIdHex() 
-			+ this.getModule(nodeId).getFlagsHex();
-		var msgData = ':S' + 'B780' + 'N' + 'B6' + nodeData + ';'
-		winston.info({message: 'Mock CBUS Network: Output PNN : nodeId [' + nodeId + '] ' + msgData});
+	outputPNN(nodeNumber, manufacturerId, moduleId, flags) {
+		var msgData = cbusLib.encodePNN(nodeNumber, manufacturerId, moduleId, flags);
 		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
 
@@ -394,12 +393,15 @@ class CbusModule {
 	getNodeIdHex(){return decToHex(this.nodeId, 4)}
 	setNodeId(newNodeId) { this.nodeId = newNodeId;}
 	
+	getModuleId() {return this.parameters[3]}
 	getModuleIdHex() {return decToHex(this.parameters[3], 2)}
 	setModuleId(Id) {this.parameters[3] = Id}
 
+	getManufacturerId() {return this.parameters[1]}
 	getManufacturerIdHex() {return decToHex(this.parameters[1], 2)}
 	setManufacturerId(Id) {this.parameters[1] = Id}
 
+	getFlags() {return this.parameters[8]}
 	getFlagsHex() {return decToHex(this.parameters[8], 2)}
 	setNodeFlags(flags) {this.parameters[8] = flags}
 }

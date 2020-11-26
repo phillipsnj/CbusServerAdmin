@@ -277,8 +277,9 @@ class cbusAdmin extends EventEmitter {
 				//winston.debug({message: `merg :${JSON.stringify(this.merg)}`});
                 const ref = msg.nodeId()
 
-                //winston.debug({message: `PNN (B6) Node found ${msg.messageOutput()} NodeId ${msg.nodeId()} ManufId ${msg.manufId()} ModuleId ${msg.moduleId()} flags ${msg.flags()}`})
+                //winston.debug({message: `PNN (B6) Node found ${JSON.stringify(this.config.nodes[ref])`})
                 if (ref in this.config.nodes) {
+                    winston.debug({message: `PNN (B6) Node found ` + JSON.stringify(this.config.nodes[ref])})
                     this.config.nodes[ref].flim = (msg.flags() & 4) ? true : false
                     if (this.merg['modules'][msg.moduleId()]) {
                         this.config.nodes[ref].module = this.merg['modules'][msg.moduleId()]['name']
@@ -321,6 +322,7 @@ class cbusAdmin extends EventEmitter {
                     this.config.nodes[ref].coe = (msg.flags() & 16) ? true : false
                     this.config.nodes[ref].learn = (msg.flags() & 16) ? true : false
                 }
+                this.config.nodes[ref].flags = msg.flags()
                 this.config.nodes[ref].status = true
                 this.cbusSend((this.RQEVN(msg.nodeId())))
                 this.saveConfig()

@@ -614,8 +614,7 @@ describe('mergAdminNode tests', function(){
 		}
 		return testCases;
 	}
-
-
+    //
 	itParam("NEVAL test nodeNumber ${value.nodeNumber} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex} eventVariableValue ${value.eventVariableValue}", 
         GetTestCase_NEVAL(), function (done, value) {
             winston.info({message: 'cbusMessage test: BEGIN NEVAL test ' + JSON.stringify(value)});
@@ -624,6 +623,46 @@ describe('mergAdminNode tests', function(){
             mock_Cbus.outputNEVAL(value.nodeNumber, value.eventIndex, value.eventVariableIndex, value.eventVariableValue);
             done()
 		}, 50);
+	})
+
+
+    // B6 PNN
+    //
+	function GetTestCase_PNN () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (MAN = 1; MAN < 4; MAN++) {
+				if (MAN == 1) manufacturerId = 0;
+				if (MAN == 2) manufacturerId = 1;
+				if (MAN == 3) manufacturerId = 255;
+                for (MOD = 1; MOD < 4; MOD++) {
+                    if (MOD == 1) moduleId = 0;
+                    if (MOD == 2) moduleId = 1;
+                    if (MOD == 3) moduleId = 255;
+                    for (FL = 1; FL < 4; FL++) {
+                        if (FL == 1) flags = 0;
+                        if (FL == 2) flags = 1;
+                        if (FL == 3) flags = 255;
+                        testCases.push({'nodeNumber':nodeNumber, 'manufacturerId':manufacturerId, 'moduleId':moduleId, 'flags':flags});
+                    }
+                }
+			}
+		}
+		return testCases;
+	}
+    //
+    // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
+	itParam("PNN test nodeNumber ${value.nodeNumber} manufacturerId ${value.manufacturerId} moduleId ${value.moduleId} flags ${value.flags}", 
+        GetTestCase_PNN(), function (done, value) {
+            winston.info({message: 'cbusMessage test: BEGIN PNN test ' + JSON.stringify(value)});
+            mock_Cbus.outputPNN(value.nodeNumber, value.manufacturerId, value.moduleId, value.flags);
+            setTimeout(function(){
+                expect(node.config.nodes[value.nodeNumber].flags).to.equal(value.flags)
+                done()
+            }, 10);
 	})
 
 
