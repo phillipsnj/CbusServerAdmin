@@ -927,7 +927,7 @@ describe('mergAdminNode tests', function(){
 		setTimeout(function(){
             mock_Cbus.outputNEVAL(value.nodeNumber, value.eventIndex, value.eventVariableIndex, value.eventVariableValue);
             done()
-		}, 50);
+		}, 10);
 	})
 
 

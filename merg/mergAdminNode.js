@@ -336,24 +336,24 @@ class cbusAdmin extends EventEmitter {
                 this.emit('dccSessions', this.dccSessions)
                 winston.debug({message: `PLOC (E1) ` + JSON.stringify(this.dccSessions[session])})
             },
-            'EF': (msg) => {//Request Node Parameter in setup
+            'EF': (tmp, cbusMsg) => {//Request Node Parameter in setup
                 // mode
 				//winston.debug({message: `PARAMS (EF) Received`});
             },
-            'F2': (msg) => {//ENSRP Response to NERD/NENRD
+            'F2': (tmp, cbusMsg) => {//ENSRP Response to NERD/NENRD
 				// ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
                 //winston.debug({message: `ENSRP (F2) Response to NERD : Node : ${msg.nodeId()} Action : ${msg.actionId()} Action Number : ${msg.actionEventId()}`});
-                const ref = msg.actionEventId()
-                if (!(ref in this.config.nodes[msg.nodeId()].actions)) {
-                    this.config.nodes[msg.nodeId()].actions[msg.actionEventId()] = {
-                        "event": msg.actionId(),
-                        "actionId": msg.actionEventId(),
-                        "eventIndex": msg.actionEventId(),
-                        "variables": [this.config.nodes[msg.nodeId()].parameters[5]],
+                const ref = cbusMsg.eventIndex
+                if (!(ref in this.config.nodes[cbusMsg.nodeNumber].actions)) {
+                    this.config.nodes[cbusMsg.nodeNumber].actions[cbusMsg.eventIndex] = {
+                        "event": cbusMsg.eventName,
+                        "actionId": cbusMsg.eventIndex,
+                        "eventIndex": cbusMsg.eventIndex,
+                        "variables": [this.config.nodes[cbusMsg.nodeNumber].parameters[5]],
                     }
-                    if (this.config.nodes[msg.nodeId()].module == "Universal") {
-                        setTimeout(()=>{this.cbusSend(this.REVAL(msg.nodeId(), msg.actionEventId(), 0))},50*ref)
-                        setTimeout(()=>{this.cbusSend(this.REVAL(msg.nodeId(), msg.actionEventId(), 1))},100*ref)
+                    if (this.config.nodes[cbusMsg.nodeNumber].module == "Universal") {
+                        setTimeout(()=>{this.cbusSend(this.REVAL(cbusMsg.nodeNumber, cbusMsg.eventIndex, 0))},50*ref)
+                        setTimeout(()=>{this.cbusSend(this.REVAL(cbusMsg.nodeNumber, cbusMsg.eventIndex, 1))},100*ref)
                     }
                     this.saveConfig()
                 }
