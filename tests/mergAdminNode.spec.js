@@ -1122,5 +1122,22 @@ describe('mergAdminNode tests', function(){
     })
 
 
+	it('cbusTraffic test', function(done) {
+		winston.info({message: 'mergAdminNode Test: cbusTraffic test'});
+        node.on('cbusTraffic', function tmp(data) {
+            trafficData = data
+            winston.info({message: 'mergAdminNode Test: cbusTraffic test - message data : ' + JSON.stringify(trafficData)});
+            node.removeListener('cbusTraffic', tmp);    // remove event listener after first event
+        })
+        var message = cbusLib.encodeACK()
+        node.cbusSend(message)  // need to update events in system before proceeding
+        setTimeout(function(){
+            expect(trafficData.raw).to.equal(message);
+            expect(trafficData.direction).to.equal('Out');
+            done();
+        }, 10);
+	});
+
+
 
 })
