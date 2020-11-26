@@ -85,6 +85,9 @@ class mock_CbusNetwork {
                             //for (var i = 0; i < events.length; i++) {
                                 //this.outputENRSP(nodeNumber, i);
                             //}
+                            if (events.length > 0) {
+                                this.outputENRSP(nodeNumber, 0);
+                            }
                         }
 
 						break;

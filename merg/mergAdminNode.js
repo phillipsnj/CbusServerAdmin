@@ -253,24 +253,24 @@ class cbusAdmin extends EventEmitter {
                     this.saveConfig()
                 }
             },
-            'B5': (msg) => {// NEVAL -Read of EV value Response REVAL
-                if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()] != null) {
-                    if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != null) {
-                        if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != msg.actionEventVarVal()) {
-                            winston.debug({message: 'Event Variable ${msg.actionEventVarId()} Value has Changed '});
-                            this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
+            'B5': (tmp, cbusMsg) => {// NEVAL -Read of EV value Response REVAL
+                if (this.config.nodes[cbusMsg.nodeNumber].actions[cbusMsg.eventIndex] != null) {
+                    if (this.config.nodes[cbusMsg.nodeNumber].actions[cbusMsg.eventIndex].variables[cbusMsg.eventVariableIndex] != null) {
+                        if (this.config.nodes[cbusMsg.nodeNumber].actions[cbusMsg.eventIndex].variables[cbusMsg.eventVariableIndex] != cbusMsg.eventVariableValue) {
+                            winston.debug({message: 'Event Variable ${cbusMsg.eventVariableIndex} Value has Changed '});
+                            this.config.nodes[cbusMsg.nodeNumber].actions[cbusMsg.eventIndex].variables[cbusMsg.eventVariableIndex] = cbusMsg.eventVariableValue
                             this.saveConfig()
                         } else {
-                            winston.debug({message: `NEVAL: Event Variable ${msg.actionEventVarId()} Value has not Changed `});
+                            winston.debug({message: `NEVAL: Event Variable ${cbusMsg.eventVariableIndex} Value has not Changed `});
                         }
                     } else {
-                        winston.debug({message: `NEVAL: Event Variable ${msg.actionEventVarId()} Does not exist on config - adding`});
-                        this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
+                        winston.debug({message: `NEVAL: Event Variable ${cbusMsg.eventVariableIndex} Does not exist on config - adding`});
+                        this.config.nodes[cbusMsg.nodeNumber].actions[cbusMsg.eventIndex].variables[cbusMsg.eventVariableIndex] = cbusMsg.eventVariableValue
                         this.saveConfig()
                     }
                 }
                 else {
-                        winston.debug({message: `NEVAL: Event Index ${msg.actionEventIndex()} Does not exist on config - skipping`});
+                        winston.debug({message: `NEVAL: Event Index ${cbusMsg.eventIndex} Does not exist on config - skipping`});
                 }
             },
             'B6': (msg) => { //PNN Recieved from Node

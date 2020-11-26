@@ -619,7 +619,7 @@ describe('mergAdminNode tests', function(){
 	itParam("NEVAL test nodeNumber ${value.nodeNumber} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex} eventVariableValue ${value.eventVariableValue}", 
         GetTestCase_NEVAL(), function (done, value) {
             winston.info({message: 'cbusMessage test: BEGIN NEVAL test ' + JSON.stringify(value)});
-//        node.cbusSend(node.NERD(value.nodeNumber))  // need to update events in system before proceeding
+        node.cbusSend(node.NERD(value.nodeNumber))  // need to update events in system before proceeding
 		setTimeout(function(){
             mock_Cbus.outputNEVAL(value.nodeNumber, value.eventIndex, value.eventVariableIndex, value.eventVariableValue);
             done()
