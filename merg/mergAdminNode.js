@@ -253,24 +253,25 @@ class cbusAdmin extends EventEmitter {
                     this.saveConfig()
                 }
             },
-            'B5': (msg) => {//Read of EV value Response REVAL
-				//winston.debug({message: `REVAL (B5) ${msg.nodeId()} Event : ${msg.actionEventIndex()} Event Variable : ${msg.actionEventVarId()} Event Variable Value : ${msg.actionEventVarVal()}`});
-                if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != null) {
-					//winston.debug({message: `Event Variable Exists `});
-                    if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != msg.actionEventVarVal()) {
-						winston.debug({message: 'Event Variable ${msg.actionEventVarId()} Value has Changed '});
+            'B5': (msg) => {// NEVAL -Read of EV value Response REVAL
+                if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()] != null) {
+                    if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != null) {
+                        if (this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] != msg.actionEventVarVal()) {
+                            winston.debug({message: 'Event Variable ${msg.actionEventVarId()} Value has Changed '});
+                            this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
+                            this.saveConfig()
+                        } else {
+                            winston.debug({message: `NEVAL: Event Variable ${msg.actionEventVarId()} Value has not Changed `});
+                        }
+                    } else {
+                        winston.debug({message: `NEVAL: Event Variable ${msg.actionEventVarId()} Does not exist on config - adding`});
                         this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
                         this.saveConfig()
-                    } else {
-						winston.debug({message: `Event Variable ${msg.actionEventVarId()} Value has not Changed `});
                     }
-                } else {
-					winston.debug({message: `Event Variable ${msg.actionEventVarId()} Does not exist on config`});
-                    this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
-                    this.saveConfig()
                 }
-                //this.config.nodes[msg.nodeId()].actions[msg.actionEventIndex()].variables[msg.actionEventVarId()] = msg.actionEventVarVal()
-                //this.saveConfig()
+                else {
+                        winston.debug({message: `NEVAL: Event Index ${msg.actionEventIndex()} Does not exist on config - skipping`});
+                }
             },
             'B6': (msg) => { //PNN Recieved from Node
 				//winston.debug({message: `merg :${JSON.stringify(this.merg)}`});

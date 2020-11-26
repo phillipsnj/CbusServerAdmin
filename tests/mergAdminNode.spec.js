@@ -587,6 +587,46 @@ describe('mergAdminNode tests', function(){
 	})
 
 
+    // B5 NEVAL
+    //
+	function GetTestCase_NEVAL () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (ENindex = 1; ENindex < 4; ENindex++) {
+				if (ENindex == 1) eventIndex = 0;
+				if (ENindex == 2) eventIndex = 1;
+				if (ENindex == 3) eventIndex = 255;
+                for (EVindex = 1; EVindex < 4; EVindex++) {
+                    if (EVindex == 1) eventVariableIndex = 0;
+                    if (EVindex == 2) eventVariableIndex = 1;
+                    if (EVindex == 3) eventVariableIndex = 255;
+                    for (EVvalue = 1; EVvalue < 4; EVvalue++) {
+                        if (EVvalue == 1) eventVariableValue = 0;
+                        if (EVvalue == 2) eventVariableValue = 1;
+                        if (EVvalue == 3) eventVariableValue = 255;
+                        testCases.push({'nodeNumber':nodeNumber, 'eventIndex':eventIndex, 'eventVariableIndex':eventVariableIndex, 'eventVariableValue':eventVariableValue});
+                    }
+                }
+			}
+		}
+		return testCases;
+	}
+
+
+	itParam("NEVAL test nodeNumber ${value.nodeNumber} eventIndex ${value.eventIndex} eventVariableIndex ${value.eventVariableIndex} eventVariableValue ${value.eventVariableValue}", 
+        GetTestCase_NEVAL(), function (done, value) {
+            winston.info({message: 'cbusMessage test: BEGIN NEVAL test ' + JSON.stringify(value)});
+//        node.cbusSend(node.NERD(value.nodeNumber))  // need to update events in system before proceeding
+		setTimeout(function(){
+            mock_Cbus.outputNEVAL(value.nodeNumber, value.eventIndex, value.eventVariableIndex, value.eventVariableValue);
+            done()
+		}, 50);
+	})
+
+
     // D2 EVLRN
     //
 	function GetTestCase_EVLRN () {
