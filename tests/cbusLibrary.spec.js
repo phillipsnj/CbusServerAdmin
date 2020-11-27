@@ -819,6 +819,7 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+        expect(decode.eventData.hex).to.equal('', 'eventdata.hex');
 		expect(decode.mnemonic).to.equal('ACON', 'mnemonic');
 		expect(decode.opCode).to.equal('90', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
@@ -838,6 +839,7 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+        expect(decode.eventData.hex).to.equal('', 'eventdata.hex');
 		expect(decode.mnemonic).to.equal('ACOF', 'mnemonic');
 		expect(decode.opCode).to.equal('91', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
@@ -988,6 +990,7 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
+        expect(decode.eventData.hex).to.equal('', 'eventdata.hex');
 		expect(decode.mnemonic).to.equal('ASON', 'mnemonic');
 		expect(decode.opCode).to.equal('98', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
@@ -1007,6 +1010,7 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
         expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
+        expect(decode.eventData.hex).to.equal('', 'eventdata.hex');
 		expect(decode.mnemonic).to.equal('ASOF', 'mnemonic');
 		expect(decode.opCode).to.equal('99', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');

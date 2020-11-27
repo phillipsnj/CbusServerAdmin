@@ -665,6 +665,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {hex:''},
                 'text': "ACON (90) Node " + parseInt(message.substr(9, 4), 16) + 
 					" eventNumber " + parseInt(message.substr(13, 4), 16)
         }
@@ -684,6 +685,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {hex:''},
                 'text': "ACOF (91) Node " + parseInt(message.substr(9, 4), 16) + 
 					" eventNumber " + parseInt(message.substr(13, 4), 16)
         }
@@ -762,6 +764,7 @@ class cbusLibrary {
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {hex:''},
                 'text': "ASON (98) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Device Number " + parseInt(message.substr(13, 4), 16)
         }
@@ -780,6 +783,7 @@ class cbusLibrary {
                 'mnemonic': 'ASOF',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventData': {hex:''},
                 'deviceNumber': parseInt(message.substr(13, 4), 16),
                 'text': "ASOF (99) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Device Number " + parseInt(message.substr(13, 4), 16)
