@@ -172,8 +172,20 @@ class cbusLibrary {
         case 'E1':
             return this.decodePLOC(message);
             break;
+        case 'F0':
+            return this.decodeACON3(message);
+            break;
+        case 'F1':
+            return this.decodeACOF3(message);
+            break;
         case 'F2':
             return this.decodeENRSP(message);
+            break;
+        case 'F8':
+            return this.decodeASON3(message);
+            break;
+        case 'F9':
+            return this.decodeASOF3(message);
             break;
 
         default:
@@ -330,7 +342,7 @@ class cbusLibrary {
                 'session': parseInt(message.substr(9, 2), 16),
                 'speed': speedDir % 128,
                 'direction': direction,
-                'text': 'QLOC (27) Session ' + parseInt(message.substr(9, 2), 16) + 
+                'text': 'DSPD (47) Session ' + parseInt(message.substr(9, 2), 16) + 
                     ' Speed ' + speedDir % 128 + 
                     ' Direction ' + direction,
         }
@@ -350,7 +362,7 @@ class cbusLibrary {
                 'mnemonic': 'RQNN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'RQNN (RQNN) Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'RQNN (50) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeRQNN = function(nodeNumber) {
@@ -367,7 +379,7 @@ class cbusLibrary {
                 'mnemonic': 'NNACK',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNACK (NNACK) Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNACK (52) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNACK = function(nodeNumber) {
@@ -405,7 +417,7 @@ class cbusLibrary {
                 'mnemonic': 'NNULN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNLRN (54) Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNULN (54) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNULN = function(nodeNumber) {
@@ -896,6 +908,60 @@ class cbusLibrary {
     }
     
 
+    // F0 ACON3
+    //
+    decodeACON3 = function(message) {
+		// ACON3 Format: [<MjPri><MinPri=3><CANID>]<F0><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+		return {'encoded': message,
+                'mnemonic': 'ACON3',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                data3: parseInt(message.substr(21, 2), 16),
+                                hex:message.substr(17, 6)},
+                'text': "ACON3 (F0) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16) +
+                    " data3 " + parseInt(message.substr(21, 2), 16)
+        }
+    }
+    encodeACON3 = function(nodeNumber, eventNumber, data1, data2, data3) {
+		// ACON3 Format: [<MjPri><MinPri=3><CANID>]<F0><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+        return this.header() + 'F0' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
+    }
+
+
+    // F1 ACOF3
+    //
+    decodeACOF3 = function(message) {
+		// ACOF3 Format: [<MjPri><MinPri=3><CANID>]<F1><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+		return {'encoded': message,
+                'mnemonic': 'ACOF3',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                data3: parseInt(message.substr(21, 2), 16),
+                                hex:message.substr(17, 6)},
+                'text': "ACOF3 (F1) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16) +
+                    " data3 " + parseInt(message.substr(21, 2), 16)
+        }
+    }
+    encodeACOF3 = function(nodeNumber, eventNumber, data1, data2, data3) {
+		// ACOF3 Format: [<MjPri><MinPri=3><CANID>]<F1><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+        return this.header() + 'F1' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
+    }
+
+
     // F2 ENRSP
     //
     decodeENRSP = function(message) {
@@ -915,6 +981,61 @@ class cbusLibrary {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
         return this.header() + 'F2' + decToHex(nodeNumber, 4) + eventName + decToHex(eventIndex, 2) + ';';
     }
+
+
+    // F8 ASON3
+    //
+    decodeASON3 = function(message) {
+		// ASON3 Format: [<MjPri><MinPri=3><CANID>]<F8><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+		return {'encoded': message,
+                'mnemonic': 'ASON3',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                data3: parseInt(message.substr(21, 2), 16),
+                                hex:message.substr(17, 6)},
+                'text': "ASON3 (F8) Node " + parseInt(message.substr(9, 4), 16) + 
+					" deviceNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16) +
+                    " data3 " + parseInt(message.substr(21, 2), 16)
+        }
+    }
+    encodeASON3 = function(nodeNumber, deviceNumber, data1, data2, data3) {
+		// ASON3 Format: [<MjPri><MinPri=3><CANID>]<F8><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+        return this.header() + 'F8' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
+    }
+
+
+    // F9 ASOF3
+    //
+    decodeASOF3 = function(message) {
+		// ASOF3 Format: [<MjPri><MinPri=3><CANID>]<F9><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+		return {'encoded': message,
+                'mnemonic': 'ASOF3',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                data3: parseInt(message.substr(21, 2), 16),
+                                hex:message.substr(17, 6)},
+                'text': "ASOF3 (F9) Node " + parseInt(message.substr(9, 4), 16) + 
+					" deviceNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16) +
+                    " data3 " + parseInt(message.substr(21, 2), 16)
+        }
+    }
+    encodeASOF3 = function(nodeNumber, deviceNumber, data1, data2, data3) {
+		// ASOF3 Format: [<MjPri><MinPri=3><CANID>]<F9><NN hi><NN lo><EN hi><EN lo><data1><data2><data3>
+        return this.header() + 'F9' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + decToHex(data3, 2) + ';';
+    }
+
 
 }
 
