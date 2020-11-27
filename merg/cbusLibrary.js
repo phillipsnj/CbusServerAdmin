@@ -166,8 +166,20 @@ class cbusLibrary {
         case 'B6':
             return this.decodePNN(message);
             break;
+        case 'D0':
+            return this.decodeACON2(message);
+            break;
+        case 'D1':
+            return this.decodeACOF2(message);
+            break;
         case 'D2':
             return this.decodeEVLRN(message);
+            break;
+        case 'D8':
+            return this.decodeASON2(message);
+            break;
+        case 'D9':
+            return this.decodeASOF2(message);
             break;
         case 'E1':
             return this.decodePLOC(message);
@@ -855,6 +867,56 @@ class cbusLibrary {
     }
 
 
+    // D0 ACON2
+    //
+    decodeACON2 = function(message) {
+		// ACON2 Format: [<MjPri><MinPri=3><CANID>]<D0><NN hi><NN lo><EN hi><EN lo><data1><data2>
+		return {'encoded': message,
+                'mnemonic': 'ACON2',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                hex:message.substr(17, 4)},
+                'text': "ACON2 (D0) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeACON2 = function(nodeNumber, eventNumber, data1, data2) {
+		// ACON2 Format: [<MjPri><MinPri=3><CANID>]<D0><NN hi><NN lo><EN hi><EN lo><data1><data2>
+        return this.header() + 'D0' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
+
+    // D1 ACOF2
+    //
+    decodeACOF2 = function(message) {
+		// ACOF2 Format: [<MjPri><MinPri=3><CANID>]<D1><NN hi><NN lo><EN hi><EN lo><data1><data2>
+		return {'encoded': message,
+                'mnemonic': 'ACOF2',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                hex:message.substr(17, 4)},
+                'text': "ACOF2 (D1) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeACOF2 = function(nodeNumber, eventNumber, data1, data2) {
+		// ACOF2 Format: [<MjPri><MinPri=3><CANID>]<D1><NN hi><NN lo><EN hi><EN lo><data1><data2>
+        return this.header() + 'D1' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
+
     // D2 EVLRN
     //
     decodeEVLRN = function(message) {
@@ -875,6 +937,56 @@ class cbusLibrary {
         return this.header() + 'D2' + eventName + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
     }
     
+
+    // D8 ASON2
+    //
+    decodeASON2 = function(message) {
+		// ASON2 Format: [<MjPri><MinPri=3><CANID>]<D8><NN hi><NN lo><EN hi><EN lo><data1><data2>
+		return {'encoded': message,
+                'mnemonic': 'ASON2',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                hex:message.substr(17, 4)},
+                'text': "ASON2 (D8) Node " + parseInt(message.substr(9, 4), 16) + 
+					" deviceNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeASON2 = function(nodeNumber, deviceNumber, data1, data2) {
+		// ASON2 Format: [<MjPri><MinPri=3><CANID>]<D8><NN hi><NN lo><EN hi><EN lo><data1><data2>
+        return this.header() + 'D8' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
+
+    // D9 ASOF2
+    //
+    decodeASOF2 = function(message) {
+		// ASOF2 Format: [<MjPri><MinPri=3><CANID>]<D9><NN hi><NN lo><EN hi><EN lo><data1><data2>
+		return {'encoded': message,
+                'mnemonic': 'ASOF2',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                hex:message.substr(17, 4)},
+                'text': "ASOF2 (D9) Node " + parseInt(message.substr(9, 4), 16) + 
+					" deviceNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeASOF2 = function(nodeNumber, deviceNumber, data1, data2) {
+		// ASOF2 Format: [<MjPri><MinPri=3><CANID>]<D9><NN hi><NN lo><EN hi><EN lo><data1><data2>
+        return this.header() + 'D9' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
 
     // E1 PLOC
     //

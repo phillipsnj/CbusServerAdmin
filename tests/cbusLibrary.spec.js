@@ -1164,6 +1164,86 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // D0/D1 ACON2 & ACOF2 test cases
+    //
+	function GetTestCase_ACONF2 () {
+		var testCases = []
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (EN = 1; EN < 4; EN++) {
+				if (EN == 1) eventNumber = 0;
+				if (EN == 2) eventNumber = 1;
+				if (EN == 3) eventNumber = 65535;
+                for (D1 = 1; D1 < 4; D1++) {
+                    if (D1 == 1) data1 = 0;
+                    if (D1 == 2) data1 = 1;
+                    if (D1 == 3) data1 = 255;
+                    for (D2 = 1; D2 < 4; D2++) {
+                        if (D2 == 1) data2 = 0;
+                        if (D2 == 2) data2 = 1;
+                        if (D2 == 3) data2 = 255;
+                        testCases.push({'nodeNumber':nodeNumber,
+                                        'eventNumber':eventNumber,
+                                        'data1':data1,
+                                        'data2':data2})
+                    }
+                }
+            }
+        }
+		return testCases;
+    }        
+
+
+    // D0 ACON2
+    //
+	itParam("ACON2 test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber} data1 ${value.data1} data2 ${value.data2}",
+        GetTestCase_ACONF2(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN ACON2 test ' + JSON.stringify(value)});
+            expected = ":SB780ND0" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + decToHex(value.data1, 2) + decToHex(value.data2, 2) + ";";
+            var encode = cbusLib.encodeACON2(value.nodeNumber, value.eventNumber, value.data1, value.data2);
+            var decode = cbusLib.decode(encode);
+            winston.info({message: 'cbusMessage test: ACON3 encode ' + encode});
+            winston.info({message: 'cbusMessage test: ACON3 decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected, 'encode');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.data2).to.equal(value.data2, 'data2');
+            var hex = decToHex(value.data1, 2) + decToHex(value.data2, 2)
+            expect(decode.eventData.hex).to.equal(hex, 'eventdata.hex');
+            expect(decode.mnemonic).to.equal('ACON2', 'mnemonic');
+            expect(decode.opCode).to.equal('D0', 'opCode');
+            expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+            expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // D1 ACOF2
+    //
+	itParam("ACOF2 test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber} data1 ${value.data1} data2 ${value.data2}",
+        GetTestCase_ACONF2(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN ACOF2 test ' + JSON.stringify(value)});
+            expected = ":SB780ND1" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + decToHex(value.data1, 2) + decToHex(value.data2, 2) + ";";
+            var encode = cbusLib.encodeACOF2(value.nodeNumber, value.eventNumber, value.data1, value.data2);
+            var decode = cbusLib.decode(encode);
+            winston.info({message: 'cbusMessage test: ACOF2 encode ' + encode});
+            winston.info({message: 'cbusMessage test: ACOF2 decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected, 'encode');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.data2).to.equal(value.data2, 'data2');
+            var hex = decToHex(value.data1, 2) + decToHex(value.data2, 2)
+            expect(decode.eventData.hex).to.equal(hex, 'eventdata.hex');
+            expect(decode.mnemonic).to.equal('ACOF2', 'mnemonic');
+            expect(decode.opCode).to.equal('D1', 'opCode');
+            expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+            expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
     // D2 EVLRN
     //
 	function GetTestCase_EVLRN () {
@@ -1202,6 +1282,86 @@ describe('cbusMessage tests', function(){
         expect(decode.opCode).to.equal('D2', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
         expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // D8/D9 ASON2 & ASOF2 test cases
+    //
+	function GetTestCase_ASONF2 () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (DN = 1; DN < 4; DN++) {
+				if (DN == 1) deviceNumber = 0;
+				if (DN == 2) deviceNumber = 1;
+				if (DN == 3) deviceNumber = 65535;
+                for (D1 = 1; D1 < 4; D1++) {
+                    if (D1 == 1) data1 = 0;
+                    if (D1 == 2) data1 = 1;
+                    if (D1 == 3) data1 = 255;
+                    for (D2 = 1; D2 < 4; D2++) {
+                        if (D2 == 1) data2 = 0;
+                        if (D2 == 2) data2 = 1;
+                        if (D2 == 3) data2 = 255;
+                        testCases.push({'nodeNumber':nodeNumber,
+                                        'deviceNumber':deviceNumber,
+                                        'data1':data1,
+                                        'data2':data2})
+                    }
+                }
+            }
+        }
+		return testCases;
+    }        
+
+
+    // D8 ASON2
+    //
+	itParam("ASON2 test nodeNumber ${value.nodeNumber} deviceNumber ${value.deviceNumber} data1 ${value.data1} data2 ${value.data2}",
+        GetTestCase_ASONF2(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN ASON2 test ' + JSON.stringify(value)});
+            expected = ":SB780ND8" + decToHex(value.nodeNumber, 4) + decToHex(value.deviceNumber, 4) + decToHex(value.data1, 2) + decToHex(value.data2, 2) + ";";
+            var encode = cbusLib.encodeASON2(value.nodeNumber, value.deviceNumber, value.data1, value.data2);
+            var decode = cbusLib.decode(encode);
+            winston.info({message: 'cbusMessage test: ASON2 encode ' + encode});
+            winston.info({message: 'cbusMessage test: ASON2 decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected, 'encode');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.data2).to.equal(value.data2, 'data2');
+            var hex = decToHex(value.data1, 2) + decToHex(value.data2, 2)
+            expect(decode.eventData.hex).to.equal(hex, 'eventdata.hex');
+            expect(decode.mnemonic).to.equal('ASON2', 'mnemonic');
+            expect(decode.opCode).to.equal('D8', 'opCode');
+            expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+            expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // D9 ASOF2
+    //
+	itParam("ASOF2 test nodeNumber ${value.nodeNumber} deviceNumber ${value.deviceNumber} data1 ${value.data1} data2 ${value.data2}",
+        GetTestCase_ASONF2(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN ASOF2 test ' + JSON.stringify(value)});
+            expected = ":SB780ND9" + decToHex(value.nodeNumber, 4) + decToHex(value.deviceNumber, 4) + decToHex(value.data1, 2) + decToHex(value.data2, 2) + ";";
+            var encode = cbusLib.encodeASOF2(value.nodeNumber, value.deviceNumber, value.data1, value.data2);
+            var decode = cbusLib.decode(encode);
+            winston.info({message: 'cbusMessage test: ASOF2 encode ' + encode});
+            winston.info({message: 'cbusMessage test: ASOF2 decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected, 'encode');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.data2).to.equal(value.data2, 'data2');
+            var hex = decToHex(value.data1, 2) + decToHex(value.data2, 2)
+            expect(decode.eventData.hex).to.equal(hex, 'eventdata.hex');
+            expect(decode.mnemonic).to.equal('ASOF2', 'mnemonic');
+            expect(decode.opCode).to.equal('D9', 'opCode');
+            expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+            expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
 	})
 
 
@@ -1331,6 +1491,11 @@ describe('cbusMessage tests', function(){
             expect(encode).to.equal(expected, 'encode');
             expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
             expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.data2).to.equal(value.data2, 'data2');
+            expect(decode.eventData.data3).to.equal(value.data3, 'data3');
+            var hex = decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.data3, 2)
+            expect(decode.eventData.hex).to.equal(hex, 'eventdata.hex');
             expect(decode.mnemonic).to.equal('ACON3', 'mnemonic');
             expect(decode.opCode).to.equal('F0', 'opCode');
             expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
@@ -1351,6 +1516,11 @@ describe('cbusMessage tests', function(){
             expect(encode).to.equal(expected, 'encode');
             expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
             expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.data2).to.equal(value.data2, 'data2');
+            expect(decode.eventData.data3).to.equal(value.data3, 'data3');
+            var hex = decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.data3, 2)
+            expect(decode.eventData.hex).to.equal(hex, 'eventdata.hex');
             expect(decode.mnemonic).to.equal('ACOF3', 'mnemonic');
             expect(decode.opCode).to.equal('F1', 'opCode');
             expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
@@ -1451,6 +1621,11 @@ describe('cbusMessage tests', function(){
             expect(encode).to.equal(expected, 'encode');
             expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
             expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.data2).to.equal(value.data2, 'data2');
+            expect(decode.eventData.data3).to.equal(value.data3, 'data3');
+            var hex = decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.data3, 2)
+            expect(decode.eventData.hex).to.equal(hex, 'eventdata.hex');
             expect(decode.mnemonic).to.equal('ASON3', 'mnemonic');
             expect(decode.opCode).to.equal('F8', 'opCode');
             expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
@@ -1471,6 +1646,11 @@ describe('cbusMessage tests', function(){
             expect(encode).to.equal(expected, 'encode');
             expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
             expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.data2).to.equal(value.data2, 'data2');
+            expect(decode.eventData.data3).to.equal(value.data3, 'data3');
+            var hex = decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.data3, 2)
+            expect(decode.eventData.hex).to.equal(hex, 'eventdata.hex');
             expect(decode.mnemonic).to.equal('ASOF3', 'mnemonic');
             expect(decode.opCode).to.equal('F9', 'opCode');
             expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
