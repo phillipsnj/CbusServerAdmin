@@ -1068,6 +1068,76 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // B0/B1 ACON1 & ACOF1 test cases
+    //
+	function GetTestCase_ACONF1 () {
+		var testCases = []
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (EN = 1; EN < 4; EN++) {
+				if (EN == 1) eventNumber = 0;
+				if (EN == 2) eventNumber = 1;
+				if (EN == 3) eventNumber = 65535;
+                for (D1 = 1; D1 < 4; D1++) {
+                    if (D1 == 1) data1 = 0;
+                    if (D1 == 2) data1 = 1;
+                    if (D1 == 3) data1 = 255;
+                    testCases.push({'nodeNumber':nodeNumber,
+                                    'eventNumber':eventNumber,
+                                    'data1':data1})
+                }
+            }
+        }
+		return testCases;
+    }        
+
+
+    // B0 ACON1
+    //
+	itParam("ACON1 test: nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber} data1 ${value.data1}",
+        GetTestCase_ACONF2(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN ACON1 test ' + JSON.stringify(value)});
+            expected = ":SB780NB0" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + decToHex(value.data1, 2) + ";";
+            var encode = cbusLib.encodeACON1(value.nodeNumber, value.eventNumber, value.data1);
+            var decode = cbusLib.decode(encode);
+            winston.info({message: 'cbusMessage test: ACON1 encode ' + encode});
+            winston.info({message: 'cbusMessage test: ACON1 decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected, 'encode');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.hex).to.equal(decToHex(value.data1, 2), 'eventdata.hex');
+            expect(decode.mnemonic).to.equal('ACON1', 'mnemonic');
+            expect(decode.opCode).to.equal('B0', 'opCode');
+            expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+            expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // B1 ACOF1
+    //
+	itParam("ACOF1 test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber} data1 ${value.data1}",
+        GetTestCase_ACONF1(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN ACOF2 test ' + JSON.stringify(value)});
+            expected = ":SB780NB1" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + decToHex(value.data1, 2) + ";";
+            var encode = cbusLib.encodeACOF1(value.nodeNumber, value.eventNumber, value.data1);
+            var decode = cbusLib.decode(encode);
+            winston.info({message: 'cbusMessage test: ACOF1 encode ' + encode});
+            winston.info({message: 'cbusMessage test: ACOF1 decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected, 'encode');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(decode.eventNumber).to.equal(value.eventNumber, 'eventNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.hex).to.equal(decToHex(value.data1, 2), 'eventdata.hex');
+            expect(decode.mnemonic).to.equal('ACOF1', 'mnemonic');
+            expect(decode.opCode).to.equal('B1', 'opCode');
+            expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+            expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
     // B5 NEVAL
     //
 	function GetTestCase_NEVAL () {
@@ -1159,6 +1229,77 @@ describe('cbusMessage tests', function(){
             expect(decode.flags).to.equal(value.flags, 'flags');
             expect(decode.mnemonic).to.equal('PNN', 'mnemonic');
             expect(decode.opCode).to.equal('B6', 'opCode');
+            expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+            expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // B8/B9 ASON1 & ASOF1 test cases
+    //
+	function GetTestCase_ASONF1 () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (DN = 1; DN < 4; DN++) {
+				if (DN == 1) deviceNumber = 0;
+				if (DN == 2) deviceNumber = 1;
+				if (DN == 3) deviceNumber = 65535;
+                for (D1 = 1; D1 < 4; D1++) {
+                    if (D1 == 1) data1 = 0;
+                    if (D1 == 2) data1 = 1;
+                    if (D1 == 3) data1 = 255;
+                    testCases.push({'nodeNumber':nodeNumber,
+                                    'deviceNumber':deviceNumber,
+                                    'data1':data1,
+                                    'data2':data2})
+                }
+            }
+        }
+		return testCases;
+    }        
+
+
+    // B8 ASON1
+    //
+	itParam("ASON1 test nodeNumber ${value.nodeNumber} deviceNumber ${value.deviceNumber} data1 ${value.data1}",
+        GetTestCase_ASONF1(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN ASON1 test ' + JSON.stringify(value)});
+            expected = ":SB780NB8" + decToHex(value.nodeNumber, 4) + decToHex(value.deviceNumber, 4) + decToHex(value.data1, 2) + ";";
+            var encode = cbusLib.encodeASON1(value.nodeNumber, value.deviceNumber, value.data1);
+            var decode = cbusLib.decode(encode);
+            winston.info({message: 'cbusMessage test: ASON1 encode ' + encode});
+            winston.info({message: 'cbusMessage test: ASON1 decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected, 'encode');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.hex).to.equal(decToHex(value.data1, 2), 'eventdata.hex');
+            expect(decode.mnemonic).to.equal('ASON1', 'mnemonic');
+            expect(decode.opCode).to.equal('B8', 'opCode');
+            expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+            expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // B9 ASOF1
+    //
+	itParam("ASOF1 test nodeNumber ${value.nodeNumber} deviceNumber ${value.deviceNumber} data1 ${value.data1}",
+        GetTestCase_ASONF1(), function (value) {
+            winston.info({message: 'cbusMessage test: BEGIN ASOF2 test ' + JSON.stringify(value)});
+            expected = ":SB780NB9" + decToHex(value.nodeNumber, 4) + decToHex(value.deviceNumber, 4) + decToHex(value.data1, 2) + ";";
+            var encode = cbusLib.encodeASOF1(value.nodeNumber, value.deviceNumber, value.data1);
+            var decode = cbusLib.decode(encode);
+            winston.info({message: 'cbusMessage test: ASOF1 encode ' + encode});
+            winston.info({message: 'cbusMessage test: ASOF1 decode ' + JSON.stringify(decode)});
+            expect(encode).to.equal(expected, 'encode');
+            expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
+            expect(decode.eventData.data1).to.equal(value.data1, 'data1');
+            expect(decode.eventData.hex).to.equal(decToHex(value.data1, 2), 'eventdata.hex');
+            expect(decode.mnemonic).to.equal('ASOF1', 'mnemonic');
+            expect(decode.opCode).to.equal('B9', 'opCode');
             expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
             expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
 	})
