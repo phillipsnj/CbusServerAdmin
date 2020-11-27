@@ -853,7 +853,7 @@ class cbusLibrary {
                 'eventName': message.substr(9, 8),
                 'eventVariableIndex': parseInt(message.substr(17, 2), 16),
                 'eventVariableValue': parseInt(message.substr(19, 2), 16),
-                'text': "REVAL (D2) eventName " + message.substr(9, 8) + 
+                'text': "EVLRN (D2) eventName " + message.substr(9, 8) + 
 					" Event Variable Index " + parseInt(message.substr(17, 2), 16) + 
 					" Event Variable Value " + parseInt(message.substr(19, 2), 16)
         }
