@@ -200,10 +200,10 @@ class cbusAdmin extends EventEmitter {
         		winston.info({message: 'mergAdminNode: NUMEV: ' + JSON.stringify(this.config.nodes[cbusMsg.nodeNumber])});
             },
             '90': (cbusMsg) => {//Accessory On Long Event
-                this.eventSend(cbusMsg, 'on', 'long')
+                this.eventSend(cbusMsg, 'on', 'long', 0)
             },
             '91': (cbusMsg) => {//Accessory Off Long Event
-                this.eventSend(cbusMsg, 'off', 'long')
+                this.eventSend(cbusMsg, 'off', 'long', 0)
             },
             '97': (cbusMsg) => { // NVANS - Receive Node Variable Value
                 if (this.config.nodes[cbusMsg.nodeNumber].variables[cbusMsg.nodeVariableIndex] != null) {
@@ -221,10 +221,10 @@ class cbusAdmin extends EventEmitter {
                 }
             },
             '98': (cbusMsg) => {//Accessory On Long Event
-                this.eventSend(cbusMsg, 'on', 'short')
+                this.eventSend(cbusMsg, 'on', 'short', 0)
             },
             '99': (cbusMsg) => {//Accessory Off Long Event
-                this.eventSend(cbusMsg, 'off', 'short')
+                this.eventSend(cbusMsg, 'off', 'short', 0)
             },
             '9B': (cbusMsg) => {//PARAN Parameter readback by Index
 				//winston.debug({message: `PARAN (9B) ${cbusMsg.nodeNumber} Parameter ${cbusMsg.parameterIndex} Value ${msg.paramValue()}`});
@@ -398,15 +398,22 @@ class cbusAdmin extends EventEmitter {
         this.emit('events', Object.values(this.config.events))
     }
 
-    eventSend(cbusMsg, status, type) {
+    eventSend(cbusMsg, status, type, data) {
         let eId = ''
         let eventId = ''
+        let eventdata = []
         if (type == 'long') {
             eId = decToHex(cbusMsg.nodeNumber,4) + decToHex(cbusMsg.eventNumber,4)
             eventId = cbusMsg.eventNumber
         } else {
             eId = decToHex(cbusMsg.deviceNumber,8)
             eventId = cbusMsg.deviceNumber
+        }
+        if (data > 0) {
+            let dataStr = cbusMsg.encoded.substr(17, cbusMsg.encoded.length - 17);
+            for (let i = 0; i < dataStr.length - 1; i += 2) {
+                eventdata.push(dataStr.substr(i, 2));
+            }
         }
 		winston.debug({message: `mergAdminNode: EventSend : ` + cbusMsg.text});
         if (eId in this.config.events) {
@@ -420,10 +427,12 @@ class cbusAdmin extends EventEmitter {
             output['status'] = status
             output['type'] = type
             output['count'] = 1
+            output['data'] = eventdata
             this.config.events[eId] = output
         }
         this.emit('events', Object.values(this.config.events));
     }
+
 
     saveConfig() {
 		//winston.debug({message: `Save Config `});

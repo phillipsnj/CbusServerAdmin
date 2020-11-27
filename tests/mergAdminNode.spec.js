@@ -650,6 +650,7 @@ describe('mergAdminNode tests', function(){
             expect(eventData[0].nodeId).to.equal(value.nodeNumber);
             expect(eventData[0].eventId).to.equal(value.eventNumber);
             expect(eventData[0].status).to.equal('on');
+            expect(eventData[0].data.length).to.equal(0);
 			done();
 		}, 10);
 	})
