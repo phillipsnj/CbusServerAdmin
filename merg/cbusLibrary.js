@@ -61,6 +61,9 @@ class cbusLibrary {
         if (message == undefined) message = this.message;
         var opCode = message.substr(7, 2);
         switch (opCode) {
+        case '00':
+            return this.decodeACK(message);
+            break;
         case '0D':
             return this.decodeQNN(message);
             break;
@@ -79,11 +82,11 @@ class cbusLibrary {
         case '23':
             return this.decodeDKEEP(message);
             break;
-        case '27':
-            return this.decodeDSPD(message);
-            break;
         case '42':
             return this.decodeSNN(message);
+            break;
+        case '47':
+            return this.decodeDSPD(message);
             break;
 		case '50':
             return this.decodeRQNN(message);
@@ -174,20 +177,37 @@ class cbusLibrary {
             break;
 
         default:
-            return {'mnemonic': 'UNSUPPORTED', 'opCode': message.substr(7, 2)}
+            return {'encoded': message ,'mnemonic': 'UNSUPPORTED', 'opCode': message.substr(7, 2)}
             break;
         }
     }
 
 
 
+    // 00 ACK
+    //
+    decodeACK = function(message) {
+        // ACK Format: [<MjPri><MinPri=3><CANID>]<00>
+        return {'encoded': message,
+                'mnemonic': 'ACK',
+                'opCode': message.substr(7, 2),
+                'text': 'ACK (00)',
+        }
+    }
+    encodeACK = function() {//Request Node Parameters
+        // ACK Format: [<MjPri><MinPri=3><CANID>]<00>
+        return this.header() + '00' + ';'
+    }
+
+
     // 0D QNN
     //
     decodeQNN = function(message) {
         // QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
-        return {'mnemonic': 'QNN',
+        return {'encoded': message,
+                'mnemonic': 'QNN',
                 'opCode': message.substr(7, 2),
-                'text': 'QNN',
+                'text': 'QNN (0D)',
         }
     }
     encodeQNN = function() {//Request Node Parameters
@@ -200,9 +220,10 @@ class cbusLibrary {
     //
     decodeRQNP = function(message) {
 		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
-        return {'mnemonic': 'RQNP',
+        return {'encoded': message,
+                'mnemonic': 'RQNP',
                 'opCode': message.substr(7, 2),
-                'text': 'RQNP',
+                'text': 'RQNP (10)',
         }
     }
     encodeRQNP = function() {//Request Node Parameters
@@ -215,9 +236,10 @@ class cbusLibrary {
     //
     decodeRQMN = function(message) {
 		// RQMN Format: [<MjPri><MinPri=3><CANID>]<11>
-        return {'mnemonic': 'RQMN',
+        return {'encoded': message,
+                'mnemonic': 'RQMN',
                 'opCode': message.substr(7, 2),
-                'text': 'RQMN',
+                'text': 'RQMN (11)',
         }
     }
     encodeRQMN = function() {//Request Node Parameters
@@ -230,10 +252,11 @@ class cbusLibrary {
     //
     decodeKLOC = function(message) {
         // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
-        return {'mnemonic': 'KLOC',
+        return {'encoded': message,
+                'mnemonic': 'KLOC',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
-                'text': 'KLOC Session ' + parseInt(message.substr(9, 2), 16),
+                'text': 'KLOC (21) Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeKLOC = function(session) {
@@ -246,10 +269,11 @@ class cbusLibrary {
     //
     decodeQLOC = function(message) {
 		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
-        return {'mnemonic': 'QLOC',
+        return {'encoded': message,
+                'mnemonic': 'QLOC',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
-                'text': 'QLOC Session ' + parseInt(message.substr(9, 2), 16),
+                'text': 'QLOC (22) Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeQLOC = function(session) {
@@ -262,10 +286,11 @@ class cbusLibrary {
     //
     decodeDKEEP = function(message) {
         // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
-        return {'mnemonic': 'DKEEP',
+        return {'encoded': message,
+                'mnemonic': 'DKEEP',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
-                'text': 'DKEEP Session ' + parseInt(message.substr(9, 2), 16),
+                'text': 'DKEEP (23) Session ' + parseInt(message.substr(9, 2), 16),
         }
     }
     encodeDKEEP = function(session) {
@@ -274,37 +299,15 @@ class cbusLibrary {
     }
     
 
-    // 27 DSPD
-    //
-    decodeDSPD = function(message) {
-        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
-        var speedDir = parseInt(message.substr(11, 2), 16)
-        var direction = (speedDir > 127) ? 'Forward' : 'Reverse'
-        return {'mnemonic': 'DSPD',
-                'opCode': message.substr(7, 2),
-                'session': parseInt(message.substr(9, 2), 16),
-                'speed': speedDir % 128,
-                'direction': direction,
-                'text': 'QLOC Session ' + parseInt(message.substr(9, 2), 16) + 
-                    ' Speed ' + speedDir % 128 + 
-                    ' Direction ' + direction,
-        }
-    }
-    encodeDSPD = function(session, speed, direction) {
-        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
-        var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
-        return this.header() + '27' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
-    }
-    
-
     // 42 SNN
     //
     decodeSNN = function(message) {
 		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
-        return {'mnemonic': 'SNN',
+        return {'encoded': message,
+                'mnemonic': 'SNN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'SNN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'SNN (42) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeSNN = function(nodeNumber) {
@@ -315,14 +318,39 @@ class cbusLibrary {
     }
 
 
+    // 47 DSPD
+    //
+    decodeDSPD = function(message) {
+        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
+        var speedDir = parseInt(message.substr(11, 2), 16)
+        var direction = (speedDir > 127) ? 'Forward' : 'Reverse'
+        return {'encoded': message,
+                'mnemonic': 'DSPD',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'speed': speedDir % 128,
+                'direction': direction,
+                'text': 'QLOC (27) Session ' + parseInt(message.substr(9, 2), 16) + 
+                    ' Speed ' + speedDir % 128 + 
+                    ' Direction ' + direction,
+        }
+    }
+    encodeDSPD = function(session, speed, direction) {
+        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
+        var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
+        return this.header() + '47' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
+    }
+    
+
     // 50 RQNN
     //
     decodeRQNN = function(message) {
 		// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
-        return {'mnemonic': 'RQNN',
+        return {'encoded': message,
+                'mnemonic': 'RQNN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'RQNN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'RQNN (RQNN) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeRQNN = function(nodeNumber) {
@@ -335,10 +363,11 @@ class cbusLibrary {
     //
     decodeNNACK = function(message) {
 		// NNACK Format: [<MjPri><MinPri=3><CANID>]<52><NN hi><NN lo>
-        return {'mnemonic': 'NNACK',
+        return {'encoded': message,
+                'mnemonic': 'NNACK',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNACK Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNACK (NNACK) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNACK = function(nodeNumber) {
@@ -353,10 +382,11 @@ class cbusLibrary {
     //
     decodeNNLRN = function(message) {
 		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
-        return {'mnemonic': 'NNLRN',
+        return {'encoded': message,
+                'mnemonic': 'NNLRN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNLRN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNLRN (53) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNLRN = function(nodeNumber) {
@@ -371,10 +401,11 @@ class cbusLibrary {
     //
     decodeNNULN = function(message) {
 		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
-        return {'mnemonic': 'NNULN',
+        return {'encoded': message,
+                'mnemonic': 'NNULN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNLRN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNLRN (54) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNULN = function(nodeNumber) {
@@ -387,10 +418,11 @@ class cbusLibrary {
     //
     decodeNNCLR = function(message) {
 		// NNCLR Format: [<MjPri><MinPri=3><CANID>]<55><NN hi><NN lo>>
-        return {'mnemonic': 'NNCLR',
+        return {'encoded': message,
+                'mnemonic': 'NNCLR',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NNCLR Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NNCLR (55) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNNCLR = function(nodeNumber) {
@@ -403,10 +435,11 @@ class cbusLibrary {
     //
     decodeNERD = function(message) {
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
-        return {'mnemonic': 'NERD',
+        return {'encoded': message,
+                'mnemonic': 'NERD',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'NERD Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'NERD (57) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeNERD = function(nodeNumber) {
@@ -419,10 +452,11 @@ class cbusLibrary {
     //
     decodeRQEVN = function(message) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
-        return {'mnemonic': 'RQEVN',
+        return {'encoded': message,
+                'mnemonic': 'RQEVN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': 'RQEVN Node ' + parseInt(message.substr(9, 4), 16),
+                'text': 'RQEVN (58) Node ' + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeRQEVN = function(nodeNumber) {
@@ -435,10 +469,11 @@ class cbusLibrary {
     //
     decodeWRACK = function(message) {
 		// WRACK Format: [<MjPri><MinPri=3><CANID>]<59><NN hi><NN lo>
-        return {'mnemonic': 'WRACK',
+        return {'encoded': message,
+                'mnemonic': 'WRACK',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
-                'text': "WRACK Node " + parseInt(message.substr(9, 4), 16),
+                'text': "WRACK (59) Node " + parseInt(message.substr(9, 4), 16),
         }
     }
     encodeWRACK = function(nodeNumber) {
@@ -451,12 +486,13 @@ class cbusLibrary {
     //
     decodeDFUN = function(message) {
         // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
-        return {'mnemonic': 'DFUN',
+        return {'encoded': message,
+                'mnemonic': 'DFUN',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
                 'Fn1': parseInt(message.substr(11, 2), 16),
                 'Fn2': parseInt(message.substr(13, 2), 16),
-                'text': "DFUN Session " + parseInt(message.substr(9, 2), 16) +
+                'text': "DFUN (60) Session " + parseInt(message.substr(9, 2), 16) +
 					" Fn1 " + parseInt(message.substr(11, 2), 16) +
 					" Fn2 " + parseInt(message.substr(13, 2), 16),
         }
@@ -472,12 +508,13 @@ class cbusLibrary {
     decodeERR = function(message) {
         // ERR Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
         // data 3 is currently assigned to error number
-        return {'mnemonic': 'ERR',
+        return {'encoded': message,
+                'mnemonic': 'ERR',
                 'opCode': message.substr(7, 2),
                 'data1': parseInt(message.substr(9, 2), 16),
                 'data2': parseInt(message.substr(11, 2), 16),
                 'errorNumber': parseInt(message.substr(13, 2), 16),
-                'text': "ERR Data1 " + parseInt(message.substr(9, 2), 16) +
+                'text': "ERR (63) Data1 " + parseInt(message.substr(9, 2), 16) +
 					" Data2 " + parseInt(message.substr(11, 2), 16) +
 					" errorNumber " + parseInt(message.substr(13, 2), 16),
         }
@@ -492,11 +529,12 @@ class cbusLibrary {
     //
     decodeCMDERR = function(message) {
         // CMDERR Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
-		return {'mnemonic': 'CMDERR',
+		return {'encoded': message,
+                'mnemonic': 'CMDERR',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'errorNumber': parseInt(message.substr(13, 2), 16),
-                'text': "CMDERR Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "CMDERR (6F) Node " + parseInt(message.substr(9, 4), 16) + 
 					" errorNumber " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -510,11 +548,12 @@ class cbusLibrary {
     //
     decodeNVRD = function(message) {
 		// NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
-		return {'mnemonic': 'NVRD',
+		return {'encoded': message,
+                'mnemonic': 'NVRD',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
-                'text': "NVRD Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "NVRD (71) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Node Variable Index " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -528,11 +567,12 @@ class cbusLibrary {
     //
     decodeNENRD = function(message) {
 		// NENRD Format: [<MjPri><MinPri=3><CANID>]<72><NN hi><NN lo><EN#>
-		return {'mnemonic': 'NENRD',
+		return {'encoded': message,
+                'mnemonic': 'NENRD',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventIndex': parseInt(message.substr(13, 2), 16),
-                'text': "NENRD Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "NENRD (72) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Event Index " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -546,11 +586,12 @@ class cbusLibrary {
     //
     decodeRQNPN = function(message) {
         // RQNPN Format: [<MjPri><MinPri=3><CANID>]<73><NN hi><NN lo><Para#>
-		return {'mnemonic': 'RQNPN',
+		return {'encoded': message,
+                'mnemonic': 'RQNPN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'ParameterIndex': parseInt(message.substr(13, 2), 16),
-                'text': "RQNPN Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "RQNPN (73) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Node Parameter Index " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -564,11 +605,12 @@ class cbusLibrary {
     //
     decodeNUMEV = function(message) {
         // NUMEV Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
-        return {'mnemonic': 'NUMEV',
+        return {'encoded': message,
+                'mnemonic': 'NUMEV',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventCount': parseInt(message.substr(13, 2), 16),
-                'text': "NUMEV Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "NUMEV (74) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Event Count " + parseInt(message.substr(13, 2), 16)
         }
     }
@@ -582,11 +624,12 @@ class cbusLibrary {
     //
     decodeACON = function(message) {
 		// ACON Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
-		return {'mnemonic': 'ACON',
+		return {'encoded': message,
+                'mnemonic': 'ACON',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
-                'text': "ACON Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ACON (90) Node " + parseInt(message.substr(9, 4), 16) + 
 					" eventNumber " + parseInt(message.substr(13, 4), 16)
         }
     }
@@ -600,11 +643,12 @@ class cbusLibrary {
     //
     decodeACOF = function(message) {
 		// ACOF Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
-		return {'mnemonic': 'ACOF',
+		return {'encoded': message,
+                'mnemonic': 'ACOF',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventNumber': parseInt(message.substr(13, 4), 16),
-                'text': "ACOF Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ACOF (91) Node " + parseInt(message.substr(9, 4), 16) + 
 					" eventNumber " + parseInt(message.substr(13, 4), 16)
         }
     }
@@ -618,10 +662,11 @@ class cbusLibrary {
     //
     decodeEVULN = function(message) {
 		// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
-        return {'mnemonic': 'EVULN',
+        return {'encoded': message,
+                'mnemonic': 'EVULN',
                 'opCode': message.substr(7, 2),
                 'eventName': message.substr(9, 8),
-                'text': "EVULN eventName " + message.substr(9, 8),
+                'text': "EVULN (95) eventName " + message.substr(9, 8),
         }
     }
     encodeEVULN = function(eventName) {
@@ -634,12 +679,13 @@ class cbusLibrary {
     //
     decodeNVSET = function(message) {
 		// NVSET Format: [<MjPri><MinPri=3><CANID>]<96><NN hi><NN lo><NV# ><NV val>
-        return {'mnemonic': 'NVSET',
+        return {'encoded': message,
+                'mnemonic': 'NVSET',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16), 
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16), 
-                'text':  "NVSET Node " + parseInt(message.substr(9, 4), 16) + 
+                'text':  "NVSET (96) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Node Variable Index " + parseInt(message.substr(13, 2), 16) +
 					" Node Variable Value " + parseInt(message.substr(15, 2), 16)
         }
@@ -654,12 +700,13 @@ class cbusLibrary {
     //
     decodeNVANS = function(message) {
         // NVANS Format: [[<MjPri><MinPri=3><CANID>]<97><NN hi><NN lo><NV# ><NV val>
-        return {'mnemonic': 'NVANS',
+        return {'encoded': message,
+                'mnemonic': 'NVANS',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'nodeVariableIndex': parseInt(message.substr(13, 2), 16),
                 'nodeVariableValue': parseInt(message.substr(15, 2), 16),
-                'text':  "NVANS Node " + parseInt(message.substr(9, 4), 16) + 
+                'text':  "NVANS (97) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Node Variable Index " + parseInt(message.substr(13, 2), 16) +
 					" Node Variable Value " + parseInt(message.substr(15, 2), 16)
         }
@@ -674,11 +721,12 @@ class cbusLibrary {
     //
     decodeASON = function(message) {
 		// ASON Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><DN hi><DN lo>
-		return {'mnemonic': 'ASON',
+		return {'encoded': message,
+                'mnemonic': 'ASON',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'deviceNumber': parseInt(message.substr(13, 4), 16),
-                'text': "ASON Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ASON (98) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Device Number " + parseInt(message.substr(13, 4), 16)
         }
     }
@@ -692,11 +740,12 @@ class cbusLibrary {
     //
     decodeASOF = function(message) {
 		// ASOF Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><DN hi><DN lo>
-		return {'mnemonic': 'ASOF',
+		return {'encoded': message,
+                'mnemonic': 'ASOF',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'deviceNumber': parseInt(message.substr(13, 4), 16),
-                'text': "ASOF Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ASOF (99) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Device Number " + parseInt(message.substr(13, 4), 16)
         }
     }
@@ -710,12 +759,13 @@ class cbusLibrary {
     //
     decodePARAN = function(message) {
         // PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
-        return {'mnemonic': 'PARAN',
+        return {'encoded': message,
+                'mnemonic': 'PARAN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'parameterIndex': parseInt(message.substr(13, 2), 16),
                 'parameterValue': parseInt(message.substr(15, 2), 16),
-                'text': "PARAN Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "PARAN (9B) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Parameter Index " + parseInt(message.substr(13, 2), 16) + 
 					" Parameter Value " + parseInt(message.substr(15, 2), 16)
         }
@@ -730,12 +780,13 @@ class cbusLibrary {
     //
     decodeREVAL = function(message) {
         // REVAL Format: [<MjPri><MinPri=3><CANID>]<9C><NN hi><NN lo><EN#><EV#>
-        return {'mnemonic': 'REVAL',
+        return {'encoded': message,
+                'mnemonic': 'REVAL',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16), 
                 'eventIndex': parseInt(message.substr(13, 2), 16), 
                 'eventVariableIndex': parseInt(message.substr(15, 2), 16), 
-                'text': "REVAL Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "REVAL (9C) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Event Index " + parseInt(message.substr(13, 2), 16) + 
 					" Event VariableIndex " + parseInt(message.substr(15, 2), 16)
         }
@@ -750,13 +801,14 @@ class cbusLibrary {
     //
     decodeNEVAL = function(message) {
         // NEVAL Format: [<MjPri><MinPri=3><CANID>]<B5><NN hi><NN lo><EN#><EV#><EVval>
-        return {'mnemonic': 'NEVAL',
+        return {'encoded': message,
+                'mnemonic': 'NEVAL',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventIndex': parseInt(message.substr(13, 2), 16),
                 'eventVariableIndex': parseInt(message.substr(15, 2), 16),
                 'eventVariableValue': parseInt(message.substr(17, 2), 16),
-                'text': "NEVAL NodeId " + parseInt(message.substr(9, 4), 16) + 
+                'text': "NEVAL (B5) NodeId " + parseInt(message.substr(9, 4), 16) + 
 					" Event Index " + parseInt(message.substr(13, 2), 16) + 
 					" Event Variable Index " + parseInt(message.substr(15, 2), 16) + 
 					" Event Variable Value " + parseInt(message.substr(17, 2), 16)
@@ -772,13 +824,14 @@ class cbusLibrary {
     //
     decodePNN = function(message) {
         // PNN Format: [<MjPri><MinPri=3><CANID>]<B6><NN Hi><NN Lo><Manuf Id><Module Id><Flags>
-        return {'mnemonic': 'PNN',
+        return {'encoded': message,
+                'mnemonic': 'PNN',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'manufacturerId': parseInt(message.substr(13, 2), 16), 
                 'moduleId': parseInt(message.substr(15, 2), 16), 
                 'flags': parseInt(message.substr(17, 2), 16),
-                'text': "PNN Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "PNN (B6) Node " + parseInt(message.substr(9, 4), 16) + 
 					" Manufacturer Id " + parseInt(message.substr(13, 2), 16) + 
 					" Module Id " + parseInt(message.substr(15, 2), 16) + 
 					" Flags " + parseInt(message.substr(17, 2), 16)
@@ -794,12 +847,13 @@ class cbusLibrary {
     //
     decodeEVLRN = function(message) {
 		// EVLRN Format: [<MjPri><MinPri=3><CANID>]<D2><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
-        return {'mnemonic': 'EVLRN',
+        return {'encoded': message,
+                'mnemonic': 'EVLRN',
                 'opCode': message.substr(7, 2),
                 'eventName': message.substr(9, 8),
                 'eventVariableIndex': parseInt(message.substr(17, 2), 16),
                 'eventVariableValue': parseInt(message.substr(19, 2), 16),
-                'text': "REVAL eventName " + message.substr(9, 8) + 
+                'text': "EVLRN (D2) eventName " + message.substr(9, 8) + 
 					" Event Variable Index " + parseInt(message.substr(17, 2), 16) + 
 					" Event Variable Value " + parseInt(message.substr(19, 2), 16)
         }
@@ -816,7 +870,8 @@ class cbusLibrary {
         // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
         var speedDir = parseInt(message.substr(15, 2), 16)
         var direction = (speedDir > 127) ? 'Forward' : 'Reverse';
-        return {'mnemonic': 'PLOC',
+        return {'encoded': message,
+                'mnemonic': 'PLOC',
                 'opCode': message.substr(7, 2),
                 'session': parseInt(message.substr(9, 2), 16),
                 'address': parseInt(message.substr(11, 4), 16),
@@ -825,7 +880,7 @@ class cbusLibrary {
                 'Fn1': parseInt(message.substr(17, 2), 16),
                 'Fn2': parseInt(message.substr(19, 2), 16),
                 'Fn3': parseInt(message.substr(21, 2), 16),
-                'text': "PLOC Session " + parseInt(message.substr(9, 2), 16) + 
+                'text': "PLOC (E1) Session " + parseInt(message.substr(9, 2), 16) + 
 					" Address " + parseInt(message.substr(11, 4), 16) +
 					" Speed/Dir " + speedDir % 128 +
 					" Direction " + direction +
@@ -845,12 +900,13 @@ class cbusLibrary {
     //
     decodeENRSP = function(message) {
         // ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
-        return {'mnemonic': 'ENRSP',
+        return {'encoded': message,
+                'mnemonic': 'ENRSP',
                 'opCode': message.substr(7, 2),
                 'nodeNumber': parseInt(message.substr(9, 4), 16),
                 'eventName': message.substr(13, 8),
                 'eventIndex': parseInt(message.substr(21, 2), 16),
-                'text': "ENRSP Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "ENRSP (F2) Node " + parseInt(message.substr(9, 4), 16) + 
 					" EventName " + message.substr(13, 8) + 
 					" Event Index " + parseInt(message.substr(21, 2), 16)
         }

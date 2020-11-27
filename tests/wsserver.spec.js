@@ -788,62 +788,67 @@ describe('Websocket server tests', function(){
 
 	function dccError_TestCase () {
 		var testCases = [];
-		for (dataCount = 1; dataCount < 4; dataCount++) {
-			if (dataCount == 1) data = 0;
-			if (dataCount == 2) data = 1;
-			if (dataCount == 3) data = 65535;
-			for (ErrCodeCount = 1; ErrCodeCount < 9; ErrCodeCount++) {
-				if (ErrCodeCount == 1) {
-					errorId = 1;
-					message = "Loco Stack Full";
-				}
-				if (ErrCodeCount == 2) {
-					errorId = 2;
-					message = "Loco Address Taken";
-				}
-				if (ErrCodeCount == 3) {
-					errorId = 3;
-					message = "Session not present";
-				}
-				if (ErrCodeCount == 4) {
-					errorId = 4;
-					message = "Consist Empty";
-				}
-				if (ErrCodeCount == 5) {
-					errorId = 5;
-					message = "Loco Not Found";
-				}
-				if (ErrCodeCount == 6) {
-					errorId = 6;
-					message = "Can Bus Error";
-				}
-				if (ErrCodeCount == 7) {
-					errorId = 7;
-					message = "Invalid Request";
-				}
-				if (ErrCodeCount == 8) {
-					errorId = 8;
-					message = "Session Cancelled";
-				}
-				testCases.push({'data':data, 'errorId':errorId, 'message':message});
-			}
+		for (D1Count = 1; D1Count < 4; D1Count++) {
+			if (D1Count == 1) data1 = 0;
+			if (D1Count == 2) data1 = 1;
+			if (D1Count == 3) data1 = 255;
+            for (D2Count = 1; D2Count < 4; D2Count++) {
+                if (D2Count == 1) data2 = 0;
+                if (D2Count == 2) data2 = 1;
+                if (D2Count == 3) data2 = 255;
+                for (ErrCodeCount = 1; ErrCodeCount < 9; ErrCodeCount++) {
+                    if (ErrCodeCount == 1) {
+                        errorId = 1;
+                        message = "Loco Stack Full";
+                    }
+                    if (ErrCodeCount == 2) {
+                        errorId = 2;
+                        message = "Loco Address Taken";
+                    }
+                    if (ErrCodeCount == 3) {
+                        errorId = 3;
+                        message = "Session not present";
+                    }
+                    if (ErrCodeCount == 4) {
+                        errorId = 4;
+                        message = "Consist Empty";
+                    }
+                    if (ErrCodeCount == 5) {
+                        errorId = 5;
+                        message = "Loco Not Found";
+                    }
+                    if (ErrCodeCount == 6) {
+                        errorId = 6;
+                        message = "Can Bus Error";
+                    }
+                    if (ErrCodeCount == 7) {
+                        errorId = 7;
+                        message = "Invalid Request";
+                    }
+                    if (ErrCodeCount == 8) {
+                        errorId = 8;
+                        message = "Session Cancelled";
+                    }
+                    testCases.push({'data1':data1, 'data2':data2, 'errorId':errorId, 'message':message});
+                }
+            }
 		}
 		return testCases;
 	}
 
-	itParam('dccError test data ${value.data}, errorId ${value.errorId}, message ${value.message}',	dccError_TestCase(), function (done, value) {
+	itParam('dccError test data1 ${value.data1}, data2 ${value.data2}, errorId ${value.errorId}, message ${value.message}',	dccError_TestCase(), function (done, value) {
 		winston.info({message: 'wsserver Test: START dccError test ' + JSON.stringify(value)});
 		let testCase = {
 			'type': "DCC",
 			'Error': value.errorId,
 			'Message': value.message,
-			'data': decToHex(value.data,4)
+			'data': decToHex(value.data1,2) + decToHex(value.data2,2)
 			}
 		websocket_Client.on('dccError', function (data) {
 			dccErrorData = data;
 			winston.info({message: 'wsserver Test: dccError test - data : ' + JSON.stringify(dccErrorData)});
 			});	
-		mock_Cbus.outputERR(value.data, value.errorId);
+		mock_Cbus.outputERR(value.data1, value.data2, value.errorId);
 		setTimeout(function(){
 			expect(JSON.stringify(dccErrorData)).to.equal(JSON.stringify(testCase));
 			websocket_Client.off('dccError');
