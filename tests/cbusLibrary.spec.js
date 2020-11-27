@@ -788,20 +788,28 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 90 ACON test cases
+    // 90/91 ACON & ACOF test cases
     //
-	var TestCases_NodeEvent = 	[	{ nodeNumber: 0, eventNumber: 0 },
-									{ nodeNumber: 0, eventNumber: 1 },
-									{ nodeNumber: 0, eventNumber: 65535 },
-									{ nodeNumber: 1, eventNumber: 0 },
-									{ nodeNumber: 1, eventNumber: 1 },
-									{ nodeNumber: 1, eventNumber: 65535 },
-									{ nodeNumber: 65535, eventNumber: 0 },
-									{ nodeNumber: 65535, eventNumber: 1 },
-									{ nodeNumber: 65535, eventNumber: 65535 }
-								];
-	
-	itParam("ACON test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
+	function GetTestCase_ACONF () {
+		var testCases = []
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (EN = 1; EN < 4; EN++) {
+				if (EN == 1) eventNumber = 0;
+				if (EN == 2) eventNumber = 1;
+				if (EN == 3) eventNumber = 65535;
+                testCases.push({'nodeNumber':nodeNumber,
+                                'eventNumber':eventNumber})
+            }
+        }
+		return testCases;
+    }        
+
+    // 90 ACON
+    //
+	itParam("ACON test: nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", GetTestCase_ACONF(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ACON test ' + JSON.stringify(value)});
 		expected = ":SB780N90" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + ";";
         var encode = cbusLib.encodeACON(value.nodeNumber, value.eventNumber);
@@ -820,7 +828,7 @@ describe('cbusMessage tests', function(){
 
     // 91 ACOF
     //
-	itParam("ACOF test nodeNumber ${value.nodeNumber} event ${value.eventNumber}", TestCases_NodeEvent, function (value) {
+	itParam("ACOF test: nodeNumber ${value.nodeNumber} event ${value.eventNumber}", GetTestCase_ACONF(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ACOF test ' + JSON.stringify(value)});
 		expected = ":SB780N91" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + ";";
         var encode = cbusLib.encodeACOF(value.nodeNumber, value.eventNumber);
@@ -948,18 +956,38 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 98/99 ASON & ASOF test cases
+    //
+	function GetTestCase_ASONF () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (DN = 1; DN < 4; DN++) {
+				if (DN == 1) deviceNumber = 0;
+				if (DN == 2) deviceNumber = 1;
+				if (DN == 3) deviceNumber = 65535;
+                testCases.push({'nodeNumber':nodeNumber,
+                                'deviceNumber':deviceNumber})
+            }
+        }
+		return testCases;
+    }        
+
+
     // 98 ASON
     //
-	itParam("ASON test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
+	itParam("ASON test nodeNumber ${value.nodeNumber} eventNumber ${value.deviceNumber}", GetTestCase_ASONF(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ASON test ' + JSON.stringify(value)});
-		expected = ":SB780N98" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + ";";
-        var encode = cbusLib.encodeASON(value.nodeNumber, value.eventNumber);
+		expected = ":SB780N98" + decToHex(value.nodeNumber, 4) + decToHex(value.deviceNumber, 4) + ";";
+        var encode = cbusLib.encodeASON(value.nodeNumber, value.deviceNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ASON encode ' + encode});
 		winston.info({message: 'cbusMessage test: ASON decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
-        expect(decode.deviceNumber).to.equal(value.eventNumber, 'deviceNumber');
+        expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
 		expect(decode.mnemonic).to.equal('ASON', 'mnemonic');
 		expect(decode.opCode).to.equal('98', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
@@ -969,16 +997,16 @@ describe('cbusMessage tests', function(){
 
     // 99 ASOF
     //
-	itParam("ASOF test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber}", TestCases_NodeEvent, function (value) {
+	itParam("ASOF test nodeNumber ${value.nodeNumber} eventNumber ${value.deviceNumber}", GetTestCase_ASONF(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ASOF test ' + JSON.stringify(value)});
-		expected = ":SB780N99" + decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) + ";";
-        var encode = cbusLib.encodeASOF(value.nodeNumber, value.eventNumber);
+		expected = ":SB780N99" + decToHex(value.nodeNumber, 4) + decToHex(value.deviceNumber, 4) + ";";
+        var encode = cbusLib.encodeASOF(value.nodeNumber, value.deviceNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ASOF encode ' + encode});
 		winston.info({message: 'cbusMessage test: ASOF decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
-        expect(decode.deviceNumber).to.equal(value.eventNumber, 'deviceNumber');
+        expect(decode.deviceNumber).to.equal(value.deviceNumber, 'deviceNumber');
 		expect(decode.mnemonic).to.equal('ASOF', 'mnemonic');
 		expect(decode.opCode).to.equal('99', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
@@ -1252,8 +1280,7 @@ describe('cbusMessage tests', function(){
                     if (D1 == 3) data1 = 255;
                     testCases.push({'nodeNumber':nodeNumber,
                                     'deviceNumber':deviceNumber,
-                                    'data1':data1,
-                                    'data2':data2})
+                                    'data1':data1})
                 }
             }
         }
