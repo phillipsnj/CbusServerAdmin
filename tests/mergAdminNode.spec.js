@@ -37,10 +37,12 @@ describe('mergAdminNode tests', function(){
 	});
     
     beforeEach(function() {
+   		winston.info({message: ' '});   // blank line to separate tests
         mock_Cbus.clearSendArray()
     })
 
 	after(function() {
+   		winston.info({message: ' '});   // blank line to separate tests
 		mock_Cbus.stopServer();
 		winston.info({message: 'Close mergAdminNode test Client'});
 
@@ -1108,6 +1110,92 @@ describe('mergAdminNode tests', function(){
 
     // EF PARAMS
     
+
+    // F0 ACON3 & ACOF3 test cases
+    //
+	function GetTestCase_ACONF3 () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (EN = 1; EN < 4; EN++) {
+				if (EN == 1) eventNumber = 0;
+				if (EN == 2) eventNumber = 1;
+				if (EN == 3) eventNumber = 65535;
+                for (D1 = 1; D1 < 4; D1++) {
+                    if (D1 == 1) data1 = 0;
+                    if (D1 == 2) data1 = 1;
+                    if (D1 == 3) data1 = 255;
+                    for (D2 = 1; D2 < 4; D2++) {
+                        if (D2 == 1) data2 = 0;
+                        if (D2 == 2) data2 = 1;
+                        if (D2 == 3) data2 = 255;
+                        for (D3 = 1; D3 < 4; D3++) {
+                            if (D3 == 1) data3 = 0;
+                            if (D3 == 2) data3 = 1;
+                            if (D3 == 3) data3 = 255;
+                            testCases.push({'nodeNumber':nodeNumber,
+                                            'eventNumber':eventNumber,
+                                            'data1':data1,
+                                            'data2':data2,
+                                            'data3':data3})
+                        }
+                    }
+                }
+            }
+        }
+		return testCases;
+    }        
+
+
+    // F0 ACON3
+    //
+	itParam("ACON3 test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber} data1 ${value.data1} data2 ${value.data2} data3 ${value.data3}",
+        GetTestCase_ACONF3(), function (done, value) {
+        winston.info({message: 'cbusMessage test: BEGIN ACON3 test ' + JSON.stringify(value)});
+        node.config.events = []         // clear events
+        node.on('events', function tmp(data) {
+			eventData = data;
+			winston.info({message: 'mergAdminNode Test: ACON3 incoming test - message data : ' + JSON.stringify(eventData)});
+            node.removeListener('events', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputACON3(value.nodeNumber, value.eventNumber, value.data1, value.data2, value.data3);
+		setTimeout(function(){
+            var ref = decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) 
+            expect(eventData[0].id).to.equal(ref, 'id');
+            expect(eventData[0].nodeId).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(eventData[0].eventId).to.equal(value.eventNumber, 'eventNumber');
+            expect(eventData[0].status).to.equal('on', 'status');
+            expect(eventData[0].data.length).to.equal(6, 'data');
+			done();
+		}, 10);
+	})
+    
+    
+    // F1 ACOF3
+    //
+	itParam("ACOF3 test nodeNumber ${value.nodeNumber} eventNumber ${value.eventNumber} data1 ${value.data1} data2 ${value.data2} data3 ${value.data3}",
+        GetTestCase_ACONF3(), function (done, value) {
+        winston.info({message: 'cbusMessage test: BEGIN ACOF3 test ' + JSON.stringify(value)});
+        node.config.events = []         // clear events
+        node.on('events', function tmp(data) {
+			eventData = data;
+			winston.info({message: 'mergAdminNode Test: ACOF3 incoming test - message data : ' + JSON.stringify(eventData)});
+            node.removeListener('events', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputACOF3(value.nodeNumber, value.eventNumber, value.data1, value.data2, value.data3);
+		setTimeout(function(){
+            var ref = decToHex(value.nodeNumber, 4) + decToHex(value.eventNumber, 4) 
+            expect(eventData[0].id).to.equal(ref, 'id');
+            expect(eventData[0].nodeId).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(eventData[0].eventId).to.equal(value.eventNumber, 'eventNumber');
+            expect(eventData[0].status).to.equal('off', 'status');
+            expect(eventData[0].data.length).to.equal(6, 'data');
+			done();
+		}, 10);
+	})
+    
     
     // F2 ENRSP test cases
     //
@@ -1150,6 +1238,108 @@ describe('mergAdminNode tests', function(){
                 done();
             }, 10);
     })
+
+
+    // F8/F9 ASON3 & ASOF3 test cases
+    //
+	function GetTestCase_ASONF3 () {
+		var testCases = [];
+		for (NN = 1; NN < 4; NN++) {
+			if (NN == 1) nodeNumber = 0;
+			if (NN == 2) nodeNumber = 1;
+			if (NN == 3) nodeNumber = 65535;
+			for (DN = 1; DN < 4; DN++) {
+				if (DN == 1) deviceNumber = 0;
+				if (DN == 2) deviceNumber = 1;
+				if (DN == 3) deviceNumber = 65535;
+                for (D1 = 1; D1 < 4; D1++) {
+                    if (D1 == 1) data1 = 0;
+                    if (D1 == 2) data1 = 1;
+                    if (D1 == 3) data1 = 255;
+                    for (D2 = 1; D2 < 4; D2++) {
+                        if (D2 == 1) data2 = 0;
+                        if (D2 == 2) data2 = 1;
+                        if (D2 == 3) data2 = 255;
+                        for (D3 = 1; D3 < 4; D3++) {
+                            if (D3 == 1) data3 = 0;
+                            if (D3 == 2) data3 = 1;
+                            if (D3 == 3) data3 = 255;
+                            testCases.push({'nodeNumber':nodeNumber,
+                                            'deviceNumber':deviceNumber,
+                                            'data1':data1,
+                                            'data2':data2,
+                                            'data3':data3})
+                        }
+                    }
+                }
+            }
+        }
+		return testCases;
+    }        
+
+
+    // F8 ASON3
+    //
+	itParam("ASON3 test nodeNumber ${value.nodeNumber} deviceNumber ${value.deviceNumber} data1 ${value.data1} data2 ${value.data2} data3 ${value.data3}",
+        GetTestCase_ASONF3(), function (done, value) {
+            winston.info({message: 'cbusMessage test: BEGIN ASON3 test ' + JSON.stringify(value)});
+        node.config.events = []         // clear events
+        node.on('events', function tmp(data) {
+			eventData = data;
+			winston.info({message: 'mergAdminNode Test: ACON3 incoming test - message data : ' + JSON.stringify(eventData)});
+            node.removeListener('events', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputASON3(value.nodeNumber, value.deviceNumber, value.data1, value.data2, value.data3);
+		setTimeout(function(){
+            var ref = decToHex(value.deviceNumber, 8) 
+            expect(eventData[0].id).to.equal(ref, 'id');
+            expect(eventData[0].nodeId).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(eventData[0].eventId).to.equal(value.deviceNumber, 'deviceNumber');
+            expect(eventData[0].status).to.equal('on', 'status');
+            expect(eventData[0].data.length).to.equal(6, 'data');
+			done();
+		}, 10);
+	})
+
+    
+    // F9 ASOF3
+    //
+	itParam("ASON3 test nodeNumber ${value.nodeNumber} deviceNumber ${value.deviceNumber} data1 ${value.data1} data2 ${value.data2} data3 ${value.data3}",
+        GetTestCase_ASONF3(), function (done, value) {
+            winston.info({message: 'cbusMessage test: BEGIN ASOF3 test ' + JSON.stringify(value)});
+        node.config.events = []         // clear events
+        node.on('events', function tmp(data) {
+			eventData = data;
+			winston.info({message: 'mergAdminNode Test: ACOF3 incoming test - message data : ' + JSON.stringify(eventData)});
+            node.removeListener('events', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputASOF3(value.nodeNumber, value.deviceNumber, value.data1, value.data2, value.data3);
+		setTimeout(function(){
+            var ref = decToHex(value.deviceNumber, 8) 
+            expect(eventData[0].id).to.equal(ref, 'id');
+            expect(eventData[0].nodeId).to.equal(value.nodeNumber, 'nodeNumber');
+            expect(eventData[0].eventId).to.equal(value.deviceNumber, 'deviceNumber');
+            expect(eventData[0].status).to.equal('off', 'status');
+            expect(eventData[0].data.length).to.equal(6, 'data');
+			done();
+		}, 10);
+	})
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	it('cbusTraffic test', function(done) {
