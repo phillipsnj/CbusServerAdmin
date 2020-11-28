@@ -93,9 +93,29 @@ class cbusLibrary {
         case '05':
             return this.decodeTON(message);
             break;
+        case '06':
+            return this.decodeESTOP(message);
+            break;
+        case '07':
+            return this.decodeARST(message);
+            break;
+        case '08':
+            return this.decodeRTOF(message);
+            break;
+        case '09':
+            return this.decodeRTON(message);
+            break;
+        case '0A':
+            return this.decodeRESTP(message);
+            break;
+        // 0B reserved
+        case '0C':
+            return this.decodeRSTAT(message);
+            break;
         case '0D':
             return this.decodeQNN(message);
             break;
+        // 0E, 0F reserved
         case '10':
             return this.decodeRQNP(message);
             break;
@@ -335,6 +355,96 @@ class cbusLibrary {
     }
     encodeTON = function() {
         return this.header({MinPri: 1}) + '05' + ';'
+    }
+
+
+    // 06 ESTOP
+    // ESTOP Format: [<MjPri><MinPri=1><CANID>]<06>
+    //
+    decodeESTOP = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'ESTOP',
+                'opCode': message.substr(7, 2),
+                'text': 'ESTOP (06)',
+        }
+    }
+    encodeESTOP = function() {
+        return this.header({MinPri: 1}) + '06' + ';'
+    }
+
+
+    // 07 ARST
+    // ARST Format: [<MjPri><MinPri=0><CANID>]<07>
+    //
+    decodeARST = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'ARST',
+                'opCode': message.substr(7, 2),
+                'text': 'ARST (07)',
+        }
+    }
+    encodeARST = function() {
+        return this.header({MinPri: 0}) + '07' + ';'
+    }
+
+
+    // 08 RTOF
+    // RTOF Format: [<MjPri><MinPri=1><CANID>]<08>
+    //
+    decodeRTOF = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RTOF',
+                'opCode': message.substr(7, 2),
+                'text': 'RTOF (08)',
+        }
+    }
+    encodeRTOF = function() {
+        return this.header({MinPri: 1}) + '08' + ';'
+    }
+
+
+    // 09 RTON
+    // RTON Format: [<MjPri><MinPri=1><CANID>]<09>
+    //
+    decodeRTON = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RTON',
+                'opCode': message.substr(7, 2),
+                'text': 'RTON (09)',
+        }
+    }
+    encodeRTON = function() {
+        return this.header({MinPri: 1}) + '09' + ';'
+    }
+
+
+    // 0A RESTP
+    // RESTP Format: [<MjPri><MinPri=0><CANID>]<0A>
+    //
+    decodeRESTP = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RESTP',
+                'opCode': message.substr(7, 2),
+                'text': 'RESTP (0A)',
+        }
+    }
+    encodeRESTP = function() {
+        return this.header({MinPri: 0}) + '0A' + ';'
+    }
+
+
+    // 0C RSTAT
+    // RSTAT Format: [<MjPri><MinPri=2><CANID>]<0C>
+    //
+    decodeRSTAT = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RSTAT',
+                'opCode': message.substr(7, 2),
+                'text': 'RSTAT (0C)',
+        }
+    }
+    encodeRSTAT = function() {
+        return this.header({MinPri: 2}) + '0C' + ';'
     }
 
 

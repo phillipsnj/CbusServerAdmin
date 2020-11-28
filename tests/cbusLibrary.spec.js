@@ -165,6 +165,108 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 06 ESTOP
+    //
+	it("ESTOP test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN ESTOP test '});
+		expected = ":S9780N06" + ";";
+        var encode = cbusLib.encodeESTOP();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ESTOP encode ' + encode});
+		winston.info({message: 'cbusMessage test: ESTOP decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('ESTOP', 'mnemonic');
+		expect(decode.opCode).to.equal('06', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 07 ARST
+    //
+	it("ARST test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN ARST test '});
+		expected = ":S8780N07" + ";";
+        var encode = cbusLib.encodeARST();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ARST encode ' + encode});
+		winston.info({message: 'cbusMessage test: ARST decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('ARST', 'mnemonic');
+		expect(decode.opCode).to.equal('07', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 08 RTOF
+    //
+	it("RTOF test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RTOF test '});
+		expected = ":S9780N08" + ";";
+        var encode = cbusLib.encodeRTOF();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RTOF encode ' + encode});
+		winston.info({message: 'cbusMessage test: RTOF decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RTOF', 'mnemonic');
+		expect(decode.opCode).to.equal('08', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 09 RTON
+    //
+	it("RTON test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RTON test '});
+		expected = ":S9780N09" + ";";
+        var encode = cbusLib.encodeRTON();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RTON encode ' + encode});
+		winston.info({message: 'cbusMessage test: RTON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RTON', 'mnemonic');
+		expect(decode.opCode).to.equal('09', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 0A RESTP
+    //
+	it("RESTP test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RESTP test '});
+		expected = ":S8780N0A" + ";";
+        var encode = cbusLib.encodeRESTP();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RESTP encode ' + encode});
+		winston.info({message: 'cbusMessage test: RESTP decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RESTP', 'mnemonic');
+		expect(decode.opCode).to.equal('0A', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 0C RSTAT
+    //
+	it("RSTAT test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RSTAT test '});
+		expected = ":SA780N0C" + ";";
+        var encode = cbusLib.encodeRSTAT();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RSTAT encode ' + encode});
+		winston.info({message: 'cbusMessage test: RSTAT decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RSTAT', 'mnemonic');
+		expect(decode.opCode).to.equal('0C', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
     // 0D QNN
     //
 	it("QNN test", function () {
