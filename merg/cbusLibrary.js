@@ -82,6 +82,9 @@ class cbusLibrary {
         case '04':
             return this.decodeTOF(message);
             break;
+        case '05':
+            return this.decodeTON(message);
+            break;
         case '0D':
             return this.decodeQNN(message);
             break;
@@ -311,6 +314,21 @@ class cbusLibrary {
     }
     encodeTOF = function() {
         return this.header({MinPri: 1}) + '04' + ';'
+    }
+
+
+    // 05 TON
+    // TON Format: [<MjPri><MinPri=1><CANID>]<05>
+    //
+    decodeTON = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'TON',
+                'opCode': message.substr(7, 2),
+                'text': 'TON (05)',
+        }
+    }
+    encodeTON = function() {
+        return this.header({MinPri: 1}) + '05' + ';'
     }
 
 

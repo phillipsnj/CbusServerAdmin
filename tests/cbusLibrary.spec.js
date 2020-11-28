@@ -148,6 +148,23 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 05 TON
+    //
+	it("TON test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN TON test '});
+		expected = ":S9780N05" + ";";
+        var encode = cbusLib.encodeTON();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: TON encode ' + encode});
+		winston.info({message: 'cbusMessage test: TON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('TON', 'mnemonic');
+		expect(decode.opCode).to.equal('05', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
     // 0D QNN
     //
 	it("QNN test", function () {
