@@ -35,34 +35,30 @@ describe('cbusMessage tests', function(){
 		for (MJ = 1; MJ < 4; MJ++) {
 			if (MJ == 1) MjPri = 0;
 			if (MJ == 2) MjPri = 1;
-			if (MJ == 3) MjPri = 3;
-			for (MN = 1; MN < 4; MN++) {
-				if (MN == 1) MinPri = 0;
-				if (MN == 2) MinPri = 1;
-				if (MN == 3) MinPri = 3;
-				for (ID = 1; ID < 4; ID++) {
-					if (ID == 1) CAN_ID = '0';
-					if (ID == 2) CAN_ID = '1';
-					if (ID == 3) CAN_ID = '127';
-					testCases.push({'MjPri':MjPri, 'MinPri':MinPri, 'CAN_ID':CAN_ID});
-				}
-			}
+			if (MJ == 3) MjPri = 2;
+            for (ID = 1; ID < 4; ID++) {
+                if (ID == 1) CAN_ID = '0';
+                if (ID == 2) CAN_ID = '1';
+                if (ID == 3) CAN_ID = '127';
+                testCases.push({'MjPri':MjPri, 'CAN_ID':CAN_ID});
+            }
 		}
 		return testCases;
 	}
 
-	itParam("canHeader test MjPri ${value.MjPri} MinPri ${value.MinPri} CAN_ID ${value.CAN_ID}", GetTestCase_canHeader(), function (value) {
+    // MinPri is pre-defined for each opcode, and using RQNP has a MinPri of 3, so thats fixed and no need to test
+    // the tests for other opCodes test the changing of the MinPri value
+	itParam("canHeader test MjPri ${value.MjPri} CAN_ID ${value.CAN_ID}", GetTestCase_canHeader(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN canHeader test ' + JSON.stringify(value)});
-		var identifier = parseInt(value.MjPri << 14) + parseInt(value.MinPri << 12) + parseInt(value.CAN_ID << 5) 
+		var identifier = parseInt(value.MjPri << 14) + parseInt(3 << 12) + parseInt(value.CAN_ID << 5) 
 		expected = ":S" + decToHex(identifier, 4) + "N10" + ";";
-        cbusLib.setCanHeader(value.MjPri, value.MinPri, value.CAN_ID)
+        cbusLib.setCanHeader(value.MjPri, 3, value.CAN_ID)
         var encode = cbusLib.encodeRQNP();
         var canHeader = cbusLib.getCanHeader();
 		winston.info({message: 'cbusMessage test: canHeader encode ' + encode});
 		winston.info({message: 'cbusMessage test: canHeader decode ' + JSON.stringify(canHeader)});
 		expect(encode).to.equal(expected, 'encode');
         expect(canHeader.MjPri).to.equal(value.MjPri, 'MjPri');
-		expect(canHeader.MinPri).to.equal(value.MinPri, 'MinPri');
 		expect(canHeader.CAN_ID).to.equal(value.CAN_ID, 'CAN_ID');
 	})
 	
@@ -71,7 +67,7 @@ describe('cbusMessage tests', function(){
     //
 	it("ACK test", function () {
 		winston.info({message: 'cbusMessage test: BEGIN ACK test '});
-		expected = ":SB780N00" + ";";
+		expected = ":SA780N00" + ";";
         var encode = cbusLib.encodeACK();
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ACK encode ' + encode});
@@ -88,7 +84,7 @@ describe('cbusMessage tests', function(){
     //
 	it("NAK test", function () {
 		winston.info({message: 'cbusMessage test: BEGIN ACK test '});
-		expected = ":SB780N01" + ";";
+		expected = ":SA780N01" + ";";
         var encode = cbusLib.encodeNAK();
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: NAK encode ' + encode});
@@ -152,7 +148,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 21 KLOC
+    // 21 KLOC test cases
     //
 	function GetTestCase_KLOC () {
 		var testCases = [];
@@ -165,9 +161,12 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("KLOC test session ${value.session}", GetTestCase_KLOC(), function (value) {
+
+    // 21 KLOC
+    //
+	itParam("KLOC: test session ${value.session}", GetTestCase_KLOC(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN KLOC test ' + JSON.stringify(value)});
-		expected = ":SB780N21" + decToHex(value.session, 2) + ";";
+		expected = ":SA780N21" + decToHex(value.session, 2) + ";";
         var encode = cbusLib.encodeKLOC(value.session);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: KLOC encode ' + encode});
@@ -181,7 +180,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 22 QLOC
+    // 22 QLOC test cases
     //
 	function GetTestCase_QLOC () {
 		var testCases = [];
@@ -194,9 +193,12 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("QLOC test session ${value.session}", GetTestCase_QLOC(), function (value) {
+
+    // 22 QLOC
+    //
+	itParam("QLOC test: session ${value.session}", GetTestCase_QLOC(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN QLOC test ' + JSON.stringify(value)});
-		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
+		expected = ":SA780N22" + decToHex(value.session, 2) + ";";
         var encode = cbusLib.encodeQLOC(value.session);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: QLOC encode ' + encode});
@@ -210,7 +212,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 23 DKEEP
+    // 23 DKEEP test cases
     //
 	function GetTestCase_DKEEP () {
 		var testCases = [];
@@ -224,9 +226,12 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("DKEEP test session ${value.session}", GetTestCase_DKEEP(), function (value) {
+
+    // 23 DKEEP
+    //
+	itParam("DKEEP test: session ${value.session}", GetTestCase_DKEEP(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN DKEEP test ' + JSON.stringify(value)});
-		expected = ":SB780N23" + decToHex(value.session, 2) + ";";
+		expected = ":SA780N23" + decToHex(value.session, 2) + ";";
         var encode = cbusLib.encodeDKEEP(value.session);
         var decode = cbusLib.decodeDKEEP(encode);
 		winston.info({message: 'cbusMessage test: DKEEP encode ' + encode});
@@ -269,7 +274,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 47 DSPD
+    // 47 DSPD test cases
     //
 	function GetTestCase_DSPD () {
 		var testCases = [];
@@ -290,11 +295,14 @@ describe('cbusMessage tests', function(){
 		}
 		return testCases;
 	}
+    
+    
+    // 47 DSPD
     //
-	itParam("DSPD test session ${value.session} speed ${value.speed} direction ${value.direction}", GetTestCase_DSPD(), function (value) {
+	itParam("DSPD test: session ${value.session} speed ${value.speed} direction ${value.direction}", GetTestCase_DSPD(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN DSPD test ' + JSON.stringify(value)});
         var speedDir = value.speed + parseInt((value.direction == 'Reverse') ? 0 : 128)
-		expected = ":SB780N47" + decToHex(value.session, 2) + decToHex(speedDir, 2) + ";";
+		expected = ":SA780N47" + decToHex(value.session, 2) + decToHex(speedDir, 2) + ";";
         var encode = cbusLib.encodeDSPD(value.session, value.speed, value.direction);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: DSPD encode ' + encode});
@@ -544,7 +552,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 60 DFUN
+    // 60 DFUN testcases
     //
 	function GetTestCase_DFUN () {
 		var testCases = [];
@@ -567,9 +575,11 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("DFUN test session ${value.session} Fn1 ${value.Fn1} Fn2 ${value.Fn2}", GetTestCase_DFUN(), function (value) {
+    // 60 DFUN
+    //
+	itParam("DFUN test: session ${value.session} Fn1 ${value.Fn1} Fn2 ${value.Fn2}", GetTestCase_DFUN(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN DFUN test ' + JSON.stringify(value)});
-		expected = ":SB780N60" + decToHex(value.session, 2) + decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + ";";
+		expected = ":SA780N60" + decToHex(value.session, 2) + decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + ";";
         var encode = cbusLib.encodeDFUN(value.session, value.Fn1, value.Fn2);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: DFUN encode ' + encode});
@@ -587,7 +597,7 @@ describe('cbusMessage tests', function(){
 
 
 
-    // 63 ERR
+    // 63 ERR test case
     //
 	function GetTestCase_ERR () {
 		var testCases = [];
@@ -610,9 +620,11 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("ERR test data1 ${value.data1} data2 ${value.data2} errorNumber ${value.errorNumber}", GetTestCase_ERR(), function (value) {
+    // 63 ERR
+    //
+	itParam("ERR test: data1 ${value.data1} data2 ${value.data2} errorNumber ${value.errorNumber}", GetTestCase_ERR(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ERR test ' + JSON.stringify(value)});
-		expected = ":SB780N63" + decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.errorNumber, 2) + ";";
+		expected = ":SA780N63" + decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.errorNumber, 2) + ";";
         var encode = cbusLib.encodeERR(value.data1, value.data2, value.errorNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ERR encode ' + encode});
@@ -1608,7 +1620,7 @@ describe('cbusMessage tests', function(){
             winston.info({message: 'cbusMessage test: BEGIN PLOC test ' + JSON.stringify(value)});
             // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
             var speedDir = value.speed + parseInt((value.direction == 'Reverse') ? 0 : 128)
-            expected = ":SB780NE1" + decToHex(value.session, 2) + decToHex(value.address, 4) + decToHex(speedDir, 2) +
+            expected = ":SA780NE1" + decToHex(value.session, 2) + decToHex(value.address, 4) + decToHex(speedDir, 2) +
                 decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + decToHex(value.Fn3, 2) + ";";
             var encode = cbusLib.encodePLOC(value.session, value.address, value.speed, value.direction, value.Fn1, value.Fn2, value.Fn3);
             var decode = cbusLib.decode(encode);
