@@ -20,12 +20,13 @@ describe('cbusMessage tests', function(){
 	});
 
 	beforeEach(function() {
+   		winston.info({message: ' '});   // blank line to separate tests
         // ensure expected CAN header is reset before each test run
         cbusLib.setCanHeader(2, 3, 60)
 	});
 
 	after(function() {
-
+   		winston.info({message: ' '});   // blank line to separate tests
 	});																										
 
 	

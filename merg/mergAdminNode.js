@@ -251,6 +251,12 @@ class cbusAdmin extends EventEmitter {
                     this.saveConfig()
                 }
             },
+            'B0': (cbusMsg) => {//Accessory On Long Event 1
+                this.eventSend(cbusMsg, 'on', 'long')
+            },
+            'B1': (cbusMsg) => {//Accessory Off Long Event 1
+                this.eventSend(cbusMsg, 'off', 'long')
+            },
             'B5': (cbusMsg) => {// NEVAL -Read of EV value Response REVAL
                 if (this.config.nodes[cbusMsg.nodeNumber].actions[cbusMsg.eventIndex] != null) {
                     if (this.config.nodes[cbusMsg.nodeNumber].actions[cbusMsg.eventIndex].variables[cbusMsg.eventVariableIndex] != null) {
@@ -316,6 +322,24 @@ class cbusAdmin extends EventEmitter {
                 this.config.nodes[ref].status = true
                 this.cbusSend((this.RQEVN(cbusMsg.nodeNumber)))
                 this.saveConfig()
+            },
+            'B8': (cbusMsg) => {//Accessory On Short Event 1
+                this.eventSend(cbusMsg, 'on', 'short')
+            },
+            'B9': (cbusMsg) => {//Accessory Off Short Event 1
+                this.eventSend(cbusMsg, 'off', 'short')
+            },
+            'D0': (cbusMsg) => {//Accessory On Long Event 2
+                this.eventSend(cbusMsg, 'on', 'long')
+            },
+            'D1': (cbusMsg) => {//Accessory Off Long Event 2
+                this.eventSend(cbusMsg, 'off', 'long')
+            },
+            'D8': (cbusMsg) => {//Accessory On Short Event 2
+                this.eventSend(cbusMsg, 'on', 'short')
+            },
+            'D9': (cbusMsg) => {//Accessory Off Short Event 2
+                this.eventSend(cbusMsg, 'off', 'short')
             },
             'E1': (cbusMsg) => { // PLOC
                 let session = cbusMsg.session
