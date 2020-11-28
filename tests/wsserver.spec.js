@@ -640,7 +640,7 @@ describe('Websocket server tests', function(){
 			let testCase = {
 				'major': '1',
 				'minor': '0',
-				'patch': '9',
+				'patch': '10',
 				}
 		websocket_Client.on('VERSION', function (data) {
 			versionData = data;
