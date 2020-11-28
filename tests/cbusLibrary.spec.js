@@ -80,7 +80,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 00 NAK
+    // 01 NAK
     //
 	it("NAK test", function () {
 		winston.info({message: 'cbusMessage test: BEGIN ACK test '});
@@ -92,6 +92,40 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected, 'encode');
 		expect(decode.mnemonic).to.equal('NAK', 'mnemonic');
 		expect(decode.opCode).to.equal('01', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 02 HLT
+    //
+	it("HLT test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN HLT test '});
+		expected = ":S8780N02" + ";";
+        var encode = cbusLib.encodeHLT();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: HLT encode ' + encode});
+		winston.info({message: 'cbusMessage test: HLT decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('HLT', 'mnemonic');
+		expect(decode.opCode).to.equal('02', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 03 BON
+    //
+	it("BON test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN BON test '});
+		expected = ":S9780N03" + ";";
+        var encode = cbusLib.encodeBON();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: BON encode ' + encode});
+		winston.info({message: 'cbusMessage test: BON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('BON', 'mnemonic');
+		expect(decode.opCode).to.equal('03', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
         expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
 	})

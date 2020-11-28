@@ -73,6 +73,12 @@ class cbusLibrary {
         case '01':
             return this.decodeNAK(message);
             break;
+        case '02':
+            return this.decodeHLT(message);
+            break;
+        case '03':
+            return this.decodeBON(message);
+            break;
         case '0D':
             return this.decodeQNN(message);
             break;
@@ -239,7 +245,7 @@ class cbusLibrary {
                 'text': 'ACK (00)',
         }
     }
-    encodeACK = function() {//Request Node Parameters
+    encodeACK = function() {
         // ACK Format: [<MjPri><MinPri=3><CANID>]<00>
         return this.header({MinPri: 2}) + '00' + ';'
     }
@@ -255,8 +261,38 @@ class cbusLibrary {
                 'text': 'NAK (01)',
         }
     }
-    encodeNAK = function() {//Request Node Parameters
+    encodeNAK = function() {
         return this.header({MinPri: 2}) + '01' + ';'
+    }
+
+
+    // 02 HLT
+    // HLT Format: [<MjPri><MinPri=0><CANID>]<02>
+    //
+    decodeHLT = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'HLT',
+                'opCode': message.substr(7, 2),
+                'text': 'HLT (02)',
+        }
+    }
+    encodeHLT = function() {
+        return this.header({MinPri: 0}) + '02' + ';'
+    }
+
+
+    // 03 BON
+    // BON Format: [<MjPri><MinPri=1><CANID>]<03>
+    //
+    decodeBON = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'BON',
+                'opCode': message.substr(7, 2),
+                'text': 'BON (03)',
+        }
+    }
+    encodeBON = function() {
+        return this.header({MinPri: 1}) + '03' + ';'
     }
 
 
@@ -286,7 +322,7 @@ class cbusLibrary {
                 'text': 'RQNP (10)',
         }
     }
-    encodeRQNP = function() {//Request Node Parameters
+    encodeRQNP = function() {
 		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
         return this.header({MinPri: 3}) + '10' + ';'
     }
