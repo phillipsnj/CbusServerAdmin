@@ -79,6 +79,9 @@ class cbusLibrary {
         case '03':
             return this.decodeBON(message);
             break;
+        case '04':
+            return this.decodeTOF(message);
+            break;
         case '0D':
             return this.decodeQNN(message);
             break;
@@ -293,6 +296,21 @@ class cbusLibrary {
     }
     encodeBON = function() {
         return this.header({MinPri: 1}) + '03' + ';'
+    }
+
+
+    // 04 TOF
+    // TOF Format: [<MjPri><MinPri=1><CANID>]<04>
+    //
+    decodeTOF = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'TOF',
+                'opCode': message.substr(7, 2),
+                'text': 'TOF (04)',
+        }
+    }
+    encodeTOF = function() {
+        return this.header({MinPri: 1}) + '04' + ';'
     }
 
 

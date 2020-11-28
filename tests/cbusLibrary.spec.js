@@ -131,6 +131,23 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 04 TOF
+    //
+	it("TOF test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN TOF test '});
+		expected = ":S9780N04" + ";";
+        var encode = cbusLib.encodeTOF();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: TOF encode ' + encode});
+		winston.info({message: 'cbusMessage test: TOF decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('TOF', 'mnemonic');
+		expect(decode.opCode).to.equal('04', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
     // 0D QNN
     //
 	it("QNN test", function () {
