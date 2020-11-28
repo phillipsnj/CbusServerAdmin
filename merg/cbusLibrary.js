@@ -18,25 +18,33 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 'use strict';
 
+
 function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
 class cbusLibrary {
     constructor() {
         this.canHeader = {
-                    'MjPri': 2,
-                    'MinPri': 3,
+                    'MjPri': 2,     // lowest allowed priority (highest value)
                     'CAN_ID': 60,
         }
     }
 
     //
     // header() provides the prefix to add to CBUS data to compose a transmittable message
+    // CAN uses a bitwise arbitration scheme whereby the header with the lowest value has priority
+    // So higher values have lower priority
+    // The CAN protocol prohibits a sequence of 7 or more 1 bits at the start of the header, so a
+    // MjPri. of 11 in binary (3 in decimal) is not used
     //
     header = function({
                     MjPri = this.canHeader.MjPri,
-                    MinPri = this.canHeader.MinPri,
+                    MinPri = 3,
                     CAN_ID = this.canHeader.CAN_ID
         } = {}) {
+        // ensure all varaibles don't exceed the appropriate number of bits for encoding
+        if (MjPri > 2) {MjPri = 2}      // MjPri is two bits, but a value of 3 is not allowed
+        MinPri = MinPri % 4             // MinPri is two bits, 0 to 3
+        CAN_ID = CAN_ID % 128           // CAN_ID is 7 bits, 0 to 127
 		var identifier = parseInt(MjPri << 14) + parseInt(MinPri << 12) + parseInt(CAN_ID << 5) 
         return ':S' + decToHex(identifier, 4) + 'N'
     }
@@ -44,10 +52,10 @@ class cbusLibrary {
     getCanHeader() {
         return this.canHeader
         }
-    setCanHeader(MjPri, MinPri, CAN_ID) {
-        if (MjPri != undefined) { this.canHeader.MjPri = MjPri}
-        if (MinPri != undefined) { this.canHeader.MinPri = MinPri}
-        if (CAN_ID != undefined) { this.canHeader.CAN_ID = CAN_ID}
+    setCanHeader(MjPri, CAN_ID) {
+        if (MjPri != undefined) { 
+        this.canHeader.MjPri = (MjPri > 2) ? 2 : MjPri}                     // MjPri is two bits, but a value of 3 is n0t allowed
+        if (CAN_ID != undefined) { this.canHeader.CAN_ID = CAN_ID % 128}    // CAN_ID is 7 bits, 0 to 127
     }
     
 

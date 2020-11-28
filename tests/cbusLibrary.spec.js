@@ -22,7 +22,7 @@ describe('cbusMessage tests', function(){
 	beforeEach(function() {
    		winston.info({message: ' '});   // blank line to separate tests
         // ensure expected CAN header is reset before each test run
-        cbusLib.setCanHeader(2, 3, 60)
+        cbusLib.setCanHeader(2, 60)
 	});
 
 	after(function() {
@@ -37,9 +37,9 @@ describe('cbusMessage tests', function(){
 			if (MJ == 2) MjPri = 1;
 			if (MJ == 3) MjPri = 2;
             for (ID = 1; ID < 4; ID++) {
-                if (ID == 1) CAN_ID = '0';
-                if (ID == 2) CAN_ID = '1';
-                if (ID == 3) CAN_ID = '127';
+                if (ID == 1) CAN_ID = 0;
+                if (ID == 2) CAN_ID = 1;
+                if (ID == 3) CAN_ID = 127;
                 testCases.push({'MjPri':MjPri, 'CAN_ID':CAN_ID});
             }
 		}
@@ -52,14 +52,14 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: BEGIN canHeader test ' + JSON.stringify(value)});
 		var identifier = parseInt(value.MjPri << 14) + parseInt(3 << 12) + parseInt(value.CAN_ID << 5) 
 		expected = ":S" + decToHex(identifier, 4) + "N10" + ";";
-        cbusLib.setCanHeader(value.MjPri, 3, value.CAN_ID)
+        cbusLib.setCanHeader(value.MjPri, value.CAN_ID)
         var encode = cbusLib.encodeRQNP();
         var canHeader = cbusLib.getCanHeader();
 		winston.info({message: 'cbusMessage test: canHeader encode ' + encode});
 		winston.info({message: 'cbusMessage test: canHeader decode ' + JSON.stringify(canHeader)});
-		expect(encode).to.equal(expected, 'encode');
-        expect(canHeader.MjPri).to.equal(value.MjPri, 'MjPri');
-		expect(canHeader.CAN_ID).to.equal(value.CAN_ID, 'CAN_ID');
+		expect(encode).to.equal(expected, 'encode test');
+        expect(canHeader.MjPri).to.equal(value.MjPri, 'MjPri test');
+		expect(canHeader.CAN_ID).to.equal(value.CAN_ID, 'CAN_ID test');
 	})
 	
 
