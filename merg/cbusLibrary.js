@@ -242,9 +242,8 @@ class cbusLibrary {
 
 
     // 00 ACK
-    //
+    // ACK Format: [<MjPri><MinPri=2><CANID>]<00>
     decodeACK = function(message) {
-        // ACK Format: [<MjPri><MinPri=3><CANID>]<00>
         return {'encoded': message,
                 'mnemonic': 'ACK',
                 'opCode': message.substr(7, 2),
@@ -252,7 +251,6 @@ class cbusLibrary {
         }
     }
     encodeACK = function() {
-        // ACK Format: [<MjPri><MinPri=3><CANID>]<00>
         return this.header({MinPri: 2}) + '00' + ';'
     }
 
@@ -333,9 +331,9 @@ class cbusLibrary {
 
 
     // 0D QNN
+    // QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
     //
     decodeQNN = function(message) {
-        // QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
         return {'encoded': message,
                 'mnemonic': 'QNN',
                 'opCode': message.substr(7, 2),
@@ -343,15 +341,14 @@ class cbusLibrary {
         }
     }
     encodeQNN = function() {//Request Node Parameters
-        // QNN Format: [<MjPri><MinPri=3><CANID>]<0D>
         return this.header({MinPri: 3}) + '0D' + ';'
     }
 
 
     // 10 RQNP
+    // RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
     //
     decodeRQNP = function(message) {
-		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
         return {'encoded': message,
                 'mnemonic': 'RQNP',
                 'opCode': message.substr(7, 2),
@@ -359,15 +356,14 @@ class cbusLibrary {
         }
     }
     encodeRQNP = function() {
-		// RQNP Format: [<MjPri><MinPri=3><CANID>]<10>
         return this.header({MinPri: 3}) + '10' + ';'
     }
 
 
     // 11 RQMN
+	// RQMN Format: [<MjPri><MinPri=2><CANID>]<11>
     //
     decodeRQMN = function(message) {
-		// RQMN Format: [<MjPri><MinPri=3><CANID>]<11>
         return {'encoded': message,
                 'mnemonic': 'RQMN',
                 'opCode': message.substr(7, 2),
@@ -375,15 +371,14 @@ class cbusLibrary {
         }
     }
     encodeRQMN = function() {//Request Node Parameters
-		// RQMN Format: [<MjPri><MinPri=3><CANID>]<11>
-        return this.header({MinPri: 3}) + '11' + ';'
+        return this.header({MinPri: 2}) + '11' + ';'
     }
 
 
     // 21 KLOC
+    // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
     //
     decodeKLOC = function(message) {
-        // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
         return {'encoded': message,
                 'mnemonic': 'KLOC',
                 'opCode': message.substr(7, 2),
@@ -392,15 +387,14 @@ class cbusLibrary {
         }
     }
     encodeKLOC = function(session) {
-        // KLOC Format: [<MjPri><MinPri=2><CANID>]<21><Session>
         return this.header({MinPri: 2}) + '21' + decToHex(session, 2) + ';';
     }
     
 
     // 22 QLOC
+	// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
     //
     decodeQLOC = function(message) {
-		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
         return {'encoded': message,
                 'mnemonic': 'QLOC',
                 'opCode': message.substr(7, 2),
@@ -409,15 +403,14 @@ class cbusLibrary {
         }
     }
     encodeQLOC = function(session) {
-		// QLOC Format: [<MjPri><MinPri=2><CANID>]<22><Session>
         return this.header({MinPri: 2}) + '22' + decToHex(session, 2) + ';';
     }
 
 
     // 23 DKEEP
+    // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
     //
     decodeDKEEP = function(message) {
-        // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
         return {'encoded': message,
                 'mnemonic': 'DKEEP',
                 'opCode': message.substr(7, 2),
@@ -426,15 +419,14 @@ class cbusLibrary {
         }
     }
     encodeDKEEP = function(session) {
-        // DKEEP Format: [<MjPri><MinPri=2><CANID>]<23><Session>
         return this.header({MinPri: 2}) + '23' + decToHex(session, 2) + ';';
     }
     
 
     // 42 SNN
+	// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
     //
     decodeSNN = function(message) {
-		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
         return {'encoded': message,
                 'mnemonic': 'SNN',
                 'opCode': message.substr(7, 2),
@@ -443,7 +435,6 @@ class cbusLibrary {
         }
     }
     encodeSNN = function(nodeNumber) {
-		// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
         if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
             return this.header({MinPri: 3}) + '42' + decToHex(nodeNumber, 4) + ';'
         }
@@ -451,9 +442,9 @@ class cbusLibrary {
 
 
     // 47 DSPD
+    // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
     //
     decodeDSPD = function(message) {
-        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = parseInt(message.substr(11, 2), 16)
         var direction = (speedDir > 127) ? 'Forward' : 'Reverse'
         return {'encoded': message,
@@ -468,16 +459,15 @@ class cbusLibrary {
         }
     }
     encodeDSPD = function(session, speed, direction) {
-        // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
         var speedDir = speed + parseInt((direction == 'Reverse') ? 0 : 128)
         return this.header({MinPri: 2}) + '47' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
     }
     
 
     // 50 RQNN
+	// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
     //
     decodeRQNN = function(message) {
-		// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
         return {'encoded': message,
                 'mnemonic': 'RQNN',
                 'opCode': message.substr(7, 2),
@@ -486,15 +476,14 @@ class cbusLibrary {
         }
     }
     encodeRQNN = function(nodeNumber) {
-		// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
         return this.header({MinPri: 3}) + '50' + decToHex(nodeNumber, 4) + ';'
     }
     
 
     // 52 NNACK
+	// NNACK Format: [<MjPri><MinPri=3><CANID>]<52><NN hi><NN lo>
     //
     decodeNNACK = function(message) {
-		// NNACK Format: [<MjPri><MinPri=3><CANID>]<52><NN hi><NN lo>
         return {'encoded': message,
                 'mnemonic': 'NNACK',
                 'opCode': message.substr(7, 2),
@@ -503,7 +492,6 @@ class cbusLibrary {
         }
     }
     encodeNNACK = function(nodeNumber) {
-		// NNACK Format: [<MjPri><MinPri=3><CANID>]<52><NN hi><NN lo>
 		if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
 			return this.header({MinPri: 3}) + '52' + decToHex(nodeNumber, 4) + ';'
 		}
@@ -511,9 +499,9 @@ class cbusLibrary {
 
 
     // 53 NNLRN
+	// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
     //
     decodeNNLRN = function(message) {
-		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
         return {'encoded': message,
                 'mnemonic': 'NNLRN',
                 'opCode': message.substr(7, 2),
@@ -522,7 +510,6 @@ class cbusLibrary {
         }
     }
     encodeNNLRN = function(nodeNumber) {
-		// NNLRN Format: [<MjPri><MinPri=3><CANID>]<53><NN hi><NN lo>
 		if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
 			return this.header({MinPri: 3}) + '53' + decToHex(nodeNumber, 4) + ';'
 		}
@@ -530,9 +517,9 @@ class cbusLibrary {
 
 
     // 54 NNULN
+	// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
     //
     decodeNNULN = function(message) {
-		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
         return {'encoded': message,
                 'mnemonic': 'NNULN',
                 'opCode': message.substr(7, 2),
@@ -541,15 +528,14 @@ class cbusLibrary {
         }
     }
     encodeNNULN = function(nodeNumber) {
-		// NNULN Format: [<MjPri><MinPri=3><CANID>]<54><NN hi><NN lo>>
         return this.header({MinPri: 3}) + '54' + decToHex(nodeNumber, 4) + ';'
     }
 
 
     // 55 NNCLR
+	// NNCLR Format: [<MjPri><MinPri=3><CANID>]<55><NN hi><NN lo>>
     //
     decodeNNCLR = function(message) {
-		// NNCLR Format: [<MjPri><MinPri=3><CANID>]<55><NN hi><NN lo>>
         return {'encoded': message,
                 'mnemonic': 'NNCLR',
                 'opCode': message.substr(7, 2),
@@ -558,12 +544,12 @@ class cbusLibrary {
         }
     }
     encodeNNCLR = function(nodeNumber) {
-		// NNCLR Format: [<MjPri><MinPri=3><CANID>]<55><NN hi><NN lo>>
         return this.header({MinPri: 3}) + '55' + decToHex(nodeNumber, 4) + ';'
     }
 
 
     // 57 NERD
+	// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
     //
     decodeNERD = function(message) {
 		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
@@ -575,12 +561,12 @@ class cbusLibrary {
         }
     }
     encodeNERD = function(nodeNumber) {
-		// NERD Format: [<MjPri><MinPri=3><CANID>]<57><NN hi><NN lo>
         return this.header({MinPri: 3}) + '57' + decToHex(nodeNumber, 4) + ';'
     }
 
 
     // 58 RQEVN
+    // RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
     //
     decodeRQEVN = function(message) {
 		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
@@ -592,15 +578,14 @@ class cbusLibrary {
         }
     }
     encodeRQEVN = function(nodeNumber) {
-		// RQEVN Format: [<MjPri><MinPri=3><CANID>]<58><NN hi><NN lo>
         return this.header({MinPri: 3}) + '58' + decToHex(nodeNumber, 4) + ';'
     }
 
 
     // 59 WRACK
+	// WRACK Format: [<MjPri><MinPri=3><CANID>]<59><NN hi><NN lo>
     //
     decodeWRACK = function(message) {
-		// WRACK Format: [<MjPri><MinPri=3><CANID>]<59><NN hi><NN lo>
         return {'encoded': message,
                 'mnemonic': 'WRACK',
                 'opCode': message.substr(7, 2),
@@ -609,7 +594,6 @@ class cbusLibrary {
         }
     }
     encodeWRACK = function(nodeNumber) {
-		// WRACK Format: [<MjPri><MinPri=3><CANID>]<59><NN hi><NN lo>
         return this.header({MinPri: 3}) + '59' + decToHex(nodeNumber, 4) + ';'
     }
 

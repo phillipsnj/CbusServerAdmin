@@ -203,7 +203,7 @@ describe('cbusMessage tests', function(){
     //
 	it("RQMN test", function () {
 		winston.info({message: 'cbusMessage test: BEGIN RQMN test '});
-		expected = ":SB780N11" + ";";
+		expected = ":SA780N11" + ";";
         var encode = cbusLib.encodeRQMN();
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: RQMN encode ' + encode});
