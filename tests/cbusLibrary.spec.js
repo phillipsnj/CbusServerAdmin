@@ -84,6 +84,23 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 00 NAK
+    //
+	it("NAK test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN ACK test '});
+		expected = ":SB780N01" + ";";
+        var encode = cbusLib.encodeNAK();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: NAK encode ' + encode});
+		winston.info({message: 'cbusMessage test: NAK decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('NAK', 'mnemonic');
+		expect(decode.opCode).to.equal('01', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
     // 0D QNN
     //
 	it("QNN test", function () {

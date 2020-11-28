@@ -64,6 +64,9 @@ class cbusLibrary {
         case '00':
             return this.decodeACK(message);
             break;
+        case '01':
+            return this.decodeNAK(message);
+            break;
         case '0D':
             return this.decodeQNN(message);
             break;
@@ -233,6 +236,21 @@ class cbusLibrary {
     encodeACK = function() {//Request Node Parameters
         // ACK Format: [<MjPri><MinPri=3><CANID>]<00>
         return this.header() + '00' + ';'
+    }
+
+
+    // 01 NAK
+    // NAK Format: [<MjPri><MinPri=2><CANID>]<01>
+    //
+    decodeNAK = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'NAK',
+                'opCode': message.substr(7, 2),
+                'text': 'NAK (01)',
+        }
+    }
+    encodeNAK = function() {//Request Node Parameters
+        return this.header() + '01' + ';'
     }
 
 
