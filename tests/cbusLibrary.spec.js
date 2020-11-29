@@ -403,13 +403,79 @@ describe('cbusMessage tests', function(){
 		winston.info({message: 'cbusMessage test: BEGIN DKEEP test ' + JSON.stringify(value)});
 		expected = ":SA780N23" + decToHex(value.session, 2) + ";";
         var encode = cbusLib.encodeDKEEP(value.session);
-        var decode = cbusLib.decodeDKEEP(encode);
+        var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: DKEEP encode ' + encode});
 		winston.info({message: 'cbusMessage test: DKEEP decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.session).to.equal(value.session, 'session');
 		expect(decode.mnemonic).to.equal('DKEEP', 'mnemonic');
 		expect(decode.opCode).to.equal('23', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 30 DBG1 test cases
+    //
+	function GetTestCase_DBG1 () {
+		var testCases = [];
+		for (sIndex = 1; sIndex < 4; sIndex++) {
+			if (sIndex == 1) Status = 0;
+			if (sIndex == 2) Status = 1;
+			if (sIndex == 3) Status = 255;
+
+			testCases.push({'Status':Status});
+		}
+		return testCases;
+	}
+
+
+    // 30 DBG1
+    //
+	itParam("DBG1 test: Status ${value.Status}", GetTestCase_DBG1(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN DBG1 test ' + JSON.stringify(value)});
+		expected = ":SA780N30" + decToHex(value.Status, 2) + ";";
+        var encode = cbusLib.encodeDBG1(value.Status);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: DBG1 encode ' + encode});
+		winston.info({message: 'cbusMessage test: DBG1 decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.Status).to.equal(value.Status, 'Status');
+		expect(decode.mnemonic).to.equal('DBG1', 'mnemonic');
+		expect(decode.opCode).to.equal('30', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 3F EXTC test cases
+    //
+	function GetTestCase_EXTC () {
+		var testCases = [];
+		for (eIndex = 1; eIndex < 4; eIndex++) {
+			if (eIndex == 1) Ext_OPC = 0;
+			if (eIndex == 2) Ext_OPC = 1;
+			if (eIndex == 3) Ext_OPC = 255;
+
+			testCases.push({'Ext_OPC':Ext_OPC});
+		}
+		return testCases;
+	}
+
+
+    // 3F EXTC
+    //
+	itParam("EXTC test: Ext_OPC ${value.Ext_OPC}", GetTestCase_EXTC(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN EXTC test ' + JSON.stringify(value)});
+		expected = ":SB780N3F" + decToHex(value.Ext_OPC, 2) + ";";
+        var encode = cbusLib.encodeEXTC(value.Ext_OPC);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: EXTC encode ' + encode});
+		winston.info({message: 'cbusMessage test: EXTC decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.Ext_OPC).to.equal(value.Ext_OPC, 'Ext_OPC');
+		expect(decode.mnemonic).to.equal('EXTC', 'mnemonic');
+		expect(decode.opCode).to.equal('3F', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
         expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
 	})

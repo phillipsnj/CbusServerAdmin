@@ -122,6 +122,7 @@ class cbusLibrary {
         case '11':
             return this.decodeRQMN(message);
             break;
+        // 12 - 20 reserved
         case '21':
             return this.decodeKLOC(message);
             break;
@@ -130,6 +131,14 @@ class cbusLibrary {
             break;
         case '23':
             return this.decodeDKEEP(message);
+            break;
+        // 24 - 2F reserved
+        case '30':
+            return this.decodeDBG1(message);
+            break;
+        // 31 - 3E reserved
+        case '3F':
+            return this.decodeEXTC(message);
             break;
         case '42':
             return this.decodeSNN(message);
@@ -538,6 +547,38 @@ class cbusLibrary {
     }
     encodeDKEEP = function(session) {
         return this.header({MinPri: 2}) + '23' + decToHex(session, 2) + ';';
+    }
+    
+
+    // 30 DBG1
+    // DBG1 Format: [<MjPri><MinPri=2><CANID>]<30><Status>
+    //
+    decodeDBG1 = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'DBG1',
+                'opCode': message.substr(7, 2),
+                'Status': parseInt(message.substr(9, 2), 16),
+                'text': 'DBG1 (30) Status ' + parseInt(message.substr(9, 2), 16),
+        }
+    }
+    encodeDBG1 = function(Status) {
+        return this.header({MinPri: 2}) + '30' + decToHex(Status, 2) + ';';
+    }
+    
+
+    // 3F EXTC
+    // EXTC Format: [<MjPri><MinPri=3><CANID>]<3F><Ext_OPC>
+    //
+    decodeEXTC = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'EXTC',
+                'opCode': message.substr(7, 2),
+                'Ext_OPC': parseInt(message.substr(9, 2), 16),
+                'text': 'EXTC (3F) Status ' + parseInt(message.substr(9, 2), 16),
+        }
+    }
+    encodeEXTC = function(Ext_OPC) {
+        return this.header({MinPri: 3}) + '3F' + decToHex(Ext_OPC, 2) + ';';
     }
     
 
