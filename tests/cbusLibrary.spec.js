@@ -481,6 +481,39 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 40 RLOC test cases
+    //
+	function GetTestCase_RLOC () {
+		var testCases = [];
+		for (aIndex = 1; aIndex < 4; aIndex++) {
+			if (aIndex == 1) address = 0;
+			if (aIndex == 2) address = 1;
+			if (aIndex == 3) address = 65535;
+
+			testCases.push({'address':address});
+		}
+		return testCases;
+	}
+
+
+    // 40 RLOC
+    //
+	itParam("RLOC test: address ${value.address}", GetTestCase_RLOC(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN RLOC test ' + JSON.stringify(value)});
+		expected = ":SA780N40" + decToHex(value.address, 4) + ";";
+        var encode = cbusLib.encodeRLOC(value.address);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RLOC encode ' + encode});
+		winston.info({message: 'cbusMessage test: RLOC decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.address).to.equal(value.address, 'address');
+		expect(decode.mnemonic).to.equal('RLOC', 'mnemonic');
+		expect(decode.opCode).to.equal('40', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
     // 42 SNN
     //
 	function GetTestCase_SNN () {

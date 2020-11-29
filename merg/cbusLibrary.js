@@ -140,6 +140,9 @@ class cbusLibrary {
         case '3F':
             return this.decodeEXTC(message);
             break;
+        case '40':
+            return this.decodeRLOC(message);
+            break;
         case '42':
             return this.decodeSNN(message);
             break;
@@ -581,6 +584,23 @@ class cbusLibrary {
         return this.header({MinPri: 3}) + '3F' + decToHex(Ext_OPC, 2) + ';';
     }
     
+
+    // 40 RLOC
+	// RLOC Format: [<MjPri><MinPri=2><CANID>]<40><Dat1><Dat2 >
+    // <Dat1> and <Dat2> are [AddrH] and [AddrL] of the decoder, respectively.
+    //
+    decodeRLOC = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RLOC',
+                'opCode': message.substr(7, 2),
+                'address': parseInt(message.substr(9, 4), 16),
+                'text': 'RLOC (40) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeRLOC = function(address) {
+        return this.header({MinPri: 2}) + '40' + decToHex(address, 4) + ';'
+    }
+
 
     // 42 SNN
 	// SNN Format: [<MjPri><MinPri=3><CANID>]<42><NNHigh><NNLow>
