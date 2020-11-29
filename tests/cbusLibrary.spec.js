@@ -22,7 +22,7 @@ describe('cbusMessage tests', function(){
 	beforeEach(function() {
    		winston.info({message: ' '});   // blank line to separate tests
         // ensure expected CAN header is reset before each test run
-        cbusLib.setCanHeader(2, 3, 60)
+        cbusLib.setCanHeader(2, 60)
 	});
 
 	after(function() {
@@ -35,35 +35,31 @@ describe('cbusMessage tests', function(){
 		for (MJ = 1; MJ < 4; MJ++) {
 			if (MJ == 1) MjPri = 0;
 			if (MJ == 2) MjPri = 1;
-			if (MJ == 3) MjPri = 3;
-			for (MN = 1; MN < 4; MN++) {
-				if (MN == 1) MinPri = 0;
-				if (MN == 2) MinPri = 1;
-				if (MN == 3) MinPri = 3;
-				for (ID = 1; ID < 4; ID++) {
-					if (ID == 1) CAN_ID = '0';
-					if (ID == 2) CAN_ID = '1';
-					if (ID == 3) CAN_ID = '127';
-					testCases.push({'MjPri':MjPri, 'MinPri':MinPri, 'CAN_ID':CAN_ID});
-				}
-			}
+			if (MJ == 3) MjPri = 2;
+            for (ID = 1; ID < 4; ID++) {
+                if (ID == 1) CAN_ID = 0;
+                if (ID == 2) CAN_ID = 1;
+                if (ID == 3) CAN_ID = 127;
+                testCases.push({'MjPri':MjPri, 'CAN_ID':CAN_ID});
+            }
 		}
 		return testCases;
 	}
 
-	itParam("canHeader test MjPri ${value.MjPri} MinPri ${value.MinPri} CAN_ID ${value.CAN_ID}", GetTestCase_canHeader(), function (value) {
+    // MinPri is pre-defined for each opcode, and using RQNP has a MinPri of 3, so thats fixed and no need to test
+    // the tests for other opCodes test the changing of the MinPri value
+	itParam("canHeader test MjPri ${value.MjPri} CAN_ID ${value.CAN_ID}", GetTestCase_canHeader(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN canHeader test ' + JSON.stringify(value)});
-		var identifier = parseInt(value.MjPri << 14) + parseInt(value.MinPri << 12) + parseInt(value.CAN_ID << 5) 
+		var identifier = parseInt(value.MjPri << 14) + parseInt(3 << 12) + parseInt(value.CAN_ID << 5) 
 		expected = ":S" + decToHex(identifier, 4) + "N10" + ";";
-        cbusLib.setCanHeader(value.MjPri, value.MinPri, value.CAN_ID)
+        cbusLib.setCanHeader(value.MjPri, value.CAN_ID)
         var encode = cbusLib.encodeRQNP();
         var canHeader = cbusLib.getCanHeader();
 		winston.info({message: 'cbusMessage test: canHeader encode ' + encode});
 		winston.info({message: 'cbusMessage test: canHeader decode ' + JSON.stringify(canHeader)});
-		expect(encode).to.equal(expected, 'encode');
-        expect(canHeader.MjPri).to.equal(value.MjPri, 'MjPri');
-		expect(canHeader.MinPri).to.equal(value.MinPri, 'MinPri');
-		expect(canHeader.CAN_ID).to.equal(value.CAN_ID, 'CAN_ID');
+		expect(encode).to.equal(expected, 'encode test');
+        expect(canHeader.MjPri).to.equal(value.MjPri, 'MjPri test');
+		expect(canHeader.CAN_ID).to.equal(value.CAN_ID, 'CAN_ID test');
 	})
 	
 
@@ -71,7 +67,7 @@ describe('cbusMessage tests', function(){
     //
 	it("ACK test", function () {
 		winston.info({message: 'cbusMessage test: BEGIN ACK test '});
-		expected = ":SB780N00" + ";";
+		expected = ":SA780N00" + ";";
         var encode = cbusLib.encodeACK();
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ACK encode ' + encode});
@@ -79,6 +75,193 @@ describe('cbusMessage tests', function(){
 		expect(encode).to.equal(expected, 'encode');
 		expect(decode.mnemonic).to.equal('ACK', 'mnemonic');
 		expect(decode.opCode).to.equal('00', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 01 NAK
+    //
+	it("NAK test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN ACK test '});
+		expected = ":SA780N01" + ";";
+        var encode = cbusLib.encodeNAK();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: NAK encode ' + encode});
+		winston.info({message: 'cbusMessage test: NAK decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('NAK', 'mnemonic');
+		expect(decode.opCode).to.equal('01', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 02 HLT
+    //
+	it("HLT test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN HLT test '});
+		expected = ":S8780N02" + ";";
+        var encode = cbusLib.encodeHLT();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: HLT encode ' + encode});
+		winston.info({message: 'cbusMessage test: HLT decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('HLT', 'mnemonic');
+		expect(decode.opCode).to.equal('02', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 03 BON
+    //
+	it("BON test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN BON test '});
+		expected = ":S9780N03" + ";";
+        var encode = cbusLib.encodeBON();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: BON encode ' + encode});
+		winston.info({message: 'cbusMessage test: BON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('BON', 'mnemonic');
+		expect(decode.opCode).to.equal('03', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 04 TOF
+    //
+	it("TOF test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN TOF test '});
+		expected = ":S9780N04" + ";";
+        var encode = cbusLib.encodeTOF();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: TOF encode ' + encode});
+		winston.info({message: 'cbusMessage test: TOF decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('TOF', 'mnemonic');
+		expect(decode.opCode).to.equal('04', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 05 TON
+    //
+	it("TON test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN TON test '});
+		expected = ":S9780N05" + ";";
+        var encode = cbusLib.encodeTON();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: TON encode ' + encode});
+		winston.info({message: 'cbusMessage test: TON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('TON', 'mnemonic');
+		expect(decode.opCode).to.equal('05', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 06 ESTOP
+    //
+	it("ESTOP test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN ESTOP test '});
+		expected = ":S9780N06" + ";";
+        var encode = cbusLib.encodeESTOP();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ESTOP encode ' + encode});
+		winston.info({message: 'cbusMessage test: ESTOP decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('ESTOP', 'mnemonic');
+		expect(decode.opCode).to.equal('06', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 07 ARST
+    //
+	it("ARST test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN ARST test '});
+		expected = ":S8780N07" + ";";
+        var encode = cbusLib.encodeARST();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ARST encode ' + encode});
+		winston.info({message: 'cbusMessage test: ARST decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('ARST', 'mnemonic');
+		expect(decode.opCode).to.equal('07', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 08 RTOF
+    //
+	it("RTOF test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RTOF test '});
+		expected = ":S9780N08" + ";";
+        var encode = cbusLib.encodeRTOF();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RTOF encode ' + encode});
+		winston.info({message: 'cbusMessage test: RTOF decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RTOF', 'mnemonic');
+		expect(decode.opCode).to.equal('08', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 09 RTON
+    //
+	it("RTON test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RTON test '});
+		expected = ":S9780N09" + ";";
+        var encode = cbusLib.encodeRTON();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RTON encode ' + encode});
+		winston.info({message: 'cbusMessage test: RTON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RTON', 'mnemonic');
+		expect(decode.opCode).to.equal('09', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 0A RESTP
+    //
+	it("RESTP test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RESTP test '});
+		expected = ":S8780N0A" + ";";
+        var encode = cbusLib.encodeRESTP();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RESTP encode ' + encode});
+		winston.info({message: 'cbusMessage test: RESTP decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RESTP', 'mnemonic');
+		expect(decode.opCode).to.equal('0A', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 0C RSTAT
+    //
+	it("RSTAT test", function () {
+		winston.info({message: 'cbusMessage test: BEGIN RSTAT test '});
+		expected = ":SA780N0C" + ";";
+        var encode = cbusLib.encodeRSTAT();
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RSTAT encode ' + encode});
+		winston.info({message: 'cbusMessage test: RSTAT decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal('RSTAT', 'mnemonic');
+		expect(decode.opCode).to.equal('0C', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
         expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
 	})
@@ -122,7 +305,7 @@ describe('cbusMessage tests', function(){
     //
 	it("RQMN test", function () {
 		winston.info({message: 'cbusMessage test: BEGIN RQMN test '});
-		expected = ":SB780N11" + ";";
+		expected = ":SA780N11" + ";";
         var encode = cbusLib.encodeRQMN();
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: RQMN encode ' + encode});
@@ -135,7 +318,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 21 KLOC
+    // 21 KLOC test cases
     //
 	function GetTestCase_KLOC () {
 		var testCases = [];
@@ -148,9 +331,12 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("KLOC test session ${value.session}", GetTestCase_KLOC(), function (value) {
+
+    // 21 KLOC
+    //
+	itParam("KLOC: test session ${value.session}", GetTestCase_KLOC(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN KLOC test ' + JSON.stringify(value)});
-		expected = ":SB780N21" + decToHex(value.session, 2) + ";";
+		expected = ":SA780N21" + decToHex(value.session, 2) + ";";
         var encode = cbusLib.encodeKLOC(value.session);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: KLOC encode ' + encode});
@@ -164,7 +350,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 22 QLOC
+    // 22 QLOC test cases
     //
 	function GetTestCase_QLOC () {
 		var testCases = [];
@@ -177,9 +363,12 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("QLOC test session ${value.session}", GetTestCase_QLOC(), function (value) {
+
+    // 22 QLOC
+    //
+	itParam("QLOC test: session ${value.session}", GetTestCase_QLOC(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN QLOC test ' + JSON.stringify(value)});
-		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
+		expected = ":SA780N22" + decToHex(value.session, 2) + ";";
         var encode = cbusLib.encodeQLOC(value.session);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: QLOC encode ' + encode});
@@ -193,7 +382,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 23 DKEEP
+    // 23 DKEEP test cases
     //
 	function GetTestCase_DKEEP () {
 		var testCases = [];
@@ -207,17 +396,158 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("DKEEP test session ${value.session}", GetTestCase_DKEEP(), function (value) {
+
+    // 23 DKEEP
+    //
+	itParam("DKEEP test: session ${value.session}", GetTestCase_DKEEP(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN DKEEP test ' + JSON.stringify(value)});
-		expected = ":SB780N23" + decToHex(value.session, 2) + ";";
+		expected = ":SA780N23" + decToHex(value.session, 2) + ";";
         var encode = cbusLib.encodeDKEEP(value.session);
-        var decode = cbusLib.decodeDKEEP(encode);
+        var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: DKEEP encode ' + encode});
 		winston.info({message: 'cbusMessage test: DKEEP decode ' + JSON.stringify(decode)});
 		expect(encode).to.equal(expected, 'encode');
         expect(decode.session).to.equal(value.session, 'session');
 		expect(decode.mnemonic).to.equal('DKEEP', 'mnemonic');
 		expect(decode.opCode).to.equal('23', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 30 DBG1 test cases
+    //
+	function GetTestCase_DBG1 () {
+		var testCases = [];
+		for (sIndex = 1; sIndex < 4; sIndex++) {
+			if (sIndex == 1) Status = 0;
+			if (sIndex == 2) Status = 1;
+			if (sIndex == 3) Status = 255;
+
+			testCases.push({'Status':Status});
+		}
+		return testCases;
+	}
+
+
+    // 30 DBG1
+    //
+	itParam("DBG1 test: Status ${value.Status}", GetTestCase_DBG1(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN DBG1 test ' + JSON.stringify(value)});
+		expected = ":SA780N30" + decToHex(value.Status, 2) + ";";
+        var encode = cbusLib.encodeDBG1(value.Status);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: DBG1 encode ' + encode});
+		winston.info({message: 'cbusMessage test: DBG1 decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.Status).to.equal(value.Status, 'Status');
+		expect(decode.mnemonic).to.equal('DBG1', 'mnemonic');
+		expect(decode.opCode).to.equal('30', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 3F EXTC test cases
+    //
+	function GetTestCase_EXTC () {
+		var testCases = [];
+		for (eIndex = 1; eIndex < 4; eIndex++) {
+			if (eIndex == 1) Ext_OPC = 0;
+			if (eIndex == 2) Ext_OPC = 1;
+			if (eIndex == 3) Ext_OPC = 255;
+
+			testCases.push({'Ext_OPC':Ext_OPC});
+		}
+		return testCases;
+	}
+
+
+    // 3F EXTC
+    //
+	itParam("EXTC test: Ext_OPC ${value.Ext_OPC}", GetTestCase_EXTC(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN EXTC test ' + JSON.stringify(value)});
+		expected = ":SB780N3F" + decToHex(value.Ext_OPC, 2) + ";";
+        var encode = cbusLib.encodeEXTC(value.Ext_OPC);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: EXTC encode ' + encode});
+		winston.info({message: 'cbusMessage test: EXTC decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.Ext_OPC).to.equal(value.Ext_OPC, 'Ext_OPC');
+		expect(decode.mnemonic).to.equal('EXTC', 'mnemonic');
+		expect(decode.opCode).to.equal('3F', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 40 RLOC test cases
+    //
+	function GetTestCase_RLOC () {
+		var testCases = [];
+		for (aIndex = 1; aIndex < 4; aIndex++) {
+			if (aIndex == 1) address = 0;
+			if (aIndex == 2) address = 1;
+			if (aIndex == 3) address = 65535;
+
+			testCases.push({'address':address});
+		}
+		return testCases;
+	}
+
+
+    // 40 RLOC
+    //
+	itParam("RLOC test: address ${value.address}", GetTestCase_RLOC(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN RLOC test ' + JSON.stringify(value)});
+		expected = ":SA780N40" + decToHex(value.address, 4) + ";";
+        var encode = cbusLib.encodeRLOC(value.address);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: RLOC encode ' + encode});
+		winston.info({message: 'cbusMessage test: RLOC decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.address).to.equal(value.address, 'address');
+		expect(decode.mnemonic).to.equal('RLOC', 'mnemonic');
+		expect(decode.opCode).to.equal('40', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 41 QCON test cases
+    //
+	function GetTestCase_QCON () {
+		var testCases = [];
+		for (CID = 1; CID < 4; CID++) {
+			if (CID == 1) ConID = 0;
+			if (CID == 2) ConID = 1;
+			if (CID == 3) ConID = 255;
+            for (aIndex = 1; aIndex < 4; aIndex++) {
+                if (aIndex == 1) Index = 0;
+                if (aIndex == 2) Index = 1;
+                if (aIndex == 3) Index = 255;
+
+                testCases.push({'ConID':ConID, 'Index':Index});
+            }
+        }
+		return testCases;
+	}
+
+
+    // 41 QCON
+    //
+	itParam("QCON test: ConID ${value.ConID} Index ${value.Index}", GetTestCase_QCON(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN QCON test ' + JSON.stringify(value)});
+		expected = ":SA780N41" + decToHex(value.ConID, 2) + decToHex(value.Index, 2) + ";";
+        var encode = cbusLib.encodeQCON(value.ConID, value.Index);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: QCON encode ' + encode});
+		winston.info({message: 'cbusMessage test: QCON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.ConID).to.equal(value.ConID, 'ConID');
+        expect(decode.Index).to.equal(value.Index, 'Index');
+		expect(decode.mnemonic).to.equal('QCON', 'mnemonic');
+		expect(decode.opCode).to.equal('41', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
         expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
 	})
@@ -252,7 +582,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 47 DSPD
+    // 47 DSPD test cases
     //
 	function GetTestCase_DSPD () {
 		var testCases = [];
@@ -273,11 +603,14 @@ describe('cbusMessage tests', function(){
 		}
 		return testCases;
 	}
+    
+    
+    // 47 DSPD
     //
-	itParam("DSPD test session ${value.session} speed ${value.speed} direction ${value.direction}", GetTestCase_DSPD(), function (value) {
+	itParam("DSPD test: session ${value.session} speed ${value.speed} direction ${value.direction}", GetTestCase_DSPD(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN DSPD test ' + JSON.stringify(value)});
         var speedDir = value.speed + parseInt((value.direction == 'Reverse') ? 0 : 128)
-		expected = ":SB780N47" + decToHex(value.session, 2) + decToHex(speedDir, 2) + ";";
+		expected = ":SA780N47" + decToHex(value.session, 2) + decToHex(speedDir, 2) + ";";
         var encode = cbusLib.encodeDSPD(value.session, value.speed, value.direction);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: DSPD encode ' + encode});
@@ -527,7 +860,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 60 DFUN
+    // 60 DFUN testcases
     //
 	function GetTestCase_DFUN () {
 		var testCases = [];
@@ -550,9 +883,11 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("DFUN test session ${value.session} Fn1 ${value.Fn1} Fn2 ${value.Fn2}", GetTestCase_DFUN(), function (value) {
+    // 60 DFUN
+    //
+	itParam("DFUN test: session ${value.session} Fn1 ${value.Fn1} Fn2 ${value.Fn2}", GetTestCase_DFUN(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN DFUN test ' + JSON.stringify(value)});
-		expected = ":SB780N60" + decToHex(value.session, 2) + decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + ";";
+		expected = ":SA780N60" + decToHex(value.session, 2) + decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + ";";
         var encode = cbusLib.encodeDFUN(value.session, value.Fn1, value.Fn2);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: DFUN encode ' + encode});
@@ -570,7 +905,7 @@ describe('cbusMessage tests', function(){
 
 
 
-    // 63 ERR
+    // 63 ERR test case
     //
 	function GetTestCase_ERR () {
 		var testCases = [];
@@ -593,9 +928,11 @@ describe('cbusMessage tests', function(){
 		return testCases;
 	}
 
-	itParam("ERR test data1 ${value.data1} data2 ${value.data2} errorNumber ${value.errorNumber}", GetTestCase_ERR(), function (value) {
+    // 63 ERR
+    //
+	itParam("ERR test: data1 ${value.data1} data2 ${value.data2} errorNumber ${value.errorNumber}", GetTestCase_ERR(), function (value) {
 		winston.info({message: 'cbusMessage test: BEGIN ERR test ' + JSON.stringify(value)});
-		expected = ":SB780N63" + decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.errorNumber, 2) + ";";
+		expected = ":SA780N63" + decToHex(value.data1, 2) + decToHex(value.data2, 2) + decToHex(value.errorNumber, 2) + ";";
         var encode = cbusLib.encodeERR(value.data1, value.data2, value.errorNumber);
         var decode = cbusLib.decode(encode);
 		winston.info({message: 'cbusMessage test: ERR encode ' + encode});
@@ -1591,7 +1928,7 @@ describe('cbusMessage tests', function(){
             winston.info({message: 'cbusMessage test: BEGIN PLOC test ' + JSON.stringify(value)});
             // PLOC Format: [<MjPri><MinPri=2><CANID>]<E1><Session><AddrH><AddrL><Speed/Dir><Fn1><Fn2><Fn3>
             var speedDir = value.speed + parseInt((value.direction == 'Reverse') ? 0 : 128)
-            expected = ":SB780NE1" + decToHex(value.session, 2) + decToHex(value.address, 4) + decToHex(speedDir, 2) +
+            expected = ":SA780NE1" + decToHex(value.session, 2) + decToHex(value.address, 4) + decToHex(speedDir, 2) +
                 decToHex(value.Fn1, 2) + decToHex(value.Fn2, 2) + decToHex(value.Fn3, 2) + ";";
             var encode = cbusLib.encodePLOC(value.session, value.address, value.speed, value.direction, value.Fn1, value.Fn2, value.Fn3);
             var decode = cbusLib.decode(encode);

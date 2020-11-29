@@ -125,13 +125,15 @@ describe('mergAdminNode tests', function(){
 		return testCases;
 	}
     
+    
     // 22 QLOC encoding
     //
-	itParam("QLOC encoding test session ${value.session}", GetTestCase_QLOC(), function (value) {
+	itParam("QLOC encoding test: session ${value.session}", GetTestCase_QLOC(), function (value) {
 		winston.info({message: 'mergAdminNode test: BEGIN QLOC test ' + JSON.stringify(value)});
-		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
+		expected = ":SA780N22" + decToHex(value.session, 2) + ";";
 		expect(node.QLOC(value.session)).to.equal(expected);
 	})
+
 
     // 23 DKEEP test cases
     //
@@ -583,28 +585,6 @@ describe('mergAdminNode tests', function(){
             expect(node.config.nodes[value.nodeNumber].EvCount).to.equal(value.eventCount);
             done()
 		}, 10);
-	})
-
-
-    // 78 QLOC test cases
-    //
-	function GetTestCase_QLOC () {
-		var testCases = [];
-		for (S = 1; S < 4; S++) {
-			if (S == 1) session = 0;
-			if (S == 2) session = 1;
-			if (S == 3) session = 255;
-			testCases.push({'session':session});
-		}
-		return testCases;
-	}
-
-    // 78 QLOC encoding test
-    //
-	itParam("QLOC encoding test: session ${value.session}", GetTestCase_QLOC(), function (value) {
-		winston.info({message: 'mergAdminNode test: BEGIN QLOC test ' + JSON.stringify(value)});
-		expected = ":SB780N22" + decToHex(value.session, 2) + ";";
-		expect(node.QLOC(value.session)).to.equal(expected);
 	})
 
 
