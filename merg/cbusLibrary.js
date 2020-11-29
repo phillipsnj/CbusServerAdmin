@@ -143,6 +143,9 @@ class cbusLibrary {
         case '40':
             return this.decodeRLOC(message);
             break;
+        case '41':
+            return this.decodeQCON(message);
+            break;
         case '42':
             return this.decodeSNN(message);
             break;
@@ -599,6 +602,23 @@ class cbusLibrary {
     }
     encodeRLOC = function(address) {
         return this.header({MinPri: 2}) + '40' + decToHex(address, 4) + ';'
+    }
+
+
+    // 41 QCON
+	// RLOC Format: <MjPri><MinPri=2><CANID>]<41><ConID><Index>
+    //
+    decodeQCON = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'QCON',
+                'opCode': message.substr(7, 2),
+                'ConID': parseInt(message.substr(9, 2), 16),
+                'Index': parseInt(message.substr(11, 2), 16),
+                'text': 'QCON (41) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeQCON = function(ConID, Index) {
+        return this.header({MinPri: 2}) + '41' + decToHex(ConID, 2) + decToHex(Index, 2) + ';'
     }
 
 

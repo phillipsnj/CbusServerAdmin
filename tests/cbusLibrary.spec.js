@@ -514,6 +514,45 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 41 QCON test cases
+    //
+	function GetTestCase_QCON () {
+		var testCases = [];
+		for (CID = 1; CID < 4; CID++) {
+			if (CID == 1) ConID = 0;
+			if (CID == 2) ConID = 1;
+			if (CID == 3) ConID = 255;
+            for (aIndex = 1; aIndex < 4; aIndex++) {
+                if (aIndex == 1) Index = 0;
+                if (aIndex == 2) Index = 1;
+                if (aIndex == 3) Index = 255;
+
+                testCases.push({'ConID':ConID, 'Index':Index});
+            }
+        }
+		return testCases;
+	}
+
+
+    // 41 QCON
+    //
+	itParam("QCON test: ConID ${value.ConID} Index ${value.Index}", GetTestCase_QCON(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN QCON test ' + JSON.stringify(value)});
+		expected = ":SA780N41" + decToHex(value.ConID, 2) + decToHex(value.Index, 2) + ";";
+        var encode = cbusLib.encodeQCON(value.ConID, value.Index);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: QCON encode ' + encode});
+		winston.info({message: 'cbusMessage test: QCON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.ConID).to.equal(value.ConID, 'ConID');
+        expect(decode.Index).to.equal(value.Index, 'Index');
+		expect(decode.mnemonic).to.equal('QCON', 'mnemonic');
+		expect(decode.opCode).to.equal('41', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
     // 42 SNN
     //
 	function GetTestCase_SNN () {
