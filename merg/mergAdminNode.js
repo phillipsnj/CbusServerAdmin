@@ -26,8 +26,8 @@ class cbusAdmin extends EventEmitter {
         this.pr1 = 2
         this.pr2 = 3
         this.canId = 60
-        this.config.nodes = {}
-        this.config.events = {}
+        //this.config.nodes = {}
+        //this.config.events = {}
         this.cbusErrors = {}
         this.cbusNoSupport = {}
         this.dccSessions = {}
