@@ -778,6 +778,45 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 48 DFLG test cases
+    //
+	function GetTestCase_DFLG () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (ACIndex = 1; ACIndex < 4; ACIndex++) {
+				if (ACIndex == 1) flags = 0;
+				if (ACIndex == 2) flags = 1;
+				if (ACIndex == 3) flags = 255;
+				testCases.push({'session':session, 'flags':flags});
+			}
+		}
+		return testCases;
+	}
+    
+    
+    // 48 DFLG
+    //
+	itParam("DFLG test: session ${value.session} flags ${value.flags}", GetTestCase_DFLG(), function (value) {
+        var mnemonic = 'DFLG'
+		winston.info({message: 'cbusMessage test: BEGIN ' + mnemonic + ' test ' + JSON.stringify(value)});
+		expected = ":SA780N48" + decToHex(value.session, 2) + decToHex(value.flags, 2) + ";";
+        var encode = cbusLib.encodeDFLG(value.session, value.flags);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + mnemonic + ' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + mnemonic + ' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.session).to.equal(value.session, 'session');
+        expect(decode.flags).to.equal(value.flags, 'flags');
+		expect(decode.mnemonic).to.equal(mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal('48', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ');
+        expect(decode.text).to.include('(' + decode.opCode + ')');
+	})
+
+
     // 50 RQNN
     //
 	function GetTestCase_RQNN () {

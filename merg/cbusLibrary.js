@@ -164,6 +164,20 @@ class cbusLibrary {
         case '47':
             return this.decodeDSPD(message);
             break;
+        case '48':
+            return this.decodeDFLG(message);
+            break;
+        case '49':
+            return this.decodeDFNON(message);
+            break;
+        case '4A':
+            return this.decodeDFNOF(message);
+            break;
+        // 4B reserved
+        case '4C':
+            return this.decodeSSTAT(message);
+            break;
+        // 4D - 4F reserved
 		case '50':
             return this.decodeRQNN(message);
             break;
@@ -740,6 +754,23 @@ class cbusLibrary {
         return this.header({MinPri: 2}) + '47' + decToHex(session, 2) + decToHex(speedDir, 2) + ';';
     }
     
+
+    // 48 DFLG
+	// DFLG Format: Format: <MjPri><MinPri=2><CANID>]<48><Session><DDDDDDDD>
+    //
+    decodeDFLG = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'DFLG',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'flags': parseInt(message.substr(11, 2), 16),
+                'text': 'DFLG (48) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeDFLG = function(session, flags) {
+            return this.header({MinPri: 2}) + '48' + decToHex(session, 2) + decToHex(flags, 2) + ';'
+    }
+
 
     // 50 RQNN
 	// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
