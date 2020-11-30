@@ -73,19 +73,7 @@
         0,
         9
       ],
-      "actions": {
-        "1": {
-          "event": "03220001",
-          "actionId": 1,
-          "eventIndex": 1,
-          "variables": [
-            null,
-            1,
-            0,
-            0
-          ]
-        }
-      },
+      "actions": {},
       "status": true,
       "component": "merg-canservo8c",
       "learn": false,
@@ -101,41 +89,8 @@
       "flim": true,
       "bootloader": true,
       "coe": false,
-      "parameters": [
-        20,
-        165,
-        110,
-        5,
-        32,
-        2,
-        9,
-        2,
-        15,
-        null,
-        1,
-        0,
-        8,
-        0,
-        0,
-        228,
-        26,
-        0,
-        0,
-        1,
-        0
-      ],
-      "variables": [
-        null,
-        0,
-        0,
-        0,
-        100,
-        200,
-        0,
-        0,
-        0,
-        0
-      ],
+      "parameters": [],
+      "variables": [],
       "actions": {},
       "status": true,
       "component": "merg-canace8c",
