@@ -701,6 +701,23 @@ class cbusLibrary {
     }
 
 
+    // 46 KCON
+	// KCON Format: Format: [<MjPri><MinPri=2><CANID>]<46><Session><Consist#>
+    //
+    decodeKCON = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'KCON',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'consistAddress': parseInt(message.substr(11, 2), 16),
+                'text': 'KCON (46) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeKCON = function(session, consistAddress) {
+            return this.header({MinPri: 2}) + '46' + decToHex(session, 2) + decToHex(consistAddress, 2) + ';'
+    }
+
+
     // 47 DSPD
     // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
     //

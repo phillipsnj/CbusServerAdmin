@@ -680,7 +680,7 @@ describe('cbusMessage tests', function(){
     // 45 PCON
     //
 	itParam("PCON test: session ${value.session} consistAddress ${value.consistAddress}", GetTestCase_PCON(), function (value) {
-		winston.info({message: 'cbusMessage test: BEGIN STMOD test ' + JSON.stringify(value)});
+		winston.info({message: 'cbusMessage test: BEGIN PCON test ' + JSON.stringify(value)});
 		expected = ":SA780N45" + decToHex(value.session, 2) + decToHex(value.consistAddress, 2) + ";";
         var encode = cbusLib.encodePCON(value.session, value.consistAddress);
         var decode = cbusLib.decode(encode);
@@ -691,6 +691,44 @@ describe('cbusMessage tests', function(){
         expect(decode.consistAddress).to.equal(value.consistAddress, 'consistAddress');
 		expect(decode.mnemonic).to.equal('PCON', 'mnemonic');
 		expect(decode.opCode).to.equal('45', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ');
+        expect(decode.text).to.include('(' + decode.opCode + ')');
+	})
+
+
+    // 46 KCON test cases
+    //
+	function GetTestCase_KCON () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (ACIndex = 1; ACIndex < 4; ACIndex++) {
+				if (ACIndex == 1) consistAddress = 0;
+				if (ACIndex == 2) consistAddress = 1;
+				if (ACIndex == 3) consistAddress = 255;
+				testCases.push({'session':session, 'consistAddress':consistAddress});
+			}
+		}
+		return testCases;
+	}
+    
+    
+    // 46 KCON
+    //
+	itParam("KCON test: session ${value.session} consistAddress ${value.consistAddress}", GetTestCase_KCON(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN KCON test ' + JSON.stringify(value)});
+		expected = ":SA780N46" + decToHex(value.session, 2) + decToHex(value.consistAddress, 2) + ";";
+        var encode = cbusLib.encodeKCON(value.session, value.consistAddress);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: KCON encode ' + encode});
+		winston.info({message: 'cbusMessage test: KCON decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.session).to.equal(value.session, 'session');
+        expect(decode.consistAddress).to.equal(value.consistAddress, 'consistAddress');
+		expect(decode.mnemonic).to.equal('KCON', 'mnemonic');
+		expect(decode.opCode).to.equal('46', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ');
         expect(decode.text).to.include('(' + decode.opCode + ')');
 	})
