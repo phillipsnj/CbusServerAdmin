@@ -684,6 +684,23 @@ class cbusLibrary {
     }
 
 
+    // 45 PCON
+	// PCON Format: [<MjPri><MinPri=2><CANID>]<45><Session><Consist#>
+    //
+    decodePCON = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'PCON',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'consistAddress': parseInt(message.substr(11, 2), 16),
+                'text': 'PCON (45) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodePCON = function(session, consistAddress) {
+            return this.header({MinPri: 2}) + '45' + decToHex(session, 2) + decToHex(consistAddress, 2) + ';'
+    }
+
+
     // 47 DSPD
     // DSPD Format: [<MjPri><MinPri=2><CANID>]<47><Session><Speed/Dir>
     //
