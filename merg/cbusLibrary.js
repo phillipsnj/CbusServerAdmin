@@ -149,6 +149,18 @@ class cbusLibrary {
         case '42':
             return this.decodeSNN(message);
             break;
+        case '43':
+            return this.decodeALOC(message);
+            break;
+        case '44':
+            return this.decodeSTMOD(message);
+            break;
+        case '45':
+            return this.decodePCON(message);
+            break;
+        case '46':
+            return this.decodeKCON(message);
+            break;
         case '47':
             return this.decodeDSPD(message);
             break;
@@ -636,6 +648,25 @@ class cbusLibrary {
     encodeSNN = function(nodeNumber) {
         if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
             return this.header({MinPri: 3}) + '42' + decToHex(nodeNumber, 4) + ';'
+        }
+    }
+
+
+    // 43 ALOC
+	// ALOC Format: [<MjPri><MinPri=2><CANID>]<43><Session ID><Allocation code >
+    //
+    decodeALOC = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'ALOC',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'allocationCode': parseInt(message.substr(11, 2), 16),
+                'text': 'ALOC (43) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeALOC = function(session, allocatonCode) {
+        if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
+            return this.header({MinPri: 2}) + '43' + decToHex(session, 2) + decToHex(allocatonCode, 2) + ';'
         }
     }
 

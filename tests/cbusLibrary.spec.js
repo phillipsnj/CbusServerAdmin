@@ -582,6 +582,44 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 43 ALOC test cases
+    //
+	function GetTestCase_ALOC () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (ACIndex = 1; ACIndex < 4; ACIndex++) {
+				if (ACIndex == 1) allocationCode = 0;
+				if (ACIndex == 2) allocationCode = 1;
+				if (ACIndex == 3) allocationCode = 255;
+				testCases.push({'session':session, 'allocationCode':allocationCode});
+			}
+		}
+		return testCases;
+	}
+    
+    
+    // 43 ALOC
+    //
+	itParam("ALOC test: session ${value.session} allocationCode ${value.allocationCode}", GetTestCase_ALOC(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN ALOC test ' + JSON.stringify(value)});
+		expected = ":SA780N43" + decToHex(value.session, 2) + decToHex(value.allocationCode, 2) + ";";
+        var encode = cbusLib.encodeALOC(value.session, value.allocationCode);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ALOC encode ' + encode});
+		winston.info({message: 'cbusMessage test: ALOC decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.session).to.equal(value.session, 'session');
+        expect(decode.allocationCode).to.equal(value.allocationCode, 'allocationCode');
+		expect(decode.mnemonic).to.equal('ALOC', 'mnemonic');
+		expect(decode.opCode).to.equal('43', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ');
+        expect(decode.text).to.include('(' + decode.opCode + ')');
+	})
+
+
     // 47 DSPD test cases
     //
 	function GetTestCase_DSPD () {
