@@ -483,7 +483,7 @@ class cbusAdmin extends EventEmitter {
         //
         //
         //
-        //jsonfile.writeFileSync(this.configFile, this.config, {spaces: 2, EOL: '\r\n'})
+        jsonfile.writeFileSync(this.configFile, this.config, {spaces: 2, EOL: '\r\n'})
         //let nodes = []
         /*for (let node in this.config.nodes){
             nodes.push(this.config.nodes[node])
