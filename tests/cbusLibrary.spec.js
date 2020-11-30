@@ -817,6 +817,65 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 49 & 4A DFNONF test cases
+    //
+	function GetTestCase_DFNONF () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (ACIndex = 1; ACIndex < 4; ACIndex++) {
+				if (ACIndex == 1) Function = 0;
+				if (ACIndex == 2) Function = 1;
+				if (ACIndex == 3) Function = 255;
+				testCases.push({'session':session, 'Function':Function});
+			}
+		}
+		return testCases;
+	}
+    
+    
+    // 49 DFNON
+    //
+	itParam("DFNON test: session ${value.session} Function ${value.Function}", GetTestCase_DFNONF(), function (value) {
+        var mnemonic = 'DFNON'
+		winston.info({message: 'cbusMessage test: BEGIN ' + mnemonic + ' test ' + JSON.stringify(value)});
+		expected = ":SA780N49" + decToHex(value.session, 2) + decToHex(value.Function, 2) + ";";
+        var encode = cbusLib.encodeDFNON(value.session, value.Function);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + mnemonic + ' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + mnemonic + ' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.session).to.equal(value.session, 'session');
+        expect(decode.Function).to.equal(value.Function, 'Function');
+		expect(decode.mnemonic).to.equal(mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal('49', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ');
+        expect(decode.text).to.include('(' + decode.opCode + ')');
+	})
+
+
+    // 4A DFNOF
+    //
+	itParam("DFNOF test: session ${value.session} Function ${value.Function}", GetTestCase_DFNONF(), function (value) {
+        var mnemonic = 'DFNOF'
+		winston.info({message: 'cbusMessage test: BEGIN ' + mnemonic + ' test ' + JSON.stringify(value)});
+		expected = ":SA780N4A" + decToHex(value.session, 2) + decToHex(value.Function, 2) + ";";
+        var encode = cbusLib.encodeDFNOF(value.session, value.Function);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + mnemonic + ' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + mnemonic + ' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.session).to.equal(value.session, 'session');
+        expect(decode.Function).to.equal(value.Function, 'Function');
+		expect(decode.mnemonic).to.equal(mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal('4A', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ');
+        expect(decode.text).to.include('(' + decode.opCode + ')');
+	})
+
+
     // 50 RQNN
     //
 	function GetTestCase_RQNN () {

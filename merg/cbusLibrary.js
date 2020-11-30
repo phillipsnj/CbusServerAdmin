@@ -772,6 +772,40 @@ class cbusLibrary {
     }
 
 
+    // 49 DFNON
+	// DFNON Format: Format: <MjPri><MinPri=2><CANID>]<49><Session><Fnum>
+    //
+    decodeDFNON = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'DFNON',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'Function': parseInt(message.substr(11, 2), 16),
+                'text': 'DFNON (49) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeDFNON = function(session, Function) {
+            return this.header({MinPri: 2}) + '49' + decToHex(session, 2) + decToHex(Function, 2) + ';'
+    }
+
+
+    // 4A DFNOF
+	// DFNOF Format: Format: <MjPri><MinPri=2><CANID>]<4A><Session><Fnum>
+    //
+    decodeDFNOF = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'DFNOF',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'Function': parseInt(message.substr(11, 2), 16),
+                'text': 'DFNOF (4A) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeDFNOF = function(session, Function) {
+            return this.header({MinPri: 2}) + '4A' + decToHex(session, 2) + decToHex(Function, 2) + ';'
+    }
+
+
     // 50 RQNN
 	// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
     //
