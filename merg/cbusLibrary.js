@@ -646,9 +646,7 @@ class cbusLibrary {
         }
     }
     encodeSNN = function(nodeNumber) {
-        if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
             return this.header({MinPri: 3}) + '42' + decToHex(nodeNumber, 4) + ';'
-        }
     }
 
 
@@ -665,9 +663,24 @@ class cbusLibrary {
         }
     }
     encodeALOC = function(session, allocatonCode) {
-        if (nodeNumber >= 0 && nodeNumber <= 0xFFFF) {
             return this.header({MinPri: 2}) + '43' + decToHex(session, 2) + decToHex(allocatonCode, 2) + ';'
+    }
+
+
+    // 44 STMOD
+	// STMOD Format: [<MjPri><MinPri=2><CANID>]<44><Session><MMMMMMMM>
+    //
+    decodeSTMOD = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'STMOD',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'modeByte': parseInt(message.substr(11, 2), 16),
+                'text': 'STMOD (44) Node ' + parseInt(message.substr(9, 4), 16),
         }
+    }
+    encodeSTMOD = function(session, modeByte) {
+            return this.header({MinPri: 2}) + '44' + decToHex(session, 2) + decToHex(modeByte, 2) + ';'
     }
 
 

@@ -620,6 +620,44 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 44 STMOD test cases
+    //
+	function GetTestCase_STMOD () {
+		var testCases = [];
+		for (sessionIndex = 1; sessionIndex < 4; sessionIndex++) {
+			if (sessionIndex == 1) session = 0;
+			if (sessionIndex == 2) session = 1;
+			if (sessionIndex == 3) session = 255;
+			for (ACIndex = 1; ACIndex < 4; ACIndex++) {
+				if (ACIndex == 1) modeByte = 0;
+				if (ACIndex == 2) modeByte = 1;
+				if (ACIndex == 3) modeByte = 255;
+				testCases.push({'session':session, 'modeByte':modeByte});
+			}
+		}
+		return testCases;
+	}
+    
+    
+    // 44 STMOD
+    //
+	itParam("STMOD test: session ${value.session} modeByte ${value.modeByte}", GetTestCase_STMOD(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN STMOD test ' + JSON.stringify(value)});
+		expected = ":SA780N44" + decToHex(value.session, 2) + decToHex(value.modeByte, 2) + ";";
+        var encode = cbusLib.encodeSTMOD(value.session, value.modeByte);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: STMOD encode ' + encode});
+		winston.info({message: 'cbusMessage test: STMOD decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+        expect(decode.session).to.equal(value.session, 'session');
+        expect(decode.modeByte).to.equal(value.modeByte, 'modeByte');
+		expect(decode.mnemonic).to.equal('STMOD', 'mnemonic');
+		expect(decode.opCode).to.equal('44', 'opCode');
+        expect(decode.text).to.include(decode.mnemonic + ' ');
+        expect(decode.text).to.include('(' + decode.opCode + ')');
+	})
+
+
     // 47 DSPD test cases
     //
 	function GetTestCase_DSPD () {
