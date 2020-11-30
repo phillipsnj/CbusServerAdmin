@@ -806,6 +806,23 @@ class cbusLibrary {
     }
 
 
+    // 4C SSTAT
+	// SSTAT Format: Format: [<MjPri><MinPri=3><CANID>]<4C><Session><Status>
+    //
+    decodeSSTAT = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'SSTAT',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'Status': parseInt(message.substr(11, 2), 16),
+                'text': 'SSTAT (4C) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeSSTAT = function(session, Status) {
+            return this.header({MinPri: 3}) + '4C' + decToHex(session, 2) + decToHex(Status, 2) + ';'
+    }
+
+
     // 50 RQNN
 	// RQNN Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
     //
