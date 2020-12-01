@@ -1781,6 +1781,248 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 80 RDCC3 testcases
+    //
+	function GetTestCase_RDCC3 () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 255;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        for (a4 = 1; a4 < 4; a4++) {
+                            if (a4 == 1) arg4 = 0;
+                            if (a4 == 2) arg4 = 1;
+                            if (a4 == 3) arg4 = 255;
+                            testCases.push({'mnemonic':'RDCC3', 
+                                            'opCode':'80', 
+                                            'repetitions':arg1, 
+                                            'byte0':arg2, 
+                                            'byte1':arg3, 
+                                            'byte2':arg4});
+                        }
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // 80 RDCC3
+    //
+	itParam("RDCC3 test repetitions ${value.repetitions} byte0 ${value.byte0} byte1 ${value.byte1} byte2 ${value.byte2}", GetTestCase_RDCC3(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SA780N" + value.opCode + decToHex(value.repetitions, 2) + decToHex(value.byte0, 2) + decToHex(value.byte1, 2) + decToHex(value.byte2, 2) + ";";
+        var encode = cbusLib.encodeRDCC3(value.repetitions, value.byte0, value.byte1, value.byte2);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.repetitions).to.equal(value.repetitions, 'repetitions');
+        expect(decode.byte0).to.equal(value.byte0, 'byte0');
+        expect(decode.byte1).to.equal(value.byte1, 'byte1');
+        expect(decode.byte2).to.equal(value.byte2, 'byte2');
+	})
+
+
+    // 82 WCVO testcases
+    //
+	function GetTestCase_WCVO () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 65535;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        testCases.push({'mnemonic':'WCVO', 
+                                        'opCode':'82', 
+                                        'session':arg1, 
+                                        'CV':arg2, 
+                                        'value':arg3});
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // 82 WCVO
+    //
+	itParam("WCVO test session ${value.session} CV ${value.CV} value ${value.value}", GetTestCase_WCVO(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SA780N" + value.opCode + decToHex(value.session, 2) + decToHex(value.CV, 4) + decToHex(value.value, 2) + ";";
+        var encode = cbusLib.encodeWCVO(value.session, value.CV, value.value);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.Session).to.equal(value.session, 'session');
+        expect(decode.CV).to.equal(value.CV, 'CV');
+        expect(decode.value).to.equal(value.value, 'value');
+	})
+
+
+    // 83 WCVB testcases
+    //
+	function GetTestCase_WCVB () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 65535;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        testCases.push({'mnemonic':'WCVB', 
+                                        'opCode':'83', 
+                                        'session':arg1, 
+                                        'CV':arg2, 
+                                        'value':arg3});
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // 83 WCVB
+    //
+	itParam("WCVB test session ${value.session} CV ${value.CV} value ${value.value}", GetTestCase_WCVB(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SA780N" + value.opCode + decToHex(value.session, 2) + decToHex(value.CV, 4) + decToHex(value.value, 2) + ";";
+        var encode = cbusLib.encodeWCVB(value.session, value.CV, value.value);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.Session).to.equal(value.session, 'session');
+        expect(decode.CV).to.equal(value.CV, 'CV');
+        expect(decode.value).to.equal(value.value, 'value');
+	})
+
+
+    // 84 QCVS testcases
+    //
+	function GetTestCase_QCVS () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 65535;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        testCases.push({'mnemonic':'QCVS', 
+                                        'opCode':'84', 
+                                        'session':arg1, 
+                                        'CV':arg2, 
+                                        'Mode':arg3});
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // 84 QCVS
+    //
+	itParam("QCVS test session ${value.session} CV ${value.CV} value ${value.Mode}", GetTestCase_QCVS(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SA780N" + value.opCode + decToHex(value.session, 2) + decToHex(value.CV, 4) + decToHex(value.Mode, 2) + ";";
+        var encode = cbusLib.encodeQCVS(value.session, value.CV, value.Mode);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.Session).to.equal(value.session, 'session');
+        expect(decode.CV).to.equal(value.CV, 'CV');
+        expect(decode.Mode).to.equal(value.Mode, 'Mode');
+	})
+
+
+    // 85 PCVS testcases
+    //
+	function GetTestCase_PCVS () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 65535;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        testCases.push({'mnemonic':'PCVS', 
+                                        'opCode':'85', 
+                                        'session':arg1, 
+                                        'CV':arg2, 
+                                        'value':arg3});
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // 85 PCVS
+    //
+	itParam("PCVS test session ${value.session} CV ${value.CV} value ${value.value}", GetTestCase_PCVS(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SA780N" + value.opCode + decToHex(value.session, 2) + decToHex(value.CV, 4) + decToHex(value.value, 2) + ";";
+        var encode = cbusLib.encodePCVS(value.session, value.CV, value.value);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.Session).to.equal(value.session, 'session');
+        expect(decode.CV).to.equal(value.CV, 'CV');
+        expect(decode.value).to.equal(value.value, 'value');
+	})
+
+
     // 90/91 ACON & ACOF test cases
     //
 	function GetTestCase_ACONF () {

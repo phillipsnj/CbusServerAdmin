@@ -260,6 +260,23 @@ class cbusLibrary {
         case '7F':
             return this.decodeEXTC2(message);
             break;
+        case '80':
+            return this.decodeRDCC3(message);
+            break;
+        // 81 - reserved
+        case '82':
+            return this.decodeWCVO(message);
+            break;
+        case '83':
+            return this.decodeWCVB(message);
+            break;
+        case '84':
+            return this.decodeQCVS(message);
+            break;
+        case '85':
+            return this.decodePCVS(message);
+            break;
+        // 86 - 8F reserved
         case '90':
             return this.decodeACON(message);
             break;
@@ -1303,13 +1320,115 @@ class cbusLibrary {
                 'Ext_OPC': parseInt(message.substr(9, 2), 16),
                 'byte1': parseInt(message.substr(11, 2), 16),
                 'byte2': parseInt(message.substr(13, 2), 16),
-                'text': "EXTC2 (7F) Node " + parseInt(message.substr(9, 4), 16) + 
+                'text': "EXTC2 (7F) Ext_OPC " + parseInt(message.substr(9, 2), 16) + 
 					" byte1 " + parseInt(message.substr(11, 2), 16) +
 					" byte2 " + parseInt(message.substr(13, 2), 16)
         }
     }
     encodeEXTC2 = function(Ext_OPC, byte1, byte2) {
         return this.header({MinPri: 3}) + '7F' + decToHex(Ext_OPC, 2) + decToHex(byte1, 2) + decToHex(byte2, 2) + ';'
+    }
+    
+
+    // 80 RDCC3
+    // RDCC3 Format: <MjPri><MinPri=2><CANID>]<80><REP><Byte0>..<Byte2>
+    //
+    decodeRDCC3 = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RDCC3',
+                'opCode': message.substr(7, 2),
+                'repetitions': parseInt(message.substr(9, 2), 16),
+                'byte0': parseInt(message.substr(11, 2), 16),
+                'byte1': parseInt(message.substr(13, 2), 16),
+                'byte2': parseInt(message.substr(15, 2), 16),
+                'text': "RDCC3 (80) repetitions " + parseInt(message.substr(9, 2), 16) + 
+					" byte0 " + parseInt(message.substr(11, 2), 16) +
+					" byte1 " + parseInt(message.substr(13, 2), 16) +
+					" byte2 " + parseInt(message.substr(15, 2), 16)
+        }
+    }
+    encodeRDCC3 = function(repetitions, byte0, byte1, byte2) {
+        return this.header({MinPri: 2}) + '80' + decToHex(repetitions, 2) + decToHex(byte0, 2) + decToHex(byte1, 2) + decToHex(byte2, 2) + ';'
+    }
+    
+
+    // 82 WCVO
+    // WCVO Format: <MjPri><MinPri=2><CANID>]<82><Session><High CV#><Low CV#><Val>
+    //
+    decodeWCVO = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'WCVO',
+                'opCode': message.substr(7, 2),
+                'Session': parseInt(message.substr(9, 2), 16),
+                'CV': parseInt(message.substr(11, 4), 16),
+                'value': parseInt(message.substr(15, 2), 16),
+                'text': "WCVO (82) Session " + parseInt(message.substr(9, 2), 16) + 
+					" CV " + parseInt(message.substr(11, 4), 16) +
+					" value " + parseInt(message.substr(15, 2), 16)
+        }
+    }
+    encodeWCVO = function(Session, CV, value) {
+        return this.header({MinPri: 2}) + '82' + decToHex(Session, 2) + decToHex(CV, 4) + decToHex(value, 2) + ';'
+    }
+    
+
+    // 83 WCVB
+    // WCVB Format: <MjPri><MinPri=2><CANID>]<83><Session><High CV#><Low CV#><Val>
+    //
+    decodeWCVB = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'WCVB',
+                'opCode': message.substr(7, 2),
+                'Session': parseInt(message.substr(9, 2), 16),
+                'CV': parseInt(message.substr(11, 4), 16),
+                'value': parseInt(message.substr(15, 2), 16),
+                'text': "WCVB (83) Session " + parseInt(message.substr(9, 2), 16) + 
+					" CV " + parseInt(message.substr(11, 2), 16) +
+					" value " + parseInt(message.substr(15, 2), 16)
+        }
+    }
+    encodeWCVB = function(Session, CV, value) {
+        return this.header({MinPri: 2}) + '83' + decToHex(Session, 2) + decToHex(CV, 4) + decToHex(value, 2) + ';'
+    }
+    
+
+    // 84 QCVS
+    // QCVS Format: [<MjPri><MinPri=2><CANID>]<84><Session><High CV#><Low CV#><Mode>
+    //
+    decodeQCVS = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'QCVS',
+                'opCode': message.substr(7, 2),
+                'Session': parseInt(message.substr(9, 2), 16),
+                'CV': parseInt(message.substr(11, 4), 16),
+                'Mode': parseInt(message.substr(15, 2), 16),
+                'text': "QCVS (84) Session " + parseInt(message.substr(9, 2), 16) + 
+					" CV " + parseInt(message.substr(11, 2), 16) +
+					" Mode " + parseInt(message.substr(15, 2), 16)
+        }
+    }
+    encodeQCVS = function(Session, CV, Mode) {
+        return this.header({MinPri: 2}) + '84' + decToHex(Session, 2) + decToHex(CV, 4) + decToHex(Mode, 2) + ';'
+    }
+    
+
+    // 85 PCVS
+    // PCVS Format: [<MjPri><MinPri=2><CANID>]<85><Session><High CV#><Low CV#><Val>
+    //
+    decodePCVS = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'PCVS',
+                'opCode': message.substr(7, 2),
+                'Session': parseInt(message.substr(9, 2), 16),
+                'CV': parseInt(message.substr(11, 4), 16),
+                'value': parseInt(message.substr(15, 2), 16),
+                'text': "PCVS (85) Session " + parseInt(message.substr(9, 2), 16) + 
+					" CV " + parseInt(message.substr(11, 2), 16) +
+					" value " + parseInt(message.substr(15, 2), 16)
+        }
+    }
+    encodePCVS = function(Session, CV, value) {
+        return this.header({MinPri: 2}) + '85' + decToHex(Session, 2) + decToHex(CV, 4) + decToHex(value, 2) + ';'
     }
     
 
