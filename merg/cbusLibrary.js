@@ -181,6 +181,9 @@ class cbusLibrary {
 		case '50':
             return this.decodeRQNN(message);
             break;
+		case '51':
+            return this.decodeNNREL(message);
+            break;
         case '52':
             return this.decodeNNACK(message);
             break;
@@ -836,6 +839,22 @@ class cbusLibrary {
     }
     encodeRQNN = function(nodeNumber) {
         return this.header({MinPri: 3}) + '50' + decToHex(nodeNumber, 4) + ';'
+    }
+    
+
+    // 51 NNREL
+	// NNREL Format: [<MjPri><MinPri=3><CANID>]<51><NN hi><NN lo>
+    //
+    decodeNNREL = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'NNREL',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'NNREL (51) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeNNREL = function(nodeNumber) {
+        return this.header({MinPri: 3}) + '51' + decToHex(nodeNumber, 4) + ';'
     }
     
 

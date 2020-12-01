@@ -915,7 +915,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 50 RQNN
+    // 50 RQNN testcases
     //
 	function GetTestCase_RQNN () {
 		var testCases = [];
@@ -941,6 +941,35 @@ describe('cbusMessage tests', function(){
 		expect(decode.opCode).to.equal('50', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
         expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 51 NNREL testcases
+    //
+	function GetTestCase_NNREL () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 65535;
+			testCases.push({'mnemonic':'NNREL', 'opCode':'51', 'nodeNumber':arg1});
+		}
+		return testCases;
+	}
+
+	itParam("NNREL test nodeNumber ${value.nodeNumber}", GetTestCase_NNREL(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SB780N" + value.opCode + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeNNREL(value.nodeNumber);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
 	})
 
 
