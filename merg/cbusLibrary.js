@@ -196,6 +196,9 @@ class cbusLibrary {
         case '55':
             return this.decodeNNCLR(message);
             break;
+        case '56':
+            return this.decodeNNEVN(message);
+            break;
         case '57':
             return this.decodeNERD(message);
             break;
@@ -923,6 +926,22 @@ class cbusLibrary {
     }
     encodeNNCLR = function(nodeNumber) {
         return this.header({MinPri: 3}) + '55' + decToHex(nodeNumber, 4) + ';'
+    }
+
+
+    // 56 NNEVN
+	// NNEVN Format: [<MjPri><MinPri=3><CANID>]<56><NN hi><NN lo>>
+    //
+    decodeNNEVN = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'NNEVN',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': 'NNEVN (56) Node ' + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeNNEVN = function(nodeNumber) {
+        return this.header({MinPri: 3}) + '56' + decToHex(nodeNumber, 4) + ';'
     }
 
 

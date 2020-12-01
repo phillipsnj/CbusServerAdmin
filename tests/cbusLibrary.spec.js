@@ -1091,6 +1091,35 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 56 NNEVN testcases
+    //
+	function GetTestCase_NNEVN () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 65535;
+			testCases.push({'mnemonic':'NNEVN', 'opCode':'56', 'nodeNumber':arg1});
+		}
+		return testCases;
+	}
+
+	itParam("NNEVN test nodeNumber ${value.nodeNumber}", GetTestCase_NNEVN(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SB780N" + value.opCode + decToHex(value.nodeNumber, 4) + ";";
+        var encode = cbusLib.encodeNNEVN(value.nodeNumber);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+	})
+
+
     // 57 NERD
     //
 	function GetTestCase_NERD () {
