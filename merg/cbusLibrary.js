@@ -208,6 +208,22 @@ class cbusLibrary {
         case '59':
             return this.decodeWRACK(message);
             break;
+        case '5A':
+            return this.decodeRQDAT(message);
+            break;
+        case '5B':
+            return this.decodeRQDDS(message);
+            break;
+        case '5C':
+            return this.decodeBOOTM(message);
+            break;
+        case '5D':
+            return this.decodeENUM(message);
+            break;
+        // 5E reserved
+        case '5F':
+            return this.decodeEXTC1(message);
+            break;
         case '60':
             return this.decodeDFUN(message);
             break;
@@ -992,6 +1008,87 @@ class cbusLibrary {
     }
     encodeWRACK = function(nodeNumber) {
         return this.header({MinPri: 3}) + '59' + decToHex(nodeNumber, 4) + ';'
+    }
+
+
+    // 5A RQDAT
+	// RQDAT Format: [<MjPri><MinPri=3><CANID>]<5A><NN hi><NN lo>
+    //
+    decodeRQDAT = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RQDAT',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': "RQDAT (5A) Node " + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeRQDAT = function(nodeNumber) {
+        return this.header({MinPri: 3}) + '5A' + decToHex(nodeNumber, 4) + ';'
+    }
+
+
+    // 5B RQDDS
+	// RQDDS Format: [<MjPri><MinPri=3><CANID>]<5B><NN hi><NN lo>
+    //
+    decodeRQDDS = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RQDDS',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': "RQDDS (5B) Node " + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeRQDDS = function(nodeNumber) {
+        return this.header({MinPri: 3}) + '5B' + decToHex(nodeNumber, 4) + ';'
+    }
+
+
+    // 5C BOOTM
+	// BOOTM Format: [<MjPri><MinPri=3><CANID>]<5C><NN hi><NN lo>
+    //
+    decodeBOOTM = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'BOOTM',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': "BOOTM (5C) Node " + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeBOOTM = function(nodeNumber) {
+        return this.header({MinPri: 3}) + '5C' + decToHex(nodeNumber, 4) + ';'
+    }
+
+
+    // 5D ENUM
+	// ENUM Format: [<MjPri><MinPri=3><CANID>]<5D><NN hi><NN lo>
+    //
+    decodeENUM = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'ENUM',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'text': "ENUM (5D) Node " + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeENUM = function(nodeNumber) {
+        return this.header({MinPri: 3}) + '5D' + decToHex(nodeNumber, 4) + ';'
+    }
+
+
+    // 5F EXTC1
+	// EXTC1 Format: [<MjPri><MinPri=3><CANID>]<5F><Ext_OPC><byte1>
+    //
+    decodeEXTC1 = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'EXTC1',
+                'opCode': message.substr(7, 2),
+                'Ext_OPC': parseInt(message.substr(9, 2), 16),
+                'byte1': parseInt(message.substr(11, 2), 16),
+                'text': "EXTC1 (5F) Node " + parseInt(message.substr(9, 4), 16),
+        }
+    }
+    encodeEXTC1 = function(Ext_OPC, byte1) {
+        return this.header({MinPri: 3}) + '5F' + decToHex(Ext_OPC, 2) + decToHex(byte1, 2) + ';'
     }
 
 
