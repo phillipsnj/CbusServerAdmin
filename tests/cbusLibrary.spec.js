@@ -1403,6 +1403,43 @@ describe('cbusMessage tests', function(){
 
 
 
+    // 61 GLOC testcases
+    //
+	function GetTestCase_GLOC () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 65535;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 255;
+                    testCases.push({'mnemonic':'GLOC', 'opCode':'61', 
+                                'address':arg1, 
+                                'Flags':arg2});
+                }
+		}
+		return testCases;
+	}
+
+	itParam("GLOC test address ${value.address} Flags ${value.Flags}", GetTestCase_GLOC(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SA780N" + value.opCode + decToHex(value.address, 4) + decToHex(value.Flags, 2) + ";";
+        var encode = cbusLib.encodeGLOC(value.address, value.Flags);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.address).to.equal(value.address, 'address');
+        expect(decode.Flags).to.equal(value.Flags, 'Flags');
+	})
+
+
     // 63 ERR test case
     //
 	function GetTestCase_ERR () {

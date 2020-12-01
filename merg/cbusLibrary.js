@@ -227,9 +227,14 @@ class cbusLibrary {
         case '60':
             return this.decodeDFUN(message);
             break;
+        case '61':
+            return this.decodeGLOC(message);
+            break;
+        // 62 - reserved
         case '63':
             return this.decodeERR(message);
             break;
+        // 64 - 6E reserved
         case '6F':
             return this.decodeCMDERR(message);
             break;
@@ -1093,7 +1098,7 @@ class cbusLibrary {
 
 
     // 60 DFUN
-    // DFUN Format: <MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
+    // DFUN Format: [<MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
     //
     decodeDFUN = function(message) {
         return {'encoded': message,
@@ -1109,6 +1114,25 @@ class cbusLibrary {
     }
     encodeDFUN = function(session, Fn1, Fn2) {
         return this.header({MinPri: 2}) + '60' + decToHex(session, 2) + decToHex(Fn1, 2) + decToHex(Fn2, 2) + ';';
+    }
+
+
+    // 61 GLOC
+    // GLOC Format: [<MjPri><MinPri=2><CANID>]<61><Dat1><Dat2><Flags>
+    // <Dat1> and <Dat2> are [AddrH] and [AddrL] of the decoder, respectively.
+    //
+    decodeGLOC = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'GLOC',
+                'opCode': message.substr(7, 2),
+                'address': parseInt(message.substr(9, 4), 16),
+                'Flags': parseInt(message.substr(13, 2), 16),
+                'text': "GLOC (61) address " + parseInt(message.substr(9, 4), 16) +
+					" Flags " + parseInt(message.substr(13, 2), 16),
+        }
+    }
+    encodeGLOC = function(address, Flags) {
+        return this.header({MinPri: 2}) + '61' + decToHex(address, 4) + decToHex(Flags, 2) + ';';
     }
 
 
