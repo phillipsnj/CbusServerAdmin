@@ -1518,6 +1518,43 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // 70 EVNLF testcases
+    //
+	function GetTestCase_EVNLF () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 65535;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 255;
+                    testCases.push({'mnemonic':'EVNLF', 'opCode':'70', 
+                                'nodeNumber':arg1, 
+                                'EVSPC':arg2});
+                }
+		}
+		return testCases;
+	}
+
+	itParam("EVNLF test nodeNumber ${value.nodeNumber} EVSPC ${value.EVSPC}", GetTestCase_EVNLF(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SB780N" + value.opCode + decToHex(value.nodeNumber, 4) + decToHex(value.EVSPC, 2) + ";";
+        var encode = cbusLib.encodeEVNLF(value.nodeNumber, value.EVSPC);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+        expect(decode.EVSPC).to.equal(value.EVSPC, 'EVSPC');
+	})
+
+
     // 71 NVRD
     //
 	function GetTestCase_NVRD () {
@@ -1589,7 +1626,7 @@ describe('cbusMessage tests', function(){
 	})
 
 
-    // 73 RQNPN
+    // 73 RQNPN test case
     //
 	function GetTestCase_RQNPN () {
 		var testCases = [];
@@ -1658,6 +1695,89 @@ describe('cbusMessage tests', function(){
 		expect(decode.opCode).to.equal('74', 'opCode');
         expect(decode.text).to.include(decode.mnemonic + ' ', 'text mnemonic');
         expect(decode.text).to.include('(' + decode.opCode + ')', 'text opCode');
+	})
+
+
+    // 75 CANID testcases
+    //
+	function GetTestCase_CANID () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 65535;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 255;
+                    testCases.push({'mnemonic':'CANID', 
+                                'opCode':'75', 
+                                'nodeNumber':arg1, 
+                                'CAN_ID':arg2});
+                }
+		}
+		return testCases;
+	}
+
+    // 75 CANID
+    //
+	itParam("CANID test nodeNumber ${value.nodeNumber} CAN_ID ${value.CAN_ID}", GetTestCase_CANID(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SB780N" + value.opCode + decToHex(value.nodeNumber, 4) + decToHex(value.CAN_ID, 2) + ";";
+        var encode = cbusLib.encodeCANID(value.nodeNumber, value.CAN_ID);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.nodeNumber).to.equal(value.nodeNumber, 'nodeNumber');
+        expect(decode.CAN_ID).to.equal(value.CAN_ID, 'CAN_ID');
+	})
+
+
+    // 7F EXTC2 testcases
+    //
+	function GetTestCase_EXTC2 () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 255;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        testCases.push({'mnemonic':'EXTC2', 'opCode':'7F', 'Ext_OPC':arg1, 'byte1':arg2, 'byte2':arg3});
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // 7F EXTC2
+    //
+	itParam("EXTC2 test Ext_OPC ${value.Ext_OPC} byte1 ${value.byte1} byte2 ${value.byte2}", GetTestCase_EXTC2(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SB780N" + value.opCode + decToHex(value.Ext_OPC, 2) + decToHex(value.byte1, 2) + decToHex(value.byte2, 2) + ";";
+        var encode = cbusLib.encodeEXTC2(value.Ext_OPC, value.byte1, value.byte2);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.Ext_OPC).to.equal(value.Ext_OPC, 'Ext_OPC');
+        expect(decode.byte1).to.equal(value.byte1, 'byte1');
+        expect(decode.byte2).to.equal(value.byte2, 'byte2');
 	})
 
 

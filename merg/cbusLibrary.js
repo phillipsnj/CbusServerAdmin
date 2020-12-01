@@ -238,6 +238,9 @@ class cbusLibrary {
         case '6F':
             return this.decodeCMDERR(message);
             break;
+        case '70':
+            return this.decodeEVNLF(message);
+            break;
         case '71':
             return this.decodeNVRD(message);
             break;
@@ -249,6 +252,13 @@ class cbusLibrary {
             break;
         case '74':
             return this.decodeNUMEV(message);
+            break;
+        case '75':
+            return this.decodeCANID(message);
+            break;
+        // 76 - 7E reserved
+        case '7F':
+            return this.decodeEXTC2(message);
             break;
         case '90':
             return this.decodeACON(message);
@@ -1175,6 +1185,24 @@ class cbusLibrary {
     }
 
 
+    // 70 EVNLF
+    // EVNLF Format: [<MjPri><MinPri=3><CANID>]<70><NN hi><NN lo><EVSPC>
+    //
+    decodeEVNLF = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'EVNLF',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'EVSPC': parseInt(message.substr(13, 2), 16),
+                'text': "EVNLF (70) Node " + parseInt(message.substr(9, 4), 16) + 
+					" EVNLF " + parseInt(message.substr(13, 2), 16)
+        }
+    }
+    encodeEVNLF = function(nodeNumber, EVNLF) {
+        return this.header({MinPri: 3}) + '70' + decToHex(nodeNumber, 4) + decToHex(EVNLF, 2) + ';'
+    }
+
+
     // 71 NVRD
     // NVRD Format: [<MjPri><MinPri=3><CANID>]<71><NN hi><NN lo><NV#>
     //
@@ -1244,6 +1272,44 @@ class cbusLibrary {
     }
     encodeNUMEV = function(nodeNumber, eventCount) {
         return this.header({MinPri: 3}) + '74' + decToHex(nodeNumber, 4) + decToHex(eventCount, 2) + ';'
+    }
+    
+
+    // 75 CANID
+    // CANID Format: [<MjPri><MinPri=3><CANID>]<75><NN hi><NN lo><CAN_ID >
+    //
+    decodeCANID = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'CANID',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16),
+                'CAN_ID': parseInt(message.substr(13, 2), 16),
+                'text': "CANID (75) Node " + parseInt(message.substr(9, 4), 16) + 
+					" CAN_ID " + parseInt(message.substr(13, 2), 16)
+        }
+    }
+    encodeCANID = function(nodeNumber, CAN_ID) {
+        return this.header({MinPri: 3}) + '75' + decToHex(nodeNumber, 4) + decToHex(CAN_ID, 2) + ';'
+    }
+    
+
+    // 7F EXTC2
+    // EXTC2 Format: [<MjPri><MinPri=3><CANID>]<7F><Ext_OPC><byte1><byte2>
+    //
+    decodeEXTC2 = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'EXTC2',
+                'opCode': message.substr(7, 2),
+                'Ext_OPC': parseInt(message.substr(9, 2), 16),
+                'byte1': parseInt(message.substr(11, 2), 16),
+                'byte2': parseInt(message.substr(13, 2), 16),
+                'text': "EXTC2 (7F) Node " + parseInt(message.substr(9, 4), 16) + 
+					" byte1 " + parseInt(message.substr(11, 2), 16) +
+					" byte2 " + parseInt(message.substr(13, 2), 16)
+        }
+    }
+    encodeEXTC2 = function(Ext_OPC, byte1, byte2) {
+        return this.header({MinPri: 3}) + '7F' + decToHex(Ext_OPC, 2) + decToHex(byte1, 2) + decToHex(byte2, 2) + ';'
     }
     
 
