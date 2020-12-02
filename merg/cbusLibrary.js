@@ -283,6 +283,15 @@ class cbusLibrary {
         case '91':
             return this.decodeACOF(message);
             break;
+        case '92':
+            return this.decodeAREQ(message);
+            break;
+        case '93':
+            return this.decodeARON(message);
+            break;
+        case '94':
+            return this.decodeAROF(message);
+            break;
         case '95':
             return this.decodeEVULN(message);
             break;
@@ -298,11 +307,23 @@ class cbusLibrary {
         case '99':
             return this.decodeASOF(message);
             break;
+        case '9A':
+            return this.decodeASRQ(message);
+            break;
         case '9B':
             return this.decodePARAN(message);
             break;
         case '9C':
             return this.decodeREVAL(message);
+            break;
+        case '9D':
+            return this.decodeARSON(message);
+            break;
+        case '9E':
+            return this.decodeARSOF(message);
+            break;
+        case '9F':
+            return this.decodeEXTC3(message);
             break;
         case 'B0':
             return this.decodeACON1(message);
@@ -1470,6 +1491,63 @@ class cbusLibrary {
     }
 
 
+    // 92 AREQ
+	// AREQ Format: [<MjPri><MinPri=3><CANID>]<92><NN hi><NN lo><EN hi><EN lo>
+    //
+    decodeAREQ = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'AREQ',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {hex:''},
+                'text': "AREQ (92) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16)
+        }
+    }
+    encodeAREQ = function(nodeNumber, eventNumber) {
+        return this.header({MinPri: 3}) + '92' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) + ';';
+    }
+
+
+    // 93 ARON
+	// ARON Format: [<MjPri><MinPri=3><CANID>]<93><NN hi><NN lo><EN hi><EN lo>
+    //
+    decodeARON = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'ARON',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {hex:''},
+                'text': "ARON (93) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16)
+        }
+    }
+    encodeARON = function(nodeNumber, eventNumber) {
+        return this.header({MinPri: 3}) + '93' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) + ';';
+    }
+
+
+    // 94 AROF
+	// AROF Format: [<MjPri><MinPri=3><CANID>]<94><NN hi><NN lo><EN hi><EN lo>
+    //
+    decodeAROF = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'AROF',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {hex:''},
+                'text': "AROF (94) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16)
+        }
+    }
+    encodeAROF = function(nodeNumber, eventNumber) {
+        return this.header({MinPri: 3}) + '94' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) + ';';
+    }
+
+
     // 95 EVULN
 	// EVULN Format: [<MjPri><MinPri=3><CANID>]<95><NN hi><NN lo><EN hi><EN lo>
     //
@@ -1564,6 +1642,25 @@ class cbusLibrary {
     }
 
 
+    // 9A ASRQ
+	// ASRQ Format: [<MjPri><MinPri=3><CANID>]<9A><NN hi><NN lo><DN hi><DN lo>
+    //
+    decodeASRQ = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'ASRQ',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventData': {hex:''},
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'text': "ASRQ (9A) Node " + parseInt(message.substr(9, 4), 16) + 
+					" Device Number " + parseInt(message.substr(13, 4), 16)
+        }
+    }
+    encodeASRQ = function(nodeNumber, deviceNumber) {
+        return this.header({MinPri: 3}) + '9A' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) + ';';
+    }
+
+
     // 9B PARAN
     // PARAN Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
     //
@@ -1601,6 +1698,66 @@ class cbusLibrary {
     }
     encodeREVAL = function(nodeNumber, eventIndex, eventVariableIndex) {
         return this.header({MinPri: 3}) + '9C' + decToHex(nodeNumber, 4) + decToHex(eventIndex, 2) + decToHex(eventVariableIndex, 2) + ';'
+    }
+
+
+    // 9D ARSON
+	// ARSON Format: [<MjPri><MinPri=3><CANID>]<9D><NN hi><NN lo><DN hi><DN lo>
+    //
+    decodeARSON = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'ARSON',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventData': {hex:''},
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'text': "ARSON (9D) Node " + parseInt(message.substr(9, 4), 16) + 
+					" Device Number " + parseInt(message.substr(13, 4), 16)
+        }
+    }
+    encodeARSON = function(nodeNumber, deviceNumber) {
+        return this.header({MinPri: 3}) + '9D' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) + ';';
+    }
+
+
+    // 9E ARSOF
+	// ARSOF Format: [<MjPri><MinPri=3><CANID>]<9F><NN hi><NN lo><DN hi><DN lo>
+    //
+    decodeARSOF = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'ARSOF',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventData': {hex:''},
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'text': "ARSOF (9E) Node " + parseInt(message.substr(9, 4), 16) + 
+					" Device Number " + parseInt(message.substr(13, 4), 16)
+        }
+    }
+    encodeARSOF = function(nodeNumber, deviceNumber) {
+        return this.header({MinPri: 3}) + '9E' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) + ';';
+    }
+
+
+    // 9F EXTC3
+	// EXTC3 Format: [<MjPri><MinPri=3><CANID>]<9F><Ext_OPC><byte1><byte2><byte3>
+    //
+    decodeEXTC3 = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'EXTC3',
+                'opCode': message.substr(7, 2),
+                'Ext_OPC': parseInt(message.substr(9, 2), 16), 
+                'byte1': parseInt(message.substr(11, 2), 16),
+                'byte2': parseInt(message.substr(13, 2), 16),
+                'byte3': parseInt(message.substr(15, 2), 16),
+                'text': "EXTC3 (9F) Ext_OPC " + parseInt(message.substr(9, 2), 16) + 
+					" byte1 " + parseInt(message.substr(11, 4), 16) +
+					" byte2 " + parseInt(message.substr(13, 4), 16) +
+					" byte3 " + parseInt(message.substr(15, 4), 16)
+        }
+    }
+    encodeEXTC3 = function(Ext_OPC, byte1, byte2, byte3) {
+        return this.header({MinPri: 3}) + '9F' + decToHex(Ext_OPC, 2) + decToHex(byte1, 2) + decToHex(byte2, 2) + decToHex(byte3, 2) + ';';
     }
 
 
