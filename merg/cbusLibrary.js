@@ -390,11 +390,31 @@ class cbusLibrary {
         case 'D2':
             return this.decodeEVLRN(message);
             break;
+        case 'D3':
+            return this.decodeEVANS(message);
+            break;
+        case 'D4':
+            return this.decodeARON2(message);
+            break;
+        case 'D5':
+            return this.decodeAROF2(message);
+            break;
+        // D6 - D7 reserved
         case 'D8':
             return this.decodeASON2(message);
             break;
         case 'D9':
             return this.decodeASOF2(message);
+            break;
+        // DA - DC reserved
+        case 'DD':
+            return this.decodeARSON2(message);
+            break;
+        case 'DE':
+            return this.decodeARSOF2(message);
+            break;
+        case 'DF':
+            return this.decodeEXTC5(message);
             break;
         case 'E1':
             return this.decodePLOC(message);
@@ -2277,6 +2297,74 @@ class cbusLibrary {
     }
     
 
+    // D3 EVANS
+	// EVANS Format: [<MjPri><MinPri=3><CANID>]<D3><NN hi><NN lo><EN hi><EN lo><EV#><EV val>
+    //
+    decodeEVANS = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'EVANS',
+                'opCode': message.substr(7, 2),
+                'eventName': message.substr(9, 8),
+                'eventVariableIndex': parseInt(message.substr(17, 2), 16),
+                'eventVariableValue': parseInt(message.substr(19, 2), 16),
+                'text': "EVANS (D3) eventName " + message.substr(9, 8) + 
+					" Event Variable Index " + parseInt(message.substr(17, 2), 16) + 
+					" Event Variable Value " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeEVANS = function(eventName, eventVariableIndex, eventVariableValue) {
+        return this.header({MinPri: 3}) + 'D3' + eventName + decToHex(eventVariableIndex, 2) + decToHex(eventVariableValue, 2) + ';'
+    }
+    
+
+    // D4 ARON2
+	// ARON2 Format: [<MjPri><MinPri=3><CANID>]<D4><NN hi><NN lo><EN hi><EN lo><data1><data2>
+    //
+    decodeARON2 = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'ARON2',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                hex:message.substr(17, 4)},
+                'text': "ARON2 (D4) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeARON2 = function(nodeNumber, eventNumber, data1, data2) {
+        return this.header({MinPri: 3}) + 'D4' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
+
+    // D5 AROF2
+	// AROF2 Format: [<MjPri><MinPri=3><CANID>]<D5><NN hi><NN lo><EN hi><EN lo><data1><data2>
+    //
+    decodeAROF2 = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'AROF2',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'eventNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                hex:message.substr(17, 4)},
+                'text': "AROF2 (D5) Node " + parseInt(message.substr(9, 4), 16) + 
+					" eventNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeAROF2 = function(nodeNumber, eventNumber, data1, data2) {
+        return this.header({MinPri: 3}) + 'D5' + decToHex(nodeNumber, 4) + decToHex(eventNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
+
     // D8 ASON2
 	// ASON2 Format: [<MjPri><MinPri=3><CANID>]<D8><NN hi><NN lo><EN hi><EN lo><data1><data2>
     //
@@ -2322,6 +2410,85 @@ class cbusLibrary {
     encodeASOF2 = function(nodeNumber, deviceNumber, data1, data2) {
         return this.header({MinPri: 3}) + 'D9' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) +
             decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
+
+    // DD ARSON2
+	// ARSON2 Format: [<MjPri><MinPri=3><CANID>]<DD><NN hi><NN lo><EN hi><EN lo><data1><data2>
+    //
+    decodeARSON2 = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'ARSON2',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                hex:message.substr(17, 4)},
+                'text': "ARSON2 (DD) Node " + parseInt(message.substr(9, 4), 16) + 
+					" deviceNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeARSON2 = function(nodeNumber, deviceNumber, data1, data2) {
+        return this.header({MinPri: 3}) + 'DD' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
+
+    // DE ARSOF2
+	// ARSOF2 Format: [<MjPri><MinPri=3><CANID>]<DE><NN hi><NN lo><EN hi><EN lo><data1><data2>
+    //
+    decodeARSOF2 = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'ARSOF2',
+                'opCode': message.substr(7, 2),
+                'nodeNumber': parseInt(message.substr(9, 4), 16), 
+                'deviceNumber': parseInt(message.substr(13, 4), 16),
+                'eventData': {  data1: parseInt(message.substr(17, 2), 16), 
+                                data2: parseInt(message.substr(19, 2), 16), 
+                                hex:message.substr(17, 4)},
+                'text': "ARSOF2 (DE) Node " + parseInt(message.substr(9, 4), 16) + 
+					" deviceNumber " + parseInt(message.substr(13, 4), 16) +
+                    " data1 " + parseInt(message.substr(17, 2), 16) +
+                    " data2 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeARSOF2 = function(nodeNumber, deviceNumber, data1, data2) {
+        return this.header({MinPri: 3}) + 'DE' + decToHex(nodeNumber, 4) + decToHex(deviceNumber, 4) +
+            decToHex(data1, 2) + decToHex(data2, 2) + ';';
+    }
+
+
+    // DF EXTC5
+	// EXTC5 Format: [<MjPri><MinPri=3><CANID>]<DF><Ext_OPC><byte1><byte2><byte3><byte4><byte5>
+    //
+    decodeEXTC5 = function(message) {
+		return {'encoded': message,
+                'mnemonic': 'EXTC5',
+                'opCode': message.substr(7, 2),
+                'Ext_OPC': parseInt(message.substr(9, 2), 16), 
+                'byte1': parseInt(message.substr(11, 2), 16),
+                'byte2': parseInt(message.substr(13, 2), 16),
+                'byte3': parseInt(message.substr(15, 2), 16),
+                'byte4': parseInt(message.substr(17, 2), 16),
+                'byte5': parseInt(message.substr(19, 2), 16),
+                'text': "EXTC5 (DF) Ext_OPC " + parseInt(message.substr(9, 2), 16) + 
+					" byte1 " + parseInt(message.substr(11, 4), 16) +
+					" byte2 " + parseInt(message.substr(13, 4), 16) +
+					" byte3 " + parseInt(message.substr(15, 4), 16) +
+					" byte4 " + parseInt(message.substr(17, 4), 16) +
+					" byte5 " + parseInt(message.substr(19, 4), 16)
+        }
+    }
+    encodeEXTC5 = function(Ext_OPC, byte1, byte2, byte3, byte4, byte5) {
+        return this.header({MinPri: 3}) + 'DF' + decToHex(Ext_OPC, 2) + 
+                            decToHex(byte1, 2) + 
+                            decToHex(byte2, 2) + 
+                            decToHex(byte3, 2) + 
+                            decToHex(byte4, 2) + 
+                            decToHex(byte5, 2) + ';';
     }
 
 
