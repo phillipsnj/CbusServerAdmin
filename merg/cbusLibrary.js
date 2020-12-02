@@ -325,6 +325,14 @@ class cbusLibrary {
         case '9F':
             return this.decodeEXTC3(message);
             break;
+        case 'A0':
+            return this.decodeRDCC4(message);
+            break;
+        // A1 - reserved
+        case 'A2':
+            return this.decodeWCVS(message);
+            break;
+        // A3 - AF reserved
         case 'B0':
             return this.decodeACON1(message);
             break;
@@ -1760,6 +1768,59 @@ class cbusLibrary {
         return this.header({MinPri: 3}) + '9F' + decToHex(Ext_OPC, 2) + decToHex(byte1, 2) + decToHex(byte2, 2) + decToHex(byte3, 2) + ';';
     }
 
+
+    // A0 RDCC4
+    // RDCC4 Format: <MjPri><MinPri=2><CANID>]<A0><REP><Byte0>..<Byte3>
+    //
+    decodeRDCC4 = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RDCC4',
+                'opCode': message.substr(7, 2),
+                'repetitions': parseInt(message.substr(9, 2), 16),
+                'byte0': parseInt(message.substr(11, 2), 16),
+                'byte1': parseInt(message.substr(13, 2), 16),
+                'byte2': parseInt(message.substr(15, 2), 16),
+                'byte3': parseInt(message.substr(17, 2), 16),
+                'text': "RDCC4 (A0) repetitions " + parseInt(message.substr(9, 2), 16) + 
+					" byte0 " + parseInt(message.substr(11, 2), 16) +
+					" byte1 " + parseInt(message.substr(13, 2), 16) +
+					" byte2 " + parseInt(message.substr(15, 2), 16) +
+					" byte3 " + parseInt(message.substr(17, 2), 16)
+        }
+    }
+    encodeRDCC4 = function(repetitions, byte0, byte1, byte2, byte3) {
+        return this.header({MinPri: 2}) + 'A0' + decToHex(repetitions, 2) + 
+                            decToHex(byte0, 2) + 
+                            decToHex(byte1, 2) + 
+                            decToHex(byte2, 2) + 
+                            decToHex(byte3, 2) + ';'
+    }
+    
+
+    // A2 WCVS
+    // WCVS Format: [<MjPri><MinPri=2><CANID>]<A2><Session><High CV#><LowCV#><Mode><CVval>
+    //
+    decodeWCVS = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'WCVS',
+                'opCode': message.substr(7, 2),
+                'session': parseInt(message.substr(9, 2), 16),
+                'CV': parseInt(message.substr(11, 4), 16),
+                'mode': parseInt(message.substr(15, 2), 16),
+                'value': parseInt(message.substr(17, 2), 16),
+                'text': "WCVS (A2) Session " + parseInt(message.substr(9, 2), 16) + 
+					" CV " + parseInt(message.substr(11, 4), 16) +
+					" Mode " + parseInt(message.substr(15, 2), 16) +
+					" Value " + parseInt(message.substr(17, 2), 16)
+        }
+    }
+    encodeWCVS = function(session, CV, mode, value) {
+        return this.header({MinPri: 2}) + 'A2' + decToHex(session, 2) + 
+                            decToHex(CV, 4) + 
+                            decToHex(mode, 2) + 
+                            decToHex(value, 2) + ';'
+    }
+    
 
     // B0 ACON1
 	// ACON1 Format: [<MjPri><MinPri=3><CANID>]<D0><NN hi><NN lo><EN hi><EN lo><data1>
