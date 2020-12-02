@@ -3300,6 +3300,198 @@ describe('cbusMessage tests', function(){
 	})
 
 
+    // C0 RDCC5 testcases
+    //
+	function GetTestCase_RDCC5 () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 255;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        for (a4 = 1; a4 < 4; a4++) {
+                            if (a4 == 1) arg4 = 0;
+                            if (a4 == 2) arg4 = 1;
+                            if (a4 == 3) arg4 = 255;
+                            for (a5 = 1; a5 < 4; a5++) {
+                                if (a5 == 1) arg5 = 0;
+                                if (a5 == 2) arg5 = 1;
+                                if (a5 == 3) arg5 = 255;
+                                for (a6 = 1; a6 < 4; a6++) {
+                                    if (a6 == 1) arg6 = 0;
+                                    if (a6 == 2) arg6 = 1;
+                                    if (a6 == 3) arg6 = 255;
+                                    testCases.push({'mnemonic':'RDCC5', 
+                                                    'opCode':'C0', 
+                                                    'repetitions':arg1, 
+                                                    'byte0':arg2, 
+                                                    'byte1':arg3, 
+                                                    'byte2':arg4, 
+                                                    'byte3':arg5, 
+                                                    'byte4':arg6});
+                                }
+                            }
+                        }
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // C0 RDCC5
+    //
+	itParam("RDCC5 test repetitions ${value.repetitions} byte0 ${value.byte0} byte1 ${value.byte1} byte2 ${value.byte2} byte3 ${value.byte3} byte4 ${value.byte4}", 
+        GetTestCase_RDCC5(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SA780N" + value.opCode + decToHex(value.repetitions, 2) + decToHex(value.byte0, 2) + decToHex(value.byte1, 2) + decToHex(value.byte2, 2) + decToHex(value.byte3, 2) + decToHex(value.byte4, 2) + ";";
+        var encode = cbusLib.encodeRDCC5(value.repetitions, value.byte0, value.byte1, value.byte2, value.byte3, value.byte4);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.repetitions).to.equal(value.repetitions, 'repetitions');
+        expect(decode.byte0).to.equal(value.byte0, 'byte0');
+        expect(decode.byte1).to.equal(value.byte1, 'byte1');
+        expect(decode.byte2).to.equal(value.byte2, 'byte2');
+        expect(decode.byte3).to.equal(value.byte3, 'byte3');
+        expect(decode.byte4).to.equal(value.byte4, 'byte4');
+	})
+
+
+    // C1 WCVOA testcases
+    //
+	function GetTestCase_WCVOA () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 65535;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        for (a4 = 1; a4 < 4; a4++) {
+                            if (a4 == 1) arg4 = 0;
+                            if (a4 == 2) arg4 = 1;
+                            if (a4 == 3) arg4 = 255;
+                            testCases.push({'mnemonic':'WCVOA', 
+                                            'opCode':'C1', 
+                                            'session':arg1, 
+                                            'CV':arg2, 
+                                            'mode':arg3, 
+                                            'value':arg4});
+                        }
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // C1 WCVOA
+    //
+	itParam("WCVOA test session ${value.session} CV ${value.CV} mode ${value.mode} value ${value.value}", GetTestCase_WCVOA(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SA780N" + value.opCode + decToHex(value.session, 2) + decToHex(value.CV, 4) + decToHex(value.mode, 2) + decToHex(value.value, 2) + ";";
+        var encode = cbusLib.encodeWCVOA(value.session, value.CV, value.mode, value.value);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.Session).to.equal(value.session, 'session');
+        expect(decode.CV).to.equal(value.CV, 'CV');
+        expect(decode.mode).to.equal(value.mode, 'mode');
+        expect(decode.value).to.equal(value.value, 'value');
+	})
+
+
+    // CF FCLK testcases
+    //
+	function GetTestCase_FCLK () {
+		var testCases = [];
+		for (a1 = 1; a1 < 4; a1++) {
+			if (a1 == 1) arg1 = 0;
+			if (a1 == 2) arg1 = 1;
+			if (a1 == 3) arg1 = 255;
+                for (a2 = 1; a2 < 4; a2++) {
+                    if (a2 == 1) arg2 = 0;
+                    if (a2 == 2) arg2 = 1;
+                    if (a2 == 3) arg2 = 255;
+                    for (a3 = 1; a3 < 4; a3++) {
+                        if (a3 == 1) arg3 = 0;
+                        if (a3 == 2) arg3 = 1;
+                        if (a3 == 3) arg3 = 255;
+                        for (a4 = 1; a4 < 4; a4++) {
+                            if (a4 == 1) arg4 = 0;
+                            if (a4 == 2) arg4 = 1;
+                            if (a4 == 3) arg4 = 255;
+                            for (a5 = 1; a5 < 4; a5++) {
+                                if (a5 == 1) arg5 = 0;
+                                if (a5 == 2) arg5 = 1;
+                                if (a5 == 3) arg5 = 255;
+                                for (a6 = 1; a6 < 4; a6++) {
+                                    if (a6 == 1) arg6 = 0;
+                                    if (a6 == 2) arg6 = 1;
+                                    if (a6 == 3) arg6 = 255;
+                                    testCases.push({'mnemonic':'FCLK', 
+                                                    'opCode':'CF', 
+                                                    'minutes':arg1, 
+                                                    'hours':arg2, 
+                                                    'wdmon':arg3, 
+                                                    'div':arg4, 
+                                                    'mday':arg5, 
+                                                    'temp':arg6});
+                                }
+                            }
+                        }
+                    }
+                }
+		}
+		return testCases;
+	}
+
+    // CF FCLK
+    //
+	itParam("FCLK test minutes ${value.minutes} hours ${value.hours} wdmon ${value.wdmon} div ${value.div} mday ${value.mday} temp ${value.temp}", 
+        GetTestCase_FCLK(), function (value) {
+		winston.info({message: 'cbusMessage test: BEGIN '  + value.mnemonic +' test ' + JSON.stringify(value)});
+		expected = ":SB780N" + value.opCode + decToHex(value.minutes, 2) + decToHex(value.hours, 2) + decToHex(value.wdmon, 2) + decToHex(value.div, 2) + decToHex(value.mday, 2) + decToHex(value.temp, 2) + ";";
+        var encode = cbusLib.encodeFCLK(value.minutes, value.hours, value.wdmon, value.div, value.mday, value.temp);
+        var decode = cbusLib.decode(encode);
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' encode ' + encode});
+		winston.info({message: 'cbusMessage test: ' + value.mnemonic +' decode ' + JSON.stringify(decode)});
+		expect(encode).to.equal(expected, 'encode');
+		expect(decode.mnemonic).to.equal(value.mnemonic, 'mnemonic');
+		expect(decode.opCode).to.equal(value.opCode, 'opCode');
+        expect(decode.text).to.include(value.mnemonic + ' ', 'text mnemonic');
+        expect(decode.text).to.include('(' + value.opCode + ')', 'text opCode');
+        expect(decode.minutes).to.equal(value.minutes, 'minutes');
+        expect(decode.hours).to.equal(value.hours, 'hours');
+        expect(decode.wdmon).to.equal(value.wdmon, 'wdmon');
+        expect(decode.div).to.equal(value.div, 'div');
+        expect(decode.mday).to.equal(value.mday, 'mday');
+        expect(decode.temp).to.equal(value.temp, 'temp');
+	})
+
+
     // D0/D1 ACON2 & ACOF2 test cases
     //
 	function GetTestCase_ACONF2 () {

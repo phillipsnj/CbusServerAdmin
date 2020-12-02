@@ -371,6 +371,16 @@ class cbusLibrary {
         case 'BF':
             return this.decodeEXTC4(message);
             break;
+        case 'C0':
+            return this.decodeRDCC5(message);
+            break;
+        case 'C1':
+            return this.decodeWCVOA(message);
+            break;
+        // C2 - CE reserved
+        case 'CF':
+            return this.decodeFCLK(message);
+            break;
         case 'D0':
             return this.decodeACON2(message);
             break;
@@ -2111,6 +2121,93 @@ class cbusLibrary {
                             decToHex(byte4, 2) + ';';
     }
 
+
+    // C0 RDCC5
+    // RDCC5 Format: <MjPri><MinPri=2><CANID>]<A0><REP><Byte0>..<Byte4>
+    //
+    decodeRDCC5 = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'RDCC5',
+                'opCode': message.substr(7, 2),
+                'repetitions': parseInt(message.substr(9, 2), 16),
+                'byte0': parseInt(message.substr(11, 2), 16),
+                'byte1': parseInt(message.substr(13, 2), 16),
+                'byte2': parseInt(message.substr(15, 2), 16),
+                'byte3': parseInt(message.substr(17, 2), 16),
+                'byte4': parseInt(message.substr(19, 2), 16),
+                'text': "RDCC5 (C0) repetitions " + parseInt(message.substr(9, 2), 16) + 
+					" byte0 " + parseInt(message.substr(11, 2), 16) +
+					" byte1 " + parseInt(message.substr(13, 2), 16) +
+					" byte2 " + parseInt(message.substr(15, 2), 16) +
+					" byte3 " + parseInt(message.substr(17, 2), 16) +
+					" byte4 " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeRDCC5 = function(repetitions, byte0, byte1, byte2, byte3, byte4) {
+        return this.header({MinPri: 2}) + 'C0' + decToHex(repetitions, 2) + 
+                            decToHex(byte0, 2) + 
+                            decToHex(byte1, 2) + 
+                            decToHex(byte2, 2) + 
+                            decToHex(byte3, 2) + 
+                            decToHex(byte4, 2) + ';'
+    }
+    
+
+    // C1 WCVOA
+    // WCVOA Format: [<MjPri><MinPri=2><CANID>]<C1><AddrH><AddrL><High CV#><Low CV#><Mode><Val>
+    //
+    decodeWCVOA = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'WCVOA',
+                'opCode': message.substr(7, 2),
+                'Session': parseInt(message.substr(9, 2), 16),
+                'CV': parseInt(message.substr(11, 4), 16),
+                'mode': parseInt(message.substr(15, 2), 16),
+                'value': parseInt(message.substr(17, 2), 16),
+                'text': "WCVOA (C1) Session " + parseInt(message.substr(9, 2), 16) + 
+					" CV " + parseInt(message.substr(11, 4), 16) +
+					" mode " + parseInt(message.substr(15, 2), 16) +
+					" value " + parseInt(message.substr(17, 2), 16)
+        }
+    }
+    encodeWCVOA = function(Session, CV, mode, value) {
+        return this.header({MinPri: 2}) + 'C1' + decToHex(Session, 2) + decToHex(CV, 4) + decToHex(mode, 2) + decToHex(value, 2) + ';'
+    }
+    
+
+    // CF FCLK
+    // FCLK Format: <MjPri><MinPri=3><CANID>]<CF><mins><hrs><wdmon><div><mday><temp>
+    //
+    decodeFCLK = function(message) {
+        return {'encoded': message,
+                'mnemonic': 'FCLK',
+                'opCode': message.substr(7, 2),
+                'minutes': parseInt(message.substr(9, 2), 16),
+                'hours': parseInt(message.substr(11, 2), 16),
+                'wdmon': parseInt(message.substr(13, 2), 16),
+                'div': parseInt(message.substr(15, 2), 16),
+                'mday': parseInt(message.substr(17, 2), 16),
+                'temp': parseInt(message.substr(19, 2), 16),
+                'weekDay': parseInt(message.substr(13, 2), 16)%16,
+                'month': parseInt(message.substr(13, 2), 16) >> 4,
+                'text': "FCLK (CF) minutes " + parseInt(message.substr(9, 2), 16) + 
+					" hours " + parseInt(message.substr(11, 4), 16) +
+					" wdmon " + parseInt(message.substr(13, 2), 16) +
+					" div " + parseInt(message.substr(15, 2), 16) +
+					" mday " + parseInt(message.substr(17, 2), 16) +
+					" temp " + parseInt(message.substr(19, 2), 16)
+        }
+    }
+    encodeFCLK = function(minutes, hours, wdmon, div, mday, temp) {
+        return this.header({MinPri: 3}) + 'CF' + 
+                            decToHex(minutes, 2) + 
+                            decToHex(hours, 2) + 
+                            decToHex(wdmon, 2) + 
+                            decToHex(div, 2) + 
+                            decToHex(mday, 2) + 
+                            decToHex(temp, 2) + ';'
+    }
+    
 
     // D0 ACON2
 	// ACON2 Format: [<MjPri><MinPri=3><CANID>]<D0><NN hi><NN lo><EN hi><EN lo><data1><data2>
