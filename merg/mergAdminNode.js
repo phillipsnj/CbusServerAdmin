@@ -26,8 +26,8 @@ class cbusAdmin extends EventEmitter {
         this.pr1 = 2
         this.pr2 = 3
         this.canId = 60
-        this.config.nodes = {}
-        this.config.events = {}
+        //this.config.nodes = {}
+        //this.config.events = {}
         this.cbusErrors = {}
         this.cbusNoSupport = {}
         this.dccSessions = {}
@@ -483,7 +483,7 @@ class cbusAdmin extends EventEmitter {
         //
         //
         //
-        //jsonfile.writeFileSync(this.configFile, this.config, {spaces: 2, EOL: '\r\n'})
+        jsonfile.writeFileSync(this.configFile, this.config, {spaces: 2, EOL: '\r\n'})
         //let nodes = []
         /*for (let node in this.config.nodes){
             nodes.push(this.config.nodes[node])
