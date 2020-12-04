@@ -458,7 +458,7 @@ describe('Websocket server tests', function(){
 
 	itParam("REQUEST_ALL_NODE_PARAMETERS test nodeId ${value.nodeId} parameterCount ${value.parameterCount}", GetTestCase_REQUEST_ALL_NODE_PARAMETERS(), function (done, value) {
 		winston.info({message: 'wsserver Test: START REQUEST_ALL_NODE_PARAMETERS test: ' + JSON.stringify(value)});
-		let timeoutDelay = 1;
+		let timeoutDelay = 5;
 		mock_Cbus.clearSendArray();
 		websocket_Client.emit('REQUEST_ALL_NODE_PARAMETERS', {
 				"nodeId": value.nodeId, 
@@ -611,7 +611,7 @@ describe('Websocket server tests', function(){
 			 expected5 = ":SB780N58" + decToHex(value.nodeId, 4) + ";";
 			 expect(mock_Cbus.getSendArray()[5]).to.equal(expected5);
 			done();
-		}, 10);
+		}, 20);
 	})
 
 
@@ -647,7 +647,7 @@ describe('Websocket server tests', function(){
 			let testCase = {
 				'major': '1',
 				'minor': '0',
-				'patch': '10',
+				'patch': '13',
 				}
 		websocket_Client.on('VERSION', function (data) {
 			versionData = data;
