@@ -3,7 +3,7 @@ var winston = require('winston');		// use config from root instance
 const net = require('net');
 const cbusMessage = require('./../merg/mergCbusMessage.js')
 
-const cbusLib = require('./../merg/cbusLibrary.js')
+const cbusLib = require('cbusLibrary')
 
 //
 //		Grid connect CAN over serial message syntax

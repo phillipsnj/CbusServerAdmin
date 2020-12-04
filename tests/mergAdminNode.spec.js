@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 var itParam = require('mocha-param');
 var winston = require('./config/winston_test.js');
 
-const cbusLib = require('./../merg/cbusLibrary.js')
+const cbusLib = require('cbusLibrary')
 
 const NET_PORT = 5550;
 const NET_ADDRESS = "127.0.0.1"
@@ -1392,7 +1392,7 @@ describe('mergAdminNode tests', function(){
                 expect(dccSessionsData[value.session].F2).to.equal(value.Fn2);
                 expect(dccSessionsData[value.session].F3).to.equal(value.Fn3);
                 done();
-            }, 10);
+            }, 20);
 	})
 
 

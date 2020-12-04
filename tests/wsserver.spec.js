@@ -62,6 +62,13 @@ describe('Websocket server tests', function(){
 
 	});
 
+    
+    beforeEach(function() {
+   		winston.info({message: ' '});   // blank line to separate tests
+        mock_Cbus.clearSendArray()
+    })
+    
+
 	after(function() {
 		if (websocket_Client.connected)
 		{

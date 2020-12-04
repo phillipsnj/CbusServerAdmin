@@ -2,7 +2,7 @@
 var winston = require('winston');		// use config from root instance
 const net = require('net')
 const jsonfile = require('jsonfile')
-let cbusLib = require('./cbusLibrary.js')
+let cbusLib = require('cbusLibrary')
 const EventEmitter = require('events').EventEmitter;
 
 
@@ -539,11 +539,11 @@ class cbusAdmin extends EventEmitter {
     }
 
     EVLRN(event, variableId, valueId) {//Read an Events EV by index
-        return cbusLib.encodeEVLRN(event, variableId, valueId);
+        return cbusLib.encodeEVLRN(parseInt(event.substr(0,4),16), parseInt(event.substr(4,4),16), variableId, valueId);
     }
 
     EVULN(event) {//Read an Events EV by index
-        return cbusLib.encodeEVULN(event);
+        return cbusLib.encodeEVULN(parseInt(event.substr(0,4),16), parseInt(event.substr(4,4),16));
 
     }
 
