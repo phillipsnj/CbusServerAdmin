@@ -2,7 +2,7 @@
 var winston = require('winston');		// use config from root instance
 const net = require('net')
 const jsonfile = require('jsonfile')
-let cbusLib = require('cbusLibrary')
+let cbusLib = require('cbuslibrary')
 const EventEmitter = require('events').EventEmitter;
 
 
