@@ -220,7 +220,7 @@ class mock_CbusNetwork {
 
 
 	// 50
-	outputRQNN(nodeId) {
+	outputRQNN(nodeNumber) {
 		//Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
 		var msgData = cbusLib.encodeRQNN(nodeNumber);
 		this.socket.write(msgData);
