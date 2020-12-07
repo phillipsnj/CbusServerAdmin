@@ -53,7 +53,7 @@ var options = {
 // default logger is essentially a blank logger, and has no transports setup, so need to add them
 //
 
-winston.add(new winston.transports.File(options.file));
+//winston.add(new winston.transports.File(options.file));
 winston.add(new winston.transports.Console(options.console));
 
 
