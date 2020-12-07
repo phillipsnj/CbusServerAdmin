@@ -1,13 +1,13 @@
 'use strict';
 const socketIO = require('socket.io');
-var winston = require('winston');		// use config from root instance
-
+const winston = require('winston');		// use config from root instance
+const fs = require('fs');
 
 const jsonfile = require('jsonfile')
-let layoutDetails = jsonfile.readFileSync('./config/layoutDetails.json')
 const packageFile = jsonfile.readFileSync('./package.json')
 
-function wsserver(httpserver, node) {
+function wsserver(LAYOUT_PATH, httpserver, node) {
+    let layoutDetails = jsonfile.readFileSync(LAYOUT_PATH + "layoutDetails.json")
     const io = socketIO(httpserver);
 
     io.on('connection', function(socket){
@@ -148,7 +148,7 @@ function wsserver(httpserver, node) {
         })
 		
         socket.on('REQUEST_VERSION', function(){
-//			winston.debug({message: `REQUEST_VERSION ${JSON.stringify(packageFile)}`});
+			winston.debug({message: `REQUEST_VERSION ${JSON.stringify(packageFile)}`});
             const versionArray = packageFile.version.toString().split(".");
 			let version = {
 				'major': versionArray[0],
@@ -195,7 +195,7 @@ function wsserver(httpserver, node) {
 		winston.debug({message: `requestNodeNumber : ${newNodeId}`});
         node.cbusSend(node.SNN(newNodeId))
         layoutDetails.layoutDetails.nextNodeId = newNodeId+1
-        jsonfile.writeFileSync('./config/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
+        jsonfile.writeFileSync(LAYOUT_PATH + 'layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
         io.emit('layoutDetails', layoutDetails)
         node.cbusSend(node.QNN())
     })

@@ -1,6 +1,8 @@
 const expect = require('chai').expect;
 var itParam = require('mocha-param');
 var winston = require('./config/winston_test.js');
+const fs = require('fs');
+const jsonfile = require('jsonfile')
 
 const cbusLib = require('cbusLibrary')
 
@@ -8,13 +10,40 @@ const NET_PORT = 5550;
 const NET_ADDRESS = "127.0.0.1"
 const admin = require('./../merg/mergAdminNode.js')
 const file = 'config/nodeConfig.json'
+const layoutPath = 'config/'
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 
 function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
+
+function createTestLayout() {
+            var directory = "./tests/config/" + 'testLayout/'
+            
+            // check if directory exists
+            if (fs.existsSync(directory)) {
+                winston.debug({message: `CHANGE_LAYOUT: Directory exists`});
+            } else {
+                winston.debug({message: `CHANGE_LAYOUT: Directory not found - creating new one`});
+                fs.mkdir(directory, function(err) {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    console.log("New directory successfully created.")
+                  }
+                })            
+            }
+            const emptyConfig = {"nodes": {}, "events": {}}
+            jsonfile.writeFileSync(directory + "nodeConfig.json", emptyConfig, {spaces: 2, EOL: '\r\n'})
+            
+            return directory
+}
+
+
+
 describe('mergAdminNode tests', function(){
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-	let node = new admin.cbusAdmin(file, NET_ADDRESS,NET_PORT);
+    var directory = createTestLayout()
+	let node = new admin.cbusAdmin(directory, NET_ADDRESS,NET_PORT);
 
 	before(function(done) {
 		winston.info({message: ' '});
@@ -22,6 +51,9 @@ describe('mergAdminNode tests', function(){
 		winston.info({message: '------------------------ mergAdminNode tests -------------------------'});
 		winston.info({message: '======================================================================'});
 		winston.info({message: ' '});
+        
+            
+       
 
         // request nodes & then allow some time to process them
         winston.info({message: '..................................................'});
