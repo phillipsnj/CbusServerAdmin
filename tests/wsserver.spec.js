@@ -1,5 +1,8 @@
 const expect = require('chai').expect;
 var winston = require('./config/winston_test.js');
+const fs = require('fs');
+const jsonfile = require('jsonfile')
+
 
 const websocket_Server = require('./../wsserver');
 const http = require('http');
@@ -22,16 +25,40 @@ function decToHex(num, len) {
     return padded.substr(-len)
 }
 
+function createTestLayout() {
+            var directory = "./tests/config/" + 'testLayout/'
+            
+            // check if directory exists
+            if (fs.existsSync(directory)) {
+                winston.debug({message: `CHANGE_LAYOUT: Directory exists`});
+            } else {
+                winston.debug({message: `CHANGE_LAYOUT: Directory not found - creating new one`});
+                fs.mkdir(directory, function(err) {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    console.log("New directory successfully created.")
+                  }
+                })            
+            }
+            const emptyNodeConfig = {"nodes": {}, "events": {}}
+            jsonfile.writeFileSync(directory + "nodeConfig.json", emptyNodeConfig, {spaces: 2, EOL: '\r\n'})
+            const emptyLayoutDetails = {"layoutDetails": { "title": "Test", "subTitle": "test", "nextNodeId": 800}, 
+                                          "nodeDetails": {}, "eventDetails": {}}
+            jsonfile.writeFileSync(directory + "layoutDetails.json", emptyLayoutDetails, {spaces: 2, EOL: '\r\n'})
+            return directory
+}
+
 
 describe('Websocket server tests', function(){
 	let http_Server = undefined;
 	let websocket_Client = undefined;
 
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(file, NET_ADDRESS,NET_PORT);
+    var directory = createTestLayout()
+	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(directory, NET_ADDRESS,NET_PORT);
 	
-	let debug = 0;
-
+    
 	before(function(done) {
 		winston.info({message: ' '});
 		winston.info({message: '======================================================================'});
@@ -42,7 +69,7 @@ describe('Websocket server tests', function(){
 		http_Server = http.createServer(() => console.log(" -/- "));
 		http_Server.listen(7575, () => { winston.info({message: "wsserver listening on 7575"}); });
 	
-		websocket_Server(http_Server, cbusAdmin);
+		websocket_Server(directory, http_Server, cbusAdmin);
 
 		websocket_Client = io.connect('http://localhost:7575/', {
             'reconnection delay' : 0
@@ -81,7 +108,7 @@ describe('Websocket server tests', function(){
 		}
 		
 	});
-	
+
 
 		var TestCases_NodeId = 		[	{ node: 0 },
 										{ node: 1 },
@@ -94,6 +121,7 @@ describe('Websocket server tests', function(){
 	// Test WebSocket In Messages
 	//
 	///////////////////////////////////////////////
+
 
 	it("Wait.....", function (done) {
 		setTimeout(function(){
@@ -651,7 +679,6 @@ describe('Websocket server tests', function(){
 				}
 		websocket_Client.on('VERSION', function (data) {
 			versionData = data;
-			if (debug) console.log("\nTest Client: REQUEST_VERSION test : " + JSON.stringify(versionData));
 			winston.info({message: 'wsserver Test: REQUEST_VERSION test : ' + JSON.stringify(versionData)});
 			});	
 		websocket_Client.emit('REQUEST_VERSION')
@@ -661,6 +688,7 @@ describe('Websocket server tests', function(){
 			done();
 			}, 10);
 	});
+
 
 
 

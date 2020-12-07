@@ -14,15 +14,18 @@ function pad(num, len) { //add zero's to ensure hex values have correct number o
 function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
 class cbusAdmin extends EventEmitter {
-    constructor(CONFIG_FILE, NET_ADDRESS, NET_PORT) {
-        const setup = jsonfile.readFileSync(CONFIG_FILE)
-        const merg = jsonfile.readFileSync('./config/mergConfig.json')
+    constructor(LAYOUT_PATH, NET_ADDRESS, NET_PORT) {
         super();
+//        const setup = jsonfile.readFileSync(LAYOUT_PATH  + 'nodeConfig.json')
+        this.configFile = LAYOUT_PATH + 'nodeConfig.json'
+        this.config = jsonfile.readFileSync(this.configFile)
+        const merg = jsonfile.readFileSync('./config/mergConfig.json')
+//        super();
         this.merg = merg
         winston.debug({message: `merg :${JSON.stringify(this.merg)}`});
         //winston.debug({message: `merg- 32 :${JSON.stringify(this.merg['modules'][32]['name'])}`});
-        this.config = setup
-        this.configFile = CONFIG_FILE
+//        this.config = setup
+//        this.configFile = LAYOUT_PATH + 'nodeConfig.json'
         this.pr1 = 2
         this.pr2 = 3
         this.canId = 60
@@ -483,6 +486,7 @@ class cbusAdmin extends EventEmitter {
         //
         //
         //
+		winston.debug({message: 'mergAdminNode: Save Config : ' + this.configFile});
         jsonfile.writeFileSync(this.configFile, this.config, {spaces: 2, EOL: '\r\n'})
         //let nodes = []
         /*for (let node in this.config.nodes){

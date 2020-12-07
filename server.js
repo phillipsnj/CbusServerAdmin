@@ -35,12 +35,12 @@ const PORT = 3000
 
 const admin = require('./merg/mergAdminNode.js')
 
-const file = 'config/nodeConfig.json'
+const layout_path = 'config/'
 
-let node = new admin.cbusAdmin(file,NET_ADDRESS,NET_PORT);
+let node = new admin.cbusAdmin(layout_path,NET_ADDRESS,NET_PORT);
 
 const websocket_Server = require('./wsserver')
-websocket_Server(server, node)
+websocket_Server(layout_path,server, node)
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
