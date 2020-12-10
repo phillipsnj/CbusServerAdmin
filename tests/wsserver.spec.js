@@ -986,7 +986,7 @@ describe('Websocket server tests', function(){
 			expect(status).to.equal(value.status);
 			websocket_Client.off('events');
 			done();
-			}, 10);
+			}, 20);
 	});
 
 

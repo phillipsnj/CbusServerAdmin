@@ -401,7 +401,7 @@ class cbusAdmin extends EventEmitter {
                 let ref = cbusMsg.opCode
 
                 if (ref in this.cbusNoSupport) {
-                    this.cbusNoSupport[ref].msg = msg
+                    this.cbusNoSupport[ref].cbusMsg = cbusMsg
                     this.cbusNoSupport[ref].count += 1
                 } else {
                     let output = {}
