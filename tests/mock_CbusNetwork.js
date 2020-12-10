@@ -264,6 +264,14 @@ class mock_CbusNetwork {
 	}
 
 
+	// 71
+	outputNVRD(nodeNumber, nodeVariableIndex) {
+		var msgData = cbusLib.encodeNVRD(nodeNumber, nodeVariableIndex);
+		this.socket.write(msgData);
+		winston.info({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+	}
+
+
 	// 74
 	outputNUMEV(nodeNumber, eventCount) {
 		// Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
