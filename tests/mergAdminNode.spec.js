@@ -492,7 +492,7 @@ describe('mergAdminNode tests', function(){
 		winston.info({message: 'mergAdminNode test: BEGIN CMDERR test ' + JSON.stringify(value)});
         node.on('cbusError', function tmp(data) {
 			errorData = data;
-			winston.info({message: 'mergAdminNode Test: ERR test - message data : ' + JSON.stringify(errorData)});
+			winston.info({message: 'mergAdminNode Test: CMDERR test - message data : ' + JSON.stringify(errorData)});
             node.removeListener('cbusError', tmp);    // remove event listener after first event
         })
 		mock_Cbus.outputCMDERR(value.nodeNumber, value.errorNumber);
@@ -530,6 +530,16 @@ describe('mergAdminNode tests', function(){
 		winston.info({message: 'mergAdminNode test: BEGIN NVRD test ' + JSON.stringify(value)});
 		expected = ":SB780N71" + decToHex(value.nodeId, 4) + decToHex(value.nvIndex, 2) + ";";
 		expect(node.NVRD(value.nodeId, value.nvIndex)).to.equal(expected);
+	})
+
+
+    // 71 NVRD
+    //
+	itParam("NVRD test:  nodeId ${value.nodeId} nvIndex ${value.nvIndex}", GetTestCase_NVRD(), function (done, value) {
+		winston.info({message: 'mergAdminNode test: BEGIN NVRD test ' + JSON.stringify(value)});
+		mock_Cbus.outputNVRD(value.nodeNumber, value.nvIndex);
+        // currently not a supported opcode, just ensures it doesn't crash
+    done()
 	})
 
 
@@ -1644,6 +1654,25 @@ describe('mergAdminNode tests', function(){
 			done();
 		}, 10);
 	})
+
+
+    // FC non-existant opcode - FC doesn't exist, so check that doesn't cause any problem, and should emit an 'cbusNoSupport' event
+    //
+	it("FC Unsupported Opcode test:  ", function (done) {
+		winston.info({message: 'mergAdminNode test: BEGIN FC Unsupported Opcode test '});
+        node.cbusNoSupport = {}     // clear no support array first
+        node.on('cbusNoSupport', function tmp(data) {
+			cbusNoSupportData = data;
+			winston.info({message: 'mergAdminNode Test: FC Unsupported Opcode test - message data : ' + JSON.stringify(cbusNoSupportData)});
+            node.removeListener('cbusNoSupport', tmp);    // remove event listener after first event
+        })
+		mock_Cbus.outputUNSUPOPCODE(0);
+        setTimeout(function(){
+            expect(cbusNoSupportData['FC'].opCode).to.equal('FC', 'opcode');
+            done();
+        }, 20);
+	})
+
 
     
     
