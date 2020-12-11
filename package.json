@@ -10,7 +10,9 @@
     "dev": "nodemon server"
   },
   "nodemonConfig": {
-    "ignore": ["config/nodeConfig.json"]
+    "ignore": [
+      "config/nodeConfig.json"
+    ]
   },
   "author": "Nigel Phillips",
   "license": "MIT",
