@@ -1,6 +1,6 @@
 {
   "name": "cbusserveradmin",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Websocket Server for MERG Cbus network",
   "main": "server.js",
   "scripts": {
