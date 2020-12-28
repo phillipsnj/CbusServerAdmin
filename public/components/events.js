@@ -35,7 +35,7 @@ Vue.component('events', {
             eventList: function () {
                 this.displayEventList = []
                 for (let i in this.eventList) {
-                    console.log(`Update Diaplay List ${i}`)
+                    console.log(`Update Display List ${i}`)
                     if (this.$store.state.layout.eventDetails[this.eventList[i].id]) {
                         this.eventList[i].name = this.$store.state.layout.eventDetails[this.eventList[i].id].name
                         this.eventList[i].colour = this.$store.state.layout.eventDetails[this.eventList[i].id].colour

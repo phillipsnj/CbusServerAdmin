@@ -92,7 +92,7 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canace8c",
       "learn": false,
       "EvCount": 0
@@ -110,7 +110,7 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canacc8",
       "learn": false,
       "EvCount": 2
@@ -146,7 +146,7 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canmio",
       "learn": true,
       "EvCount": 28
@@ -159,7 +159,7 @@
       "eventId": 1,
       "status": "off",
       "type": "long",
-      "count": 6,
+      "count": 24,
       "data": ""
     },
     "0325006D": {
@@ -168,7 +168,7 @@
       "eventId": 109,
       "status": "on",
       "type": "long",
-      "count": 6,
+      "count": 45,
       "data": ""
     },
     "03220008": {
@@ -177,7 +177,7 @@
       "eventId": 8,
       "status": "off",
       "type": "long",
-      "count": 6,
+      "count": 61,
       "data": ""
     },
     "032500C9": {
@@ -186,7 +186,7 @@
       "eventId": 201,
       "status": "on",
       "type": "long",
-      "count": 3,
+      "count": 21,
       "data": ""
     },
     "0325012D": {
@@ -195,7 +195,7 @@
       "eventId": 301,
       "status": "off",
       "type": "long",
-      "count": 3,
+      "count": 21,
       "data": ""
     },
     "03250006": {
@@ -214,6 +214,51 @@
       "status": "on",
       "type": "long",
       "count": 1,
+      "data": ""
+    },
+    "03220004": {
+      "id": "03220004",
+      "nodeId": 802,
+      "eventId": 4,
+      "status": "off",
+      "type": "long",
+      "count": 48,
+      "data": ""
+    },
+    "03220003": {
+      "id": "03220003",
+      "nodeId": 802,
+      "eventId": 3,
+      "status": "off",
+      "type": "long",
+      "count": 26,
+      "data": ""
+    },
+    "03220005": {
+      "id": "03220005",
+      "nodeId": 802,
+      "eventId": 5,
+      "status": "off",
+      "type": "long",
+      "count": 8,
+      "data": ""
+    },
+    "03220006": {
+      "id": "03220006",
+      "nodeId": 802,
+      "eventId": 6,
+      "status": "off",
+      "type": "long",
+      "count": 6,
+      "data": ""
+    },
+    "03220002": {
+      "id": "03220002",
+      "nodeId": 802,
+      "eventId": 2,
+      "status": "off",
+      "type": "long",
+      "count": 8,
       "data": ""
     }
   }
