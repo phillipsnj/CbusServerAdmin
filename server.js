@@ -35,7 +35,7 @@ const PORT = 3000
 
 const admin = require('./merg/mergAdminNode.js')
 
-const layout_path = 'config/'
+const layout_path = 'default'
 
 let node = new admin.cbusAdmin(layout_path,NET_ADDRESS,NET_PORT);
 

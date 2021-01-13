@@ -2,7 +2,7 @@
   "layoutDetails": {
     "title": "MERG Demo",
     "subTitle": "Admin",
-    "nextNodeId": 806
+    "nextNodeId": "800"
   },
   "nodeDetails": {
     "200": {
@@ -31,7 +31,7 @@
     },
     "700": {
       "name": "CANSERVO8C 4G - 700",
-      "colour": "red",
+      "colour": "black",
       "group": "Board 1"
     },
     "undefined": {

@@ -4,6 +4,11 @@
     "subTitle": "Admin",
     "nextNodeId": 800
   },
-  "nodeDetails": {},
+  "nodeDetails": {
+    "257": {
+      "name": "Node 257",
+      "colour": "red"
+    }
+  },
   "eventDetails": {}
 }
