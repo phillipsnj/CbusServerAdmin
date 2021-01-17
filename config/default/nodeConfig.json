@@ -33,8 +33,47 @@
         1,
         1
       ],
-      "variables": [],
-      "actions": {},
+      "variables": [
+        null,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10,
+        0,
+        255,
+        255
+      ],
+      "actions": {
+        "1": {
+          "event": "03220008",
+          "actionId": 1,
+          "eventIndex": 1,
+          "variables": [
+            3
+          ]
+        },
+        "2": {
+          "event": "03220001",
+          "actionId": 2,
+          "eventIndex": 2,
+          "variables": [
+            3
+          ]
+        },
+        "3": {
+          "event": "01020002",
+          "actionId": 3,
+          "eventIndex": 3,
+          "variables": [
+            3
+          ]
+        }
+      },
       "status": true,
       "component": "merg-canacc8",
       "learn": false,
@@ -113,5 +152,51 @@
       "EvCount": 28
     }
   },
-  "events": {}
+  "events": {
+    "03220008": {
+      "id": "03220008",
+      "nodeId": 802,
+      "eventId": 8,
+      "status": "off",
+      "type": "long",
+      "count": 2,
+      "data": ""
+    },
+    "03220001": {
+      "id": "03220001",
+      "nodeId": 802,
+      "eventId": 1,
+      "status": "off",
+      "type": "long",
+      "count": 4,
+      "data": ""
+    },
+    "0325006D": {
+      "id": "0325006D",
+      "nodeId": 805,
+      "eventId": 109,
+      "status": "on",
+      "type": "long",
+      "count": 8,
+      "data": ""
+    },
+    "032500C9": {
+      "id": "032500C9",
+      "nodeId": 805,
+      "eventId": 201,
+      "status": "on",
+      "type": "long",
+      "count": 4,
+      "data": ""
+    },
+    "0325012D": {
+      "id": "0325012D",
+      "nodeId": 805,
+      "eventId": 301,
+      "status": "off",
+      "type": "long",
+      "count": 4,
+      "data": ""
+    }
+  }
 }
