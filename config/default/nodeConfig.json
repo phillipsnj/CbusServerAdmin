@@ -1,5 +1,84 @@
 {
   "nodes": {
+    "257": {
+      "node": 257,
+      "manuf": 165,
+      "module": "CANOUT",
+      "flags": 13,
+      "consumer": true,
+      "producer": false,
+      "flim": true,
+      "bootloader": true,
+      "coe": false,
+      "parameters": [
+        20,
+        165,
+        99,
+        63,
+        128,
+        3,
+        12,
+        5,
+        13,
+        13,
+        1,
+        0,
+        8,
+        0,
+        0,
+        38,
+        97,
+        0,
+        0,
+        1,
+        1
+      ],
+      "variables": [
+        null,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10,
+        0,
+        255,
+        255
+      ],
+      "actions": {
+        "1": {
+          "event": "03220008",
+          "actionId": 1,
+          "eventIndex": 1,
+          "variables": [
+            3
+          ]
+        },
+        "2": {
+          "event": "03220001",
+          "actionId": 2,
+          "eventIndex": 2,
+          "variables": [
+            3
+          ]
+        },
+        "3": {
+          "event": "01020002",
+          "actionId": 3,
+          "eventIndex": 3,
+          "variables": [
+            3
+          ]
+        }
+      },
+      "status": true,
+      "component": "merg-canacc8",
+      "learn": false,
+      "EvCount": 3
+    },
     "700": {
       "node": 700,
       "manuf": 165,
@@ -10,69 +89,8 @@
       "flim": true,
       "bootloader": true,
       "coe": false,
-      "parameters": [
-        20,
-        165,
-        74,
-        19,
-        128,
-        3,
-        37,
-        4,
-        13,
-        13,
-        1,
-        0,
-        8,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1
-      ],
-      "variables": [
-        null,
-        247,
-        0,
-        255,
-        255,
-        219,
-        49,
-        2,
-        7,
-        127,
-        127,
-        0,
-        2,
-        127,
-        127,
-        0,
-        0,
-        138,
-        105,
-        0,
-        0,
-        233,
-        21,
-        7,
-        7,
-        127,
-        127,
-        0,
-        0,
-        127,
-        127,
-        0,
-        0,
-        162,
-        88,
-        0,
-        0,
-        9
-      ],
+      "parameters": [],
+      "variables": [],
       "actions": {},
       "status": true,
       "component": "merg-canservo8c",
@@ -92,7 +110,7 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canace8c",
       "learn": false,
       "EvCount": 0
@@ -110,28 +128,10 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
-      "component": "merg-canacc8",
-      "learn": false,
-      "EvCount": 2
-    },
-    "804": {
-      "node": 804,
-      "manuf": 165,
-      "module": "CANOUT",
-      "flags": 13,
-      "consumer": true,
-      "producer": false,
-      "flim": true,
-      "bootloader": true,
-      "coe": false,
-      "parameters": [],
-      "variables": [],
-      "actions": {},
       "status": true,
       "component": "merg-canacc8",
       "learn": false,
-      "EvCount": 3
+      "EvCount": 2
     },
     "805": {
       "node": 805,
@@ -146,20 +146,29 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canmio",
       "learn": true,
       "EvCount": 28
     }
   },
   "events": {
+    "03220008": {
+      "id": "03220008",
+      "nodeId": 802,
+      "eventId": 8,
+      "status": "off",
+      "type": "long",
+      "count": 2,
+      "data": ""
+    },
     "03220001": {
       "id": "03220001",
       "nodeId": 802,
       "eventId": 1,
       "status": "off",
       "type": "long",
-      "count": 6,
+      "count": 4,
       "data": ""
     },
     "0325006D": {
@@ -168,16 +177,7 @@
       "eventId": 109,
       "status": "on",
       "type": "long",
-      "count": 6,
-      "data": ""
-    },
-    "03220008": {
-      "id": "03220008",
-      "nodeId": 802,
-      "eventId": 8,
-      "status": "off",
-      "type": "long",
-      "count": 6,
+      "count": 8,
       "data": ""
     },
     "032500C9": {
@@ -186,7 +186,7 @@
       "eventId": 201,
       "status": "on",
       "type": "long",
-      "count": 3,
+      "count": 4,
       "data": ""
     },
     "0325012D": {
@@ -195,25 +195,7 @@
       "eventId": 301,
       "status": "off",
       "type": "long",
-      "count": 3,
-      "data": ""
-    },
-    "03250006": {
-      "id": "03250006",
-      "nodeId": 805,
-      "eventId": 6,
-      "status": "on",
-      "type": "long",
-      "count": 1,
-      "data": ""
-    },
-    "03250007": {
-      "id": "03250007",
-      "nodeId": 805,
-      "eventId": 7,
-      "status": "on",
-      "type": "long",
-      "count": 1,
+      "count": 4,
       "data": ""
     }
   }

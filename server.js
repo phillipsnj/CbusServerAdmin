@@ -1,6 +1,7 @@
 const path = require('path')
 const http = require('http')
 const express = require('express')
+const jsonfile = require('jsonfile')
 //const socketio = require('socket.io')
 var winston = require('./config/winston.js');
 
@@ -28,19 +29,20 @@ app.use('/css',express.static(__dirname +'/node_modules'));
 // *********************************************************
 //
 
-const NET_PORT = 5550;
-const NET_ADDRESS = "localhost"
+const system = jsonfile.readFileSync('./config/systemConfig.json')
+
+const NET_PORT = system.serverPort
+const NET_ADDRESS = system.server
 //const NET_ADDRESS = "mergDev4"
-const PORT = 3000
+const PORT = system.port
+const LAYOUT = system.config
 
 const admin = require('./merg/mergAdminNode.js')
 
-const layout_path = 'config/'
-
-let node = new admin.cbusAdmin(layout_path,NET_ADDRESS,NET_PORT);
+let node = new admin.cbusAdmin(LAYOUT,NET_ADDRESS,NET_PORT);
 
 const websocket_Server = require('./wsserver')
-websocket_Server(layout_path,server, node)
+websocket_Server(LAYOUT,server, node)
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 

@@ -17,7 +17,7 @@ class cbusAdmin extends EventEmitter {
     constructor(LAYOUT_PATH, NET_ADDRESS, NET_PORT) {
         super();
 //        const setup = jsonfile.readFileSync(LAYOUT_PATH  + 'nodeConfig.json')
-        this.configFile = LAYOUT_PATH + 'nodeConfig.json'
+        this.configFile = 'config/'+ LAYOUT_PATH + '/nodeConfig.json'
         this.config = jsonfile.readFileSync(this.configFile)
         const merg = jsonfile.readFileSync('./config/mergConfig.json')
 //        super();

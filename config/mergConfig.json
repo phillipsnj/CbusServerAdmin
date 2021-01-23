@@ -36,6 +36,10 @@
       "name": "CANETHER",
       "component": "mergDefault"
     },
+    "50": {
+      "name": "CANMIO-SVO",
+      "component": "merg-canservo8c"
+    },
     "52": {
       "name": "CANMIO-OUT",
       "component": "merg-canacc8"
