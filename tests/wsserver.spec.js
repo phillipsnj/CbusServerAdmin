@@ -55,7 +55,8 @@ describe('Websocket server tests', function(){
 	let websocket_Client = undefined;
 
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-    var directory = createTestLayout()
+//    var directory = createTestLayout()
+    var directory = 'testLayout'
 	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(directory, NET_ADDRESS,NET_PORT);
 	
     
@@ -675,7 +676,7 @@ describe('Websocket server tests', function(){
 			let testCase = {
 				'major': '1',
 				'minor': '0',
-				'patch': '13',
+				'patch': '14',
 				}
 		websocket_Client.on('VERSION', function (data) {
 			versionData = data;
