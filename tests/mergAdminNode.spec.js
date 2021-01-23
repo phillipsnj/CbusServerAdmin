@@ -42,8 +42,9 @@ function createTestLayout() {
 
 describe('mergAdminNode tests', function(){
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-    var directory = createTestLayout()
-	let node = new admin.cbusAdmin(directory, NET_ADDRESS,NET_PORT);
+//    var directory = createTestLayout()
+//	let node = new admin.cbusAdmin(directory, NET_ADDRESS,NET_PORT);
+	let node = new admin.cbusAdmin('testLayout', NET_ADDRESS,NET_PORT);
 
 	before(function(done) {
 		winston.info({message: ' '});
