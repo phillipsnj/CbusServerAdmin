@@ -25,8 +25,8 @@ function decToHex(num, len) {
     return padded.substr(-len)
 }
 
-function createTestLayout() {
-            var directory = "./tests/config/" + 'testLayout/'
+function createConfigs(layoutName) {
+            var directory = "./config/" + layoutName
             
             // check if directory exists
             if (fs.existsSync(directory)) {
@@ -42,10 +42,10 @@ function createTestLayout() {
                 })            
             }
             const emptyNodeConfig = {"nodes": {}, "events": {}}
-            jsonfile.writeFileSync(directory + "nodeConfig.json", emptyNodeConfig, {spaces: 2, EOL: '\r\n'})
+            jsonfile.writeFileSync(directory + "/nodeConfig.json", emptyNodeConfig, {spaces: 2, EOL: '\r\n'})
             const emptyLayoutDetails = {"layoutDetails": { "title": "Test", "subTitle": "test", "nextNodeId": 800}, 
                                           "nodeDetails": {}, "eventDetails": {}}
-            jsonfile.writeFileSync(directory + "layoutDetails.json", emptyLayoutDetails, {spaces: 2, EOL: '\r\n'})
+            jsonfile.writeFileSync(directory + "/layoutDetails.json", emptyLayoutDetails, {spaces: 2, EOL: '\r\n'})
             return directory
 }
 
@@ -55,9 +55,9 @@ describe('Websocket server tests', function(){
 	let websocket_Client = undefined;
 
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-//    var directory = createTestLayout()
-    var directory = 'testLayout'
-	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(directory, NET_ADDRESS,NET_PORT);
+    var layoutName = 'testLayout'
+    createConfigs(layoutName)
+	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(layoutName, NET_ADDRESS,NET_PORT);
 	
     
 	before(function(done) {
@@ -70,7 +70,7 @@ describe('Websocket server tests', function(){
 		http_Server = http.createServer(() => console.log(" -/- "));
 		http_Server.listen(7575, () => { winston.info({message: "wsserver listening on 7575"}); });
 	
-		websocket_Server(directory, http_Server, cbusAdmin);
+		websocket_Server(layoutName, http_Server, cbusAdmin);
 
 		websocket_Client = io.connect('http://localhost:7575/', {
             'reconnection delay' : 0
