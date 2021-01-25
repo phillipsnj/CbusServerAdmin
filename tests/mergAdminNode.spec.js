@@ -16,8 +16,8 @@ const Mock_Cbus = require('./mock_CbusNetwork.js')
 function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
 
 
-function createTestLayout() {
-            var directory = "./tests/config/" + 'testLayout/'
+function createConfigs(layoutName) {
+            var directory = "./config/" + layoutName
             
             // check if directory exists
             if (fs.existsSync(directory)) {
@@ -33,7 +33,7 @@ function createTestLayout() {
                 })            
             }
             const emptyConfig = {"nodes": {}, "events": {}}
-            jsonfile.writeFileSync(directory + "nodeConfig.json", emptyConfig, {spaces: 2, EOL: '\r\n'})
+            jsonfile.writeFileSync(directory + "/nodeConfig.json", emptyConfig, {spaces: 2, EOL: '\r\n'})
             
             return directory
 }
@@ -42,9 +42,9 @@ function createTestLayout() {
 
 describe('mergAdminNode tests', function(){
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
-//    var directory = createTestLayout()
-//	let node = new admin.cbusAdmin(directory, NET_ADDRESS,NET_PORT);
-	let node = new admin.cbusAdmin('testLayout', NET_ADDRESS,NET_PORT);
+    var layoutName = 'testLayout'
+    createConfigs(layoutName)
+	let node = new admin.cbusAdmin(layoutName, NET_ADDRESS,NET_PORT);
 
 	before(function(done) {
 		winston.info({message: ' '});
