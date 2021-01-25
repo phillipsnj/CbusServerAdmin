@@ -27,6 +27,8 @@ Vue.component('merg-canacc5', {
             this.$store.state.node_component = "merg-canacc5-node-variables"
         },
         getEvents() {
+            this.$root.send('CLEAR_NODE_EVENTS', {'nodeId': this.nodeId})
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
             this.$store.state.node_component = "merg-canacc5-node-events"
         }
         
