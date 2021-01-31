@@ -44,6 +44,8 @@ class mock_CbusNetwork {
 
     constructor(NET_PORT) {
 		winston.debug({message: 'Mock CBUS Network: Starting'});
+        
+        this.clients = [];
 
 
 		this.sendArray = [];
@@ -60,9 +62,10 @@ class mock_CbusNetwork {
 		this.server = net.createServer(function (socket) {
 			this.socket=socket;
 			socket.setKeepAlive(true,60000);
+            this.clients.push(socket);
             
 			socket.on('data', function (data) {
-				winston.debug({message: 'Mock CBUS Network: data received'});
+				winston.debug({message: 'Mock CBUS Network: Receive <<<< Port: ' + socket.remotePort});
 				const msgArray = data.toString().split(";");
 				for (var i = 0; i < msgArray.length - 1; i++) {
 					msgArray[i] = msgArray[i].concat(";");				// add back the ';' terminator that was lost in the split
@@ -73,13 +76,15 @@ class mock_CbusNetwork {
                     } else if ( cbusMsg.ID_TYPE == 'X' ) {
                         this.processExtendedMessage(cbusMsg)
                     } else {
-                        winston.info({message: 'Mock CBUS Network: <<< Received message UNKNOWN ID TYPE [' + msgIndex + '] ' +  message + " <<< "});
+                        winston.info({message: 'Mock CBUS Network: Receive <<<< message UNKNOWN ID TYPE [' + msgIndex + '] ' +  message + " <<< "});
                     }
                 }
 			}.bind(this));
 
 			socket.on('end', function () {
-				winston.debug({message: 'Mock CBUS Network: Client Disconnected'});
+                this.clients.splice(this.clients.indexOf(socket), 1);
+                var rport = socket.remotePort;
+				winston.debug({message: 'Mock CBUS Network: Client Disconnected at port ' + rport});
 			}.bind(this));
 			
 			socket.on('error', function(err) {
@@ -93,12 +98,12 @@ class mock_CbusNetwork {
 		// emitted when new client connects
 		this.server.on('connection',function(socket){
 			var rport = socket.remotePort;
-			winston.debug({message: 'Mock CBUS Network: remote client at port : ' + rport});
-		});
+			winston.debug({message: 'Mock CBUS Network: remote client ' + this.clients.length + ' at port : ' + rport});
+		}.bind(this));
 	}
 
     processExtendedMessage(cbusMsg) {
-        winston.debug({message: 'Mock CBUS Network: <<< Received EXTENDED ID message ' + cbusMsg.text });
+        winston.debug({message: 'Mock CBUS Network: Receive <<<< EXTENDED ID message: ' + cbusMsg.text });
         if (cbusMsg.type == 'CONTROL') {
             switch (cbusMsg.SPCMD) {
                 case 0:
@@ -139,13 +144,13 @@ class mock_CbusNetwork {
 
     outputExtResponse(value) {
 		var msgData = cbusLib.encode_EXT_RESPONSE(value)
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network:  OUT >>>  ' + msgData + " >>> "});
     }
 
 
     processStandardMessage(cbusMsg) {
-        winston.debug({message: 'Mock CBUS Network: <<< Received STANDARD ID message ' + cbusMsg.text });
+        winston.debug({message: 'Mock CBUS Network: Receive <<<< STANDARD ID message ' + cbusMsg.text });
         switch (cbusMsg.opCode) {
             case '0D':
                 // Format: <MjPri><MinPri=3><CANID>]<0D>
@@ -240,6 +245,12 @@ class mock_CbusNetwork {
     }
 
 
+    broadcast(msgData) {
+        this.clients.forEach(function (client) {
+            client.write(msgData);
+            winston.debug({message: 'Mock CBUS Network: Transmit >>>> Port: ' + client.remotePort + ' Data: ' + cbusLib.decode(msgData).text});
+        });
+    }
 
 
 	getSendArray() {
@@ -269,7 +280,7 @@ class mock_CbusNetwork {
 	// 00 ACK
 	outputACK() {
 		var msgData = cbusLib.encodeACK();
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -278,7 +289,7 @@ class mock_CbusNetwork {
 	outputKLOC(session) {
 		// Format: [<MjPri><MinPri=2><CANID>]<21><Session>
 		var msgData = ':S' + 'B780' + 'N' + '21' + decToHex(session, 2) + ';';
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output KLOC : session [' + session + '] ' + msgData});
 	}
 
@@ -286,7 +297,7 @@ class mock_CbusNetwork {
 	// 23 DKEEP
 	outputDKEEP(session) {
 		var msgData = cbusLib.encodeDKEEP(session);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -294,7 +305,7 @@ class mock_CbusNetwork {
 	// 47 DSPD
 	outputDSPD(session, speed, direction) {
 		var msgData = cbusLib.encodeDSPD(session, speed, direction);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -303,7 +314,7 @@ class mock_CbusNetwork {
 	outputRQNN(nodeNumber) {
 		//Format: [<MjPri><MinPri=3><CANID>]<50><NN hi><NN lo>
 		var msgData = cbusLib.encodeRQNN(nodeNumber);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 	
@@ -312,7 +323,7 @@ class mock_CbusNetwork {
 	outputNERD(nodeNumber) {
 		//Format: [<MjPri><MinPri=3><CANID>]<57>NN hi><NN lo>
 		var msgData = cbusLib.encodeNERD(nodeNumber);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 	
@@ -321,7 +332,7 @@ class mock_CbusNetwork {
 	outputDFUN(session, fn1, fn2) {
 		// Format: [<MjPri><MinPri=2><CANID>]<60><Session><Fn1><Fn2>
 		var msgData = ':S' + 'B780' + 'N' + '60' + decToHex(session, 2) + decToHex(fn1, 2) + decToHex(fn2, 2) + ';';
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output DFUN : session [' + session + '] ' + msgData});
 	}
 
@@ -330,7 +341,7 @@ class mock_CbusNetwork {
 	outputERR(data1, data2, errorNumber) {
 		// Format: [<MjPri><MinPri=2><CANID>]<63><Dat 1><Dat 2><Dat 3>
 		var msgData = cbusLib.encodeERR(data1, data2, errorNumber);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -339,7 +350,7 @@ class mock_CbusNetwork {
 	outputCMDERR(nodeNumber, errorNumber) {
 		// Format: [<MjPri><MinPri=3><CANID>]<6F><NN hi><NN lo><Error number>
 		var msgData = cbusLib.encodeCMDERR(nodeNumber, errorNumber);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -347,7 +358,7 @@ class mock_CbusNetwork {
 	// 71
 	outputNVRD(nodeNumber, nodeVariableIndex) {
 		var msgData = cbusLib.encodeNVRD(nodeNumber, nodeVariableIndex);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -356,15 +367,15 @@ class mock_CbusNetwork {
 	outputNUMEV(nodeNumber, eventCount) {
 		// Format: [<MjPri><MinPri=3><CANID>]<74><NN hi><NN lo><No.of events>
 		var msgData = cbusLib.encodeNUMEV(nodeNumber, eventCount);
-		this.socket.write(msgData);
-		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).mnemonic});
+        this.broadcast(msgData)
 	}
 
 	// 90
 	outputACON(nodeNumber, eventNumber) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeACON(nodeNumber, eventNumber);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -373,7 +384,7 @@ class mock_CbusNetwork {
 	outputACOF(nodeNumber, eventNumber) {
 		// Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeACOF(nodeNumber, eventNumber);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -382,7 +393,7 @@ class mock_CbusNetwork {
 	outputNVANS(nodeNumber, nodeVariableIndex, nodeVariableValue) {
 		// Format: [<MjPri><MinPri=3><CANID>]<91><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeNVANS(nodeNumber, nodeVariableIndex, nodeVariableValue);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -391,7 +402,7 @@ class mock_CbusNetwork {
 	outputASON(nodeNumber, deviceNumber) {
 		// Format: [<MjPri><MinPri=3><CANID>]<98><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeASON(nodeNumber, deviceNumber);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -400,7 +411,7 @@ class mock_CbusNetwork {
 	outputASOF(nodeNumber, deviceNumber) {
 		// Format: [<MjPri><MinPri=3><CANID>]<99><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeASOF(nodeNumber, deviceNumber);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -409,7 +420,7 @@ class mock_CbusNetwork {
 	outputPARAN(nodeNumber, parameterIndex, parameterValue) {
 		// Format: [<MjPri><MinPri=3><CANID>]<9B><NN hi><NN lo><Para#><Para val>
 		var msgData = cbusLib.encodePARAN(nodeNumber, parameterIndex, parameterValue);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -418,7 +429,7 @@ class mock_CbusNetwork {
 	outputACON1(nodeNumber, eventNumber, data1) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeACON1(nodeNumber, eventNumber, data1);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -427,7 +438,7 @@ class mock_CbusNetwork {
 	outputACOF1(nodeNumber, eventNumber, data1) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeACOF1(nodeNumber, eventNumber, data1);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -435,7 +446,7 @@ class mock_CbusNetwork {
 	// B5
 	outputNEVAL(nodeNumber, eventIndex, eventVariableIndex, eventVariableValue) {
 		var msgData = cbusLib.encodeNEVAL(nodeNumber, eventIndex, eventVariableIndex, eventVariableValue);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -443,8 +454,8 @@ class mock_CbusNetwork {
 	// B6
 	outputPNN(nodeNumber, manufacturerId, moduleId, flags) {
 		var msgData = cbusLib.encodePNN(nodeNumber, manufacturerId, moduleId, flags);
-		this.socket.write(msgData);
-		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
+		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).mnemonic});
+        this.broadcast(msgData)
 	}
 
 
@@ -452,7 +463,7 @@ class mock_CbusNetwork {
 	outputASON1(nodeNumber, deviceNumber, data1) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeASON1(nodeNumber, deviceNumber, data1);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -461,7 +472,7 @@ class mock_CbusNetwork {
 	outputASOF1(nodeNumber, deviceNumber, data1) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeASOF1(nodeNumber, deviceNumber, data1);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -470,7 +481,7 @@ class mock_CbusNetwork {
 	outputACON2(nodeNumber, eventNumber, data1, data2) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeACON2(nodeNumber, eventNumber, data1, data2);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -479,7 +490,7 @@ class mock_CbusNetwork {
 	outputACOF2(nodeNumber, eventNumber, data1, data2) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeACOF2(nodeNumber, eventNumber, data1, data2);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -488,7 +499,7 @@ class mock_CbusNetwork {
 	outputASON2(nodeNumber, deviceNumber, data1, data2) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeASON2(nodeNumber, deviceNumber, data1, data2);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -497,7 +508,7 @@ class mock_CbusNetwork {
 	outputASOF2(nodeNumber, deviceNumber, data1, data2) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeASOF2(nodeNumber, deviceNumber, data1, data2);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -505,7 +516,7 @@ class mock_CbusNetwork {
 	// E1
 	outputPLOC(session, address, speed, direction, Fn1, Fn2, Fn3) {
 		var msgData = cbusLib.encodePLOC(session, address, speed, direction, Fn1, Fn2, Fn3);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -514,7 +525,7 @@ class mock_CbusNetwork {
 	outputACON3(nodeNumber, eventNumber, data1, data2, data3) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeACON3(nodeNumber, eventNumber, data1, data2, data3);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -523,7 +534,7 @@ class mock_CbusNetwork {
 	outputACOF3(nodeNumber, eventNumber, data1, data2, data3) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeACOF3(nodeNumber, eventNumber, data1, data2, data3);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -532,7 +543,7 @@ class mock_CbusNetwork {
 	outputENRSP(nodeNumber, eventName, eventIndex) {
 		// ENRSP Format: [<MjPri><MinPri=3><CANID>]<F2><NN hi><NN lo><EN3><EN2><EN1><EN0><EN#>
         var msgData = cbusLib.encodeENRSP(nodeNumber, eventName, eventIndex)
-        this.socket.write(msgData);
+        this.broadcast(msgData)
         winston.debug({message: 'CBUS Network Sim:  OUT>>  ' + msgData + " " + cbusLib.decode(msgData).text});
 	}
 
@@ -541,7 +552,7 @@ class mock_CbusNetwork {
 	outputASON3(nodeNumber, deviceNumber, data1, data2, data3) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeASON3(nodeNumber, deviceNumber, data1, data2, data3);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -550,7 +561,7 @@ class mock_CbusNetwork {
 	outputASOF3(nodeNumber, deviceNumber, data1, data2, data3) {
 		// Format: [<MjPri><MinPri=3><CANID>]<90><NN hi><NN lo><EN hi><EN lo>
 		var msgData = cbusLib.encodeASOF3(nodeNumber, deviceNumber, data1, data2, data3);
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output ' + cbusLib.decode(msgData).text});
 	}
 
@@ -560,7 +571,7 @@ class mock_CbusNetwork {
 		// Ficticious opcode - 'FC' currently unused
 		// Format: [<MjPri><MinPri=3><CANID>]<FC><NN hi><NN lo>
 		var msgData = ':S' + 'B780' + 'N' + 'FC' + decToHex(nodeId, 4) + ';';
-		this.socket.write(msgData);
+        this.broadcast(msgData)
 		winston.debug({message: 'Mock CBUS Network: Output UNSUPOPCODE : nodeId [' + nodeId + '] ' + msgData});
 	}
 }
