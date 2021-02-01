@@ -6,7 +6,7 @@ const jsonfile = require('jsonfile')
 
 const cbusLib = require('cbusLibrary')
 
-const NET_PORT = 5550;
+const NET_PORT = 5553;
 const NET_ADDRESS = "127.0.0.1"
 const admin = require('./../merg/mergAdminNode.js')
 const file = 'config/nodeConfig.json'
@@ -1094,8 +1094,14 @@ describe('mergAdminNode tests', function(){
 	itParam("PNN test: nodeNumber ${value.nodeNumber} manufacturerId ${value.manufacturerId} moduleId ${value.moduleId} flags ${value.flags}", 
         GetTestCase_PNN(), function (done, value) {
             winston.info({message: 'mergAdminNode test: BEGIN PNN test ' + JSON.stringify(value)});
+            nodeData = ""
+            node.once('nodes', function (nodes) {
+                nodeData = nodes;
+                winston.debug({message: `EVENT Received: Nodes Sent :${JSON.stringify(nodes)}`});
+            })
             mock_Cbus.outputPNN(value.nodeNumber, value.manufacturerId, value.moduleId, value.flags);
             setTimeout(function(){
+                expect(nodeData[0].node).to.equal(0);       // just to check an event was received            
                 expect(node.config.nodes[value.nodeNumber].flags).to.equal(value.flags)
                 done()
             }, 10);
