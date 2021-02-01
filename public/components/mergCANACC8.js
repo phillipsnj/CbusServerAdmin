@@ -60,7 +60,7 @@ Vue.component('merg-canacc8', {
       </v-container>
       <component v-bind:is="$store.state.node_component"></component>
       <v-container v-if="$store.state.debug">
-        <p>{{ JSON.stringify(node) }}</p>
+        <common-display-json v-bind:info="node"></common-display-json>
       </v-container>
       </v-container>
     `
@@ -117,7 +117,7 @@ Vue.component('merg-canacc8-node-variables', {
       </v-row>
 
       <v-row v-if="$store.state.debug">
-        <p>{{ node.variables }}</p>
+        <common-display-json v-bind:info="node.variables"></common-display-json>
       </v-row>
       </v-container>
     `
@@ -199,6 +199,7 @@ Vue.component('merg-canacc8-node-events', {
         </template>
       </v-data-table>
       <v-row v-if="$store.state.debug">
+        <common-display-json v-bind:info="$store.state.nodes[this.nodeId].actions"></common-display-json>
         <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
       </v-row>
       </v-container>`
@@ -263,6 +264,7 @@ Vue.component('merg-canacc8-node-event-variables', {
         </node-event-variable>
       </v-row>
       <v-row v-if="$store.state.debug">
+        <common-display-json v-bind:info="node.actions[actionId]"></common-display-json>
         <p>{{ node.actions[actionId] }}</p>
       </v-row>
       </v-container>`

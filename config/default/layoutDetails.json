@@ -1,6 +1,6 @@
 {
   "layoutDetails": {
-    "title": "MERG Demo",
+    "title": "MERG",
     "subTitle": "Admin",
     "nextNodeId": 800
   },
@@ -8,6 +8,10 @@
     "257": {
       "name": "Node 257",
       "colour": "red"
+    },
+    "803": {
+      "name": "Node 803",
+      "colour": "teal"
     }
   },
   "eventDetails": {}

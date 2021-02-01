@@ -59,6 +59,7 @@ Vue.component('mergDefault', {
       </v-container>
       <component v-bind:is="$store.state.node_component"></component>
       <v-container v-if="$store.state.debug">
+        <common-display-json v-bind:info="nodes"></common-display-json>
         <p>{{ JSON.stringify(node) }}</p>
       </v-container>
       </v-container>
@@ -216,6 +217,7 @@ Vue.component('merg-default-node-events', {
         </v-data-table>
       </v-card>
       <v-row v-if="$store.state.debug">
+        <common-display-json v-bind:info="$store.state.nodes[this.nodeId].actions"></common-display-json>
         <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
       </v-row>
       </v-container>`

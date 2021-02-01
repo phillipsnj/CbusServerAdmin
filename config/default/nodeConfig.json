@@ -154,7 +154,7 @@
       ],
       "variables": [],
       "actions": {},
-      "status": true,
+      "status": false,
       "component": "merg-canace8c",
       "learn": false,
       "EvCount": 0
@@ -193,9 +193,9 @@
         0
       ],
       "variables": [
-        null,
         0,
-        50,
+        0,
+        67,
         153,
         0,
         153,
@@ -225,7 +225,7 @@
           ]
         }
       },
-      "status": true,
+      "status": false,
       "component": "merg-canacc8",
       "learn": false,
       "EvCount": 2
@@ -287,12 +287,12 @@
         235,
         235,
         60,
-        0,
+        3,
         6,
-        4,
-        4,
-        235,
-        235,
+        128,
+        127,
+        64,
+        3,
         60,
         0,
         6,
@@ -316,12 +316,12 @@
         null,
         null,
         0,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
+        6,
+        4,
+        4,
+        235,
+        235,
+        60,
         0,
         null,
         null,
@@ -394,7 +394,14 @@
           "eventIndex": 1,
           "variables": [
             7,
-            0
+            0,
+            49,
+            2,
+            50,
+            9,
+            5,
+            10,
+            2
           ]
         },
         "2": {
@@ -402,8 +409,8 @@
           "actionId": 2,
           "eventIndex": 2,
           "variables": [
-            0,
-            12
+            5,
+            0
           ]
         },
         "3": {
@@ -456,8 +463,7 @@
           "actionId": 8,
           "eventIndex": 8,
           "variables": [
-            0,
-            36
+            0
           ]
         },
         "9": {
@@ -639,12 +645,30 @@
             0,
             52
           ]
+        },
+        "30": {
+          "event": "032500CA",
+          "actionId": 30,
+          "eventIndex": 30,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "31": {
+          "event": "03250066",
+          "actionId": 31,
+          "eventIndex": 31,
+          "variables": [
+            0,
+            12
+          ]
         }
       },
-      "status": true,
+      "status": false,
       "component": "merg-canmio",
       "learn": true,
-      "EvCount": 28
+      "EvCount": 30
     }
   },
   "events": {
@@ -652,9 +676,9 @@
       "id": "03220008",
       "nodeId": 802,
       "eventId": 8,
-      "status": "off",
+      "status": "on",
       "type": "long",
-      "count": 18,
+      "count": 31,
       "data": ""
     },
     "03220001": {
@@ -663,34 +687,34 @@
       "eventId": 1,
       "status": "off",
       "type": "long",
-      "count": 16,
+      "count": 22,
       "data": ""
     },
     "0325006D": {
       "id": "0325006D",
       "nodeId": 805,
       "eventId": 109,
-      "status": "on",
+      "status": "off",
       "type": "long",
-      "count": 30,
+      "count": 36,
       "data": ""
     },
     "032500C9": {
       "id": "032500C9",
       "nodeId": 805,
       "eventId": 201,
-      "status": "on",
+      "status": "off",
       "type": "long",
-      "count": 13,
+      "count": 16,
       "data": ""
     },
     "0325012D": {
       "id": "0325012D",
       "nodeId": 805,
       "eventId": 301,
-      "status": "off",
+      "status": "on",
       "type": "long",
-      "count": 14,
+      "count": 17,
       "data": ""
     },
     "03220007": {

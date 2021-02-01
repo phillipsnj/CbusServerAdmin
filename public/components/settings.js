@@ -71,6 +71,7 @@ Vue.component('settings', {
               <v-container v-if="$store.state.debug">
                 <v-row>
                   <h2>Debug Mode</h2>
+                  <common-display-json v-bind:info="$store.state.layout"></common-display-json>
                 </v-row>
                 <v-row><p>{{ $store.state.layout }}</p></v-row>
               </v-container>
