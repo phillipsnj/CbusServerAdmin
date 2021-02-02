@@ -118,7 +118,8 @@ Vue.component('merg-canacc5-node-events', {
                 {text: 'Event Index', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
-            addNewEventDialog: false
+            addNewEventDialog: false,
+            programNodeDialog: false
         }
     },
     methods: {
@@ -167,11 +168,16 @@ Vue.component('merg-canacc5-node-events', {
                     
         <template v-slot:top>
             <v-toolbar flat>
-              <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
-
-              <v-dialog v-model="addNewEventDialog" max-width="300">
-              <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
-            </v-dialog>
+            
+                <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
+                <v-dialog v-model="addNewEventDialog" max-width="300">
+                    <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
+                </v-dialog>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" @click.stop="programNodeDialog = true" outlined>Program Node</v-btn>
+                <v-dialog v-model="programNodeDialog" max-width="300">
+                    <program-node-dialog v-on:close-programNodeDialog="programNodeDialog=false"></program-node-dialog>
+                </v-dialog>
               
             </v-toolbar>
         </template>
