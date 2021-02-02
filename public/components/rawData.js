@@ -48,7 +48,7 @@ Vue.component('raw-data', {
         </v-tab>
         <v-tab-item :key="1">
           <v-card flat>
-            <v-card-text>{{ nodes }}</v-card-text>
+            <v-card-text><common-display-json v-bind:info="nodes"></common-display-json></v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :key="2">
@@ -68,7 +68,7 @@ Vue.component('raw-data', {
         </v-tab-item>
         <v-tab-item :key="5">
           <v-card flat>
-            <v-card-text>{{ layoutDetails }}</v-card-text>
+            <v-card-text><common-display-json :info="layoutDetails"></common-display-json></v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :key="6">

@@ -8,7 +8,6 @@ const websocket_Server = require('./../wsserver');
 const http = require('http');
 
 const file = 'config/nodeConfig.json'
-const cbusAdmin_Interface = require('./../merg/mergAdminNode.js')
 
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 
@@ -57,7 +56,6 @@ describe('Websocket server tests', function(){
 	let mock_Cbus = new Mock_Cbus.mock_CbusNetwork(NET_PORT);
     var layoutName = 'testLayout'
     createConfigs(layoutName)
-	let cbusAdmin = new cbusAdmin_Interface.cbusAdmin(layoutName, NET_ADDRESS,NET_PORT);
 	
     
 	before(function(done) {
@@ -70,7 +68,7 @@ describe('Websocket server tests', function(){
 		http_Server = http.createServer(() => console.log(" -/- "));
 		http_Server.listen(7575, () => { winston.info({message: "wsserver listening on 7575"}); });
 	
-		websocket_Server(layoutName, http_Server, cbusAdmin);
+		websocket_Server(layoutName, http_Server, NET_ADDRESS, NET_PORT);
 
 		websocket_Client = io.connect('http://localhost:7575/', {
             'reconnection delay' : 0
@@ -691,6 +689,22 @@ describe('Websocket server tests', function(){
 	});
 
 
+	it('PROGRAM_NODE test', function(done) {
+		winston.info({message: 'wsserver Test: START PROGRAM_NODE test'});
+		websocket_Client.on('PROGRAM_NODE', function (data) {
+			data;
+			winston.warn({message: 'wsserver Test: PROGRAM_NODE ' + JSON.stringify(data)});
+			});	
+		websocket_Client.emit('PROGRAM_NODE', {
+                "nodeNumber": 300,
+                "cpuType": 1,
+                "file": './tests/test_firmware/shortFile.HEX',
+                "flags": 3
+            })
+		setTimeout(function(){
+			done();
+			}, 2000);
+	});
 
 
 	///////////////////////////////////////////////
@@ -781,10 +795,9 @@ describe('Websocket server tests', function(){
 			output['Message'] = value.message
 			output['node'] = value.nodeId
 			output['count'] = 1
-			//this.cbusErrors.push(output)
 			cbusErrors[ref] = output
               
-		cbusAdmin.clearCbusErrors();
+		websocket_Client.emit('CLEAR_CBUS_ERRORS')
 		websocket_Client.on('cbusError', function (data) {
 			cbusErrorData = data;
 			winston.info({message: 'wsserver Test: cbusError test - data : ' + JSON.stringify(cbusErrorData)});
@@ -801,22 +814,18 @@ describe('Websocket server tests', function(){
 	it('cbusNoSupport test', function(done) {
 		winston.info({message: 'wsserver Test: START cbusNoSupport test:'});
 		
-			var cbusNoSupport = {}
-			let ref = "FC"
-			let output = {}
-			output['opCode'] = "FC"
-            output['msg'] = {"message":":SB780NFC0001;"}
-            output['count'] = 1
-            cbusNoSupport[ref] = output
+			let expected = {}
+			expected['opCode'] = "FC"
+            expected['msg'] = {"message":":SB780NFC0001;"}
+            expected['count'] = 1
 		
-		websocket_Client.on('cbusNoSupport', function (data) {
+		websocket_Client.once('cbusNoSupport', function (data) {
 			cbusNoSupportData = data;
 			winston.info({message: 'wsserver Test: cbusNoSupport test - data : ' + JSON.stringify(cbusNoSupportData)});
 			});	
 		mock_Cbus.outputUNSUPOPCODE(1);
 		setTimeout(function(){
-			expect(JSON.stringify(cbusNoSupportData)).to.equal(JSON.stringify(cbusNoSupport));
-			websocket_Client.off('cbusNoSupport');
+			expect(JSON.stringify(cbusNoSupportData['FC'])).to.equal(JSON.stringify(expected));
 			done();
 			}, 10);
 	});

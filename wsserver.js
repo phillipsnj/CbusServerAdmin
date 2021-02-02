@@ -6,9 +6,15 @@ const fs = require('fs');
 const jsonfile = require('jsonfile')
 const packageFile = jsonfile.readFileSync('./package.json')
 
-function wsserver(LAYOUT_PATH, httpserver, node) {
-    let layoutDetails = jsonfile.readFileSync('config/'+LAYOUT_PATH + "/layoutDetails.json")
-    const io = socketIO(httpserver);
+const admin = require('./merg/mergAdminNode.js')
+
+
+function wsserver(LAYOUT_NAME, httpserver, NET_ADDRESS,NET_PORT) {
+    let layoutDetails = jsonfile.readFileSync('config/'+LAYOUT_NAME + "/layoutDetails.json")
+    const io = socketIO(httpserver); 
+    const programNode = require('./merg/programNode.js')(NET_ADDRESS, NET_PORT)
+    let node = new admin.cbusAdmin(LAYOUT_NAME, NET_ADDRESS, NET_PORT);
+
 
     io.on('connection', function(socket){
 		winston.debug({message: 'a user connected'});
@@ -27,7 +33,6 @@ function wsserver(LAYOUT_PATH, httpserver, node) {
                 let time = i*data.delay
                 setTimeout(function() {node.cbusSend(node.RQNPN(data.nodeId, i))},time)
             }
-            //node.cbusSend(node.RQNPN(data.nodeId, data.parameter))
         })
         socket.on('RQNPN', function(data){ //Request Node Parameter
 			winston.debug({message: `RQNPN ${JSON.stringify(data)}`});
@@ -136,12 +141,14 @@ function wsserver(LAYOUT_PATH, httpserver, node) {
 			winston.debug({message: `REFRESH_EVENTS`});
             node.refreshEvents();
         })
-        socket.on('UPDATE_LAYOUT_DETAILS', function(data){
-			winston.debug({message: `UPDATE_LAYOUT_DETAILS ${JSON.stringify(data)}`});
+        
+        socket.on('UPDATE_LAYOUT_NAME_DETAILS', function(data){
+			winston.debug({message: `UPDATE_LAYOUT_NAME_DETAILS ${JSON.stringify(data)}`});
             layoutDetails = data
-            jsonfile.writeFileSync('config/'+LAYOUT_PATH + '/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
+            jsonfile.writeFileSync('config/'+LAYOUT_NAME + '/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
             io.emit('layoutDetails', layoutDetails)
         })
+        
         socket.on('CLEAR_CBUS_ERRORS', function(data){
 			winston.debug({message: `CLEAR_CBUS_ERRORS`});
             node.clearCbusErrors()
@@ -158,6 +165,12 @@ function wsserver(LAYOUT_PATH, httpserver, node) {
 
             io.emit('VERSION', version)
         })
+
+        socket.on('PROGRAM_NODE', function(data){
+			winston.debug({message: `PROGRAM_NODE ${JSON.stringify(data)}`});
+            programNode.download(data.nodeNumber, data.cpuType, data.file, data.flags);
+        })
+		
     });
 
 
@@ -167,7 +180,7 @@ function wsserver(LAYOUT_PATH, httpserver, node) {
     })
 
     node.on('nodes', function (nodes) {
-		//winston.debug({message: `Nodes Sent :${JSON.stringify(nodes)}`});
+		winston.debug({message: `Nodes Sent :${JSON.stringify(nodes)}`});
         io.emit('nodes', nodes);
     })
 
@@ -195,7 +208,7 @@ function wsserver(LAYOUT_PATH, httpserver, node) {
 		winston.debug({message: `requestNodeNumber : ${newNodeId}`});
         node.cbusSend(node.SNN(newNodeId))
         layoutDetails.layoutDetails.nextNodeId = newNodeId+1
-        jsonfile.writeFileSync('config/'+LAYOUT_PATH + '/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
+        jsonfile.writeFileSync('config/'+LAYOUT_NAME + '/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
         io.emit('layoutDetails', layoutDetails)
         node.cbusSend(node.QNN())
     })
@@ -204,6 +217,12 @@ function wsserver(LAYOUT_PATH, httpserver, node) {
 		winston.debug({message: `cbusTraffic : ` + data.direction + " " + data.raw + " " + data.translated});
         io.emit('cbusTraffic', data);
     })
+
+    programNode.on('programNode', function (data) {
+		winston.info({message: `WSSERVER: 'programNode' : ` + data});
+        io.emit('PROGRAM_NODE', data);
+    })
+
 }
 
 module.exports = wsserver;
