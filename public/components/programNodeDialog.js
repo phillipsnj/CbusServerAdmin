@@ -10,6 +10,7 @@ Vue.component('program-node-dialog', {
             programNodeEventText: "",
             options: [],
             fullFilePath: './tests/test_firmware/shortFile.HEX',
+            programEnabled: true,
         }
     },
 
@@ -40,8 +41,10 @@ Vue.component('program-node-dialog', {
         close() {
             console.log(`Close programNodeDialog`)
             this.$emit('close-programNodeDialog')
+            this.programEnabled = true;
         },
         program() {
+            this.programEnabled = false
             this.programNodeEventText = "Started",
             console.log(`program Node clicked`)
 
@@ -50,12 +53,12 @@ Vue.component('program-node-dialog', {
             if (this.options.indexOf('EEPROM') > -1) {flags |= 2}
             if (this.options.indexOf('IgnoreCpuType') > -1) {flags |= 4}
 
-            console.log(`program Node: ` + this.nodeNumber + ' Type: ' + this.cpuType + ' Flags: ' + flags)
+            console.log(`program Node: ` + this.nodeNumber + ' Type: ' + this.cpuType + ' Path' + this.fullFilePath +' Flags: ' + flags)
 
             this.$root.send('PROGRAM_NODE', {
                 "nodeNumber": this.nodeNumber,
                 "cpuType": this.cpuType,
-                "file": './tests/test_firmware/shortFile.HEX',
+                "file": this.fullFilePath,
                 "flags": flags})
         },
     },
@@ -106,7 +109,7 @@ Vue.component('program-node-dialog', {
             <v-card-actions>
                 <v-btn text @click="close">Cancel</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn text @click="program">Program</v-btn>
+                <v-btn v-if="programEnabled" text @click="program">Program</v-btn>
             </v-card-actions>
         </v-card>
     `
