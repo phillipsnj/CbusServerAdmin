@@ -175,7 +175,7 @@ Vue.component('merg-canacc5-node-events', {
                 </v-dialog>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" @click.stop="programNodeDialog = true" outlined>Program Node</v-btn>
-                <v-dialog v-model="programNodeDialog" max-width="300">
+                <v-dialog v-model="programNodeDialog" max-width="500">
                     <program-node-dialog v-on:close-programNodeDialog="programNodeDialog=false"></program-node-dialog>
                 </v-dialog>
               
