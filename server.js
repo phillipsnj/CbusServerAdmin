@@ -37,12 +37,9 @@ const NET_ADDRESS = system.server
 const PORT = system.port
 const LAYOUT = system.config
 
-const admin = require('./merg/mergAdminNode.js')
-
-let node = new admin.cbusAdmin(LAYOUT,NET_ADDRESS,NET_PORT);
 
 const websocket_Server = require('./wsserver')
-websocket_Server(LAYOUT,server, node)
+websocket_Server(LAYOUT, server, NET_ADDRESS, NET_PORT)
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
