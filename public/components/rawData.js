@@ -48,17 +48,28 @@ Vue.component('raw-data', {
         </v-tab>
         <v-tab-item :key="1">
           <v-card flat>
-            <v-card-text><common-display-json v-bind:info="nodes"></common-display-json></v-card-text>
+            <v-card-text>
+              <common-display-json v-bind:info="nodes"></common-display-json>
+            </v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :key="2">
           <v-card flat>
-            <v-card-text>{{ events }}</v-card-text>
+            <v-col cols="12">
+              <v-row v-for="event in events">
+                <v-card-text>
+                  <common-display-json v-bind:info="event"></common-display-json>
+                </v-card-text>
+              </v-row>
+            </v-col>
           </v-card>
         </v-tab-item>
         <v-tab-item :key="3">
           <v-card flat>
-            <v-card-text>{{ cbusErrors }}</v-card-text>
+            <v-card-text>
+              <common-display-json :info="cbusErrors"></common-display-json>
+              {{ cbusErrors }}
+            </v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :key="4">
@@ -68,17 +79,25 @@ Vue.component('raw-data', {
         </v-tab-item>
         <v-tab-item :key="5">
           <v-card flat>
-            <v-card-text><common-display-json :info="layoutDetails"></common-display-json></v-card-text>
+            <v-card-text>
+              <common-display-json :info="layoutDetails"></common-display-json>
+            </v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :key="6">
           <v-card flat>
-            <v-card-text>{{ cbusNoSupport }}</v-card-text>
+            <v-card-text>
+              <common-display-json :info="cbusNoSupport"></common-display-json>
+              {{ cbusNoSupport }}
+            </v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :key="7">
           <v-card flat>
-            <v-card-text>{{ dccSessions }}</v-card-text>
+            <v-card-text>
+              <common-display-json :info="dccSessions"></common-display-json>
+              {{ dccSessions }}
+            </v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs>
