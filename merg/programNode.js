@@ -125,7 +125,7 @@ function decodeLine(FIRMWARE, line, callback) {
 //
 //
 //
-class programNode extends EventEmitter  {
+class cbusFirmwareDownload extends EventEmitter  {
     constructor(NET_ADDRESS, NET_PORT) {
         super()
         this.net_address = NET_ADDRESS
@@ -152,92 +152,77 @@ class programNode extends EventEmitter  {
         try {
             this.readHexFile(FILENAME, function (firmwareObject) {
                 winston.debug({message: 'programNode: >>>>>>>>>>>>> readHexFile callback ' + JSON.stringify(firmwareObject)})
+                if (FLAGS & 0x4) {
+                        this.emit('programNode', 'CPUTYPE ignored')
+                } else {
+                    if (this.checkCPUTYPE (CPUTYPE, firmwareObject) != true) {
+                        winston.debug({message: 'programNode: >>>>>>>>>>>>> cpu check: FAILED'})
+                        this.emit('programNode', 'CPU mismatch')
+                        return;
+                    }
+                }
+                
                 this.FIRMWARE = firmwareObject
                 
-                this.program(NODENUMBER, CPUTYPE, FLAGS, this.FIRMWARE)
-            
-            }.bind(this))
-            
-        } catch (error) {
-            winston.debug({message: 'programNode: ERROR: ' + error});
-            this.emit('programNode', 'ERROR: ' + error)
-        }
-    }
-    
-
-    program (NODENUMBER, CPUTYPE, FLAGS, FIRMWARE) {
-        this.success = false
-        try {
-            if (FLAGS & 0x4) {
-                    this.emit('programNode', 'CPUTYPE ignored')
-            } else {
-                if (this.checkCPUTYPE (CPUTYPE, FIRMWARE) != true) {
-                    winston.debug({message: 'programNode: >>>>>>>>>>>>> cpu check: FAILED'})
-                    this.emit('programNode', 'CPU mismatch')
-                    return;
-                }
-            }
-
-            this.FIRMWARE = FIRMWARE
-            
-            this.client = new net.Socket()
-            
-            this.client.connect(this.net_port, this.net_address, function () {
-                winston.debug({message: 'programNode: Client Connected ' + this.net_address + ':' + this.net_port});
-            }.bind(this))
-            
-            this.client.on('error', (err) => {
-                var msg = 'TCP ERROR: ' + err.code
-                winston.debug({message: 'programNode: ' + msg});
-                this.emit('programNode', msg)
-            })
-            
-            this.client.on('close', function () {
-                winston.debug({message: 'programNode: Connection Closed'});
-            })
-
-            this.client.on('data', function (message) {
-                var cbusMsg = cbusLib.decode(message.toString())
-                winston.debug({message: 'programNode: Receive  <<<: ' + cbusMsg.text});
-                    if (cbusMsg.response == 0) {
-                        winston.debug({message: 'programNode: Check NOT OK received: download failed'});
-                        this.emit('programNode', 'Failed')
-                    }
-                if (cbusMsg.operation == 'RESPONSE') {
-                    if (cbusMsg.response == 1) {
-                        winston.debug({message: 'programNode: Check OK received: Sending reset'});
-                        var msg = cbusLib.encode_EXT_PUT_CONTROL('000000', 0x0D, 0x01, 0, 0)
-                        this.sendMsg(msg)
-                        this.emit('programNode', 'Complete')
-                        // ok, can shutdown the connection now
-                        this.client.end();
-                        winston.debug({message: 'programNode: Client closed normally'});
-                        this.success = true
-                    }
-                    if (cbusMsg.response == 2) {
-                        winston.debug({message: 'programNode: BOOT MODE Confirmed received:'});
-                        this.sendFirmware(FLAGS)
-                    }
-                }
-            }.bind(this))
-
-            // set boot mode
-            var msg = cbusLib.encodeBOOTM(NODENUMBER)
-            this.sendMsg(msg)
-            
-            // need to allow a small time for module to go into boot mode
-            setTimeout(() => {
-                var msg = cbusLib.encode_EXT_PUT_CONTROL('000000', 0x0D, 0x04, 0, 0)
-                this.sendMsg(msg)
-            }, 200)
-            
-            // ok, need to check if it's completed after a reasonable time, if not must have failed
-            // allow 10 seconds
-            setTimeout(() => {
-                winston.debug({message: 'programNode: ***************** download: ENDING - success is ' + this.success});
-                if (this.success == false) { this.emit('programNode', 'Failed: Timeout') }               
-            }, 25000)
+                this.client = new net.Socket()
                 
+                this.client.connect(this.net_port, this.net_address, function () {
+                    winston.debug({message: 'programNode: Client Connected ' + this.net_address + ':' + this.net_port});
+                }.bind(this))
+                
+                this.client.on('error', (err) => {
+                    var msg = 'TCP ERROR: ' + err.code
+                    winston.debug({message: 'programNode: ' + msg});
+                    this.emit('programNode', msg)
+                })
+                
+                this.client.on('close', function () {
+                    winston.debug({message: 'programNode: Connection Closed'});
+                })
+
+                this.client.on('data', function (message) {
+                    var cbusMsg = cbusLib.decode(message.toString())
+                    winston.debug({message: 'programNode: Receive  <<<: ' + cbusMsg.text});
+                        if (cbusMsg.response == 0) {
+                            winston.debug({message: 'programNode: Check NOT OK received: download failed'});
+                            this.emit('programNode', 'Failed')
+                        }
+                    if (cbusMsg.operation == 'RESPONSE') {
+                        if (cbusMsg.response == 1) {
+                            winston.debug({message: 'programNode: Check OK received: Sending reset'});
+                            var msg = cbusLib.encode_EXT_PUT_CONTROL('000000', 0x0D, 0x01, 0, 0)
+                            this.sendMsg(msg)
+                            this.emit('programNode', 'Complete')
+                            // ok, can shutdown the connection now
+                            this.client.end();
+                            winston.debug({message: 'programNode: Client closed normally'});
+                            this.success = true
+                        }
+                        if (cbusMsg.response == 2) {
+                            winston.debug({message: 'programNode: BOOT MODE Confirmed received:'});
+                            this.sendFirmware(FLAGS)
+                        }
+                    }
+                }.bind(this))
+
+                // set boot mode
+                var msg = cbusLib.encodeBOOTM(NODENUMBER)
+                this.sendMsg(msg)
+                
+                // need to allow a small time for module to go into boot mode
+                setTimeout(() => {
+                    var msg = cbusLib.encode_EXT_PUT_CONTROL('000000', 0x0D, 0x04, 0, 0)
+                    this.sendMsg(msg)
+                }, 200)
+                
+                // ok, need to check if it's completed after a reasonable time, if not must have failed
+                // allow 10 seconds
+                setTimeout(() => {
+                    winston.debug({message: 'programNode: ***************** download: ENDING - success is ' + this.success});
+                    if (this.success == false) { this.emit('programNode', 'Failed: Timeout') }               
+                }, 25000)
+                
+            }.bind(this))
         } catch (error) {
             winston.debug({message: 'programNode: ERROR: ' + error});
             this.emit('programNode', 'ERROR: ' + error)
@@ -411,4 +396,4 @@ class programNode extends EventEmitter  {
 };
 
 
-module.exports = ( NET_ADDRESS, NET_PORT ) => { return new programNode( NET_ADDRESS, NET_PORT ) }
+module.exports = ( NET_ADDRESS, NET_PORT ) => { return new cbusFirmwareDownload( NET_ADDRESS, NET_PORT ) }

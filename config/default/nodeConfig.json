@@ -48,154 +48,36 @@
         255,
         255
       ],
-      "actions": {},
-      "status": false,
-      "component": "merg-canacc8",
-      "learn": false,
-      "EvCount": 3
-    },
-    "300": {
-      "node": 300,
-      "manuf": 165,
-      "module": "CANACC5",
-      "flags": 13,
-      "consumer": true,
-      "producer": false,
-      "flim": true,
-      "bootloader": true,
-      "coe": false,
-      "parameters": [
-        20,
-        165,
-        117,
-        2,
-        32,
-        3,
-        12,
-        2,
-        13,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      "variables": [
-        null,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
       "actions": {
-        "0": {
-          "event": "012D0103",
-          "actionId": 0,
-          "eventIndex": 0,
+        "1": {
+          "event": "03220008",
+          "actionId": 1,
+          "eventIndex": 1,
           "variables": [
             3
           ]
         },
-        "1": {
-          "event": "012D0104",
-          "actionId": 1,
-          "eventIndex": 1,
+        "2": {
+          "event": "03220001",
+          "actionId": 2,
+          "eventIndex": 2,
+          "variables": [
+            3
+          ]
+        },
+        "3": {
+          "event": "01020002",
+          "actionId": 3,
+          "eventIndex": 3,
           "variables": [
             3
           ]
         }
       },
       "status": true,
-      "component": "merg-canacc5",
-      "learn": false,
-      "EvCount": 2
-    },
-    "301": {
-      "node": 301,
-      "manuf": 165,
-      "module": "CANACC8",
-      "flags": 13,
-      "consumer": true,
-      "producer": false,
-      "flim": true,
-      "bootloader": true,
-      "coe": false,
-      "parameters": [],
-      "variables": [],
-      "actions": {},
-      "status": true,
       "component": "merg-canacc8",
       "learn": false,
-      "EvCount": 2
-    },
-    "302": {
-      "node": 302,
-      "manuf": 165,
-      "module": "CANACE8C",
-      "flags": 14,
-      "consumer": false,
-      "producer": true,
-      "flim": true,
-      "bootloader": true,
-      "coe": false,
-      "parameters": [],
-      "variables": [],
-      "actions": {},
-      "status": true,
-      "component": "merg-canace8c",
-      "learn": false,
-      "EvCount": 2
-    },
-    "303": {
-      "node": 303,
-      "manuf": 165,
-      "module": "CANINP",
-      "flags": 14,
-      "consumer": false,
-      "producer": true,
-      "flim": true,
-      "bootloader": true,
-      "coe": false,
-      "parameters": [],
-      "variables": [],
-      "actions": {},
-      "status": true,
-      "component": "mergDefault",
-      "learn": false,
-      "EvCount": 2
-    },
-    "304": {
-      "node": 304,
-      "manuf": 165,
-      "module": "Universal",
-      "flags": 31,
-      "consumer": true,
-      "producer": true,
-      "flim": true,
-      "bootloader": true,
-      "coe": true,
-      "parameters": [],
-      "variables": [],
-      "actions": {},
-      "status": true,
-      "component": "merg-canmio",
-      "learn": true,
-      "EvCount": 2
+      "EvCount": 3
     },
     "700": {
       "node": 700,
@@ -210,7 +92,7 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canservo8c",
       "learn": false,
       "EvCount": 1
@@ -228,7 +110,7 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canace8c",
       "learn": false,
       "EvCount": 0
@@ -246,7 +128,7 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canacc8",
       "learn": false,
       "EvCount": 2
@@ -264,7 +146,7 @@
       "parameters": [],
       "variables": [],
       "actions": {},
-      "status": false,
+      "status": true,
       "component": "merg-canmio",
       "learn": true,
       "EvCount": 28
