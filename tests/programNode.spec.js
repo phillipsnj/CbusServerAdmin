@@ -177,7 +177,7 @@ describe('programNode tests', function(){
 
     //
     // test sequence of operations on download
-    // use shortened file to save time, as we've already tested parsing full hex file above
+    // using full file this time
     //
     // expect: sequence to start with sending of BOOTM opcode
     // expect: next, Hex file loaded, parsed & downloaded - verify by testing checksum of downloaded file if 'Complete' event received
@@ -190,7 +190,8 @@ describe('programNode tests', function(){
 			downloadData = data;
 			winston.warn({message: 'TEST: full download: ' + JSON.stringify(downloadData)});
 			});	        
-		programNode.download(300, 1, './tests/test_firmware/CANACC5_v2v.HEX', 3);
+        var intelHexString = fs.readFileSync('./tests/test_firmware/CANACC5_v2v.HEX');
+		programNode.program(300, 1, 3, intelHexString);
 		setTimeout(function(){
             //
             // expect first message to be BOOTM
