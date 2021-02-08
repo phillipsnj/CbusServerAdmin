@@ -352,6 +352,7 @@ class programNode extends EventEmitter  {
             checksum = checksum & 0xFFFF        // trim to 16 bits
         }
         var checksum2C = decToHex((checksum ^ 0xFFFF) + 1, 4)    // checksum as two's complement in hexadecimal
+        winston.debug({message: 'programNode: arrayChecksum: ' + checksum2C});
         return checksum2C
     }
 
@@ -385,6 +386,35 @@ class programNode extends EventEmitter  {
                 else {winston.info({message: 'programNode: read hex file: WARNING - No EOF callback'})}
             })
         });  
+    }
+
+
+    //
+    //
+    //
+    parseHexFile(intelHexString, CALLBACK) {
+        var firmware = {}
+
+        winston.debug({message: 'programNode: parseHexFile - hex ' + intelHexString})
+
+        const lines = intelHexString.toString().split("\r\n");
+        winston.debug({message: 'programNode: parseHexFile - line count ' + lines.length})
+
+        for (var i = 0; i < lines.length - 1; i++) {
+        winston.debug({message: 'programNode: parseHexFile - line ' + lines[i]})
+
+    
+            decodeLine(firmware, lines[i], function (firmwareObject) {
+                winston.debug({message: 'programNode: >>>>>>>>>>>>> end of file callback'})
+                for (const area in firmwareObject) {
+                    for (const block in firmwareObject[area]) {
+                        winston.debug({message: 'programNode: EOF callback: FIRMWARE: ' + area + ': ' + block + ' length: ' + firmwareObject[area][block].length});
+                    }
+                }  
+                if(CALLBACK) {CALLBACK(firmwareObject)}
+                else {winston.info({message: 'programNode: read hex file: WARNING - No EOF callback'})}
+            })
+        }
     }
 
 

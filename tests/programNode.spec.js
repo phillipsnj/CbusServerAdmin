@@ -78,6 +78,29 @@ describe('programNode tests', function(){
 
 
     //
+    // Use real hex file to ensure correct operation
+    //
+	it('Parse Hex File test', function(done) {
+		winston.debug({message: 'TEST: Parse Hex File test:'});
+        const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
+        var intelHexString = fs.readFileSync('./tests/test_firmware/shortFile.HEX');
+        var callbackInvoked = false
+		programNode.parseHexFile(intelHexString, 
+            function(firmwareObject){ 
+                winston.debug({message: 'TEST: Parse Hex File Test: callback invoked: ' + JSON.stringify(firmwareObject)});
+//                expect(firmwareObject["FLASH"]['00000800'].length).to.equal(6064, 'FLASH length'); 
+                expect(programNode.arrayChecksum(firmwareObject["FLASH"]['00000800'])).to.equal('EC12','checksum');
+                callbackInvoked = true
+            }
+        );
+		setTimeout(function(){
+            expect(callbackInvoked).to.equal(true, 'callbackInvoked');
+			done();
+		}, 500);
+	});
+
+
+    //
     //
     //
 	it('Read Hex missing File test', function(done) {
