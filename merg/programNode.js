@@ -141,32 +141,20 @@ class programNode extends EventEmitter  {
     /** actual download function
     * @param NODENUMBER
     * @param CPUTYPE
-    * @param FILENAME
     * @param FLAGS
+    * @param INTEL_HEX_STRING
+    * Flags
     * 1 = Program CONFIG
     * 2 = Program EEPROM
     * 4 = Ignore CPUTYPE
     */
-    download (NODENUMBER, CPUTYPE, FILENAME, FLAGS) {
-        try {
-
-            var intelHexString = fs.readFileSync(FILENAME);
-            this.program(NODENUMBER, CPUTYPE, FLAGS, intelHexString)
-
-        } catch (error) {
-            winston.debug({message: 'programNode: ERROR: ' + error});
-            this.emit('programNode', 'ERROR: ' + error)
-        }
-    }
-    
-
     program (NODENUMBER, CPUTYPE, FLAGS, INTEL_HEX_STRING) {
         this.success = false
 
         try {
             // parse the intel hex file into our firmware object
             this.parseHexFile(INTEL_HEX_STRING, function (firmwareObject) {
-                winston.debug({message: 'programNode: >>>>>>>>>>>>> readHexFile callback ' + JSON.stringify(firmwareObject)})
+                winston.debug({message: 'programNode: >>>>>>>>>>>>> parseHexFile callback ' + JSON.stringify(firmwareObject)})
 
                 this.FIRMWARE = firmwareObject
                 
@@ -358,37 +346,6 @@ class programNode extends EventEmitter  {
         return checksum2C
     }
 
-
-    //
-    //
-    //
-    readHexFile(FILENAME, CALLBACK) {
-        var firmware = {}
-        
-        try {
-          var intelHexString = fs.readFileSync(FILENAME);
-        } catch (error) {
-            winston.debug({message: 'programNode: File read error: ' + error});
-            throw('File read error: ' + error)
-        }
-        
-      const readInterface = readline.createInterface({
-        input: fs.createReadStream(FILENAME),
-        });
-      
-        readInterface.on('line', function(line) {
-            decodeLine(firmware, line, function (firmwareObject) {
-                winston.debug({message: 'programNode: >>>>>>>>>>>>> end of file callback'})
-                for (const area in firmwareObject) {
-                    for (const block in firmwareObject[area]) {
-                        winston.debug({message: 'programNode: EOF callback: FIRMWARE: ' + area + ': ' + block + ' length: ' + firmwareObject[area][block].length});
-                    }
-                }  
-                if(CALLBACK) {CALLBACK(firmwareObject)}
-                else {winston.info({message: 'programNode: read hex file: WARNING - No EOF callback'})}
-            })
-        });  
-    }
 
 
     //
