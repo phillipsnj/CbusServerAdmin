@@ -246,7 +246,7 @@ describe('programNode tests', function(){
 		setTimeout(function(){
             expect(downloadData).to.equal('CPUTYPE ignored', 'Download event');
 			done();
-		}, 500);
+		}, 1000);
 	});
 
 
@@ -262,7 +262,7 @@ describe('programNode tests', function(){
 			});	        
 		programNode.download(300, 1, './FNF.hex', 4);
 		setTimeout(function(){
-            expect(downloadData).to.include('File read error: Error: ', 'errorString');
+            expect(downloadData).to.include('Error: ENOENT: no such file or directory', 'errorString');
 			done();
 		}, 500);
 	});

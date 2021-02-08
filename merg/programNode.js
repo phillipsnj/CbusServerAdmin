@@ -148,12 +148,13 @@ class programNode extends EventEmitter  {
     * 4 = Ignore CPUTYPE
     */
     download (NODENUMBER, CPUTYPE, FILENAME, FLAGS) {
-        this.success = false
+//        this.success = false
         try {
-            this.readHexFile(FILENAME, function (firmwareObject) {
+            var intelHexString = fs.readFileSync(FILENAME);
+            this.parseHexFile(intelHexString, function (firmwareObject) {
                 winston.debug({message: 'programNode: >>>>>>>>>>>>> readHexFile callback ' + JSON.stringify(firmwareObject)})
-                this.FIRMWARE = firmwareObject
                 
+                this.FIRMWARE = firmwareObject
                 this.program(NODENUMBER, CPUTYPE, FLAGS, this.FIRMWARE)
             
             }.bind(this))
