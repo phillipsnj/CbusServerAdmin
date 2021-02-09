@@ -89,9 +89,79 @@
       "flim": true,
       "bootloader": true,
       "coe": false,
-      "parameters": [],
-      "variables": [],
-      "actions": {},
+      "parameters": [
+        20,
+        165,
+        74,
+        19,
+        128,
+        3,
+        37,
+        4,
+        13,
+        13,
+        1,
+        0,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "variables": [
+        null,
+        247,
+        0,
+        255,
+        255,
+        219,
+        41,
+        2,
+        7,
+        127,
+        127,
+        0,
+        2,
+        127,
+        127,
+        0,
+        0,
+        138,
+        105,
+        0,
+        0,
+        233,
+        21,
+        7,
+        7,
+        127,
+        127,
+        0,
+        0,
+        127,
+        127,
+        0,
+        0,
+        162,
+        88,
+        0,
+        0,
+        9
+      ],
+      "actions": {
+        "1": {
+          "event": "03220001",
+          "actionId": 1,
+          "eventIndex": 1,
+          "variables": [
+            3
+          ]
+        }
+      },
       "status": true,
       "component": "merg-canservo8c",
       "learn": false,
@@ -107,8 +177,41 @@
       "flim": true,
       "bootloader": true,
       "coe": false,
-      "parameters": [],
-      "variables": [],
+      "parameters": [
+        20,
+        165,
+        110,
+        5,
+        32,
+        2,
+        9,
+        2,
+        15,
+        1,
+        1,
+        0,
+        8,
+        0,
+        0,
+        228,
+        26,
+        0,
+        0,
+        1,
+        0
+      ],
+      "variables": [
+        null,
+        0,
+        0,
+        0,
+        100,
+        200,
+        0,
+        0,
+        0,
+        0
+      ],
       "actions": {},
       "status": true,
       "component": "merg-canace8c",
@@ -125,9 +228,62 @@
       "flim": true,
       "bootloader": true,
       "coe": false,
-      "parameters": [],
-      "variables": [],
-      "actions": {},
+      "parameters": [
+        20,
+        165,
+        86,
+        3,
+        128,
+        3,
+        12,
+        2,
+        13,
+        1,
+        1,
+        0,
+        8,
+        0,
+        0,
+        228,
+        26,
+        0,
+        0,
+        1,
+        0
+      ],
+      "variables": [
+        0,
+        0,
+        67,
+        153,
+        0,
+        153,
+        50,
+        0,
+        0,
+        10,
+        8,
+        255,
+        0
+      ],
+      "actions": {
+        "1": {
+          "event": "FFFF0001",
+          "actionId": 1,
+          "eventIndex": 1,
+          "variables": [
+            3
+          ]
+        },
+        "2": {
+          "event": "03220001",
+          "actionId": 2,
+          "eventIndex": 2,
+          "variables": [
+            3
+          ]
+        }
+      },
       "status": true,
       "component": "merg-canacc8",
       "learn": false,
@@ -143,13 +299,444 @@
       "flim": true,
       "bootloader": true,
       "coe": true,
-      "parameters": [],
-      "variables": [],
-      "actions": {},
+      "parameters": [
+        20,
+        165,
+        97,
+        32,
+        255,
+        20,
+        127,
+        3,
+        31,
+        15,
+        1,
+        0,
+        8,
+        0,
+        0,
+        38,
+        97,
+        0,
+        0,
+        1,
+        1
+      ],
+      "variables": [
+        null,
+        0,
+        0,
+        234,
+        51,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        2,
+        2,
+        184,
+        57,
+        235,
+        235,
+        60,
+        3,
+        6,
+        128,
+        127,
+        64,
+        3,
+        60,
+        0,
+        6,
+        4,
+        4,
+        255,
+        255,
+        255,
+        0,
+        6,
+        4,
+        4,
+        64,
+        3,
+        60,
+        0,
+        6,
+        4,
+        4,
+        null,
+        null,
+        null,
+        0,
+        6,
+        4,
+        4,
+        235,
+        235,
+        60,
+        0,
+        null,
+        4,
+        4,
+        255,
+        255,
+        255,
+        0,
+        6,
+        null,
+        null,
+        null,
+        null,
+        255,
+        1,
+        6,
+        null,
+        null,
+        null,
+        null,
+        255,
+        1,
+        6,
+        0,
+        0,
+        235,
+        235,
+        255,
+        1,
+        null,
+        null,
+        0,
+        109,
+        128,
+        60,
+        1,
+        null,
+        null,
+        null,
+        null,
+        null,
+        255,
+        0,
+        6,
+        4,
+        null,
+        null,
+        null,
+        null,
+        0,
+        6,
+        4,
+        4,
+        32,
+        7,
+        255,
+        0,
+        null,
+        null,
+        null,
+        null,
+        null,
+        255,
+        0,
+        6,
+        4
+      ],
+      "actions": {
+        "1": {
+          "event": "03220001",
+          "actionId": 1,
+          "eventIndex": 1,
+          "variables": [
+            12,
+            0,
+            49,
+            4,
+            50,
+            9,
+            5,
+            10,
+            4,
+            54,
+            5,
+            55,
+            2,
+            48,
+            0
+          ]
+        },
+        "2": {
+          "event": "03250002",
+          "actionId": 2,
+          "eventIndex": 2,
+          "variables": [
+            8,
+            0
+          ]
+        },
+        "3": {
+          "event": "03250003",
+          "actionId": 3,
+          "eventIndex": 3,
+          "variables": [
+            3,
+            16
+          ]
+        },
+        "4": {
+          "event": "03250004",
+          "actionId": 4,
+          "eventIndex": 4,
+          "variables": [
+            12,
+            20
+          ]
+        },
+        "5": {
+          "event": "03250005",
+          "actionId": 5,
+          "eventIndex": 5,
+          "variables": [
+            0,
+            24
+          ]
+        },
+        "6": {
+          "event": "03250006",
+          "actionId": 6,
+          "eventIndex": 6,
+          "variables": [
+            0,
+            28
+          ]
+        },
+        "7": {
+          "event": "03250007",
+          "actionId": 7,
+          "eventIndex": 7,
+          "variables": [
+            0,
+            32
+          ]
+        },
+        "8": {
+          "event": "03250008",
+          "actionId": 8,
+          "eventIndex": 8,
+          "variables": [
+            0,
+            36
+          ]
+        },
+        "9": {
+          "event": "03250009",
+          "actionId": 9,
+          "eventIndex": 9,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "10": {
+          "event": "0325000A",
+          "actionId": 10,
+          "eventIndex": 10,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "11": {
+          "event": "0325000B",
+          "actionId": 11,
+          "eventIndex": 11,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "12": {
+          "event": "0325000C",
+          "actionId": 12,
+          "eventIndex": 12,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "13": {
+          "event": "0325000D",
+          "actionId": 13,
+          "eventIndex": 13,
+          "variables": [
+            0,
+            56
+          ]
+        },
+        "14": {
+          "event": "0325000E",
+          "actionId": 14,
+          "eventIndex": 14,
+          "variables": [
+            0,
+            60
+          ]
+        },
+        "15": {
+          "event": "0325000F",
+          "actionId": 15,
+          "eventIndex": 15,
+          "variables": [
+            0,
+            64
+          ]
+        },
+        "16": {
+          "event": "03250010",
+          "actionId": 16,
+          "eventIndex": 16,
+          "variables": [
+            0,
+            68
+          ]
+        },
+        "17": {
+          "event": "0325012D",
+          "actionId": 17,
+          "eventIndex": 17,
+          "variables": [
+            0,
+            9
+          ]
+        },
+        "18": {
+          "event": "032500C9",
+          "actionId": 18,
+          "eventIndex": 18,
+          "variables": [
+            0,
+            10
+          ]
+        },
+        "19": {
+          "event": "03250001",
+          "actionId": 19,
+          "eventIndex": 19,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "20": {
+          "event": "032500D1",
+          "actionId": 20,
+          "eventIndex": 20,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "21": {
+          "event": "0325006D",
+          "actionId": 21,
+          "eventIndex": 21,
+          "variables": [
+            0,
+            40
+          ]
+        },
+        "22": {
+          "event": "032500D2",
+          "actionId": 22,
+          "eventIndex": 22,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "24": {
+          "event": "01020002",
+          "actionId": 24,
+          "eventIndex": 24,
+          "variables": [
+            8,
+            0
+          ]
+        },
+        "25": {
+          "event": "0325006E",
+          "actionId": 25,
+          "eventIndex": 25,
+          "variables": [
+            0,
+            44
+          ]
+        },
+        "26": {
+          "event": "032500D3",
+          "actionId": 26,
+          "eventIndex": 26,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "27": {
+          "event": "0325006F",
+          "actionId": 27,
+          "eventIndex": 27,
+          "variables": [
+            0,
+            48
+          ]
+        },
+        "28": {
+          "event": "032500D4",
+          "actionId": 28,
+          "eventIndex": 28,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "29": {
+          "event": "03250070",
+          "actionId": 29,
+          "eventIndex": 29,
+          "variables": [
+            0,
+            52
+          ]
+        },
+        "30": {
+          "event": "032500CA",
+          "actionId": 30,
+          "eventIndex": 30,
+          "variables": [
+            1,
+            0
+          ]
+        },
+        "31": {
+          "event": "03250066",
+          "actionId": 31,
+          "eventIndex": 31,
+          "variables": [
+            0,
+            12
+          ]
+        }
+      },
       "status": true,
       "component": "merg-canmio",
       "learn": true,
-      "EvCount": 28
+      "EvCount": 30
     }
   },
   "events": {
@@ -159,7 +746,7 @@
       "eventId": 8,
       "status": "off",
       "type": "long",
-      "count": 2,
+      "count": 43,
       "data": ""
     },
     "03220001": {
@@ -168,7 +755,7 @@
       "eventId": 1,
       "status": "off",
       "type": "long",
-      "count": 4,
+      "count": 46,
       "data": ""
     },
     "0325006D": {
@@ -177,7 +764,7 @@
       "eventId": 109,
       "status": "on",
       "type": "long",
-      "count": 8,
+      "count": 88,
       "data": ""
     },
     "032500C9": {
@@ -186,7 +773,7 @@
       "eventId": 201,
       "status": "on",
       "type": "long",
-      "count": 4,
+      "count": 41,
       "data": ""
     },
     "0325012D": {
@@ -195,7 +782,25 @@
       "eventId": 301,
       "status": "off",
       "type": "long",
-      "count": 4,
+      "count": 43,
+      "data": ""
+    },
+    "03220007": {
+      "id": "03220007",
+      "nodeId": 802,
+      "eventId": 7,
+      "status": "off",
+      "type": "long",
+      "count": 8,
+      "data": ""
+    },
+    "0325006E": {
+      "id": "0325006E",
+      "nodeId": 805,
+      "eventId": 110,
+      "status": "on",
+      "type": "long",
+      "count": 38,
       "data": ""
     }
   }
