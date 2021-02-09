@@ -9,7 +9,7 @@ Vue.component('program-node-dialog', {
             cpuType: 0,
             programNodeEventText: "",
             options: [],
-            fullFilePath: './tests/test_firmware/shortFile.HEX',
+            chosenFile: './tests/test_firmware/shortFile.HEX',       // <- initialize the v-model prop
             programEnabled: true,
         }
     },
@@ -42,10 +42,11 @@ Vue.component('program-node-dialog', {
             console.log(`Close programNodeDialog`)
             this.$emit('close-programNodeDialog')
             this.programEnabled = true;
+            this.programNodeEventText = ""
         },
         program() {
             this.programEnabled = false
-            this.programNodeEventText = "Started",
+            this.programNodeEventText = "Started"
             console.log(`program Node clicked`)
 
             var flags = 0
@@ -53,13 +54,28 @@ Vue.component('program-node-dialog', {
             if (this.options.indexOf('EEPROM') > -1) {flags |= 2}
             if (this.options.indexOf('IgnoreCpuType') > -1) {flags |= 4}
 
-            console.log(`program Node: ` + this.nodeNumber + ' Type: ' + this.cpuType + ' Path' + this.fullFilePath +' Flags: ' + flags)
+            console.log(`program Node: ` + this.nodeNumber + ' Type: ' + this.cpuType + ' Path' + this.chosenFile +' Flags: ' + flags)
+            
+            if (!this.chosenFile) {this.data = "No File Chosen"}
+            var reader = new FileReader();
+              
+              // Use the javascript reader object to load the contents
+              // of the file in the v-model prop
+              reader.readAsText(this.chosenFile);
+              reader.onload = () => {
+                var data = reader.result;
+                console.log("data length " + data.length)
+                var encodedHex = btoa(data)
+                console.log("data encoded " + encodedHex)
+                
+                this.$root.send('PROGRAM_NODE', {
+                    "nodeNumber": this.nodeNumber,
+                    "cpuType": this.cpuType,
+                    "flags": flags,
+                    "encodedIntelHex": encodedHex})
+                
+              }
 
-            this.$root.send('PROGRAM_NODE', {
-                "nodeNumber": this.nodeNumber,
-                "cpuType": this.cpuType,
-                "file": this.fullFilePath,
-                "flags": flags})
         },
     },
   
@@ -93,11 +109,13 @@ Vue.component('program-node-dialog', {
                         value="IgnoreCpuType"
                       ></v-checkbox>
 
-                        <v-text-field 
-                            v-model=fullFilePath 
-                            outlined>
-                        </v-text-field>
-
+                <v-file-input
+                    accept=".hex"
+                    label="Click here to select a .hex file"
+                    outlined
+                    v-model="chosenFile"                
+                >
+                </v-file-input>
 
                     <v-layout row>
                         <h3>{{ programNodeEventText }}</h3>
