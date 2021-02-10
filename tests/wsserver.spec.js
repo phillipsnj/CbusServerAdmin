@@ -695,11 +695,16 @@ describe('Websocket server tests', function(){
 			data;
 			winston.warn({message: 'wsserver Test: PROGRAM_NODE ' + JSON.stringify(data)});
 			});	
+            
+            // create base64 encoded version of intel hex file
+            let intelHexString = fs.readFileSync('./tests/test_firmware/shortFile.HEX');
+            var encoded = intelHexString.toString('base64')
+            
 		websocket_Client.emit('PROGRAM_NODE', {
                 "nodeNumber": 300,
                 "cpuType": 1,
-                "file": './tests/test_firmware/shortFile.HEX',
-                "flags": 3
+                "flags": 3,
+                "encodedIntelHex": encoded
             })
 		setTimeout(function(){
 			done();

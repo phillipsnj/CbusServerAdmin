@@ -167,8 +167,11 @@ function wsserver(LAYOUT_NAME, httpserver, NET_ADDRESS,NET_PORT) {
         })
 
         socket.on('PROGRAM_NODE', function(data){
-			winston.debug({message: `PROGRAM_NODE ${JSON.stringify(data)}`});
-            programNode.download(data.nodeNumber, data.cpuType, data.file, data.flags);
+            let buff = new Buffer(data.encodedIntelHex, 'base64');
+            let intelhexString = buff.toString('ascii');
+            winston.debug({message: `PROGRAM_NODE; intel hex ` + intelhexString});
+
+            programNode.program(data.nodeNumber, data.cpuType, data.flags, intelhexString);
         })
 		
     });
