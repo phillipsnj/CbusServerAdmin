@@ -10,6 +10,7 @@ const admin = require('./merg/mergAdminNode.js')
 
 
 function wsserver(LAYOUT_NAME, httpserver, NET_ADDRESS,NET_PORT) {
+    checkLayoutExists(LAYOUT_NAME)
     let layoutDetails = jsonfile.readFileSync('config/'+LAYOUT_NAME + "/layoutDetails.json")
     const io = socketIO(httpserver); 
     const programNode = require('./merg/programNode.js')(NET_ADDRESS, NET_PORT)
@@ -142,10 +143,10 @@ function wsserver(LAYOUT_NAME, httpserver, NET_ADDRESS,NET_PORT) {
             node.refreshEvents();
         })
         
-        socket.on('UPDATE_LAYOUT_NAME_DETAILS', function(data){
-			winston.debug({message: `UPDATE_LAYOUT_NAME_DETAILS ${JSON.stringify(data)}`});
+        socket.on('UPDATE_LAYOUT_DETAILS', function(data){
+			winston.debug({message: `UPDATE_LAYOUT_DETAILS ${JSON.stringify(data)}`});
             layoutDetails = data
-            jsonfile.writeFileSync('config/'+LAYOUT_NAME + '/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
+            jsonfile.writeFileSync('config/'+ LAYOUT_NAME + '/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
             io.emit('layoutDetails', layoutDetails)
         })
         
@@ -227,5 +228,56 @@ function wsserver(LAYOUT_NAME, httpserver, NET_ADDRESS,NET_PORT) {
     })
 
 }
+
+function checkLayoutExists(layoutName) {
+            var directory = "./config/" + layoutName + "/"
+            
+            // check if directory exists
+            if (fs.existsSync(directory)) {
+                winston.debug({message: `checkLayoutExists: ` + layoutName + ` Directory exists`});
+            } else {
+                winston.debug({message: `checkLayoutExists: ` + layoutName + ` Directory not found - creating new one`});
+                fs.mkdir(directory, function(err) {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    console.log("New directory successfully created.")
+                  }
+                })            
+            }
+            
+            // check if nodeConfig file exists
+            if (fs.existsSync(directory + 'nodeConfig.json')) {
+                winston.debug({message: `nodeConfig:  file exists`});
+            } else {
+                winston.debug({message: `nodeConfig: file not found - creating new one`});
+                const nodeConfig = {"nodes": {}, 
+                                    "events": {}}
+                jsonfile.writeFileSync(directory + "nodeConfig.json", nodeConfig, {spaces: 2, EOL: '\r\n'})
+            }
+            
+            // check if layoutDetails file exists
+            if (fs.existsSync(directory + 'layoutDetails.json')) {
+                winston.debug({message: `layoutDetails:  file exists`});
+            } else {
+                winston.debug({message: `layoutDetails: file not found - creating new one`});
+                const layoutDetails = {
+                    "layoutDetails": {  "title": "New Layout", 
+                                        "subTitle": "Admin", 
+                                        "nextNodeId": 800}, 
+                    "nodeDetails": {}, 
+                    "eventDetails": {}
+                    }
+                jsonfile.writeFileSync(directory + "layoutDetails.json", layoutDetails, {spaces: 2, EOL: '\r\n'})
+            }
+}
+
+
+
+
+
+
+
+
 
 module.exports = wsserver;

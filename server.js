@@ -4,6 +4,7 @@ const express = require('express')
 const jsonfile = require('jsonfile')
 //const socketio = require('socket.io')
 var winston = require('./config/winston.js');
+const fs = require('fs');
 
 var serveStatic = require('serve-static')
 
@@ -29,7 +30,7 @@ app.use('/css',express.static(__dirname +'/node_modules'));
 // *********************************************************
 //
 
-const system = jsonfile.readFileSync('./config/systemConfig.json')
+const system = getSystemConfig()
 
 const NET_PORT = system.serverPort
 const NET_ADDRESS = system.server
@@ -47,3 +48,41 @@ if (Boolean(startClient)) {
 	// open webpage in default browser
 	require("openurl").open("http://localhost:" + PORT)
 }
+
+
+
+function getSystemConfig() {
+            var directory = "./config/"
+            
+            // check if directory exists
+            if (fs.existsSync(directory)) {
+                winston.debug({message: `Config: Directory exists`});
+            } else {
+                winston.debug({message: `Config: Directory not found - creating new one`});
+                fs.mkdir(directory, function(err) {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    console.log("New Config directory successfully created.")
+                  }
+                })            
+            }
+
+            // check if config file exists
+            if (fs.existsSync(directory + 'systemConfig.json')) {
+                winston.debug({message: `systemConfig:  file exists`});
+            } else {
+                winston.debug({message: `systemConfig: file not found - creating new one`});
+                const systemConfig = {
+                    "port": 3000,
+                    "server": "localhost",
+                    "serverPort": 5550,
+                    "config": "default",
+                    }
+                jsonfile.writeFileSync(directory + "/systemConfig.json", systemConfig, {spaces: 2, EOL: '\r\n'})
+            }
+            
+            // ok, now read it in
+            return jsonfile.readFileSync('./config/systemConfig.json')
+}
+
