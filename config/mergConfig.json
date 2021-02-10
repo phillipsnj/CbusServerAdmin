@@ -49,7 +49,7 @@
       "component": "mergDefault"
     },
     "32": {
-      "name": "Universal",
+      "name": "CANMIO",
       "component": "merg-canmio"
     },
     "50": {
