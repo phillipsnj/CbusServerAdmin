@@ -30,7 +30,10 @@ Vue.component('merg-canacc5', {
             this.$root.send('CLEAR_NODE_EVENTS', {'nodeId': this.nodeId})
             this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
             this.$store.state.node_component = "merg-canacc5-node-events"
-        }
+        },
+        getFirmware() {
+            this.$store.state.node_component = "firmware"
+        },
         
     },
     template: `
@@ -41,6 +44,7 @@ Vue.component('merg-canacc5', {
           <v-tab @click="getParameters()">Parameters</v-tab>
           <v-tab @click="getVariables()" v-if="node.flim">Variables</v-tab>
           <v-tab @click="getEvents()">Stored Events</v-tab>
+          <v-tab @click="getFirmware()">Firmware</v-tab>
         </v-tabs>
         <!-- actual component selected from tab options now in node_component, so display it -->
         <component v-bind:is="$store.state.node_component"></component>
@@ -118,7 +122,7 @@ Vue.component('merg-canacc5-node-events', {
                 {text: 'Event Index', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
-            addNewEventDialog: false
+            addNewEventDialog: false,
         }
     },
     methods: {
@@ -167,11 +171,11 @@ Vue.component('merg-canacc5-node-events', {
                     
         <template v-slot:top>
             <v-toolbar flat>
-              <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
-
-              <v-dialog v-model="addNewEventDialog" max-width="300">
-              <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
-            </v-dialog>
+            
+                <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
+                <v-dialog persistent v-model="addNewEventDialog" max-width="300">
+                    <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
+                </v-dialog>
               
             </v-toolbar>
         </template>
