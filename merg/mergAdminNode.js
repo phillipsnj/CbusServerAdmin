@@ -382,7 +382,7 @@ class cbusAdmin extends EventEmitter {
                         "eventIndex": cbusMsg.eventIndex,
                         "variables": [this.config.nodes[cbusMsg.nodeNumber].parameters[5]],
                     }
-                    if (this.config.nodes[cbusMsg.nodeNumber].module == "Universal") {
+                    if (this.config.nodes[cbusMsg.nodeNumber].module == "CANMIO") {
                         setTimeout(()=>{this.cbusSend(this.REVAL(cbusMsg.nodeNumber, cbusMsg.eventIndex, 0))},50*ref)
                         setTimeout(()=>{this.cbusSend(this.REVAL(cbusMsg.nodeNumber, cbusMsg.eventIndex, 1))},100*ref)
                     }

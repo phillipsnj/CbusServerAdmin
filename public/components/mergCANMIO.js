@@ -423,6 +423,8 @@ Vue.component('merg-canmio-node-events', {
         </template>
 
       </v-data-table>
+      <p>{{ happening_actions }}</p>
+      <p>{{ Object.values(this.$store.state.nodes[this.nodeId].actions) }}</p>
       <v-row v-if="$store.state.debug">
         <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
       </v-row>
