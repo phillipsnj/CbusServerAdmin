@@ -125,7 +125,7 @@ function decodeLine(FIRMWARE, line, callback) {
 //
 //
 //
-class cbusFirmwareDownload extends EventEmitter  {
+class programNode extends EventEmitter  {
     constructor(NET_ADDRESS, NET_PORT) {
         super()
         this.net_address = NET_ADDRESS
@@ -141,29 +141,33 @@ class cbusFirmwareDownload extends EventEmitter  {
     /** actual download function
     * @param NODENUMBER
     * @param CPUTYPE
-    * @param FILENAME
     * @param FLAGS
+    * @param INTEL_HEX_STRING
+    * Flags
     * 1 = Program CONFIG
     * 2 = Program EEPROM
     * 4 = Ignore CPUTYPE
     */
-    download (NODENUMBER, CPUTYPE, FILENAME, FLAGS) {
+    program (NODENUMBER, CPUTYPE, FLAGS, INTEL_HEX_STRING) {
         this.success = false
+
         try {
-            this.readHexFile(FILENAME, function (firmwareObject) {
-                winston.debug({message: 'programNode: >>>>>>>>>>>>> readHexFile callback ' + JSON.stringify(firmwareObject)})
+            // parse the intel hex file into our firmware object
+            this.parseHexFile(INTEL_HEX_STRING, function (firmwareObject) {
+                winston.debug({message: 'programNode: >>>>>>>>>>>>> parseHexFile callback ' + JSON.stringify(firmwareObject)})
+
+                this.FIRMWARE = firmwareObject
+                
                 if (FLAGS & 0x4) {
                         this.emit('programNode', 'CPUTYPE ignored')
                 } else {
-                    if (this.checkCPUTYPE (CPUTYPE, firmwareObject) != true) {
+                    if (this.checkCPUTYPE (CPUTYPE, this.FIRMWARE) != true) {
                         winston.debug({message: 'programNode: >>>>>>>>>>>>> cpu check: FAILED'})
                         this.emit('programNode', 'CPU mismatch')
                         return;
                     }
                 }
-                
-                this.FIRMWARE = firmwareObject
-                
+               
                 this.client = new net.Socket()
                 
                 this.client.connect(this.net_port, this.net_address, function () {
@@ -223,6 +227,7 @@ class cbusFirmwareDownload extends EventEmitter  {
                 }, 25000)
                 
             }.bind(this))
+
         } catch (error) {
             winston.debug({message: 'programNode: ERROR: ' + error});
             this.emit('programNode', 'ERROR: ' + error)
@@ -337,29 +342,28 @@ class cbusFirmwareDownload extends EventEmitter  {
             checksum = checksum & 0xFFFF        // trim to 16 bits
         }
         var checksum2C = decToHex((checksum ^ 0xFFFF) + 1, 4)    // checksum as two's complement in hexadecimal
+        winston.debug({message: 'programNode: arrayChecksum: ' + checksum2C});
         return checksum2C
     }
 
 
+
     //
     //
     //
-    readHexFile(FILENAME, CALLBACK) {
+    parseHexFile(intelHexString, CALLBACK) {
         var firmware = {}
-        
-        try {
-          var intelHexString = fs.readFileSync(FILENAME);
-        } catch (error) {
-            winston.debug({message: 'programNode: File read error: ' + error});
-            throw('File read error: ' + error)
-        }
-        
-      const readInterface = readline.createInterface({
-        input: fs.createReadStream(FILENAME),
-        });
-      
-        readInterface.on('line', function(line) {
-            decodeLine(firmware, line, function (firmwareObject) {
+
+        winston.debug({message: 'programNode: parseHexFile - hex ' + intelHexString})
+
+        const lines = intelHexString.toString().split("\r\n");
+        winston.debug({message: 'programNode: parseHexFile - line count ' + lines.length})
+
+        for (var i = 0; i < lines.length - 1; i++) {
+        winston.debug({message: 'programNode: parseHexFile - line ' + lines[i]})
+
+    
+            decodeLine(firmware, lines[i], function (firmwareObject) {
                 winston.debug({message: 'programNode: >>>>>>>>>>>>> end of file callback'})
                 for (const area in firmwareObject) {
                     for (const block in firmwareObject[area]) {
@@ -369,7 +373,7 @@ class cbusFirmwareDownload extends EventEmitter  {
                 if(CALLBACK) {CALLBACK(firmwareObject)}
                 else {winston.info({message: 'programNode: read hex file: WARNING - No EOF callback'})}
             })
-        });  
+        }
     }
 
 
@@ -396,4 +400,4 @@ class cbusFirmwareDownload extends EventEmitter  {
 };
 
 
-module.exports = ( NET_ADDRESS, NET_PORT ) => { return new cbusFirmwareDownload( NET_ADDRESS, NET_PORT ) }
+module.exports = ( NET_ADDRESS, NET_PORT ) => { return new programNode( NET_ADDRESS, NET_PORT ) }

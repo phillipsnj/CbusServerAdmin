@@ -17,9 +17,11 @@ const store = new Vuex.Store({
         cbusErrors:[],
         dccErrors:[],
         cbusNoSupport:[],
+		cbusTraffic: [],
         dccSessions:[],
         raw:{},
         layout:{},
+        programNodeEvent: "",
         display_component: "nodes-list",
         node_component: "nodeInfo",
         edit_event_component: "merg-default-node-event-variables",
@@ -63,6 +65,13 @@ socket.on('cbusTraffic', function (data) {
     if (store.state.debug) {
         console.log(`cbusTraffic : ` + data.direction + " " + data.raw + " " + data.translated)
     }
+    store.state.cbusTraffic.push(			 
+			{
+			  name: data.direction,
+			  data: data.translated,
+			}
+	)
+	if (store.state.cbusTraffic.length > 20) store.state.cbusTraffic.shift();
 });
 
 
@@ -74,6 +83,12 @@ socket.on('dccSessions', function (data) {
 socket.on('layoutDetails', (data) => {
     store.state.layout = data;
 })
+
+socket.on('PROGRAM_NODE', function (data) {
+    console.log(`PROGRAM_NODE : ` + data)
+    store.state.programNodeEvent = data;
+});
+
 
 Vue.component('test', {
     template: `<h2>Test Component</h2>`
