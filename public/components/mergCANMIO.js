@@ -3,14 +3,6 @@ Vue.component('merg-canmio', {
     data: function () {
         return {
             nodeId: 0,
-            headers: [
-                {text: 'id', value: 'id'},
-                {text: 'nodeId', value: 'nodeId'},
-                {text: 'eventId', value: 'eventId'},
-                {text: 'type', value: 'type'},
-                {text: 'status', value: 'status'},
-                {text: 'count', value: 'count'}
-            ]
         }
     },
     mounted() {
@@ -191,7 +183,9 @@ Vue.component('merg-canmio-node-variables', {
         <node-variable v-bind:nodeId="node.node" varId="3" name="Servo Speed"></node-variable>
         <node-variable v-bind:nodeId="node.node" varId="4" name="PORTB Pull-ups Enable"></node-variable>
       </v-row>
-      <p>{{ node.variables }}</p>
+      <v-row v-if="$store.state.debug">
+        <p>{{ node.variables }}</p>
+      </v-row>
       </v-container>`
 })
 
@@ -322,7 +316,9 @@ Vue.component('merg-canmio-node-channels', {
         <node-variable v-bind:nodeId="node.node" v-bind:varId="baseNV"
                        name="Selected Base Variable"></node-variable>
       </v-row>
-      <p>{{ node.variables }}</p>
+      <v-row v-if="$store.state.debug">
+        <p>{{ node.variables }}</p>
+      </v-row>
       </v-container>`
 })
 
@@ -335,10 +331,10 @@ Vue.component('merg-canmio-node-events', {
             headers: [
                 {text: 'Event Name', value: 'event'},
                 {text: 'Happening', value: 'actionId'},
-                {text: 'Event Index', value: 'eventIndex'},                
+                {text: 'Event Index', value: 'eventIndex'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
-            addNewEventDialog: false,			
+            addNewEventDialog: false,
         }
     },
     methods: {
@@ -379,57 +375,57 @@ Vue.component('merg-canmio-node-events', {
     },
     template: `
       <v-container>
-        <v-data-table :headers="headers"
-                      :items="eventList"
-                      :items-per-page="20"
-                      class="elevation-1"
-                      item-key="id">
-          <template v-slot:top>
-            <v-toolbar flat>
-              <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
+      <v-data-table :headers="headers"
+                    :items="eventList"
+                    :items-per-page="20"
+                    class="elevation-1"
+                    item-key="id">
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
 
-              <v-dialog v-model="addNewEventDialog" max-width="300">
-              <add-new-event-dialog 
-				v-on:close-addNewEventDialog="addNewEventDialog=false"
-                eventVariableIndex="2"
-                eventVariableValue="2">
+            <v-dialog v-model="addNewEventDialog" max-width="300">
+              <add-new-event-dialog
+                  v-on:close-addNewEventDialog="addNewEventDialog=false"
+                  eventVariableIndex="2"
+                  eventVariableValue="2">
               </add-new-event-dialog>
             </v-dialog>
 
-               <v-spacer></v-spacer>
-              <v-dialog v-model="eventDialog" max-width="500px">
-                <v-card>
-                  <v-card-title>
-                    <span class="headline">Edit Event</span>
-                  </v-card-title>
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <merg-canmio-node-event-variables
-                            v-bind:nodeId="nodeId"
-                            v-bind:actionId="editedEvent.actionId">
-                        </merg-canmio-node-event-variables>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
-            </v-toolbar>
-          </template>
-		  
-          <template v-slot:item.actionId="{ item }">
-            {{ item.variables[1] }} :: {{ happening_actions[item.variables[1]] }}
-          </template>
+            <v-spacer></v-spacer>
+            <v-dialog v-model="eventDialog" max-width="500px">
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Edit Event</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <merg-canmio-node-event-variables
+                          v-bind:nodeId="nodeId"
+                          v-bind:actionId="editedEvent.actionId">
+                      </merg-canmio-node-event-variables>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
 
-          <template v-slot:item.actions="{ item }">
-            <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
-            <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
-          </template>
+        <template v-slot:item.actionId="{ item }">
+          {{ item.variables[1] }} :: {{ happening_actions[item.variables[1]] }}
+        </template>
 
-        </v-data-table>
-		  <v-row v-if="$store.state.debug">
-			<p>{{ $store.state.nodes[this.nodeId].actions }}</p>
-		  </v-row>
+        <template v-slot:item.actions="{ item }">
+          <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
+          <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
+        </template>
+
+      </v-data-table>
+      <v-row v-if="$store.state.debug">
+        <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
+      </v-row>
       </v-container>`
 })
 
@@ -475,15 +471,17 @@ Vue.component('merg-canmio-node-event-variables', {
         <p>{{ node.actions[actionId].variables.length }}</p>
         <p>{{ node.actions[actionId] }}</p>
         <h3>Happening :: {{ happening_actions[node.actions[actionId].variables[1]] }}</h3>
-        <v-row v-for="n in eventActions">
-          <merg-canmio-event-variable-select v-bind:nodeId="nodeId"
-                                      v-bind:actionId="actionId"
-                                      v-bind:varId="n"
-                                      :name="'Action-'+n" 
-                                      :items="$store.state.canmio_event_actions" 
-                                      dense>
-          </merg-canmio-event-variable-select>
-        </v-row>
+        <v-col cols="12">
+          <v-row v-for="n in eventActions">
+            <merg-canmio-event-variable-select v-bind:nodeId="nodeId"
+                                               v-bind:actionId="actionId"
+                                               v-bind:varId="n"
+                                               :name="'Action-'+n"
+                                               :items="$store.state.canmio_event_actions"
+                                               dense>
+            </merg-canmio-event-variable-select>
+          </v-row>
+        </v-col>
         <p>{{ event_actions }}</p>
       </v-row>
       </v-container>`
