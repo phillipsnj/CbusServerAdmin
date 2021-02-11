@@ -27,31 +27,30 @@ Vue.component('merg-canace8c', {
         getInfo() {
             this.$store.state.node_component = "nodeInfo"
         },
+        getParameters() {
+            this.$store.state.node_component = "nodeParameters"
+        },
         getVariables() {
             this.$store.state.node_component = "merg-canace8c-node-variables"
         },
         getEvents() {
-            //console.log(`mergDefault - NERD : ${this.nodeId}`)
-            //this.$root.send('NERD', {'nodeId': this.nodeId})
+            this.$root.send('CLEAR_NODE_EVENTS', {'nodeId': this.nodeId})
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
             this.$store.state.node_component = "merg-canace8c-node-events"
-        }
+        },
+        getFirmware() {
+            this.$store.state.node_component = "firmware"
+        },
     },
     template: `
       <v-container>
       <h1>CANACE8C</h1>
       <v-tabs>
         <v-tab :key="1" @click="getInfo()">Info</v-tab>
+        <v-tab @click="getParameters()">Parameters</v-tab>
         <v-tab :key="2" @click="getVariables()" v-if="node.flim">Variables</v-tab>
         <v-tab :key="3" @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
-        <v-tab-item :key="1">
-          <!--                    <nodeInfo :nodeId="node.node"></nodeInfo>-->
-        </v-tab-item>
-        <v-tab-item :key="2">
-          <!--<merg-default-node-variables :nodeId="node.node"></merg-default-node-variables>-->
-        </v-tab-item>
-        <v-tab-item :key="3">
-          <!--                    <merg-default-node-events :nodeId="node.node"></merg-default-node-events>-->
-        </v-tab-item>
+        <v-tab @click="getFirmware()">Firmware</v-tab>
       </v-tabs>
       <v-container v-if="$store.state.debug">
         <p>{{ $store.state.node_component }}</p>
