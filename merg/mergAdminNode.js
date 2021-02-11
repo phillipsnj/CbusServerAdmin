@@ -39,14 +39,14 @@ class cbusAdmin extends EventEmitter {
         this.header = ':S' + outHeader.toString(16).toUpperCase() + 'N'
         this.client = new net.Socket()
         this.client.connect(NET_PORT, NET_ADDRESS, function () {
-            winston.debug({message: 'Client Connected'});
+            winston.info({message: 'Client Connected'});
         })
         this.client.on('data', function (data) { //Receives packets from network and process individual Messages
             const outMsg = data.toString().split(";");
             for (var i = 0; i < outMsg.length - 1; i++) {
 
                 let cbusMsg = cbusLib.decode(outMsg[i].concat(";"))     // replace terminator removed by 'split' method
-				winston.debug({message: "mergAdminNode In " + outMsg[i] + " : " + cbusMsg.text});
+				winston.info({message: "mergAdminNode CBUS Receive <<< " + outMsg[i] + " : " + cbusMsg.text});
 				this.emit('cbusTraffic', {direction: 'In', raw: cbusMsg.encoded, translated: cbusMsg.text});
                 this.action_message(cbusMsg)
 
@@ -209,7 +209,7 @@ class cbusAdmin extends EventEmitter {
                     this.config.nodes[cbusMsg.nodeNumber].EvCount = cbusMsg.eventCount
                     this.saveConfig()
                 }
-        		winston.info({message: 'mergAdminNode: NUMEV: ' + JSON.stringify(this.config.nodes[cbusMsg.nodeNumber])});
+        		winston.debug({message: 'mergAdminNode: NUMEV: ' + JSON.stringify(this.config.nodes[cbusMsg.nodeNumber])});
             },
             '90': (cbusMsg) => {//Accessory On Long Event
                 this.eventSend(cbusMsg, 'on', 'long')
@@ -445,6 +445,7 @@ class cbusAdmin extends EventEmitter {
 
             let outMsg = cbusLib.decode(msg);
 			this.emit('cbusTraffic', {direction: 'Out', raw: outMsg.encoded, translated: outMsg.text});
+            winston.info({message: `mergAdminNode CBUS Transmit >> ${outMsg.encoded} ` + outMsg.text});
 		}
 
     }
