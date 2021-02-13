@@ -186,7 +186,7 @@ class programNode extends EventEmitter  {
 
                 this.client.on('data', function (message) {
                     var cbusMsg = cbusLib.decode(message.toString())
-                    winston.debug({message: 'programNode: Receive  <<<: ' + cbusMsg.text});
+                    winston.info({message: 'programNode: CBUS Receive  <<<: ' + cbusMsg.text});
                         if (cbusMsg.response == 0) {
                             winston.debug({message: 'programNode: Check NOT OK received: download failed'});
                             this.emit('programNode', 'Failed')
@@ -394,7 +394,7 @@ class programNode extends EventEmitter  {
     sendMsg(msg)
     {
         this.client.write(msg)
-        winston.debug({message: 'programNode: Transmit >>>: ' + cbusLib.decode(msg).text})
+        winston.info({message: 'programNode: CBUS Transmit >>>: ' + cbusLib.decode(msg).text})
     }
 
 };

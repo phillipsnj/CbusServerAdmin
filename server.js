@@ -56,23 +56,23 @@ function getSystemConfig() {
             
             // check if directory exists
             if (fs.existsSync(directory)) {
-                winston.debug({message: `Config: Directory exists`});
+                winston.info({message: `Config: Directory exists`});
             } else {
-                winston.debug({message: `Config: Directory not found - creating new one`});
+                winston.info({message: `Config: Directory not found - creating new one`});
                 fs.mkdir(directory, function(err) {
                   if (err) {
                     console.log(err)
                   } else {
-                    console.log("New Config directory successfully created.")
+                    winston.info({message: `Config: New directory successfully created.`});
                   }
                 })            
             }
 
             // check if config file exists
             if (fs.existsSync(directory + 'systemConfig.json')) {
-                winston.debug({message: `systemConfig:  file exists`});
+                winston.info({message: `systemConfig:  file exists`});
             } else {
-                winston.debug({message: `systemConfig: file not found - creating new one`});
+                winston.info({message: `systemConfig: file not found - creating new one`});
                 const systemConfig = {
                     "port": 3000,
                     "server": "localhost",
