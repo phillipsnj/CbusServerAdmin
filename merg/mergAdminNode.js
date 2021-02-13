@@ -239,24 +239,46 @@ class cbusAdmin extends EventEmitter {
                 this.eventSend(cbusMsg, 'off', 'short')
             },
             '9B': (cbusMsg) => {//PARAN Parameter readback by Index
-				//winston.debug({message: `PARAN (9B) ${cbusMsg.nodeNumber} Parameter ${cbusMsg.parameterIndex} Value ${msg.paramValue()}`});
+                var saveConfigNeeded = false
+                if (cbusMsg.parameterIndex == 1) {
+                    if (this.config.nodes[cbusMsg.nodeNumber].moduleManufacturerName != merg.moduleManufacturerName[cbusMsg.parameterValue]) {
+                        this.config.nodes[cbusMsg.nodeNumber].moduleManufacturerName = merg.moduleManufacturerName[cbusMsg.parameterValue]
+                        saveConfigNeeded = true
+                    }
+                }
                 if (cbusMsg.parameterIndex == 9) {
-                    this.config.nodes[cbusMsg.nodeNumber].cpuName = merg.cpuType[cbusMsg.parameterValue]
-                    this.saveConfig()
+                    if (this.config.nodes[cbusMsg.nodeNumber].cpuName != merg.cpuName[cbusMsg.parameterValue]) {
+                        this.config.nodes[cbusMsg.nodeNumber].cpuName = merg.cpuName[cbusMsg.parameterValue]
+                        saveConfigNeeded = true
+                    }
+                }
+                if (cbusMsg.parameterIndex == 10) {
+                    if (this.config.nodes[cbusMsg.nodeNumber].interfaceName != merg.interfaceName[cbusMsg.parameterValue]) {
+                        this.config.nodes[cbusMsg.nodeNumber].interfaceName = merg.interfaceName[cbusMsg.parameterValue]
+                        saveConfigNeeded = true
+                    }
+                }
+                if (cbusMsg.parameterIndex == 19) {
+                    if (this.config.nodes[cbusMsg.nodeNumber].cpuManufacturerName != merg.cpuManufacturerName[cbusMsg.parameterValue]) {
+                        this.config.nodes[cbusMsg.nodeNumber].cpuManufacturerName = merg.cpuManufacturerName[cbusMsg.parameterValue]
+                        saveConfigNeeded = true
+                    }
                 }
                 if (this.config.nodes[cbusMsg.nodeNumber].parameters[cbusMsg.parameterIndex] != null) {
                     if (this.config.nodes[cbusMsg.nodeNumber].parameters[cbusMsg.parameterIndex] != cbusMsg.parameterValue) {
 						winston.debug({message: `Parameter ${cbusMsg.parameterIndex} value has changed`});
                         this.config.nodes[cbusMsg.nodeNumber].parameters[cbusMsg.parameterIndex] = cbusMsg.parameterValue
-                        this.saveConfig()
+                        saveConfigNeeded = true
                     } else {
 						winston.debug({message: `Parameter ${cbusMsg.parameterIndex} value has not changed`});
                     }
                 } else {
 					winston.debug({message: `Parameter ${cbusMsg.parameterIndex} value does not exist in config`});
                     this.config.nodes[cbusMsg.nodeNumber].parameters[cbusMsg.parameterIndex] = cbusMsg.parameterValue
-                    this.saveConfig()
+                    saveConfigNeeded = true
                 }
+                // ok, save the config if needed
+                if ( saveConfigNeeded == true ) {this.saveConfig()}
             },
             'B0': (cbusMsg) => {//Accessory On Long Event 1
                 this.eventSend(cbusMsg, 'on', 'long')

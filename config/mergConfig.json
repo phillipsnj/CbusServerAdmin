@@ -106,7 +106,7 @@
     "8": "Session Cancelled"
   },
 
-  "cpuType": {
+  "cpuName": {
       "1": "P18F2480",
       "2": "P18F4480",
       "3": "P18F2580",
@@ -133,7 +133,29 @@
       "35": "P32MX764F128",
       "36": "P32MX775F256",
       "37": "P32MX775F512",
-      "38": "P32MX795F512"
+      "38": "P32MX795F512",
+      "255": "unknown"
+  },
+  
+  "cpuManufacturerName": {
+			"1": "MICROCHIP",
+			"2": "ATMEL",
+			"3": "ARM",
+            "255": "unknown"
+  },
+
+  "moduleManufacturerName": {
+			"70": "ROCRAIL",
+			"80": "SPECTRUM",
+			"165": "MERG",
+            "255": "unknown"
+  },
+
+  "interfaceName": {
+			"1": "CAN",
+			"2": "Ethernet",
+			"3": "Microchip mesh network",
+            "255": "unknown"
   }
 
 }

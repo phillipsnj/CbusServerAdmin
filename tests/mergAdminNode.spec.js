@@ -1,16 +1,14 @@
 const expect = require('chai').expect;
-var itParam = require('mocha-param');
-var winston = require('./config/winston_test.js');
+const itParam = require('mocha-param');
+const winston = require('./config/winston_test.js');
 const fs = require('fs');
 const jsonfile = require('jsonfile')
-
 const cbusLib = require('cbusLibrary')
 
-const NET_PORT = 5553;
+const NET_PORT = 5553;                  // neeeds to be different to other tests
 const NET_ADDRESS = "127.0.0.1"
+
 const admin = require('./../merg/mergAdminNode.js')
-const file = 'config/nodeConfig.json'
-const layoutPath = 'config/'
 const Mock_Cbus = require('./mock_CbusNetwork.js')
 
 function decToHex(num, len) {return parseInt(num).toString(16).toUpperCase().padStart(len, '0');}
@@ -886,10 +884,13 @@ describe('mergAdminNode tests', function(){
 			if (NN == 1) nodeNumber = 0;
 			if (NN == 2) nodeNumber = 1;
 			if (NN == 3) nodeNumber = 65535;
-			for (PI = 1; PI < 4; PI++) {
+			for (PI = 1; PI < 7; PI++) {
 				if (PI == 1) parameterIndex = 0;
 				if (PI == 2) parameterIndex = 1;
-				if (PI == 3) parameterIndex = 255;
+				if (PI == 3) parameterIndex = 9;
+				if (PI == 4) parameterIndex = 10;
+				if (PI == 5) parameterIndex = 19;
+				if (PI == 6) parameterIndex = 255;
 				for (PV = 1; PV < 4; PV++) {
 					if (PV == 1) parameterValue = 0;
 					if (PV == 2) parameterValue = 1;
@@ -908,6 +909,21 @@ describe('mergAdminNode tests', function(){
         mock_Cbus.outputPARAN(value.nodeNumber, value.parameterIndex, value.parameterValue);
 		setTimeout(function(){
             expect(node.config.nodes[value.nodeNumber].parameters[value.parameterIndex]).to.equal(value.parameterValue)
+            if (value.parameterIndex == 9) {
+                if (value.parameterValue == 1) {
+                    expect(node.config.nodes[value.nodeNumber].cpuName).to.equal("P18F2480");
+                }
+            }
+            if (value.parameterIndex == 10) {
+                if (value.parameterValue == 1) {
+                    expect(node.config.nodes[value.nodeNumber].interfaceName).to.equal("CAN");
+                }
+            }
+            if (value.parameterIndex == 19) {
+                if (value.parameterValue == 1) {
+                    expect(node.config.nodes[value.nodeNumber].cpuManufacturerName).to.equal("MICROCHIP");
+                }
+            }
             done()
 		}, 10);
 	})
