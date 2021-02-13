@@ -581,7 +581,7 @@ class CbusModule {
      	this.events = []
 		this.nodeId = nodeId;
 		this.parameters = 	[ 	8,		// number of available parameters
-								0,		// param 1 manufacturer Id
+								165,    // param 1 manufacturer Id
 								0,		// param 2 Minor code version
 								0,		// param 3 module Id
 								0,		// param 4 number of supported events
@@ -589,12 +589,15 @@ class CbusModule {
 								0,		// param 6 number of supported node variables
 								0,		// param 7 major version
 								0,		// param 8 node flags
+								1,		// param 9 cpu type (1 = P18F2480)
+								1,		// param 10 interface type (1 = CAN)
 								// NODE flags
 								// 	Bit 0	: Consumer
 								//	Bit 1	: Producer
 								//	Bit 2	: FLiM Mode
 								//	Bit 3	: The module supports bootloading		
 							]
+        this.parameters[19] = 1;        // param 19 cpu manufacturer (1 = ATMEL)                           
 	}
 
 	getStoredEvents() { return this.events}
@@ -617,6 +620,10 @@ class CbusModule {
 	getFlags() {return this.parameters[8]}
 	getFlagsHex() {return decToHex(this.parameters[8], 2)}
 	setNodeFlags(flags) {this.parameters[8] = flags}
+
+	getCpuType() {return this.parameters[9]}
+	getCpuTypeHex() {return decToHex(this.parameters[9], 2)}
+	setCputType(value) {this.parameters[9] = value}
 }
 
 class CANACC8 extends CbusModule{
@@ -625,6 +632,7 @@ class CANACC8 extends CbusModule{
 		this.setModuleId(3);
 		this.setManufacturerId(165);
 		this.setNodeFlags(7);
+        this.setCputType(1);
         
    		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
 		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
@@ -637,6 +645,7 @@ class CANSERVO8C extends CbusModule{
 		this.setModuleId(19);
 		this.setManufacturerId(165);
 		this.setNodeFlags(7);
+        this.setCputType(1);
         
    		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
 		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
@@ -649,6 +658,7 @@ class CANMIO extends CbusModule{
 		this.setModuleId(32);
 		this.setManufacturerId(165);
 		this.setNodeFlags(7);
+        this.setCputType(13);
         
    		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
 		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
@@ -697,6 +707,7 @@ class CANACE8C extends CbusModule{
 		this.setModuleId(5);
 		this.setManufacturerId(165);
 		this.setNodeFlags(7);
+        this.setCputType(1);
         
    		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
 		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})
@@ -709,6 +720,7 @@ class CANMIO_OUT extends CbusModule{
 		this.parameters[3] = 52;
 		this.setManufacturerId(165);
 		this.setNodeFlags(7);
+        this.setCputType(13);
         
    		this.events.push({'eventName': 0x012D0103, "variables":[ 0, 0, 0, 0 ]})
 		this.events.push({'eventName': 0x012D0104, "variables":[ 0, 0, 0, 0 ]})

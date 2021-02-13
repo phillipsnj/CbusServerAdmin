@@ -21,6 +21,13 @@ var timeStampFirst = winston.format.combine(
 	  return info.timestamp + " " + info.level + "\t" + info.message;
 }));
 
+// custom format to put timestamp first
+var consoleTimeStampFirst = winston.format.combine(
+  winston.format.timestamp({format: 'HH:mm:ss.SSS'}),
+  winston.format.printf((info) => {
+	  return info.timestamp + " " + info.message;
+}));
+
 // custom format - replicate simple console.log output
 var messageOnly = winston.format.combine(
   winston.format.printf((info) => {
@@ -35,13 +42,13 @@ var options = {
 	options: { flags: 'w' },
     handleExceptions: true,
     maxsize: 5242880, // 5MB
-    maxFiles: 5,
+    maxFiles: 1,
 	format: timeStampFirst
   },
   console: {
-    level: 'debug',
+    level: 'info',
     handleExceptions: true,
-	format: messageOnly
+	format: consoleTimeStampFirst
   },
 };
 
@@ -53,7 +60,7 @@ var options = {
 // default logger is essentially a blank logger, and has no transports setup, so need to add them
 //
 
-//winston.add(new winston.transports.File(options.file));
+winston.add(new winston.transports.File(options.file));
 winston.add(new winston.transports.Console(options.console));
 
 

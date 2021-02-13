@@ -27,31 +27,30 @@ Vue.component('merg-canace8c', {
         getInfo() {
             this.$store.state.node_component = "nodeInfo"
         },
+        getParameters() {
+            this.$store.state.node_component = "nodeParameters"
+        },
         getVariables() {
             this.$store.state.node_component = "merg-canace8c-node-variables"
         },
         getEvents() {
-            //console.log(`mergDefault - NERD : ${this.nodeId}`)
-            //this.$root.send('NERD', {'nodeId': this.nodeId})
+            this.$root.send('CLEAR_NODE_EVENTS', {'nodeId': this.nodeId})
+            this.$root.send('REQUEST_ALL_NODE_EVENTS', {"nodeId": this.nodeId})
             this.$store.state.node_component = "merg-canace8c-node-events"
-        }
+        },
+        getFirmware() {
+            this.$store.state.node_component = "firmware"
+        },
     },
     template: `
       <v-container>
       <h1>CANACE8C</h1>
       <v-tabs>
         <v-tab :key="1" @click="getInfo()">Info</v-tab>
+        <v-tab @click="getParameters()">Parameters</v-tab>
         <v-tab :key="2" @click="getVariables()" v-if="node.flim">Variables</v-tab>
-        <v-tab :key="3" @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
-        <v-tab-item :key="1">
-          <!--                    <nodeInfo :nodeId="node.node"></nodeInfo>-->
-        </v-tab-item>
-        <v-tab-item :key="2">
-          <!--<merg-default-node-variables :nodeId="node.node"></merg-default-node-variables>-->
-        </v-tab-item>
-        <v-tab-item :key="3">
-          <!--                    <merg-default-node-events :nodeId="node.node"></merg-default-node-events>-->
-        </v-tab-item>
+        <v-tab :key="3" @click="getEvents()" >Stored Events</v-tab>
+        <v-tab @click="getFirmware()">Firmware</v-tab>
       </v-tabs>
       <v-container v-if="$store.state.debug">
         <p>{{ $store.state.node_component }}</p>
@@ -112,16 +111,19 @@ Vue.component('merg-canace8c-node-variables', {
 
 Vue.component('merg-canace8c-node-events', {
     name: "merg-canace8c-node-events",
-    //props: ['nodeId'],
     data: function () {
         return {
             eventDialog: false,
             editedEvent: {event: "0", variables: [], actionId: 1},
             headers: [
-                {text: 'Event Name', value: 'event'},
-                {text: 'Action ID', value: 'actionId'},
+                {text: 'Event Name', value: 'eventName'},
+                {text: 'Producing Node', value: 'nodeNumber'},
+                {text: 'Event/Device Number', value: 'eventNumber'},
+                {text: 'Type', value: 'eventType'},
+                {text: 'Event Index', value: 'actionId'},
                 {text: 'Actions', value: 'actions', sortable: false}
-            ]
+            ],
+            addNewEventDialog: false,
         }
     },
     methods: {
@@ -130,7 +132,6 @@ Vue.component('merg-canace8c-node-events', {
             for (let i = 1; i <= this.node.parameters[5]; i++) {
                 this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": item.actionId, "valueId": i})
             }
-            //this.eventDialog = true
             this.editedEvent = item
             this.$store.state.selected_action_id = item.actionId
             this.$store.state.node_component = "merg-canace8c-node-event-variables"
@@ -139,7 +140,13 @@ Vue.component('merg-canace8c-node-events', {
         deleteEvent: function (event) {
             console.log(`deleteEvent : ${this.node.node} : ${event}`)
             this.$root.send('REMOVE_EVENT', {"nodeId": this.node.node, "eventName": event.event})
-        }
+        },
+        getProducerNodeNumber: function(item) {
+          return parseInt(item.event.substr(0,4), 16)
+        },
+        getEventNumber: function(item) {
+          return parseInt(item.event.substr(4,4), 16)
+        },
     },
     mounted() {
         if (this.node.EvCount > 0) {
@@ -168,14 +175,31 @@ Vue.component('merg-canace8c-node-events', {
                       item-key="id">
           <template v-slot:top>
             <v-toolbar flat>
-              <v-toolbar-title>Events for {{ node.node }}</v-toolbar-title>
-              <v-divider
-                  class="mx-4"
-                  inset
-                  vertical
-              ></v-divider>
+
+                <v-btn color="blue darken-1" @click.stop="addNewEventDialog = true" outlined>Add New Event</v-btn>
+                <v-dialog persistent v-model="addNewEventDialog" max-width="300">
+                    <add-new-event-dialog v-on:close-addNewEventDialog="addNewEventDialog=false"></add-new-event-dialog>
+                </v-dialog>
+
             </v-toolbar>
           </template>
+          
+        <template v-slot:item.eventName="{ item }">
+          <node-event-variable-display-name v-bind:eventId="item.event"></node-event-variable-display-name>
+        </template>
+              
+         <template v-slot:item.nodeNumber="{ item }">
+          <div>{{ (getProducerNodeNumber(item) == 0) ? "" : getProducerNodeNumber(item) }}</div>
+        </template>
+                    
+         <template v-slot:item.eventNumber="{ item }">
+          <div>{{ getEventNumber(item) }}</div>
+        </template>
+
+         <template v-slot:item.eventType="{ item }">
+          <div>{{ (getProducerNodeNumber(item) == 0) ? "Short" : "Long" }}</div>
+        </template>
+                    
           <template v-slot:item.actions="{ item }">
             <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
             <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
