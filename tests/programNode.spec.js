@@ -25,6 +25,7 @@ describe('programNode tests', function(){
     
     beforeEach(function() {
    		winston.debug({message: '  '});   // blank line to separate tests
+        mock_Cbus.clearSendArray()
     })
 
 	after(function(done) {
@@ -92,6 +93,25 @@ describe('programNode tests', function(){
 	});
 
 
+    //
+    // test line checksum works on decode line function
+    //
+	it('decode line checksum test', function(done) {
+		winston.debug({message: 'TEST: decode line:'});
+        const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
+        var callbackInvoked = false
+        var firmware = {}
+        var result = 'notNull'
+		programNode.decodeLine(firmware, ':00000008FF', function (firmwareObject){ 
+            result = firmwareObject
+            callbackInvoked = true;
+        });
+        expect(callbackInvoked).to.equal(true, 'callbackInvoked');
+        expect(result).to.equal(null, 'callback result');
+        done();
+	});
+
+
 
     //
     // test sequence of operations on download
@@ -119,8 +139,8 @@ describe('programNode tests', function(){
             expect(firstMsg.opCode).to.equal('5C', 'first message BOOTM 5C');
             //
             // verify checksum when process is signalled as complete
-            expect(downloadData).to.equal('Complete', 'Download event');
-            expect(programNode.arrayChecksum(mock_Cbus.firmware)).to.equal('C68E', 'Checksum');
+            expect(downloadData).to.equal('Success: programing completed', 'Download event');
+            expect(mock_Cbus.firmwareChecksum).to.equal('C68E', 'Checksum');
             //
             // check last message is a reset command
             var lastMsg = cbusLib.decode(mock_Cbus.sendArray[mock_Cbus.sendArray.length - 1])
@@ -160,8 +180,7 @@ describe('programNode tests', function(){
             expect(firstMsg.opCode).to.equal('5C', 'first message BOOTM 5C');
             //
             // verify checksum when process is signalled as complete
-            expect(downloadData).to.equal('Complete', 'Download event');
-//            expect(programNode.arrayChecksum(mock_Cbus.firmware)).to.equal('C68E', 'Checksum');
+            expect(downloadData).to.equal('Success: programing completed', 'Download event');
             //
             // check last message is a reset command
             var lastMsg = cbusLib.decode(mock_Cbus.sendArray[mock_Cbus.sendArray.length - 1])
@@ -175,12 +194,38 @@ describe('programNode tests', function(){
 
 
     //
+    // test rejection of corrupted file
+    // use shortened file to save time, as we've already tested parsing full hex file above
+    //
+    // expect: sequence to start with sending of BOOTM opcode
+    // expect: next, Hex file loaded, parsed & downloaded - verify by testing checksum of downloaded file if 'Complete' event received
+    // expect: Last thing, expect reset command sent
+    //
+	it('Download corrupt file test', function(done) {
+		winston.debug({message: 'TEST: corrupt download:'});
+        const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
+        programNode.on('programNode', function (data) {
+			corruptFileData = data;
+			winston.debug({message: 'TEST: corrupt download: ' + JSON.stringify(corruptFileData)});
+			});	        
+        var intelHexString = fs.readFileSync('./tests/test_firmware/corruptFile.HEX');
+		programNode.program(300, 1, 3, intelHexString);
+		setTimeout(function(){
+            expect (mock_Cbus.sendArray.length).to.equal(0, "check sent messages")
+            expect(corruptFileData).to.equal("Failed: file parsing failed", 'Download event');
+            done();
+		}, 200);
+	});
+
+
+
+    //
     // use wrong cpu type, and short file
     //
 	it('Download wrong file test', function(done) {
 		winston.debug({message: 'TEST: wrong file:'});
         const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
-        programNode.once('programNode', function (data) {
+        programNode.on('programNode', function (data) {
 			downloadData = data;
 			winston.debug({message: 'TEST: wrong file: ' + JSON.stringify(downloadData)});
 			});	        
@@ -199,17 +244,77 @@ describe('programNode tests', function(){
 	it('Download ignore CPUTYPE test', function(done) {
 		winston.debug({message: 'TEST: ignore CPUTYPE:'});
         const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
-        programNode.once('programNode', function (data) {
-			downloadData = data;
-			winston.debug({message: 'TEST: ignore CPUTYPE: ' + JSON.stringify(downloadData)});
+        downloadDataArray = []
+        programNode.on('programNode', function (data) {
+			downloadDataArray.push(data);
+			winston.debug({message: 'TEST: ignore CPUTYPE: ' + JSON.stringify(data)});
 			});	        
         var intelHexString = fs.readFileSync('./tests/test_firmware/shortFile.HEX');
 		programNode.program(300, 99, 4, intelHexString);
 		setTimeout(function(){
-            expect(downloadData).to.equal('CPUTYPE ignored', 'Download event');
+            expect(downloadDataArray[1]).to.equal('CPUTYPE ignored', 'Download event');
+            expect(downloadDataArray[downloadDataArray.length-1]).to.equal('Success: programing completed', 'Download event');
 			done();
 		}, 1000);
 	});
+
+
+    //
+    // test sequence of operations on program boot mode
+    // use shortened file to save time, as we've already tested parsing full hex file above
+    //
+    // expect: module is already in boot mode, so doesn't need boot command, and onlt expects firmware, so won't respond to any other opcodes
+    // expect: next, Hex file loaded, parsed & downloaded - verify by testing checksum of downloaded file if 'Complete' event received
+    // expect: Last thing, expect reset command sent
+    //
+	it('programBootMode short test', function(done) {
+		winston.debug({message: 'TEST: programBootMode:'});
+        const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
+        programNode.on('programNode', function (data) {
+			downloadData = data;
+			winston.warn({message: 'TEST: programBootMode: ' + JSON.stringify(downloadData)});
+			});	        
+        var intelHexString = fs.readFileSync('./tests/test_firmware/shortFile.HEX');
+		programNode.programBootMode(1, 3, intelHexString);
+		setTimeout(function(){
+            //
+            // verify checksum when process is signalled as complete
+            expect(downloadData).to.equal('Success: programing completed', 'Download event');
+            expect(mock_Cbus.firmwareChecksum).to.equal('C68E', 'Checksum');
+            //
+            // check last message is a reset command
+            var lastMsg = cbusLib.decode(mock_Cbus.sendArray[mock_Cbus.sendArray.length - 1])
+			winston.debug({message: 'TEST: programBootMode: last message: ' + lastMsg.text});
+            expect(lastMsg.ID_TYPE).to.equal('X', 'last message ID_TYPE');
+            expect(lastMsg.type).to.equal('CONTROL', 'last message control type');
+            expect(lastMsg.SPCMD).to.equal(1, 'last message reset command');
+			done();
+		}, 2000);
+	});
+
+    //
+    // test corrupted file on program boot mode
+    //
+    // expect: module is already in boot mode, so doesn't need boot command, and onlt expects firmware, so won't respond to any other opcodes
+    // expect: next, Hex file loaded, parsed & downloaded - verify by testing checksum of downloaded file if 'Complete' event received
+    // expect: Last thing, expect reset command sent
+    //
+	it('programBootMode corrupt file test', function(done) {
+		winston.debug({message: 'TEST: programBootMode: corrupt file test:'});
+        const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
+        programNode.on('programNode', function (data) {
+			downloadData = data;
+			winston.debug({message: 'TEST: programBootMode: corrupt file test: ' + JSON.stringify(downloadData)});
+			});	        
+        var intelHexString = fs.readFileSync('./tests/test_firmware/corruptFile.HEX');
+		programNode.programBootMode(1, 3, intelHexString);
+		setTimeout(function(){
+            expect (mock_Cbus.sendArray.length).to.equal(0, "programBootMode: check sent messages")
+            expect(downloadData).to.equal('Failed: file parsing failed', 'programBootMode: expected event');
+			done();
+		}, 200);
+	});
+
 
 
 

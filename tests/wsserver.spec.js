@@ -712,6 +712,28 @@ describe('Websocket server tests', function(){
 	});
 
 
+	it('PROGRAM_BOOT_MODE test', function(done) {
+		winston.info({message: 'wsserver Test: START PROGRAM_BOOT_MODE test'});
+		websocket_Client.on('PROGRAM_NODE', function (data) {
+			data;
+			winston.warn({message: 'wsserver Test: PROGRAM_BOOT_MODE ' + JSON.stringify(data)});
+			});	
+            
+            // create base64 encoded version of intel hex file
+            let intelHexString = fs.readFileSync('./tests/test_firmware/shortFile.HEX');
+            var encoded = intelHexString.toString('base64')
+            
+		websocket_Client.emit('PROGRAM_BOOT_MODE', {
+                "cpuType": 1,
+                "flags": 3,
+                "encodedIntelHex": encoded
+            })
+		setTimeout(function(){
+			done();
+			}, 2000);
+	});
+
+
 	///////////////////////////////////////////////
 	//
 	// Test WebSocket Out Messages

@@ -168,11 +168,20 @@ function wsserver(LAYOUT_NAME, httpserver, NET_ADDRESS,NET_PORT) {
         })
 
         socket.on('PROGRAM_NODE', function(data){
-            let buff = new Buffer(data.encodedIntelHex, 'base64');
+            let buff = Buffer.from(data.encodedIntelHex, 'base64');
             let intelhexString = buff.toString('ascii');
             winston.debug({message: `PROGRAM_NODE; intel hex ` + intelhexString});
 
             programNode.program(data.nodeNumber, data.cpuType, data.flags, intelhexString);
+        })
+		
+        
+        socket.on('PROGRAM_BOOT_MODE', function(data){
+            let buff = Buffer.from(data.encodedIntelHex, 'base64');
+            let intelhexString = buff.toString('ascii');
+            winston.debug({message: `PROGRAM_BOOT_MODE; intel hex ` + intelhexString});
+
+            programNode.programBootMode(data.cpuType, data.flags, intelhexString);
         })
 		
     });
