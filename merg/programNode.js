@@ -165,9 +165,8 @@ class programNode extends EventEmitter  {
     */
     program (NODENUMBER, CPUTYPE, FLAGS, INTEL_HEX_STRING) {
         this.success = false
-/*
+
         try {
-            */
             this.emit('programNode', 'Parsing file')
             // parse the intel hex file into our firmware object
             this.parseHexFile(INTEL_HEX_STRING, function (firmwareObject) {
@@ -253,12 +252,11 @@ class programNode extends EventEmitter  {
                     this.emit('programNode', 'Failed: file parsing failed')
                 }
             }.bind(this))
-/*
+            
         } catch (error) {
             winston.debug({message: 'programNode: ERROR: ' + error});
             this.emit('programNode', 'ERROR: ' + error)
         }
-        */
     }
     
 
