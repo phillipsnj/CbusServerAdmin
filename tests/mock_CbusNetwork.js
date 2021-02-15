@@ -52,6 +52,7 @@ class mock_CbusNetwork {
 		this.socket;
 		
         this.firmware = []
+        this.firmwareChecksum = null
         
 		this.modules = 	[
 						new CANACC8 (0),
@@ -111,15 +112,16 @@ class mock_CbusNetwork {
                     break;
                 case 1:
                     winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_RESET  <<< '});
+                    this.firmware = []
                     break;
                 case 2:
                     winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_RST_CHKSM <<< '});
                     break;
                 case 3:
                     winston.debug({message: 'Mock CBUS Network: <<< Received control message CMD_CHK_RUN <<< '});
-                    var cksm = arrayChecksum(this.firmware)
-                    winston.debug({message: 'Mock CBUS Network: CMD_CHK_RUN: calculated checksum: ' + cksm + ' received checksum: ' + decToHex(cbusMsg.CPDTH, 2) + decToHex(cbusMsg.CPDTL, 2)});
-                    if (cksm == decToHex(cbusMsg.CPDTH, 2) + decToHex(cbusMsg.CPDTL, 2)) {
+                    this.firmwareChecksum = arrayChecksum(this.firmware)
+                    winston.debug({message: 'Mock CBUS Network: CMD_CHK_RUN: calculated checksum: ' + this.firmwareChecksum + ' received checksum: ' + decToHex(cbusMsg.CPDTH, 2) + decToHex(cbusMsg.CPDTL, 2)});
+                    if (this.firmwareChecksum == decToHex(cbusMsg.CPDTH, 2) + decToHex(cbusMsg.CPDTL, 2)) {
                         this.outputExtResponse(1)   // 1 = ok
                     } else {
                         this.outputExtResponse(0)   // 0 = not ok
