@@ -258,9 +258,9 @@ Vue.component('merg-canpan-node-event-variables', {
       <v-card outlined>
         <v-card-title>Active</v-card-title>
         <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
-                                       v-bind:action="$store.state.selected_action_id"
-                                       varId="5"
-                                       name="Active Outputs" offset="0">
+                                        v-bind:action="$store.state.selected_action_id"
+                                        varId="5"
+                                        name="Active Outputs" offset="0">
         </node-event-variable-bit-array2>
         <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
                                         v-bind:action="$store.state.selected_action_id"
@@ -279,30 +279,29 @@ Vue.component('merg-canpan-node-event-variables', {
         </node-event-variable-bit-array2>
       </v-card>
       <v-card outlined>
-        <v-card outlined>
-          <v-card-title>Polarity</v-card-title>
-          <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
-                                          v-bind:action="$store.state.selected_action_id"
-                                          varId="9"
-                                          name="Active Outputs" offset="0">
-          </node-event-variable-bit-array2>
-          <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
-                                          v-bind:action="$store.state.selected_action_id"
-                                          varId="10"
-                                          name="Active Outputs" offset="8">
-          </node-event-variable-bit-array2>
-          <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
-                                          v-bind:action="$store.state.selected_action_id"
-                                          varId="11"
-                                          name="Active Outputs" offset="16">
-          </node-event-variable-bit-array2>
-          <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
-                                          v-bind:action="$store.state.selected_action_id"
-                                          varId="12"
-                                          name="Active Outputs" offset="24">
-          </node-event-variable-bit-array2>
-        </v-card>
-        <v-card outlined>
+        <v-card-title>Polarity</v-card-title>
+        <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                        v-bind:action="$store.state.selected_action_id"
+                                        varId="9"
+                                        name="Active Outputs" offset="0">
+        </node-event-variable-bit-array2>
+        <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                        v-bind:action="$store.state.selected_action_id"
+                                        varId="10"
+                                        name="Active Outputs" offset="8">
+        </node-event-variable-bit-array2>
+        <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                        v-bind:action="$store.state.selected_action_id"
+                                        varId="11"
+                                        name="Active Outputs" offset="16">
+        </node-event-variable-bit-array2>
+        <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                        v-bind:action="$store.state.selected_action_id"
+                                        varId="12"
+                                        name="Active Outputs" offset="24">
+        </node-event-variable-bit-array2>
+      </v-card>
+      <v-card outlined>
         <v-card-title>Actions for all LEDs (13)</v-card-title>
         <v-card-text>
           <v-radio-group

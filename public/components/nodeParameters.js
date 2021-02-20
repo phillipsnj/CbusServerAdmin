@@ -2,13 +2,12 @@ Vue.component('nodeParameters', {
     name: "nodeParameters",
 
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": this.node.node, "parameters": 20, "delay":30})
+        this.$root.send('REQUEST_ALL_NODE_PARAMETERS', {"nodeId": this.node.node, "parameters": 20, "delay": 30})
         console.log(`nodeParameters : ${this.nodeId}`)
     },
     computed: {
 
-        nodeId: function ()
-		{
+        nodeId: function () {
             return this.$store.state.selected_node_id
         },
         node: function () {
@@ -19,47 +18,79 @@ Vue.component('nodeParameters', {
         },
     },
     methods: {
-		variableName: function (index) {
-			var name = index + ":";
-			if (index == 0) {name = index + ": Number of Node Parameters"}
-			if (index == 1) {name = index + ": Manufacturer Id"}
-			if (index == 2) {name = index + ": Minor Version"}
-			if (index == 3) {name = index + ": Module Id"}
-			if (index == 4) {name = index + ": Number of Supported Events"}
-			if (index == 5) {name = index + ": Number of Event Variables"}
-			if (index == 6) {name = index + ": Number of Node Variables"}
-			if (index == 7) {name = index + ": Major Version"}
-			if (index == 8) {name = index + ": Node Flags"}
-			if (index == 9) {name = index + ": CPU type"}
-			if (index == 10) {name = index + ": Interface Type"}
-			if (index == 11) {name = index + ": CPU Load Address"}
-			if (index == 12) {name = index + ": CPU Load Address"}
-			if (index == 13) {name = index + ": CPU Load Address"}
-			if (index == 14) {name = index + ": CPU Load Address"}
-			if (index == 15) {name = index + ": CPU Manufacturers Code"}
-			if (index == 16) {name = index + ": CPU Manufacturers Code"}
-			if (index == 17) {name = index + ": CPU Manufacturers Code"}
-			if (index == 18) {name = index + ": CPU Manufacturers Code"}
-			if (index == 19) {name = index + ": Code for CPU Manufacturer"}
-			if (index == 20) {name = index + ": Beta version number"}
-			return name;
-		},
-	},
+        variableName: function (index) {
+            var name = index + ":";
+            if (index == 0) {
+                name = index + ": Number of Node Parameters"
+            }
+            if (index == 1) {
+                name = index + ": Manufacturer Id"
+            }
+            if (index == 2) {
+                name = index + ": Minor Version"
+            }
+            if (index == 3) {
+                name = index + ": Module Id"
+            }
+            if (index == 4) {
+                name = index + ": Number of Supported Events"
+            }
+            if (index == 5) {
+                name = index + ": Number of Event Variables"
+            }
+            if (index == 6) {
+                name = index + ": Number of Node Variables"
+            }
+            if (index == 7) {
+                name = index + ": Major Version"
+            }
+            if (index == 8) {
+                name = index + ": Node Flags"
+            }
+            if (index == 9) {
+                name = index + ": CPU type"
+            }
+            if (index == 10) {
+                name = index + ": Interface Type"
+            }
+            if (index == 11) {
+                name = index + ": CPU Load Address"
+            }
+            if (index == 12) {
+                name = index + ": CPU Load Address"
+            }
+            if (index == 13) {
+                name = index + ": CPU Load Address"
+            }
+            if (index == 14) {
+                name = index + ": CPU Load Address"
+            }
+            if (index == 15) {
+                name = index + ": CPU Manufacturers Code"
+            }
+            if (index == 16) {
+                name = index + ": CPU Manufacturers Code"
+            }
+            if (index == 17) {
+                name = index + ": CPU Manufacturers Code"
+            }
+            if (index == 18) {
+                name = index + ": CPU Manufacturers Code"
+            }
+            if (index == 19) {
+                name = index + ": Code for CPU Manufacturer"
+            }
+            if (index == 20) {
+                name = index + ": Beta version number"
+            }
+            return name;
+        },
+    },
     template: `
       <div>
-      <!--<h1>Node Parameters {{ nodeId }}</h1>--> 
+      <!--<h1>Node Parameters {{ nodeId }}</h1>-->
       <p v-if="$store.state.debug">{{ node.parameters }}</p>
       <v-container>
-
-        <v-row>
-		<template v-for="(parameter, index) in node.parameters" >
-          <nodeValue :name="variableName(index)" :value="parameter"></nodeValue>
-		</template>
-        </v-row>
-		
-        <v-row>
-	      <p>Translated values</p>
-        </v-row>
         <v-row>
           <nodeValue name="Module Manufacturer" :value="node.moduleManufacturerName"></nodeValue>
           <nodeValue name="Module" :value="node.module"></nodeValue>
@@ -71,12 +102,20 @@ Vue.component('nodeParameters', {
           <nodeValue name="Interface Type" :value="node.interfaceName"></nodeValue>
           <nodeValue name="CPU Manufacturer" :value="node.cpuManufacturerName"></nodeValue>
         </v-row>
+        <v-row v-if="$store.state.advanced">
+          <p>Raw Values</p>
+        </v-row>
+        <v-row v-if="$store.state.advanced">
+          <template v-for="(parameter, index) in node.parameters">
+            <common-display-value :name="variableName(index)" :value="parameter"></common-display-value>
+          </template>
+        </v-row>
       </v-container>
       </div>`
 })
 
-Vue.component('nodeValue', {
-    name: "nodeValue",
+Vue.component('node-parameters-node-value', {
+    name: "node-parameters-node-value",
     props: ['name', 'value'],
     template: `
       <div>

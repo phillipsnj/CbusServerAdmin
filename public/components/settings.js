@@ -66,8 +66,17 @@ Vue.component('settings', {
                       v-model="$store.state.debug"
                       label="Debug Mode">
                   </v-checkbox>
+                  <v-checkbox
+                      v-model="$store.state.advanced"
+                      label="Advanced Mode">
+                  </v-checkbox>
                 </v-col>
               </v-row>
+              <v-container v-if="$store.state.advanced">
+                <v-row>
+                  <h2>Advanced Mode</h2>
+                </v-row>
+              </v-container>
               <v-container v-if="$store.state.debug">
                 <v-row>
                   <h2>Debug Mode</h2>

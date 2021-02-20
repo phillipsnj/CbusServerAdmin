@@ -90,26 +90,26 @@ Vue.component('nodeInfo', {
       </v-container>
       <v-container>
         <v-row>
-          <nodeValue name="NodeId" :value="nodeId"></nodeValue>
+          <common-display-value name="NodeId" :value="nodeId"></common-display-value>
           <nodeParameter :nodeId="nodeId" parId="1" name="Manufacturer Id"></nodeParameter>
-          <nodeValue name="Module" :value="node.module"></nodeValue>
-          <nodeValue name="Version" :value="moduleVersion"></nodeValue>
-          <nodeValue name="Flim" :value="node.flim"></nodeValue>
-          <nodeValue name="Consumer" :value="node.consumer"></nodeValue>
-          <nodeValue name="Producer" :value="node.producer"></nodeValue>
-          <nodeValue name="Learn" :value="node.learn"></nodeValue>
-          <nodeParameter :nodeId="nodeId" parId="6" name="Variables"></nodeParameter>
+          <common-display-value name="Module" :value="node.module"></common-display-value>
+          <common-display-value name="Version" :value="moduleVersion"></common-display-value>
+          <common-display-value name="Flim" :value="node.flim"></common-display-value>
+          <common-display-value name="Consumer" :value="node.consumer"></common-display-value>
+          <common-display-value name="Producer" :value="node.producer"></common-display-value>
+          <common-display-value name="Learn" :value="node.learn"></common-display-value>
+          <common-display-value :nodeId="nodeId" parId="6" name="Variables"></common-display-value>
           <nodeParameter :nodeId="nodeId" parId="5" name="Event Variables"></nodeParameter>
           <nodeParameter :nodeId="nodeId" parId="4" name="Supported Events"></nodeParameter>
-          <nodeValue name="Stored Events" :value="node.EvCount"></nodeValue>
-          <nodeValue name="Actual Events" :value="Object.values(node.actions).length"></nodeValue>
+          <common-display-value name="Stored Events" :value="node.EvCount"></common-display-value>
+          <common-display-value name="Actual Events" :value="Object.values(node.actions).length"></common-display-value>
         </v-row>
       </v-container>
       </div>`
 })
 
 Vue.component('nodeDetail', {
-    name: "nodeParameter",
+    name: "nodeDetail",
     props: ['nodeId', 'parId', 'name'],
     template: `
       <div>
@@ -142,8 +142,8 @@ Vue.component('nodeParameter', {
       </div>`
 })
 
-Vue.component('nodeValue', {
-    name: "nodeValue",
+Vue.component('node-info-value', {
+    name: "node-info-value",
     props: ['name', 'value'],
     template: `
       <div>

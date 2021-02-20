@@ -4,14 +4,6 @@ Vue.component('mergDefault', {
     data: function () {
         return {
             nodeId: 0,
-            headers: [
-                {text: 'id', value: 'id'},
-                {text: 'nodeId', value: 'nodeId'},
-                {text: 'eventId', value: 'eventId'},
-                {text: 'type', value: 'type'},
-                {text: 'status', value: 'status'},
-                {text: 'count', value: 'count'}
-            ]
         }
     },
     mounted() {
@@ -28,6 +20,9 @@ Vue.component('mergDefault', {
         getInfo() {
             this.$store.state.node_component = "nodeInfo"
         },
+        getParameters() {
+            this.$store.state.node_component = "nodeParameters"
+        },
         getVariables() {
             this.$store.state.node_component = "merg-default-node-variables"
         },
@@ -42,6 +37,7 @@ Vue.component('mergDefault', {
       <h1>mergDefault</h1>
       <v-tabs>
         <v-tab :key="1" @click="getInfo()">Info</v-tab>
+        <v-tab :key="4" @click="getParameters()">Parameters</v-tab>
         <v-tab :key="2" @click="getVariables()" v-if="node.flim">Variables</v-tab>
         <v-tab :key="3" @click="getEvents()" v-if="node.EvCount > 0">Events</v-tab>
         <v-tab-item :key="1">
