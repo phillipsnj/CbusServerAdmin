@@ -37,26 +37,26 @@ Vue.component('merg-canpan', {
         }
     },
     template: `
-        <v-container>
-            <h1>merg-canpan</h1>
-            <v-tabs>
-                <v-tab :key="1" @click="getInfo()">Info</v-tab>
-                <v-tab :key="2" @click="getVariables()">Variables</v-tab>
-                <v-tab :key="3" @click="getEvents()">Events</v-tab>
-                <v-tab-item :key="1">
-                    <!--<nodeInfo :nodeId="node.node"></nodeInfo>-->
-                </v-tab-item>
-                <v-tab-item :key="2">
-                    <!--<merg-canpan-node-variables :nodeId="node.node"></merg-canpan-node-variables>-->
-                </v-tab-item>
-                <v-tab-item :key="3">
-                    <!--<merg-canpan-node-events :nodeId="node.node"></merg-canpan-node-events>-->
-                </v-tab-item>
-            </v-tabs>
-            <p>{{ $store.state.node_component }}</p>
-            <component v-bind:is="$store.state.node_component"></component>
-            <p>{{ JSON.stringify(node) }}</p>
-        </v-container>
+      <v-container>
+      <h1>merg-canpan</h1>
+      <v-tabs>
+        <v-tab :key="1" @click="getInfo()">Info</v-tab>
+        <v-tab :key="2" @click="getVariables()">Variables</v-tab>
+        <v-tab :key="3" @click="getEvents()">Events</v-tab>
+        <v-tab-item :key="1">
+          <!--<nodeInfo :nodeId="node.node"></nodeInfo>-->
+        </v-tab-item>
+        <v-tab-item :key="2">
+          <!--<merg-canpan-node-variables :nodeId="node.node"></merg-canpan-node-variables>-->
+        </v-tab-item>
+        <v-tab-item :key="3">
+          <!--<merg-canpan-node-events :nodeId="node.node"></merg-canpan-node-events>-->
+        </v-tab-item>
+      </v-tabs>
+      <p>{{ $store.state.node_component }}</p>
+      <component v-bind:is="$store.state.node_component"></component>
+      <p>{{ JSON.stringify(node) }}</p>
+      </v-container>
     `
 })
 
@@ -64,7 +64,11 @@ Vue.component('merg-canpan-node-variables', {
     name: "merg-canpan-node-variables",
     //props: ['nodeId'],
     mounted() {
-        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {"nodeId": this.nodeId, "variables": this.node.parameters[6], "delay" : 20})
+        this.$root.send('REQUEST_ALL_NODE_VARIABLES', {
+            "nodeId": this.nodeId,
+            "variables": this.node.parameters[6],
+            "delay": 20
+        })
         /*for (let i = 1; i <= this.node.parameters[6]; i++) {
             this.$root.send('NVRD', {"nodeId": this.nodeId, "variableId": i})
         }*/
@@ -88,11 +92,12 @@ Vue.component('merg-canpan-node-variables', {
         }
     },
     template: `
-        <v-container>
-            <node-variable-select v-bind:nodeId="nodeId" :varId="1"
-                                  name="On startup" :items="[{value:0, text:'Send Current Events'},{value:1, text:'Do Nothing'},{value:2, text:'Send All Events'}]"></node-variable-select>
-            <p>{{ node.variables }}</p>
-        </v-container>`
+      <v-container>
+      <node-variable-select v-bind:nodeId="nodeId" :varId="1"
+                            name="On startup"
+                            :items="[{value:0, text:'Send Current Events'},{value:1, text:'Do Nothing'},{value:2, text:'Send All Events'}]"></node-variable-select>
+      <p>{{ node.variables }}</p>
+      </v-container>`
 })
 
 Vue.component('merg-canpan-node-events', {
@@ -144,50 +149,50 @@ Vue.component('merg-canpan-node-events', {
         }
     },
     template: `
-        <v-container>
-            <h3>Event Variables</h3>
-            <v-card>
-                <v-data-table :headers="headers"
-                              :items="eventList"
-                              :items-per-page="20"
-                              class="elevation-1"
-                              item-key="id">
-                    <template v-slot:top>
-                        <v-toolbar flat>
-                            <v-toolbar-title>Events for {{ node.node }}</v-toolbar-title>
-                            <v-divider
-                                    class="mx-4"
-                                    inset
-                                    vertical
-                            ></v-divider>
-                            <v-spacer></v-spacer>
-                            <v-dialog v-model="eventDialog" max-width="500px">
-                                <v-card>
-                                    <v-card-title>
-                                        <span class="headline">Edit Event</span>
-                                    </v-card-title>
-                                    <v-card-text>
-                                        <v-container>
-                                            <v-row>
-                                                <merg-canpan-node-event-variables
-                                                        v-bind:nodeId="nodeId"
-                                                        v-bind:actionId="editedEvent.actionId">
-                                                </merg-canpan-node-event-variables>
-                                            </v-row>
-                                        </v-container>
-                                    </v-card-text>
-                                </v-card>
-                            </v-dialog>
-                        </v-toolbar>
-                    </template>
-                    <template v-slot:item.actions="{ item }">
-                        <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
-                        <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
-                    </template>
-                </v-data-table>
-            </v-card>
-            <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
-        </v-container>`
+      <v-container>
+      <h3>Event Variables</h3>
+      <v-card>
+        <v-data-table :headers="headers"
+                      :items="eventList"
+                      :items-per-page="20"
+                      class="elevation-1"
+                      item-key="id">
+          <template v-slot:top>
+            <v-toolbar flat>
+              <v-toolbar-title>Events for {{ node.node }}</v-toolbar-title>
+              <v-divider
+                  class="mx-4"
+                  inset
+                  vertical
+              ></v-divider>
+              <v-spacer></v-spacer>
+              <v-dialog v-model="eventDialog" max-width="500px">
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">Edit Event</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <merg-canpan-node-event-variables
+                            v-bind:nodeId="nodeId"
+                            v-bind:actionId="editedEvent.actionId">
+                        </merg-canpan-node-event-variables>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+            </v-toolbar>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
+            <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
+          </template>
+        </v-data-table>
+      </v-card>
+      <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
+      </v-container>`
 })
 
 Vue.component('merg-canpan-node-event-variables', {
@@ -199,11 +204,11 @@ Vue.component('merg-canpan-node-event-variables', {
             "nodeId": this.nodeId,
             "eventIndex": this.actionId,
             "variables": this.node.parameters[5],
-            "delay":120
+            "delay": 120
         })
-/*        for (let i = 1; i <= this.node.parameters[5]; i++) {
-            this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": this.actionId, "valueId": i})
-        }*/
+        /*        for (let i = 1; i <= this.node.parameters[5]; i++) {
+                    this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": this.actionId, "valueId": i})
+                }*/
     },
     computed: {
         node: function () {
@@ -230,54 +235,101 @@ Vue.component('merg-canpan-node-event-variables', {
         }
     },
     template: `
-        <v-container>
-            <h3>Event Variables</h3>
-            <p>{{ node.actions[actionId] }}</p>
-            <v-card outlined>
-                <v-card-title>Startup Options</v-card-title>
-                <v-card-text>
-                    <v-radio-group v-model="node.actions[actionId].variables[3]" :mandatory="true"
-                                   @change="updateEV(node.node,
+      <v-container>
+      <h3>Event Variables</h3>
+      <p>{{ node.actions[actionId] }}</p>
+      <v-card outlined>
+        <v-card-title>Startup Options</v-card-title>
+        <v-card-text>
+          <v-radio-group v-model="node.actions[actionId].variables[3]" :mandatory="true"
+                         @change="updateEV(node.node,
                                    node.actions[actionId].event,
                                    node.actions[actionId].actionId,
                                    3,
                                    parseInt(node.actions[actionId].variables[3]))">
-                        <v-radio label="On/Off" :value="1"></v-radio>
-                        <v-radio label="Off/On" :value="3"></v-radio>
-                        <v-radio label="On Only" :value="4"></v-radio>
-                        <v-radio label="Off Only" :value="6"></v-radio>
-                        <v-radio label="On/Off Toggle" :value="8"></v-radio>
-                    </v-radio-group>
-                </v-card-text>
-            </v-card>
-            <v-card outlined>
-                <v-card-title>Actions for all LEDs (13)</v-card-title>
-                <v-card-text>
-                    <v-radio-group
-                            v-model="node.actions[actionId].variables[13]"
-                            :mandatory="true"
-                            @change="updateEV(node.node,
+            <v-radio label="On/Off" :value="1"></v-radio>
+            <v-radio label="Off/On" :value="3"></v-radio>
+            <v-radio label="On Only" :value="4"></v-radio>
+            <v-radio label="Off Only" :value="6"></v-radio>
+            <v-radio label="On/Off Toggle" :value="8"></v-radio>
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+      <v-card outlined>
+        <v-card-title>Active</v-card-title>
+        <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                       v-bind:action="$store.state.selected_action_id"
+                                       varId="5"
+                                       name="Active Outputs" offset="0">
+        </node-event-variable-bit-array2>
+        <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                        v-bind:action="$store.state.selected_action_id"
+                                        varId="6"
+                                        name="Active Outputs" offset="8">
+        </node-event-variable-bit-array2>
+        <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                        v-bind:action="$store.state.selected_action_id"
+                                        varId="7"
+                                        name="Active Outputs" offset="16">
+        </node-event-variable-bit-array2>
+        <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                        v-bind:action="$store.state.selected_action_id"
+                                        varId="8"
+                                        name="Active Outputs" offset="24">
+        </node-event-variable-bit-array2>
+      </v-card>
+      <v-card outlined>
+        <v-card outlined>
+          <v-card-title>Polarity</v-card-title>
+          <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                          v-bind:action="$store.state.selected_action_id"
+                                          varId="9"
+                                          name="Active Outputs" offset="0">
+          </node-event-variable-bit-array2>
+          <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                          v-bind:action="$store.state.selected_action_id"
+                                          varId="10"
+                                          name="Active Outputs" offset="8">
+          </node-event-variable-bit-array2>
+          <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                          v-bind:action="$store.state.selected_action_id"
+                                          varId="11"
+                                          name="Active Outputs" offset="16">
+          </node-event-variable-bit-array2>
+          <node-event-variable-bit-array2 v-bind:nodeId="$store.state.selected_node_id"
+                                          v-bind:action="$store.state.selected_action_id"
+                                          varId="12"
+                                          name="Active Outputs" offset="24">
+          </node-event-variable-bit-array2>
+        </v-card>
+        <v-card outlined>
+        <v-card-title>Actions for all LEDs (13)</v-card-title>
+        <v-card-text>
+          <v-radio-group
+              v-model="node.actions[actionId].variables[13]"
+              :mandatory="true"
+              @change="updateEV(node.node,
                             node.actions[actionId].event,
                             node.actions[actionId].actionId,
                             13,
                             parseInt(node.actions[actionId].variables[13]))"
-                    >
-                        <v-radio label="On/Off" :value="255"></v-radio>
-                        <v-radio label="On Only" :value="254"></v-radio>
-                        <v-radio label="Off Only" :value="253"></v-radio>
-                        <v-radio label="Flash" :value="252"></v-radio>
-                    </v-radio-group>
-                </v-card-text>
-            </v-card>
-            <v-row>
-                <node-event-variable v-bind:nodeId="nodeId"
-                                     v-bind:actionId="actionId"
-                                     v-bind:varId="n"
-                                     v-for="n in node.parameters[5]"
-                                     :key="n">
+          >
+            <v-radio label="On/Off" :value="255"></v-radio>
+            <v-radio label="On Only" :value="254"></v-radio>
+            <v-radio label="Off Only" :value="253"></v-radio>
+            <v-radio label="Flash" :value="252"></v-radio>
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+      <v-row>
+        <node-event-variable v-bind:nodeId="nodeId"
+                             v-bind:actionId="actionId"
+                             v-bind:varId="n"
+                             v-for="n in node.parameters[5]"
+                             :key="n">
 
-                </node-event-variable>
-            </v-row>
-            <p>{{ node.actions[actionId] }}</p>
-        </v-container>`
+        </node-event-variable>
+      </v-row>
+      <p>{{ node.actions[actionId] }}</p>
+      </v-container>`
 })

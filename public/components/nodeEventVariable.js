@@ -193,6 +193,25 @@ Vue.component('node-event-variable-bit-array', {
       </v-card>`
 })
 
+Vue.component('node-event-variable-bit-array2', {
+    name: "node-event-variable-bit-array2",
+    props: ["nodeId", "action", "varId", "name","offset"],
+    template: `
+      <v-card class="xs6 md3 pa-3" flat>
+<!--      <div>{{ name }}</div>-->
+      <v-row>
+        <node-event-variable-bit v-for="n in [0,1,2,3,4,5,6,7]"
+                                 :key="n"
+                                 v-bind:node="nodeId"
+                                 v-bind:action="action"
+                                 :variable="varId"
+                                 :bit="n"
+                                 :name="(n+1+parseInt(offset,10)).toString()">
+        </node-event-variable-bit>
+      </v-row>
+      </v-card>`
+})
+
 Vue.component('node-event-variable-display-name', {
     name: "node-event-variable-display-name",
     props: ["eventId"],
