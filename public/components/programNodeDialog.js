@@ -27,13 +27,13 @@ Vue.component('program-node-dialog', {
 
     watch: {
         eventText() {
-            this.programNodeEventText = this.$store.state.programNodeEvent
+            this.programNodeEventText = this.$store.state.programNodeEvent.text
         }
     },
     
     computed: {
         eventText: function () {
-            return this.$store.state.programNodeEvent
+            return this.$store.state.programNodeEvent.text
         },        
     },
 

@@ -139,7 +139,7 @@ describe('programNode tests', function(){
             expect(firstMsg.opCode).to.equal('5C', 'first message BOOTM 5C');
             //
             // verify checksum when process is signalled as complete
-            expect(downloadData).to.equal('Success: programing completed', 'Download event');
+            expect(downloadData.text).to.equal('Success: programing completed', 'Download event');
             expect(mock_Cbus.firmwareChecksum).to.equal('C68E', 'Checksum');
             //
             // check last message is a reset command
@@ -180,7 +180,7 @@ describe('programNode tests', function(){
             expect(firstMsg.opCode).to.equal('5C', 'first message BOOTM 5C');
             //
             // verify checksum when process is signalled as complete
-            expect(downloadData).to.equal('Success: programing completed', 'Download event');
+            expect(downloadData.text).to.equal('Success: programing completed', 'Download event');
             //
             // check last message is a reset command
             var lastMsg = cbusLib.decode(mock_Cbus.sendArray[mock_Cbus.sendArray.length - 1])
@@ -212,7 +212,7 @@ describe('programNode tests', function(){
 		programNode.program(300, 1, 3, intelHexString);
 		setTimeout(function(){
             expect (mock_Cbus.sendArray.length).to.equal(0, "check sent messages")
-            expect(corruptFileData).to.equal("Failed: file parsing failed", 'Download event');
+            expect(corruptFileData.text).to.equal("Failed: file parsing failed", 'Download event');
             done();
 		}, 200);
 	});
@@ -232,7 +232,7 @@ describe('programNode tests', function(){
         var intelHexString = fs.readFileSync('./tests/test_firmware/paramsOnly.HEX');
 		programNode.program(300, 0, 0, intelHexString);
 		setTimeout(function(){
-            expect(downloadData).to.equal('CPU mismatch', 'Download event');
+            expect(downloadData.text).to.equal('CPU mismatch', 'Download event');
 			done();
 		}, 500);
 	});
@@ -252,8 +252,8 @@ describe('programNode tests', function(){
         var intelHexString = fs.readFileSync('./tests/test_firmware/shortFile.HEX');
 		programNode.program(300, 99, 4, intelHexString);
 		setTimeout(function(){
-            expect(downloadDataArray[1]).to.equal('CPUTYPE ignored', 'Download event');
-            expect(downloadDataArray[downloadDataArray.length-1]).to.equal('Success: programing completed', 'Download event');
+            expect(downloadDataArray[1].text).to.equal('CPUTYPE ignored', 'Download event');
+            expect(downloadDataArray[downloadDataArray.length-1].text).to.equal('Success: programing completed', 'Download event');
 			done();
 		}, 1000);
 	});
@@ -279,7 +279,7 @@ describe('programNode tests', function(){
 		setTimeout(function(){
             //
             // verify checksum when process is signalled as complete
-            expect(downloadData).to.equal('Success: programing completed', 'Download event');
+            expect(downloadData.text).to.equal('Success: programing completed', 'Download event');
             expect(mock_Cbus.firmwareChecksum).to.equal('C68E', 'Checksum');
             //
             // check last message is a reset command
@@ -310,7 +310,7 @@ describe('programNode tests', function(){
 		programNode.programBootMode(1, 3, intelHexString);
 		setTimeout(function(){
             expect (mock_Cbus.sendArray.length).to.equal(0, "programBootMode: check sent messages")
-            expect(downloadData).to.equal('Failed: file parsing failed', 'programBootMode: expected event');
+            expect(downloadData.text).to.equal('Failed: file parsing failed', 'programBootMode: expected event');
 			done();
 		}, 200);
 	});

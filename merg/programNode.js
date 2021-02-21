@@ -147,6 +147,7 @@ class programNode extends EventEmitter  {
         this.net_port = NET_PORT
         this.client = null
         this.FIRMWARE = {}
+        this.nodeNumber = null
     }
     
     //  expose decodeLine for testing purposes
@@ -165,9 +166,9 @@ class programNode extends EventEmitter  {
     */
     program (NODENUMBER, CPUTYPE, FLAGS, INTEL_HEX_STRING) {
         this.success = false
+        this.nodeNumber = NODENUMBER
 
         try {
-            this.emit('programNode', 'Parsing file')
             // parse the intel hex file into our firmware object
             this.parseHexFile(INTEL_HEX_STRING, function (firmwareObject) {
 
@@ -178,11 +179,11 @@ class programNode extends EventEmitter  {
                     this.FIRMWARE = firmwareObject
                     
                     if (FLAGS & 0x4) {
-                            this.emit('programNode', 'CPUTYPE ignored')
+                        this.sendMessageToClient('CPUTYPE ignored')
                     } else {
                         if (this.checkCPUTYPE (CPUTYPE, this.FIRMWARE) != true) {
                             winston.debug({message: 'programNode: >>>>>>>>>>>>> cpu check: FAILED'})
-                            this.emit('programNode', 'CPU mismatch')
+                            this.sendFailureToClient('CPU mismatch')
                             return;
                         }
                     }
@@ -196,7 +197,7 @@ class programNode extends EventEmitter  {
                     this.client.on('error', (err) => {
                         var msg = 'TCP ERROR: ' + err.code
                         winston.debug({message: 'programNode: ' + msg});
-                        this.emit('programNode', msg)
+                        this.sendFailureToClient(msg)
                     })
                     
                     this.client.on('close', function () {
@@ -208,19 +209,19 @@ class programNode extends EventEmitter  {
                         winston.info({message: 'programNode: CBUS Receive  <<<: ' + cbusMsg.text});
                             if (cbusMsg.response == 0) {
                                 winston.debug({message: 'programNode: Check NOT OK received: download failed'});
-                                this.emit('programNode', 'Failed')
+                                this.sendFailureToClient('Check NOT OK received: download failed')
                             }
                         if (cbusMsg.operation == 'RESPONSE') {
                             if (cbusMsg.response == 1) {
                                 winston.debug({message: 'programNode: Check OK received: Sending reset'});
                                 var msg = cbusLib.encode_EXT_PUT_CONTROL('000000', 0x0D, 0x01, 0, 0)
-                                this.sendMsg(msg)
+                                this.transmitCBUS(msg)
                                 // ok, can shutdown the connection now
                                 this.client.end();
                                 winston.debug({message: 'programNode: Client closed normally'});
                                 this.success = true
                                 // 'Success:' is a necessary string in the message to signal the client it's been successful
-                                this.emit('programNode', 'Success: programing completed')
+                                this.sendSuccessToClient('Success: programing completed')
                                 this.client.removeAllListeners()
                             }
                             if (cbusMsg.response == 2) {
@@ -232,12 +233,12 @@ class programNode extends EventEmitter  {
 
                     // set boot mode
                     var msg = cbusLib.encodeBOOTM(NODENUMBER)
-                    this.sendMsg(msg)
+                    this.transmitCBUS(msg)
                     
                     // need to allow a small time for module to go into boot mode
                     setTimeout(() => {
                         var msg = cbusLib.encode_EXT_PUT_CONTROL('000000', 0x0D, 0x04, 0, 0)
-                        this.sendMsg(msg)
+                        this.transmitCBUS(msg)
                     }, 200)
                     
                     // ok, need to check if it's completed after a reasonable time, if not must have failed
@@ -245,31 +246,31 @@ class programNode extends EventEmitter  {
                     setTimeout(() => {
                         winston.debug({message: 'programNode: ***************** download: ENDING - success is ' + this.success});
                         // 'Failed:' is a necessary string in the message to signal the client it's failed
-                        if (this.success == false) { this.emit('programNode', 'Failed: Timeout') }               
+                        if (this.success == false) { this.sendFailureToClient('Failed: Timeout') }               
                     }, 25000)
                 }
                 else {
-                    this.emit('programNode', 'Failed: file parsing failed')
+                    this.sendFailureToClient('Failed: file parsing failed')
                 }
             }.bind(this))
             
         } catch (error) {
             winston.debug({message: 'programNode: ERROR: ' + error});
-            this.emit('programNode', 'ERROR: ' + error)
+            this.sendFailureToClient('ERROR: ' + error)
         }
     }
     
 
     programBootMode (CPUTYPE, FLAGS, INTEL_HEX_STRING) {
         this.success = false
+        this.nodeNumber = null
 
         try {
             // parse the intel hex file into our firmware object
-            this.emit('programNode', 'Parsing file')
             this.parseHexFile(INTEL_HEX_STRING, function (firmwareObject) {
 
                 if (firmwareObject == null) {
-                    this.emit('programNode', 'Failed: file parsing failed')
+                    this.sendFailureToClient('Failed: file parsing failed')
                     return
                 }
 
@@ -278,11 +279,11 @@ class programNode extends EventEmitter  {
                 this.FIRMWARE = firmwareObject
                 
                 if (FLAGS & 0x4) {
-                        this.emit('programNode', 'CPUTYPE ignored')
+                    this.sendMessageToClient('CPUTYPE ignored')
                 } else {
                     if (this.checkCPUTYPE (CPUTYPE, this.FIRMWARE) != true) {
                         winston.debug({message: 'programBootMode: >>>>>>>>>>>>> cpu check: FAILED'})
-                        this.emit('programNode', 'CPU mismatch')
+                        this.sendFailureToClient('CPU mismatch')
                         return;
                     }
                 }
@@ -296,7 +297,7 @@ class programNode extends EventEmitter  {
                 this.client.on('error', (err) => {
                     var msg = 'TCP ERROR: ' + err.code
                     winston.debug({message: 'programBootMode: ' + msg});
-                    this.emit('programNode', msg)
+                    this.sendFailureToClient(msg)
                 })
                 
                 this.client.on('close', function () {
@@ -308,19 +309,19 @@ class programNode extends EventEmitter  {
                     winston.info({message: 'programBootMode: CBUS Receive  <<<: ' + cbusMsg.text});
                         if (cbusMsg.response == 0) {
                             winston.debug({message: 'programBootMode: Check NOT OK received: download failed'});
-                            this.emit('programNode', 'Failed')
+                            this.sendFailureToClient('Check NOT OK received: download failed')
                         }
                     if (cbusMsg.operation == 'RESPONSE') {
                         if (cbusMsg.response == 1) {
                             winston.debug({message: 'programBootMode: Check OK received: Sending reset'});
                             var msg = cbusLib.encode_EXT_PUT_CONTROL('000000', 0x0D, 0x01, 0, 0)
-                            this.sendMsg(msg)
+                            this.transmitCBUS(msg)
                             // ok, can shutdown the connection now
                             this.client.end();
                             winston.debug({message: 'programBootMode: Client closed normally'});
                             this.success = true
                             // 'Success:' is a necessary string in the message to signal the client it's been successful
-                            this.emit('programNode', 'Success: programing completed')
+                            this.sendSuccessToClient('Success: programing completed')
                             this.client.removeAllListeners()
                         }
                         if (cbusMsg.response == 2) {
@@ -337,14 +338,14 @@ class programNode extends EventEmitter  {
                 setTimeout(() => {
                     winston.debug({message: 'programBootMode: ***************** download: ENDING - success is ' + this.success});
                     // 'Failed:' is a necessary string in the message to signal the client it's failed
-                    if (this.success == false) { this.emit('programNode', 'Failed: Timeout') }               
+                    if (this.success == false) { this.sendFailureToClient('Failed: Timeout') }               
                 }, 25000)
                 
             }.bind(this))
 
         } catch (error) {
             winston.debug({message: 'programBootMode: ERROR: ' + error});
-            this.emit('programNode', 'ERROR: ' + error)
+            this.sendFailureToClient('ERROR: ' + error)
         }
     }
 
@@ -368,19 +369,19 @@ class programNode extends EventEmitter  {
         var program = this.FIRMWARE['FLASH']['00000800']
         winston.debug({message: 'programNode: FLASH : 00000800 length: ' + program.length});
         var msg = cbusLib.encode_EXT_PUT_CONTROL('000800', 0x0D, 0x02, 0, 0)
-        this.sendMsg(msg)
+        this.transmitCBUS(msg)
         
         for (let i = 0; i < program.length; i += 8) {
             setTimeout((program) => {
                 var chunk = program.slice(i, i + 8)
                 var msgData = cbusLib.encode_EXT_PUT_DATA(chunk)
-                this.sendMsg(msgData)
+                this.transmitCBUS(msgData)
                 calculatedChecksum = this.arrayChecksum(chunk, calculatedChecksum)
                 winston.debug({message: 'programNode: sending FLASH data: ' + i + ' ' + msgData + ' Rolling CKSM ' + calculatedChecksum});
                 if (progressCount <= i) {
                     progressCount += 128    // report every 16 messages
                     var text = 'Progress: FLASH ' + Math.round(i/program.length * 100) + '%'
-                    this.emit('programNode', text )
+                    this.sendBootModeToClient(text)
                 }
             }, staggeredTimeout += pauseTime, program)
         }
@@ -392,18 +393,18 @@ class programNode extends EventEmitter  {
                 setTimeout(() => {
                     var msgData = cbusLib.encode_EXT_PUT_CONTROL(block.substr(2), 0x0D, 0x00, 0, 0)
                     winston.debug({message: 'programNode: sending CONFIG address: ' + msgData});
-                    this.sendMsg(msgData)
+                    this.transmitCBUS(msgData)
                 }, staggeredTimeout += 8)
                 for (let i = 0; i < config.length; i += 8) {
                     setTimeout((config) => {
                         var chunk = config.slice(i, i + 8)
                         var msgData = cbusLib.encode_EXT_PUT_DATA(chunk)
-                        this.sendMsg(msgData)
+                        this.transmitCBUS(msgData)
                         calculatedChecksum = this.arrayChecksum(chunk, calculatedChecksum)
                         winston.debug({message: 'programNode: sending CONFIG data: ' + i + ' ' + msgData + ' Rolling CKSM ' + calculatedChecksum});
                         // report progress on every message
                         var text = 'Progress: CONFIG ' + Math.round(i/config.length * 100) + '%'
-                        this.emit('programNode', text )
+                        this.sendBootModeToClient(text)
                     }, staggeredTimeout += pauseTime, config)
                 }
             }
@@ -416,18 +417,18 @@ class programNode extends EventEmitter  {
                 setTimeout(() => {
                     var msgData = cbusLib.encode_EXT_PUT_CONTROL(block.substr(2), 0x0D, 0x00, 0, 0)
                     winston.debug({message: 'programNode: sending EEPROM address: ' + msgData});
-                    this.sendMsg(msgData)
+                    this.transmitCBUS(msgData)
                 }, staggeredTimeout += 8)
                 for (let i = 0; i < eeprom.length; i += 8) {
                     setTimeout((eeprom) => {
                         var chunk = eeprom.slice(i, i + 8)
                         var msgData = cbusLib.encode_EXT_PUT_DATA(chunk)
-                        this.sendMsg(msgData)
+                        this.transmitCBUS(msgData)
                         calculatedChecksum = this.arrayChecksum(chunk, calculatedChecksum)
                         winston.debug({message: 'programNode: sending EEPROM data: ' + i + ' ' + msgData + ' Rolling CKSM ' + calculatedChecksum});
                         // report progress on every message
                         var text = 'Progress: EEPROM ' + Math.round(i/eeprom.length * 100) + '%  ' +  + i/eeprom.length
-                        this.emit('programNode', text )
+                        this.sendBootModeToClient(text)
                     }, staggeredTimeout += pauseTime, eeprom)
                 }
             }
@@ -438,7 +439,7 @@ class programNode extends EventEmitter  {
             // 00049272: Send: :X00080004N000000000D034122;
             winston.debug({message: 'programNode: Sending Check firmware'});
             var msgData = cbusLib.encode_EXT_PUT_CONTROL('000000', 0x0D, 0x03, parseInt(calculatedChecksum.substr(2,2), 16), parseInt(calculatedChecksum.substr(0,2),16))
-            this.sendMsg(msgData)
+            this.transmitCBUS(msgData)
         },  staggeredTimeout += 200)
     }
     
@@ -468,6 +469,7 @@ class programNode extends EventEmitter  {
     parseHexFile(intelHexString, CALLBACK) {
         var firmware = {}
 
+        this.sendMessageToClient('Parsing file')
         winston.debug({message: 'programNode: parseHexFile - hex ' + intelHexString})
 
         const lines = intelHexString.toString().split("\r\n");
@@ -507,11 +509,27 @@ class programNode extends EventEmitter  {
         if (nodeCPU == targetCPU) {return true}
         else {return false}    
     }    
+
     
-    sendMsg(msg)
+    transmitCBUS(msg)
     {
         this.client.write(msg)
         winston.info({message: 'programNode: CBUS Transmit >>>: ' + cbusLib.decode(msg).text})
+    }
+
+
+    sendMessageToClient(text) {this.emitMessageToClient('Pending', text)}
+    sendSuccessToClient(text) {this.emitMessageToClient('Success', text)}
+    sendFailureToClient(text) {this.emitMessageToClient('Failure', text)}
+    sendBootModeToClient(text) {this.emitMessageToClient('BootMode', text)}
+
+    emitMessageToClient(status, text) {
+        const data = {
+			"status": status,
+			"nodeNumber": this.nodeNumber,
+			"text": text }
+        this.emit('programNode', data)
+        winston.info({message: 'programNode: Emit: ' + JSON.stringify(data)})
     }
 
 };
