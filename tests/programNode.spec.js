@@ -139,6 +139,7 @@ describe('programNode tests', function(){
             expect(firstMsg.opCode).to.equal('5C', 'first message BOOTM 5C');
             //
             // verify checksum when process is signalled as complete
+            expect(downloadData.status).to.equal('Success', 'Download event');
             expect(downloadData.text).to.equal('Success: programing completed', 'Download event');
             expect(mock_Cbus.firmwareChecksum).to.equal('C68E', 'Checksum');
             //
@@ -180,6 +181,7 @@ describe('programNode tests', function(){
             expect(firstMsg.opCode).to.equal('5C', 'first message BOOTM 5C');
             //
             // verify checksum when process is signalled as complete
+            expect(downloadData.status).to.equal('Success', 'Download event');
             expect(downloadData.text).to.equal('Success: programing completed', 'Download event');
             //
             // check last message is a reset command
@@ -206,12 +208,13 @@ describe('programNode tests', function(){
         const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
         programNode.on('programNode', function (data) {
 			corruptFileData = data;
-			winston.debug({message: 'TEST: corrupt download: ' + JSON.stringify(corruptFileData)});
+			winston.warn({message: 'TEST: corrupt download: ' + JSON.stringify(corruptFileData)});
 			});	        
         var intelHexString = fs.readFileSync('./tests/test_firmware/corruptFile.HEX');
 		programNode.program(300, 1, 3, intelHexString);
 		setTimeout(function(){
             expect (mock_Cbus.sendArray.length).to.equal(0, "check sent messages")
+            expect(corruptFileData.status).to.equal("Failure", 'Download event');
             expect(corruptFileData.text).to.equal("Failed: file parsing failed", 'Download event');
             done();
 		}, 200);
@@ -227,11 +230,12 @@ describe('programNode tests', function(){
         const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
         programNode.on('programNode', function (data) {
 			downloadData = data;
-			winston.debug({message: 'TEST: wrong file: ' + JSON.stringify(downloadData)});
+			winston.warn({message: 'TEST: wrong file: ' + JSON.stringify(downloadData)});
 			});	        
         var intelHexString = fs.readFileSync('./tests/test_firmware/paramsOnly.HEX');
 		programNode.program(300, 0, 0, intelHexString);
 		setTimeout(function(){
+            expect(downloadData.status).to.equal('Failure', 'Download event');
             expect(downloadData.text).to.equal('CPU mismatch', 'Download event');
 			done();
 		}, 500);
@@ -247,16 +251,18 @@ describe('programNode tests', function(){
         downloadDataArray = []
         programNode.on('programNode', function (data) {
 			downloadDataArray.push(data);
-			winston.debug({message: 'TEST: ignore CPUTYPE: ' + JSON.stringify(data)});
+			winston.warn({message: 'TEST: ignore CPUTYPE: ' + JSON.stringify(data)});
 			});	        
         var intelHexString = fs.readFileSync('./tests/test_firmware/shortFile.HEX');
 		programNode.program(300, 99, 4, intelHexString);
 		setTimeout(function(){
             expect(downloadDataArray[1].text).to.equal('CPUTYPE ignored', 'Download event');
+            expect(downloadDataArray[downloadDataArray.length-1].status).to.equal('Success', 'Download event');
             expect(downloadDataArray[downloadDataArray.length-1].text).to.equal('Success: programing completed', 'Download event');
 			done();
 		}, 1000);
 	});
+
 
 
     //
@@ -278,7 +284,8 @@ describe('programNode tests', function(){
 		programNode.programBootMode(1, 3, intelHexString);
 		setTimeout(function(){
             //
-            // verify checksum when process is signalled as complete
+            // verify process is signalled as complete & checksum correct
+            expect(downloadData.status).to.equal("Success", 'programBootMode: expected event');
             expect(downloadData.text).to.equal('Success: programing completed', 'Download event');
             expect(mock_Cbus.firmwareChecksum).to.equal('C68E', 'Checksum');
             //
@@ -292,6 +299,7 @@ describe('programNode tests', function(){
 		}, 2000);
 	});
 
+
     //
     // test corrupted file on program boot mode
     //
@@ -304,12 +312,13 @@ describe('programNode tests', function(){
         const programNode = require('./../merg/programNode.js')(NET_ADDRESS, NET_PORT)
         programNode.on('programNode', function (data) {
 			downloadData = data;
-			winston.debug({message: 'TEST: programBootMode: corrupt file test: ' + JSON.stringify(downloadData)});
+			winston.warn({message: 'TEST: programBootMode: corrupt file test: ' + JSON.stringify(downloadData)});
 			});	        
         var intelHexString = fs.readFileSync('./tests/test_firmware/corruptFile.HEX');
 		programNode.programBootMode(1, 3, intelHexString);
 		setTimeout(function(){
             expect (mock_Cbus.sendArray.length).to.equal(0, "programBootMode: check sent messages")
+            expect(downloadData.status).to.equal("Failure", 'programBootMode: expected event');
             expect(downloadData.text).to.equal('Failed: file parsing failed', 'programBootMode: expected event');
 			done();
 		}, 200);
