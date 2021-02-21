@@ -85,7 +85,7 @@ socket.on('layoutDetails', (data) => {
 })
 
 socket.on('PROGRAM_NODE', function (data) {
-    console.log(`PROGRAM_NODE : ` + data)
+    console.log(`PROGRAM_NODE : ` + JSON.stringify(data))
     store.state.programNodeEvent = data;
 });
 

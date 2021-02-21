@@ -691,8 +691,9 @@ describe('Websocket server tests', function(){
 
 	it('PROGRAM_NODE test', function(done) {
 		winston.info({message: 'wsserver Test: START PROGRAM_NODE test'});
+        downloadDataArray = []
 		websocket_Client.on('PROGRAM_NODE', function (data) {
-			data;
+			downloadDataArray.push(data);
 			winston.warn({message: 'wsserver Test: PROGRAM_NODE ' + JSON.stringify(data)});
 			});	
             
@@ -707,15 +708,19 @@ describe('Websocket server tests', function(){
                 "encodedIntelHex": encoded
             })
 		setTimeout(function(){
-			done();
+            expect(downloadDataArray[downloadDataArray.length-1].status).to.equal('Success', 'program event status');
+            expect(downloadDataArray[downloadDataArray.length-1].text).to.equal('Success: programing completed', 'program event text');
+            websocket_Client.removeAllListeners()
+            done();
 			}, 2000);
 	});
 
 
 	it('PROGRAM_BOOT_MODE test', function(done) {
 		winston.info({message: 'wsserver Test: START PROGRAM_BOOT_MODE test'});
+        downloadDataArray = []
 		websocket_Client.on('PROGRAM_NODE', function (data) {
-			data;
+			downloadDataArray.push(data);
 			winston.warn({message: 'wsserver Test: PROGRAM_BOOT_MODE ' + JSON.stringify(data)});
 			});	
             
@@ -729,6 +734,9 @@ describe('Websocket server tests', function(){
                 "encodedIntelHex": encoded
             })
 		setTimeout(function(){
+            expect(downloadDataArray[downloadDataArray.length-1].status).to.equal('Success', 'program event status');
+            expect(downloadDataArray[downloadDataArray.length-1].text).to.equal('Success: programing completed', 'program event');
+            websocket_Client.removeAllListeners()
 			done();
 			}, 2000);
 	});
