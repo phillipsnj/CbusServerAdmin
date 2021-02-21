@@ -710,7 +710,8 @@ describe('Websocket server tests', function(){
 		setTimeout(function(){
             expect(downloadDataArray[downloadDataArray.length-1].status).to.equal('Success', 'program event status');
             expect(downloadDataArray[downloadDataArray.length-1].text).to.equal('Success: programing completed', 'program event text');
-			done();
+            websocket_Client.removeAllListeners()
+            done();
 			}, 2000);
 	});
 
@@ -735,6 +736,7 @@ describe('Websocket server tests', function(){
 		setTimeout(function(){
             expect(downloadDataArray[downloadDataArray.length-1].status).to.equal('Success', 'program event status');
             expect(downloadDataArray[downloadDataArray.length-1].text).to.equal('Success: programing completed', 'program event');
+            websocket_Client.removeAllListeners()
 			done();
 			}, 2000);
 	});
