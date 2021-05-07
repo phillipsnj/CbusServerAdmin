@@ -74,7 +74,7 @@
     },
     "63": {
       "name": "CANOUT",
-      "component": "merg-canacc8"
+      "component": "mergDefault"
     },
     "65": {
       "name": "ETHNIGE",

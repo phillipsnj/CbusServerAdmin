@@ -72,6 +72,10 @@ Vue.component('nodes-list', {
                 this.$store.state.display_component = 'mergDefault'
             }
         },
+        removeNode(node) {
+            console.log(`Remove Node ${node.component} : ${node.node}`)
+            this.$root.send('REMOVE_NODE',{nodeId: node.node})
+        },
         displayName: function (id) {
             return this.$store.state.layout.nodeDetails[id].name
         },
@@ -121,6 +125,7 @@ Vue.component('nodes-list', {
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn color="blue darken-1" text @click="editNode(item)" outlined>Edit</v-btn>
+          <v-btn color="blue darken-1" text @click="removeNode(item)" outlined>Remove</v-btn>
         </template>
       </v-data-table>
       <div>

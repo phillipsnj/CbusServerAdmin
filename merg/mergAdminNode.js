@@ -454,6 +454,11 @@ class cbusAdmin extends EventEmitter {
         this.saveConfig()
     }
 
+    removeNode(nodeId) {
+        delete this.config.nodes[nodeId]
+        this.saveConfig()
+    }
+
     clearCbusErrors() {
         this.cbusErrors = {}
         this.emit('cbusError', this.cbusErrors)

@@ -125,6 +125,10 @@ function wsserver(LAYOUT_NAME, httpserver, NET_ADDRESS,NET_PORT) {
             node.cbusSend(node.NERD(data.nodeId))
             node.cbusSend(node.RQEVN(data.nodeId))
         })
+        socket.on('REMOVE_NODE', function(data){
+            winston.debug({message: `REMOVE_NODE ${JSON.stringify(data)}`});
+            node.removeNode(data.nodeId)
+        })
         socket.on('REMOVE_EVENT', function(data){
 			winston.debug({message: `REMOVE_EVENT ${JSON.stringify(data)}`});
             node.cbusSend(node.NNLRN(data.nodeId))
