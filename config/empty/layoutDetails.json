@@ -2,7 +2,8 @@
   "layoutDetails": {
     "title": "New Layout",
     "subTitle": "Admin",
-    "nextNodeId": 500
+    "nextNodeId": 500,
+    "assignId": false
   },
   "nodeDetails": {},
   "eventDetails": {}

@@ -221,13 +221,18 @@ function wsserver(LAYOUT_NAME, httpserver, NET_ADDRESS,NET_PORT) {
     })
 
     node.on('requestNodeNumber', function () {
-        const newNodeId=parseInt(layoutDetails.layoutDetails.nextNodeId)
-		winston.debug({message: `requestNodeNumber : ${newNodeId}`});
-        node.cbusSend(node.SNN(newNodeId))
-        layoutDetails.layoutDetails.nextNodeId = newNodeId+1
-        jsonfile.writeFileSync('config/'+LAYOUT_NAME + '/layoutDetails.json', layoutDetails, {spaces: 2, EOL: '\r\n'})
-        io.emit('layoutDetails', layoutDetails)
-        node.cbusSend(node.QNN())
+        if (layoutDetails.layoutDetails.assignId) {
+            const newNodeId = parseInt(layoutDetails.layoutDetails.nextNodeId)
+            winston.debug({message: `requestNodeNumber : ${newNodeId}`});
+            node.cbusSend(node.SNN(newNodeId))
+            layoutDetails.layoutDetails.nextNodeId = newNodeId + 1
+            jsonfile.writeFileSync('config/' + LAYOUT_NAME + '/layoutDetails.json', layoutDetails, {
+                spaces: 2,
+                EOL: '\r\n'
+            })
+            io.emit('layoutDetails', layoutDetails)
+            node.cbusSend(node.QNN())
+        }
     })
 
     node.on('cbusTraffic', function (data) {
