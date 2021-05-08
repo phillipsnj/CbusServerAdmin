@@ -45,9 +45,13 @@ Vue.component('merg-canpan', {
           <!--<merg-canpan-node-events :nodeId="node.node"></merg-canpan-node-events>-->
         </v-tab-item>
       </v-tabs>
-      <p>{{ $store.state.node_component }}</p>
+      <v-container v-if="$store.state.debug">
+        <p>{{ $store.state.node_component }}</p>
+      </v-container>
       <component v-bind:is="$store.state.node_component"></component>
-      <p>{{ JSON.stringify(node) }}</p>
+      <v-container v-if="$store.state.debug">
+        <p>{{ JSON.stringify(node) }}</p>
+      </v-container>
       </v-container>
     `
 })
@@ -87,8 +91,11 @@ Vue.component('merg-canpan-node-variables', {
       <v-container>
       <node-variable-select v-bind:nodeId="nodeId" :varId="1"
                             name="On startup"
-                            :items="[{value:0, text:'Send Current Events'},{value:1, text:'Do Nothing'},{value:2, text:'Send All Events'}]"></node-variable-select>
-      <p>{{ node.variables }}</p>
+                            :items="[{value:0, text:'Send Current Events'},{value:1, text:'Do Nothing'},{value:2, text:'Send All Events'}]">
+      </node-variable-select>
+      <v-container v-if="$store.state.debug">
+        <p>{{ node.variables }}</p>
+      </v-container>
       </v-container>`
 })
 
@@ -185,7 +192,9 @@ Vue.component('merg-canpan-node-events', {
           </template>
         </v-data-table>
       </v-card>
-      <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
+      <v-container v-if="$store.state.debug">
+        <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
+      </v-container>
       </v-container>`
 })
 
@@ -198,7 +207,7 @@ Vue.component('merg-canpan-node-event-variables', {
             "nodeId": this.nodeId,
             "eventIndex": this.actionId,
             "variables": this.node.parameters[5],
-            "delay": 120
+            "delay": 140
         })
         /*        for (let i = 1; i <= this.node.parameters[5]; i++) {
                     this.$root.send('REVAL', {"nodeId": this.nodeId, "actionId": this.actionId, "valueId": i})
@@ -218,20 +227,22 @@ Vue.component('merg-canpan-node-event-variables', {
     methods: {
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             // eslint-disable-next-line no-console
-            console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
+            console.log(`Update Event(${nodeId},${eventName},${actionId},${eventId},${eventVal})`)
             this.$root.send('UPDATE_EVENT_VARIABLE', {
                 "nodeId": this.node.node,
                 "eventIndex": actionId,
                 "eventName": eventName,
                 "eventVariableId": eventId,
-                "eventVariableVal": eventVal
+                "eventVariableValue": eventVal
             })
         }
     },
     template: `
       <v-container>
       <h3>Event Variables</h3>
-      <p>{{ node.actions[actionId] }}</p>
+      <v-container v-if="$store.state.debug">
+        <p>{{ node.actions[actionId] }}</p>
+      </v-container>
       <v-card outlined>
         <v-card-title>Startup Options</v-card-title>
         <v-card-text>
@@ -310,7 +321,7 @@ Vue.component('merg-canpan-node-event-variables', {
             <v-radio label="On/Off" :value="255"></v-radio>
             <v-radio label="On Only" :value="254"></v-radio>
             <v-radio label="Off Only" :value="253"></v-radio>
-            <v-radio label="Flash" :value="252"></v-radio>
+            <v-radio label="Flash" :value="248"></v-radio>
           </v-radio-group>
         </v-card-text>
       </v-card>
@@ -323,6 +334,8 @@ Vue.component('merg-canpan-node-event-variables', {
 
         </node-event-variable>
       </v-row>
-      <p>{{ node.actions[actionId] }}</p>
+      <v-container v-if="$store.state.debug">
+        <p>{{ node.actions[actionId] }}</p>
+      </v-container>
       </v-container>`
 })

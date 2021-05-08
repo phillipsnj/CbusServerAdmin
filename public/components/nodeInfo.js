@@ -98,7 +98,7 @@ Vue.component('nodeInfo', {
           <common-display-value name="Consumer" :value="node.consumer"></common-display-value>
           <common-display-value name="Producer" :value="node.producer"></common-display-value>
           <common-display-value name="Learn" :value="node.learn"></common-display-value>
-          <common-display-value :nodeId="nodeId" parId="6" name="Variables"></common-display-value>
+          <nodeParameter :nodeId="nodeId" parId="6" name="Variables"></nodeParameter>
           <nodeParameter :nodeId="nodeId" parId="5" name="Event Variables"></nodeParameter>
           <nodeParameter :nodeId="nodeId" parId="4" name="Supported Events"></nodeParameter>
           <common-display-value name="Stored Events" :value="node.EvCount"></common-display-value>
