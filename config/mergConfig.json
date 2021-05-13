@@ -79,6 +79,10 @@
     "65": {
       "name": "ETHNIGE",
       "component": "mergETHNIGE"
+    },
+    "99": {
+      "name": "LIGHTS",
+      "component": "mergDefault"
     }
   },
   "cbusErrors": {
