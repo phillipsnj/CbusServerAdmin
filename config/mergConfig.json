@@ -74,7 +74,7 @@
     },
     "63": {
       "name": "CANOUT",
-      "component": "mergDefault"
+      "component": "daveh-lights"
     },
     "65": {
       "name": "ETHNIGE",
@@ -82,7 +82,7 @@
     },
     "99": {
       "name": "LIGHTS",
-      "component": "mergDefault"
+      "component": "daveh-lights"
     }
   },
   "cbusErrors": {

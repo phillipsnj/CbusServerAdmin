@@ -165,7 +165,7 @@ Vue.component('node-variable-slider', {
       <v-slider
           v-model="variableLocal"
           class="align-center"
-          :max="234"
+          :max="255"
           :min="0"
           hide-details
           @change="updateNV(variableLocal)"
