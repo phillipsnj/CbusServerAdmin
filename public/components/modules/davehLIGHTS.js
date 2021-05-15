@@ -8,7 +8,7 @@ Vue.component('daveh-lights', {
     },
     mounted() {
         this.nodeId = this.$store.state.selected_node_id
-        this.$store.state.edit_event_component = "merg-default-node-event-variables"
+        this.$store.state.edit_event_component = "daveh-lights-node-event-variables"
         this.getInfo()
     },
     computed: {
@@ -67,7 +67,7 @@ Vue.component('daveh-lights-node-variables', {
     data: function () {
         return {
             selectedChannel: 1,
-            channels:[1,2,3,4,5,6,7,8,9,10],
+            channels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             modes: [
                 {value: 0, text: "DAYNIGHT"},
                 {value: 1, text: "DUSK"},
@@ -108,7 +108,7 @@ Vue.component('daveh-lights-node-variables', {
       </v-row>
       <v-row>
         <p>Selected Channel : {{ selectedChannel }}</p>
-        <p>Selected node Variable : {{ selectedChannel+50 }}</p>
+        <p>Selected node Variable : {{ selectedChannel + 50 }}</p>
       </v-row>
       <v-row>
         <v-card class="xs6 md3 pa-3" flat>
@@ -121,15 +121,17 @@ Vue.component('daveh-lights-node-variables', {
         </v-card>
       </v-row>
       <v-row>
-        <node-variable-select v-bind:nodeId="$store.state.selected_node_id" 
-                              :varId="selectedChannel+20"
-                              v-bind:name="Mode" 
+        <node-variable-select v-bind:nodeId="$store.state.selected_node_id"
+                              :varId="selectedChannel+50"
+                              name="Mode"
                               :items="modes">
         </node-variable-select>
       </v-row>
       <v-row>
         <node-variable-slider v-bind:nodeId="nodeId" :varId="selectedChannel"
                               name="Transition Secs"></node-variable-slider>
+        <node-variable v-bind:nodeId="nodeId" :varId="selectedChannel"
+                       name="Delay Seconds for Phase 0"></node-variable>
         <node-variable-slider v-bind:nodeId="nodeId" :varId="selectedChannel+10"
                               name="Delay Seconds for Phase 0"></node-variable-slider>
         <node-variable-slider v-bind:nodeId="nodeId" :varId="selectedChannel+20"
@@ -272,6 +274,27 @@ Vue.component('daveh-lights-node-events', {
 Vue.component('daveh-lights-node-event-variables', {
     name: "daveh-lights-node-event-variables",
     //props: ['nodeId', 'actionId'],
+    data: function () {
+        return {
+            testChannels: [
+                {value: 0, text: "DAYNIGHT"},
+                {value: 1, text: "TESTCH1"},
+                {value: 2, text: "TESTCH2"},
+                {value: 3, text: "TESTCH3"},
+                {value: 4, text: "TESTCH4"},
+                {value: 5, text: "TESTCH5"},
+                {value: 6, text: "TESTCH6"},
+                {value: 7, text: "TESTCH7"},
+                {value: 8, text: "TESTCH8"},
+                {value: 9, text: "TESTCH9"},
+                {value: 10, text: "TESTCH10"},
+                {value: 11, text: "TESTEND"},
+                {value: 12, text: "SHUTDOWN"}
+            ]
+
+
+        }
+    },
     mounted() {
         console.log(`daveh-lights-node-event-variables mounted : ${this.$store.state.selected_node_id} :: ${this.$store.state.selected_action_id}`)
         this.$root.send('REQUEST_ALL_EVENT_VARIABLES', {
@@ -298,6 +321,14 @@ Vue.component('daveh-lights-node-event-variables', {
       <p>Event ID :: {{ $store.state.selected_action_id }}</p>
       <p>{{ $store.state.nodes[this.nodeId].actions[$store.state.selected_action_id] }}</p>
       <v-row>
+        <node-event-variable-select v-bind:nodeId="$store.state.selected_node_id"
+                                    v-bind:actionId="$store.state.selected_action_id"
+                                    v-bind:varId="1"
+                                    name="Test Channel"
+                                    :items="testChannels"
+        >
+
+        </node-event-variable-select>
         <node-event-variable v-bind:nodeId="$store.state.selected_node_id"
                              v-bind:actionId="$store.state.selected_action_id"
                              v-bind:varId="n"
