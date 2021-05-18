@@ -130,8 +130,8 @@ Vue.component('daveh-lights-node-variables', {
       <v-row>
         <node-variable-slider v-bind:nodeId="nodeId" :varId="selectedChannel"
                               name="Transition Secs"></node-variable-slider>
-        <node-variable v-bind:nodeId="nodeId" :varId="selectedChannel"
-                       name="Delay Seconds for Phase 0"></node-variable>
+<!--        <node-variable v-bind:nodeId="nodeId" :varId="selectedChannel"
+                       name="Transition Secs"></node-variable>-->
         <node-variable-slider v-bind:nodeId="nodeId" :varId="selectedChannel+10"
                               name="Delay Seconds for Phase 0"></node-variable-slider>
         <node-variable-slider v-bind:nodeId="nodeId" :varId="selectedChannel+20"
