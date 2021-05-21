@@ -29,7 +29,7 @@ Vue.component('daveh-lights', {
         getEvents() {
             //console.log(`mergDefault - NERD : ${this.nodeId}`)
             //this.$root.send('REQUEST_ALL_NODE_EVENTS', {'nodeId': this.nodeId})
-            this.$store.state.node_component = "merg-default-node-events"
+            this.$store.state.node_component = "daveh-lights-node-events"
         }
     },
     template: `
@@ -168,9 +168,12 @@ Vue.component('daveh-lights-node-events', {
                 {text: 'Event/Device Number', value: 'eventNumber'},
                 {text: 'Type', value: 'eventType'},
                 {text: 'Event Index', value: 'actionId'},
+                {text: 'Event Value', value: 'eventValue'},
                 {text: 'Actions', value: 'actions', sortable: false}
             ],
             addNewEventDialog: false,
+            testListChannels: ["Night Switch","TESTCH1","TESTCH2","TESTCH3","TESTCH4","TESTCH5","TESTCH6",
+                "TESTCH7","TESTCH8","TESTCH9","TESTCH10","TESTEND","SHUTDOWN"],
         }
     },
     methods: {
@@ -195,6 +198,9 @@ Vue.component('daveh-lights-node-events', {
         getEventNumber: function (item) {
             return parseInt(item.event.substr(4, 4), 16)
         },
+        getEventValue: function (item) {
+            return item.variables[1]
+        },
     },
     mounted() {
         if (this.node.EvCount > 0) {
@@ -217,6 +223,7 @@ Vue.component('daveh-lights-node-events', {
     },
     template: `
       <v-container>
+      <p>Lights Events</p>
       <v-card>
         <v-data-table :headers="headers"
                       :items="eventList"
@@ -258,12 +265,17 @@ Vue.component('daveh-lights-node-events', {
             <div>{{ (getProducerNodeNumber(item) == 0) ? "Short" : "Long" }}</div>
           </template>
 
+          <template v-slot:item.eventValue="{ item }">
+            <div>{{ item.variables[1] }}:: {{ testListChannels[item.variables[1]] }}</div>
+          </template>
+
           <template v-slot:item.actions="{ item }">
             <v-btn color="blue darken-1" text @click="editEvent(item)" outlined>Edit</v-btn>
             <v-btn color="blue darken-1" text @click="deleteEvent(item)" outlined>Delete</v-btn>
           </template>
         </v-data-table>
       </v-card>
+      <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
       <v-row v-if="$store.state.debug">
         <common-display-json v-bind:info="$store.state.nodes[this.nodeId].actions"></common-display-json>
         <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
@@ -277,7 +289,7 @@ Vue.component('daveh-lights-node-event-variables', {
     data: function () {
         return {
             testChannels: [
-                {value: 0, text: "DAYNIGHT"},
+                {value: 0, text: "Night Switch"},
                 {value: 1, text: "TESTCH1"},
                 {value: 2, text: "TESTCH2"},
                 {value: 3, text: "TESTCH3"},
@@ -291,8 +303,6 @@ Vue.component('daveh-lights-node-event-variables', {
                 {value: 11, text: "TESTEND"},
                 {value: 12, text: "SHUTDOWN"}
             ]
-
-
         }
     },
     mounted() {
