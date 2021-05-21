@@ -408,9 +408,12 @@ class cbusAdmin extends EventEmitter {
                         "eventIndex": cbusMsg.eventIndex,
                         "variables": [this.config.nodes[cbusMsg.nodeNumber].parameters[5]],
                     }
-                    //if (this.config.nodes[cbusMsg.nodeNumber].module == "CANMIO") {
-                    if (["CANMIO","LIGHTS"].includes(this.config.nodes[cbusMsg.nodeNumber].module)){
+                    if (this.config.nodes[cbusMsg.nodeNumber].module == "CANMIO") {
+                    //if (["CANMIO","LIGHTS"].includes(this.config.nodes[cbusMsg.nodeNumber].module)){
                         setTimeout(()=>{this.cbusSend(this.REVAL(cbusMsg.nodeNumber, cbusMsg.eventIndex, 0))},50*ref)
+                        setTimeout(()=>{this.cbusSend(this.REVAL(cbusMsg.nodeNumber, cbusMsg.eventIndex, 1))},100*ref)
+                    }
+                    if (this.config.nodes[cbusMsg.nodeNumber].module == "LIGHTS") {
                         setTimeout(()=>{this.cbusSend(this.REVAL(cbusMsg.nodeNumber, cbusMsg.eventIndex, 1))},100*ref)
                     }
                     this.saveConfig()
