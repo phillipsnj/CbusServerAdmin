@@ -98,7 +98,7 @@ Vue.component('merg-canmio', {
             let x = 1
             let y = 8
             let id = 0
-            this.happening_actions[0] = "No Happening"
+            this.happening_actions[0] = ""
             this.happening_actions[1] = "Produced Startup Event"
             for (let i = 16; i <= 121; i = i + 7) { //Get Channel Types
 
@@ -423,9 +423,10 @@ Vue.component('merg-canmio-node-events', {
         </template>
 
       </v-data-table>
-      <p>{{ happening_actions }}</p>
-      <p>{{ Object.values(this.$store.state.nodes[this.nodeId].actions) }}</p>
       <v-row v-if="$store.state.debug">
+        <p>{{ happening_actions }}</p>
+        <p>{{ Object.values(this.$store.state.nodes[this.nodeId].actions) }}</p>
+
         <p>{{ $store.state.nodes[this.nodeId].actions }}</p>
       </v-row>
       </v-container>`

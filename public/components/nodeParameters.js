@@ -101,7 +101,7 @@ Vue.component('nodeParameters', {
           <nodeValue name="CPU Type" :value="node.cpuName"></nodeValue>
           <nodeValue name="Interface Type" :value="node.interfaceName"></nodeValue>
           <nodeValue name="CPU Manufacturer" :value="node.cpuManufacturerName"></nodeValue>
-          <nodeValue name="Beta Version" :value="node.beta"></nodeValue>
+          <nodeValue name="Beta Version" :value="node.parameters[20]"></nodeValue>
         </v-row>
         <v-row v-if="$store.state.advanced">
           <p>Raw Values</p>
