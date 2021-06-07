@@ -347,7 +347,7 @@ class cbusAdmin extends EventEmitter {
                 this.config.nodes[ref].producer = (cbusMsg.flags & 2) ? true : false
                 this.config.nodes[ref].bootloader = (cbusMsg.flags & 8) ? true : false
                 this.config.nodes[ref].coe = (cbusMsg.flags & 16) ? true : false
-                this.config.nodes[ref].learn = (cbusMsg.flags & 16) ? true : false
+                this.config.nodes[ref].learn = (cbusMsg.flags & 32) ? true : false
                 this.config.nodes[ref].status = true
                 this.cbusSend((this.RQEVN(cbusMsg.nodeNumber)))
                 this.saveConfig()

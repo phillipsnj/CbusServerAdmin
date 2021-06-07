@@ -178,10 +178,15 @@ Vue.component('merg-canmio-node-variables', {
       <v-container>
       <h3>Node Variables</h3>
       <v-row>
-        <node-variable v-bind:nodeId="node.node" varId="1" name="Produced Startup Delay"></node-variable>
-        <node-variable v-bind:nodeId="node.node" varId="2" name="HB Delay"></node-variable>
-        <node-variable v-bind:nodeId="node.node" varId="3" name="Servo Speed"></node-variable>
-        <node-variable v-bind:nodeId="node.node" varId="4" name="PORTB Pull-ups Enable"></node-variable>
+        <node-variable2 v-bind:nodeId="nodeId" varId="1" name="Startup Delay"
+                        text="Produced startup delay (default 0)"></node-variable2>
+        <node-variable2 v-bind:nodeId="nodeId" varId="2" name="HB Delay"
+                        text="Heartbeat Delay (default 0)"></node-variable2>
+        <!--        <node-variable v-bind:nodeId="node.node" varId="1" name="Produced Startup Delay"></node-variable>
+                <node-variable v-bind:nodeId="node.node" varId="2" name="HB Delay"></node-variable>-->
+        <node-variable-slider v-bind:nodeId="node.node" varId="3" name="Servo Speed"></node-variable-slider>
+        <node-variable-bit-array v-bind:nodeId="node.node" varId="4"
+                                 name="PORTB Pull-ups Enable"></node-variable-bit-array>
       </v-row>
       <v-row v-if="$store.state.debug">
         <p>{{ node.variables }}</p>
@@ -436,11 +441,15 @@ Vue.component('merg-canmio-node-event-variables', {
     name: "merg-canmio-node-event-variables",
     data: function () {
         return {
+            happening_lookup : [],
             eventActions: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20]
         }
     },
     mounted() {
         console.log(`merg-canmio-node-event-variables mounted : ${this.nodeId} :: ${this.actionId}`)
+        for (const [key, value] of Object.entries(this.$store.state.canmio_happening_actions)) {
+            this.happening_lookup.push({"value": parseInt(key), "text": value})
+        }
     },
     computed: {
         nodeId: function () {
@@ -472,8 +481,17 @@ Vue.component('merg-canmio-node-event-variables', {
       <v-row>
         <h3>Event Variables</h3>
         <p>{{ node.actions[actionId].variables.length }}</p>
-        <p>{{ node.actions[actionId] }}</p>
+        <p>{{ node.actions[actionId] }} :: {{this.$store.state.nodes[this.nodeId].actions[this.actionId].variables[1]}} :: </p>
         <h3>Happening :: {{ happening_actions[node.actions[actionId].variables[1]] }}</h3>
+      </v-row>
+      <v-row>
+        <merg-canmio-event-variable-select v-bind:nodeId="nodeId"
+                                           v-bind:actionId="actionId"
+                                           varId="1"
+                                           name="Happening"
+                                           :items="happening_lookup"
+                                           dense>
+        </merg-canmio-event-variable-select>
         <v-col cols="12">
           <v-row v-for="n in eventActions">
             <merg-canmio-event-variable-select v-bind:nodeId="nodeId"
@@ -485,7 +503,8 @@ Vue.component('merg-canmio-node-event-variables', {
             </merg-canmio-event-variable-select>
           </v-row>
         </v-col>
-        <p>{{ event_actions }}</p>
+        <p>Happenings {{ happening_lookup }}</p>
+        <p>Actions {{ $store.state.canmio_event_actions }}</p>
       </v-row>
       </v-container>`
 })
@@ -570,6 +589,8 @@ Vue.component('merg-canmio-channel-input', {
                            name="Disable OFF"></node-variable-bit>
         <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="4"
                            name="Toggle"></node-variable-bit>
+        <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="5"
+                           name="Disable SOD"></node-variable-bit>
         <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="6"
                            name="Event Inverted"></node-variable-bit>
       </v-row>
@@ -735,10 +756,18 @@ Vue.component('merg-canmio-channel-analogue', {
       <v-row>
         <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="0"
                            name="Trigger Inverted"></node-variable-bit>
+        <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="3"
+                           name="Disable Off"></node-variable-bit>
         <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="5"
-                           name="Action Inverted"></node-variable-bit>
+                           name="Disable SOD"></node-variable-bit>
         <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="6"
                            name="Event Inverted"></node-variable-bit>
+      </v-row>
+      <v-row>
+        <node-variable v-bind:nodeId="nodeId" :varId="baseNv+3"
+                       name="Threshold"></node-variable>
+        <node-variable v-bind:nodeId="nodeId" :varId="baseNv+4"
+                       name="Hysteresis"></node-variable>
       </v-row>
       </v-container>`
 })
@@ -755,10 +784,24 @@ Vue.component('merg-canmio-channel-magnet', {
       <v-row>
         <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="0"
                            name="Trigger Inverted"></node-variable-bit>
+        <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="3"
+                           name="Disable Off"></node-variable-bit>
         <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="5"
-                           name="Action Inverted"></node-variable-bit>
+                           name="Disable SOD"></node-variable-bit>
         <node-variable-bit v-bind:nodeId="nodeId" :varId="baseNv+1" bit="6"
                            name="Event Inverted"></node-variable-bit>
+      </v-row>
+      <v-row>
+        <node-variable v-bind:nodeId="nodeId" :varId="baseNv+2"
+                       name="Do Setup"></node-variable>
+        <node-variable v-bind:nodeId="nodeId" :varId="baseNv+3"
+                       name="Threshold"></node-variable>
+        <node-variable v-bind:nodeId="nodeId" :varId="baseNv+4"
+                       name="Hysteresis"></node-variable>
+        <node-variable v-bind:nodeId="nodeId" :varId="baseNv+5"
+                       name="Offset H"></node-variable>
+        <node-variable v-bind:nodeId="nodeId" :varId="baseNv+6"
+                       name="Offset L"></node-variable>
       </v-row>
       </v-container>`
 })
