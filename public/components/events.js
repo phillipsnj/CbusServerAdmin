@@ -113,7 +113,8 @@ Vue.component('events', {
                     this.$store.state.layout.eventDetails[item.id].colour = "black"
                     this.$store.state.layout.eventDetails[item.id].group = ""
                 }
-                this.editedEvent = item
+                this.editedEvent = this.$store.state.layout.eventDetails[item.id]
+                console.log(`Edit Event Name ${this.editedEvent.name}`)
                 //this.editedEvent["name"] = this.getEventName(item.id)
                 //this.editedEvent["colour"] = this.getEventColourName(item.id)*/
                 this.editDialog = true
@@ -159,7 +160,7 @@ Vue.component('events', {
                     hide-details
                 ></v-text-field>
                 <v-dialog v-model="editDialog" max-width="500px">
-                  <events-event-edit :eventId="editedEvent.id" :status="editedEvent.status"
+                  <events-event-edit :editedEvent="editedEvent" 
                                      v-on:close-dialog="editDialog=false"></events-event-edit>
                 </v-dialog>
                 <v-dialog v-model="teachDialog" max-width="500px">
@@ -201,7 +202,7 @@ Vue.component('events', {
                        @click="sendEvent(item.nodeId, item.eventId, item.type, 'Off')">
                   Off
                 </v-btn>
-                <!--            {{ nodeList(item.id) }}-->
+                            {{ nodeList(item.id) }}
               </td>
             </template>
 
@@ -219,14 +220,21 @@ Vue.component('events', {
 
 Vue.component('events-event-edit', {
     name: "events-event-edit",
-    props: ['eventId', 'status'],
+    props: ['editedEvent', 'status'],
     data: function () {
         return {
-            editedEvent: {}
+            // editedEvent: {}
         }
     },
     mounted() {
-        this.editedEvent = this.$store.state.layout.eventDetails[this.eventId]
+        console.log(`Event Edit Dialog ${this.editedEvent.id}`)
+        /*if (this.$store.state.layout.eventDetails[this.eventId]) {
+            this.editedEvent = this.$store.state.layout.eventDetails[this.eventId]
+        } else {
+            this.editedEvent.name = `Event ${this.eventId}`
+            this.editedEvent.colour = 'black'
+            this.editedEvent.group = ''
+        }*/
     },
     computed: {
         nodeId: function () {
