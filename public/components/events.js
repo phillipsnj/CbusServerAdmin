@@ -246,12 +246,12 @@ Vue.component('events-event-edit', {
     },
     methods: {
         update() {
-            console.log(`Event Initial Details ${JSON.stringify(this.$store.state.layout.eventDetails[this.eventId])}`)
-            this.$store.state.layout.eventDetails[this.eventId] = {}
-            this.$store.state.layout.eventDetails[this.eventId].name = this.editedEvent.name
-            this.$store.state.layout.eventDetails[this.eventId].colour = this.editedEvent.colour
-            this.$store.state.layout.eventDetails[this.eventId].group = this.editedEvent.group
-            console.log(`Event Final Details ${JSON.stringify(this.$store.state.layout.eventDetails[this.eventId])}`)
+            console.log(`Event Initial Details ${JSON.stringify(this.$store.state.layout.eventDetails[this.editedEvent.id])}`)
+            this.$store.state.layout.eventDetails[this.editedEvent.id] = {}
+            this.$store.state.layout.eventDetails[this.editedEvent.id].name = this.editedEvent.name
+            this.$store.state.layout.eventDetails[this.editedEvent.id].colour = this.editedEvent.colour
+            this.$store.state.layout.eventDetails[this.editedEvent.id].group = this.editedEvent.group
+            console.log(`Event Final Details ${JSON.stringify(this.$store.state.layout.eventDetails[this.editedEvent.id])}`)
             this.$root.send('REFRESH_EVENTS')
             this.$root.send('UPDATE_LAYOUT_DETAILS', this.$store.state.layout)
 
@@ -286,7 +286,7 @@ Vue.component('events-event-edit', {
       <v-card>
       <v-card-title>
         <span class="headline">Edit Event </span>
-        <events-event-display-id :id="eventId"></events-event-display-id>
+<!--        <events-event-display-id :id="editedEvent.Id"></events-event-display-id>-->
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md>
@@ -295,7 +295,7 @@ Vue.component('events-event-edit', {
                           label="Event Name"></v-text-field>
           </v-row>
         </v-container>
-        <events-event-display :id="eventId"></events-event-display>
+<!--        <events-event-display :id="editedEvent.Id"></events-event-display>-->
         <v-select
             label="Colour"
             v-model="editedEvent.colour"
