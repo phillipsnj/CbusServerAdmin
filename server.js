@@ -45,7 +45,7 @@ websocket_Server(LAYOUT, server, NET_ADDRESS, NET_PORT)
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 if (Boolean(startClient)) {
-	// open webpage in default browser
+	// open webpage in default_old browser
 	require("openurl").open("http://localhost:" + PORT)
 }
 

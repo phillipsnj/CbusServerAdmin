@@ -1,7 +1,7 @@
 var winston = require('winston');
 
 /*
-for rerference only, default npm logging levels used
+for rerference only, default_old npm logging levels used
 lower number being higher priority
 const levels = { 
   error: 0,
@@ -53,11 +53,11 @@ var options = {
 };
 
 //
-// Use inbuilt default logger instead of creating another logger
+// Use inbuilt default_old logger instead of creating another logger
 // Config then only has to be specified once in highest level file, 
-// and other included modules then just need require 'winston/js' with no config so they then pickup the default logger
+// and other included modules then just need require 'winston/js' with no config so they then pickup the default_old logger
 // Thus allowing different root programs to specify different configs - i.e. different configs for run and test for example
-// default logger is essentially a blank logger, and has no transports setup, so need to add them
+// default_old logger is essentially a blank logger, and has no transports setup, so need to add them
 //
 
 winston.add(new winston.transports.File(options.file));

@@ -418,13 +418,14 @@ Vue.component('events-teach-event', {
         teach(selectedNode, selectedEvent) {
             // eslint-disable-next-line no-console
             console.log(`TEACH_EVENT : ${selectedNode.node} : ${selectedNode.module} : ${selectedEvent.id}`)
-            if (selectedNode.module == 'Universal') {
+            if (selectedNode.module == 'CANMIO') {
                 this.$root.send('TEACH_EVENT', {
                     "nodeId": selectedNode.node,
                     "eventName": selectedEvent.id,
                     "eventId": 2,
                     "eventVal": 2
                 })
+                console.log(`TEACH_EVENT : CANMIO`)
             } else {
                 this.$root.send('TEACH_EVENT', {
                     "nodeId": selectedNode.node,
