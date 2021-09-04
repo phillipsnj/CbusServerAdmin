@@ -70,11 +70,11 @@
     },
     "62": {
       "name": "CANINP",
-      "component": "mergDefault"
+      "component": "merg-canace8c"
     },
     "63": {
       "name": "CANOUT",
-      "component": "mergDefault"
+      "component": "merg-canacc8"
     },
     "65": {
       "name": "ETHNIGE",
